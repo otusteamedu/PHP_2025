@@ -2,7 +2,7 @@
 include "../engine/Autoload.php";
 
 use app\engine\{Autoload, Db};
-use app\models\{Product, DigitalProduct};
+use app\models \{Product, DigitalProduct, ProductByWeight};
 //use app\interfaces\{Imodel};
 
 spl_autoload_register([new Autoload(), 'loadClass']);
@@ -41,6 +41,22 @@ var_dump("Маржа",$digitalProduct->marja());
 $digitalProduct->sell(5);
 
 var_dump("Маржа",$digitalProduct->marja());
+
+$productByWeight = new ProductByWeight([
+    "name" => "Крупа",
+    "price" => 1000,
+    "description" => "Весовой товар"
+]);
+echo $productByWeight;
+var_dump("Маржа",$productByWeight->marja());
+
+$productByWeight->sell(0.2);
+
+var_dump("Маржа",$productByWeight->marja());
+
+$productByWeight->sell(2.5);
+
+var_dump("Маржа",$productByWeight->marja());
 
 
 

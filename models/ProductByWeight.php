@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-class Product extends Item{
+class ProductByWeight extends Item{
 
     static $marja=0;
     /**
@@ -14,9 +14,9 @@ class Product extends Item{
         parent::__construct($input);
     }
 
-    public function sell ($quantity){
+    public function sell ($weight){
 
-        self::$marja += $this->getTax()*$quantity*$this->getPrice();
+        self::$marja += $this->getTax()*$weight*$this->getPrice();
     }
     public function marja(){
 
