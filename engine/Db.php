@@ -1,6 +1,6 @@
 <?php
 
-//namespace app\engine;
+namespace app\engine;
 
 
 class Db

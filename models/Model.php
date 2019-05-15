@@ -1,6 +1,9 @@
 <?php
 
-//namespace app\models;
+namespace app\models;
+
+use app\interfaces\{Imodel};
+use app\engine\{Db};
 
 
 abstract class Model implements IModel
