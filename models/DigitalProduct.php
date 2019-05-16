@@ -6,7 +6,7 @@ namespace app\Models;
 class DigitalProduct extends Item
 {
     private $tax = 0.5;
-    static $marja=0;
+//    static $marja=0;
 
     public function __construct(array $input)
     {
@@ -20,8 +20,8 @@ class DigitalProduct extends Item
 
         self::$marja += $this->getTax()*$quantity*$this->getPrice();
     }
-    public function marja(){
-
-        return self::$marja;
-    }
+//    public function marja(){
+//
+//        return self::$marja;
+//    }
 }

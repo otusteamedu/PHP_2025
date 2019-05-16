@@ -2,9 +2,9 @@
 
 namespace app\models;
 
-class ProductByWeight extends Item{
+class ProductByWeight extends Product {
 
-    static $marja=0;
+//    static $marja=0;
     /**
      * Product constructor.
      * @param $input ассоциативный массив, где ключи name, price, description
@@ -18,9 +18,9 @@ class ProductByWeight extends Item{
 
         self::$marja += $this->getTax()*$weight*$this->getPrice();
     }
-    public function marja(){
-
-        return self::$marja;
-    }
+//    public function marja(){
+//
+//        return self::$marja;
+//    }
 
 }

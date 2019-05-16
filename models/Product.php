@@ -4,7 +4,7 @@ namespace app\models;
 
 class Product extends Item{
 
-    static $marja=0;
+//    static $marja=0;
     /**
      * Product constructor.
      * @param $input ассоциативный массив, где ключи name, price, description
@@ -18,9 +18,9 @@ class Product extends Item{
 
         self::$marja += $this->getTax()*$quantity*$this->getPrice();
     }
-    public function marja(){
-
-        return self::$marja;
-    }
+//    public function marja(){
+//
+//        return self::$marja;
+//    }
 
 }

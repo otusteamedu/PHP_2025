@@ -7,7 +7,7 @@ abstract class Item{
     private $name; // Название товара
     private $description; // Краткое описание
     private $price; // Цена
-//    static $marja=0;
+    static $marja=0;
     private $tax = 1;
 
     /**
@@ -29,10 +29,10 @@ abstract class Item{
 //        var_dump($str); die();
         return $str;
     }
-//    public function marja(){
-//
-//        return self::$marja;
-//    }
+    public function marja(){
+
+        return self::$marja;
+    }
     public function getPrice(){
 
         return $this->price;
