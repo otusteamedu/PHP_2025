@@ -2,59 +2,66 @@
 
 namespace app\engine;
 
+use app\traits\Tsingletone;
 
 class Db
 {
-    public function queryOne($sql) {
-        return null;
-    }
+    use Tsingletone;
 
-    public function queryAll($sql) {
-        return null;
-    }
-    function getDb() {
+    private $config = [
+        'driver' => 'mysql',
+        'host' => 'localhost',
+        'login' => 'root',
+        'password' => '',
+        'database' => 'inshopdb',
+        'charset' => 'utf8'
+    ];
 
-        static $db = null;
+    private $connection = null;
 
-        if (is_null($db)) {
-            $db = @mysqli_connect(HOST, USER, PASS, DB) or die("Could not connect: " . mysqli_connect_error());
+
+
+    private function getConnection() {
+        if (is_null($this->connection)) {
+//            var_dump("Создаю подключение к БД, Дооолго.");
+            $this->connection = new \PDO($this->prepareDsnString(),
+                $this->config['login'],
+                $this->config['password']
+                );
         }
-
-        return $db;
+        $this->connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+        return $this->connection;
     }
 
-//При желании можно закрыть соединение (если уж и вызывать, то после render на главной)
-    function closeDb() {
-        mysqli_close(getDb());
+    private function prepareDsnString() {
+
+        return sprintf("%s:host=%s;dbname=%s;charset=%s",
+            $this->config['driver'],
+            $this->config['host'],
+            $this->config['database'],
+            $this->config['charset']
+        );
+    }
+// "SELECT * FROM products WHERE id = :id", ["id", 1]
+    private function query($sql, $params) {
+        $stmt = $this->getConnection()->prepare($sql);
+        var_dump('sql:',$sql,'params:',$params);
+        $stmt->execute($params);
+        return $stmt;
+    }
+
+    public function execute($sql, $params) {
+        $this->query($sql, $params);
+        return true;
     }
 
 
-    /*
-     * Обертка для выполнения любого запроса
-     * Передаем в параметре текст sql-запроса
-     * Возвращаем результат, в основном использовать для
-     * операций update и delete, которые не требуют возврата данных
-     */
-    function executeQuery($sql)
-    {
-        $db = getDb();
-
-        $result = @mysqli_query($db, $sql) or die(mysqli_error($db));
-        return $result;
+    public function queryOne($sql, $params) {
+        return $this->queryAll($sql, $params)[0];
     }
 
-    /*
-     * Обертка для выполнения запроса на получение данных
-     * Данные возвращаются в виде ассоциативного массива
-     * Цикл по получению данных уже реализован в этой функции
-     */
-    function getAssocResult($sql)
-    {
-        $db = getDb();
-        $result = @mysqli_query($db, $sql) or die(mysqli_error($db));
-        $array_result = [];
-        while ($row = mysqli_fetch_assoc($result))
-            $array_result[] = $row;
-        return $array_result;
+    public function queryAll($sql, $params = []) {
+        return $this->query($sql, $params)->fetchAll();
     }
+
 }

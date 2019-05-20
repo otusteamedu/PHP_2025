@@ -2,25 +2,29 @@
 
 namespace app\models;
 
-class Product extends Item{
+class Product
+{
 
-//    static $marja=0;
-    /**
-     * Product constructor.
-     * @param $input ассоциативный массив, где ключи name, price, description
-     */
-    public function __construct(array $input)
+    public $id_product;
+    public $name_product;
+    public $description;
+    public $price;
+    public $name_unit;
+    public $img;
+    public $type;
+    public $category;
+
+    public function __construct($product)
     {
-        parent::__construct($input);
+//        var_dump($product);
+        $this -> id_product = $product['id_product'];
+        $this -> name_product = $product['name_product'];
+        $this -> description = $product['description'];
+        $this -> price = $product['price'];
+        $this -> name_unit = $product['name_unit'];
+        $this -> img = $product['img'];
+        $this -> type = $product['type'];
+        $this -> category = $product['category'];
     }
-
-    public function sell ($quantity){
-
-        self::$marja += $this->getTax()*$quantity*$this->getPrice();
-    }
-//    public function marja(){
-//
-//        return self::$marja;
-//    }
 
 }

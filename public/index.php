@@ -1,62 +1,45 @@
 <?
-include "../engine/Autoload.php";
+use app\models\Products;
 
-use app\engine\{Autoload, Db};
-use app\models \{Product, DigitalProduct, ProductByWeight};
-//use app\interfaces\{Imodel};
+
+include "../engine/Autoload.php";
+include "../config/main.php";
+
+use app\engine\Autoload;
+use app\models\Product;
+
 
 spl_autoload_register([new Autoload(), 'loadClass']);
 
 
+// Получение всех товаров
+$prods=new Products();
+// Создание нового товара
+$newprod = new Product([
 
-$computer = new Product([
-    "name" => "Компьютер",
-    "price" => 1000,
-    "description" => "Супер компьютер"
+    name_product        => 'Товар3',
+    description         => 'Оприсание товара3',
+    price               => 555,
+    name_unit           => 'шт.',
+    img                 => 'kdfls',
+    type                => 'Физический',
+    category            => 'Одежда'
 ]);
+// Добавление нового товара в БД
+$prods->insert($newprod);
+// Обновление созданного товара
+$update = $prods->getOne($prods->products[count($prods->products)-1]);
+$update->name_product = "Updated";
+$update->price = "666";
+$update->description = "Новое описание";
+//$update->name_unit = "кг"; // по этому полю обновление не работает ((
+$update->img = "новый";
+$update->type = "Весовой";
+$update->category = "Техника";
+$prods->update($update);
+var_dump('Все продукты',$prods);
 
-echo $computer;
-var_dump("Маржа",$computer->marja());
-
-$computer->sell(2);
-
-var_dump("Маржа",$computer->marja());
-
-$computer->sell(5);
-
-var_dump("Маржа",$computer->marja());
-
-$digitalProduct = new DigitalProduct([
-    "name" => "Цифровой товар",
-    "price" => 1000,
-    "description" => "Что-то цифровое"
-]);
-echo $digitalProduct;
-var_dump("Маржа",$digitalProduct->marja());
-
-$digitalProduct->sell(2);
-
-var_dump("Маржа",$digitalProduct->marja());
-
-$digitalProduct->sell(5);
-
-var_dump("Маржа",$digitalProduct->marja());
-
-$productByWeight = new ProductByWeight([
-    "name" => "Крупа",
-    "price" => 1000,
-    "description" => "Весовой товар"
-]);
-echo $productByWeight;
-var_dump("Маржа",$productByWeight->marja());
-
-$productByWeight->sell(0.2);
-
-var_dump("Маржа",$productByWeight->marja());
-
-$productByWeight->sell(2.5);
-
-var_dump("Маржа",$productByWeight->marja());
-
-
+//Удаление товара из БД
+//$prods->delete($prods->products[count($prods->products)-1]);
+var_dump('Все продукты',$prods);
 
