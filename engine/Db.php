@@ -23,7 +23,6 @@ class Db
 
     private function getConnection() {
         if (is_null($this->connection)) {
-//            var_dump("Создаю подключение к БД, Дооолго.");
             $this->connection = new \PDO($this->prepareDsnString(),
                 $this->config['login'],
                 $this->config['password']
@@ -45,9 +44,14 @@ class Db
 // "SELECT * FROM products WHERE id = :id", ["id", 1]
     private function query($sql, $params) {
         $stmt = $this->getConnection()->prepare($sql);
-        var_dump('sql:',$sql,'params:',$params);
         $stmt->execute($params);
         return $stmt;
+    }
+
+    public function queryObject($sql, $params, $class) {
+        $stmt = $this->query($sql, $params);
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, $class);
+        return $stmt->fetch();
     }
 
     public function execute($sql, $params) {
@@ -62,6 +66,14 @@ class Db
 
     public function queryAll($sql, $params = []) {
         return $this->query($sql, $params)->fetchAll();
+    }
+    public function __toString()
+    {
+        return "Db";
+    }
+
+    public function lastInsertId() {
+        return $this->connection->lastInsertId();
     }
 
 }

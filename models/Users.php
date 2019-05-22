@@ -3,13 +3,13 @@
 namespace app\models;
 
 
-class Users extends Model
+class Users extends DbModel
 {
-    public $id_user;
+    public $id;
     public $login;
-    public $hash;
+    public $pass;
 
-    public function getTableName()
+    public static function getTableName()
     {
         return 'users';
     }
