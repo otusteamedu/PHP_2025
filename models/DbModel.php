@@ -20,15 +20,20 @@ abstract class DbModel extends Models implements IModel
         $id_db = static::getId4Query();
 //        var_dump('tableName', $tableName);
         $sql = "SELECT * FROM {$tableName} WHERE {$id_db} = :id";
-        var_dump('getOne',$sql);
+//        var_dump('getOne',$sql);
         return Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
     }
 
     public static function getAll()
     {
         $tableName = static::getTableName();
-        $sql = "SELECT * FROM {$tableName}";
-        return Db::getInstance()->queryAll($sql);
+        $columns = static::$columns;
+        $condition=static::$condition;
+        $paprams=static::$params;
+
+        $sql = "SELECT $columns FROM {$tableName} WHERE $condition";
+//        var_dump($sql);
+        return Db::getInstance()->queryAll($sql, $params);
     }
 
     public function insert()

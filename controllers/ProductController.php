@@ -6,22 +6,10 @@ use app\models\Products;
 
 class ProductController extends Controller
 {
-    private $action;
+    protected $action;
     protected $layout = 'main';
     protected $useLayout = true;
-
-    public function runAction($action = null) {
-        $this->action = $action ?: 'catalog';
-        $method = "action" . ucfirst($this->action);
-        if (method_exists($this, $method)) {
-
-            $this->$method();
-        }
-        else {
-            echo "404";
-        }
-
-    }
+    protected $defaulAction = 'catalog';
 
     public function actionCatalog() {
         $products = Products::getAll();
