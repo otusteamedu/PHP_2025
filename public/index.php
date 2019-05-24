@@ -11,7 +11,7 @@ use app\models\Users;
 spl_autoload_register([new Autoload(), 'loadClass']);
 
 $controllerName = $_GET['c'] ?: 'product';
-$actionName = $_GET['a'];
+$actionName = $_GET['a'] ?: 'catalog';
 //var_dump($_GET['a']);
 //var_dump($_GET['c']);
 //var_dump(Products::getOne(1));die();
