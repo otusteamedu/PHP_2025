@@ -29,53 +29,46 @@ abstract class DbModel extends Models implements IModel
         $tableName = static::getTableName();
         $columns = static::$columns;
         $condition=static::$condition;
-        $paprams=static::$params;
+//        $params=static::$params;
+        $params=static::getParams();
 
         $sql = "SELECT $columns FROM {$tableName} WHERE $condition";
-//        var_dump($sql);
+//        var_dump($sql, $params, $columns);
         return Db::getInstance()->queryAll($sql, $params);
     }
 
     public function insert()
     {
         //INSERT INTO `products`(`name`, `description`, `price`) VALUES (:name, :description, :price)
-        $tableName = static::getTableName();
+        $tableName = static::getInsertTableName();
+        $params = $this->getInsertParams();
+        $values = $this->getValues();
+        $columns = $this->getColumns();
+//        var_dump($params,$values,$columns);
 
-        $params = [];
-        $columns = [];
-
-        foreach ($this as $key => $value) {
-
-            if ($key == "db" || $key == "id") continue;
-            $params[":{$key}"] = $value;
-            $columns[] = "`$key`";
-
-        }
-
-        $columns = implode(", ", $columns);
-        $value = implode(", ", array_keys($params));
-
-        $sql = "INSERT INTO `{$tableName}`(`name`, `description`, `price`) VALUES (:name, :description, :price)";
-
-        //var_dump($sql, $params);
-
+        $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$values})";
+var_dump($sql,$params);
         Db::getInstance()->execute($sql, $params);
 
-        $this->id = Db::getInstance()->lastInsertId();
+        $this->setId(Db::getInstance()->lastInsertId());
     }
 
     public function delete()
     {
         $tableName = static::getTableName();
         $sql = "DELETE FROM {$tableName} WHERE id = :id";
-
-        Db::getInstance()->execute($sql, ["id" => $this->id]);
+        $id = $this->getId();
+        Db::getInstance()->execute($sql, ["id" => $id]);
 
     }
 
     public function update()
     {
-
+        $set = $this->getUpdateSet();
+        $condition = $this->getUpdateCondition();
+        $sql = "UPDATE `products` SET $set WHERE $condition";
+        var_dump($sql);
+        Db::getInstance()->execute($sql, []);
     }
 
     public function save() {

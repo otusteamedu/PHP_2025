@@ -18,7 +18,13 @@
                     <p class="card-text">
                         <?=$product['description']?>
                     </p>
-                    <a href="?c=product&a=card" class="btn btn-primary">
+                    <p class="card-text">
+                        <?=$product['price']?>
+                    </p>
+                    <p class="card-text">
+                        <?=$product['category']?>
+                    </p>
+                    <a href="?c=cart&a=add&id=<?=$product['id_product']?>" class="btn btn-primary">
                         Купить
                     </a>
                 </div>

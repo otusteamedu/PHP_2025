@@ -25,9 +25,10 @@ abstract class Controller
         return ob_get_clean();
 
     }
-    public function runAction($action = null) {
+    public function runAction($action = null, $data = null) {
         $this->action = $action ?: $this->defaultAction;
         $method = "action" . ucfirst($this->action);
+//        var_dump($this->defaultAction);
         if (method_exists($this, $method)) {
 
             $this->$method();

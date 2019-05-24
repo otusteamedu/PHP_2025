@@ -7,4 +7,9 @@
   margin-right: 30px;
 }
 
+.cart-cont {
+  display: flex;
+  justify-content: space-between;
+}
+
 /*# sourceMappingURL=styles.css.map */

@@ -1,37 +1,39 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: iluka
- * Date: 22.05.2019
- * Time: 13:31
- */
+
 
 namespace app\controllers;
+use app\models\Carts;
 
 
 class CartController extends Controller
 {
-    private $action;
+    protected $action;
     protected $layout = 'main';
     protected $useLayout = true;
-    protected $defaulAction = 'cart';
+    protected $defaultAction = 'view';
 
-    public function actionCart() {
-        $products = Products::getAll();
-//        var_dump($products);
+    public function actionView() {
 
-        echo $this->render("catalog", [
-            'products' => $products
+        $cart =  Carts::getAll();
+//        var_dump($cart);
+
+        echo $this->render("cart", [
+            'cart' => $cart
         ]);
     }
+    public function actionAdd(){
 
-//    public function actionCard() {
-//        $id = $_GET['id'];
-//        $product = Products::getOne($id);
-//        $product->img=explode(',', $product->img);
-////        var_dump($product);die('actionCard');
-//        echo $this->render("card", [
-//            'product' => $product
-//        ]);
-//    }
+//        var_dump('actionAdd',$_GET);
+        $id =$_GET['id'];
+        $session_id = session_id();
+        $cart= new Carts(
+            $id,
+            null,
+            $session_id,
+            1.
+        );
+//        var_dump($cart);die("Carts");
+        $cart->insert();
+        header("location: /?c=product&a=catalog");
+    }
 }
