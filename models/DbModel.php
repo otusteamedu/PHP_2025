@@ -47,7 +47,7 @@ abstract class DbModel extends Models implements IModel
 //        var_dump($params,$values,$columns);
 
         $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$values})";
-var_dump($sql,$params);
+//var_dump($sql,$params);
         Db::getInstance()->execute($sql, $params);
 
         $this->setId(Db::getInstance()->lastInsertId());
@@ -67,7 +67,7 @@ var_dump($sql,$params);
         $set = $this->getUpdateSet();
         $condition = $this->getUpdateCondition();
         $sql = "UPDATE `products` SET $set WHERE $condition";
-        var_dump($sql);
+//        var_dump($sql);
         Db::getInstance()->execute($sql, []);
     }
 

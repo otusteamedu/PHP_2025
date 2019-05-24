@@ -64,4 +64,8 @@ class Carts extends DbModel
 
         return ['id_product'=>$this->id_product, 'id_user'=>$this->id_user, 'id_session'=>$this->id_session,'quantity'=>$this->quantity];
     }
+    public function setId($value){
+
+        $this->id_cart = $value;
+    }
 }
