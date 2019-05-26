@@ -1,34 +1,42 @@
 <?php
 
+
 namespace app\controllers;
 
 
+use app\interfaces\IRender;
+
 abstract class Controller
 {
+    protected $action;
+    protected $layout = 'main';
+    protected $useLayout = true;
+    private $renderer;
+
+    public function __construct(IRender $renderer)
+    {
+        $this->renderer = $renderer;
+    }
+
     public function render($template, $params = []) {
+
         if ($this->useLayout) {
-            return $this->renderTemplate("layouts/{$this->layout}",[
+            return $this->renderTemplate("layouts/{$this->layout}" . '.tmpl',[
                 'content' => $this->renderTemplate($template, $params)
             ]);
         } else {
             return $this->renderTemplate($template, $params);
         }
     }
+    public function renderTemplate($template, $params = []){
 
-    public function renderTemplate($template, $params = []) {
-        ob_start();
-        extract($params);
-        $templatePath = "../views/" . $template . ".php";
-        if (file_exists($templatePath)) {
-            include $templatePath;
-        }
-        return ob_get_clean();
-
+        return $this->renderer->renderTemplate($template, $params);
     }
     public function runAction($action = null, $data = null) {
+
         $this->action = $action ?: $this->defaultAction;
         $method = "action" . ucfirst($this->action);
-//        var_dump($this->defaultAction);
+//        var_dump('controllerRunAction',$method);
         if (method_exists($this, $method)) {
 
             $this->$method();

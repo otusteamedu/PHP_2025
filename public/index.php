@@ -1,12 +1,16 @@
 <?
-use app\models\Products;
+
 
 session_start();
 include "../engine/Autoload.php";
 include "../config/main.php";
+require_once '../vendor/autoload.php';
 
 use app\engine\Autoload;
 use app\models\Users;
+use app\utils\{Render};
+use app\utils\TwigRender;
+use app\models\Products;
 
 spl_autoload_register([new Autoload(), 'loadClass']);
 
@@ -16,9 +20,11 @@ $actionName = $_GET['a'] ?: 'catalog';
 //var_dump($_GET['c']);
 //var_dump(Products::getOne(1));die();
 $controllerClass = "app\\controllers\\" . ucfirst($controllerName) . "Controller";
+//$controller = new \app\controllers\ProductController(new Render());
+//$controller->runAction('catalog');
 
 if (class_exists($controllerClass)) {
-    $controller = new $controllerClass();
+    $controller = new $controllerClass(new TwigRender());
     $controller->runAction($actionName);
 }
 //Добавление нового товара

@@ -7,9 +7,6 @@ use app\models\Carts;
 
 class CartController extends Controller
 {
-    protected $action;
-    protected $layout = 'main';
-    protected $useLayout = true;
     protected $defaultAction = 'view';
 
     public function actionView() {
