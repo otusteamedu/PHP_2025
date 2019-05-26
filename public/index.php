@@ -28,7 +28,7 @@ if (class_exists($controllerClass)) {
     $controller->runAction($actionName);
 }
 //Добавление нового товара
-//$p=new Products("Товар5","Описание товара5", 900,"05.jpg",1,1,1);
+//$p=new Products("Товар7","Описание товара7", 900,"07.jpg",1,1,1);
 //$p->insert();
 
 // Обновление товара

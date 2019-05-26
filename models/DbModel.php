@@ -17,40 +17,43 @@ abstract class DbModel extends Models implements IModel
     public static function getOne($id)
     {
         $tableName = static::getTableName();
-        $id_db = static::getId4Query();
-//        var_dump('tableName', $tableName);
-        $sql = "SELECT * FROM {$tableName} WHERE {$id_db} = :id";
-//        var_dump('getOne',$sql);
+        $sql = "SELECT * FROM {$tableName} WHERE id = :id";
         return Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
     }
 
     public static function getAll()
     {
         $tableName = static::getTableName();
-        $columns = static::$columns;
-        $condition=static::$condition;
-//        $params=static::$params;
-        $params=static::getParams();
-
-        $sql = "SELECT $columns FROM {$tableName} WHERE $condition";
-//        var_dump($sql, $params, $columns);
-        return Db::getInstance()->queryAll($sql, $params);
+        $sql = "SELECT * FROM {$tableName}";
+        return Db::getInstance()->queryAll($sql);
     }
 
     public function insert()
     {
         //INSERT INTO `products`(`name`, `description`, `price`) VALUES (:name, :description, :price)
-        $tableName = static::getInsertTableName();
-        $params = $this->getInsertParams();
-        $values = $this->getValues();
-        $columns = $this->getColumns();
-//        var_dump($params,$values,$columns);
+        $tableName = static::getTableName();
 
-        $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$values})";
-//var_dump($sql,$params);
+        $params = [];
+        $columns = [];
+
+        foreach ($this as $key => $value) {
+
+            if ($key == "db" || $key == "id") continue;
+            $params[":{$key}"] = $value;
+            $columns[] = "`$key`";
+
+        }
+
+        $columns = implode(", ", $columns);
+        $value = implode(", ", array_keys($params));
+
+        $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$value})";
+
+        //var_dump($sql, $params);
+
         Db::getInstance()->execute($sql, $params);
 
-        $this->setId(Db::getInstance()->lastInsertId());
+        $this->id = Db::getInstance()->lastInsertId();
     }
 
     public function delete()
@@ -64,15 +67,14 @@ abstract class DbModel extends Models implements IModel
 
     public function update()
     {
-        $set = $this->getUpdateSet();
-        $condition = $this->getUpdateCondition();
-        $sql = "UPDATE `products` SET $set WHERE $condition";
-//        var_dump($sql);
-        Db::getInstance()->execute($sql, []);
+
     }
 
     public function save() {
-
+        if (is_null($this->id))
+            $this->insert();
+        else
+            $this->update();
     }
 
     abstract static public function getTableName();

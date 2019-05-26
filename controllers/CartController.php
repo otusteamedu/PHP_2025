@@ -7,15 +7,15 @@ use app\models\Carts;
 
 class CartController extends Controller
 {
-    protected $defaultAction = 'view';
 
     public function actionView() {
 
         $cart =  Carts::getAll();
 //        var_dump($cart);
 
-        echo $this->render("cart", [
-            'cart' => $cart
+        echo $this->render("cart" . ".tmpl", [
+            'cart' => $cart,
+            'img_small' => IMG_SMALL
         ]);
     }
     public function actionAdd(){
@@ -24,6 +24,7 @@ class CartController extends Controller
         $id =$_GET['id'];
         $session_id = session_id();
         $cart= new Carts(
+            null,
             $id,
             null,
             $session_id,

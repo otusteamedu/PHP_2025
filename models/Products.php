@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use app\engine\Db;
 
 class Products extends DbModel
 {
@@ -10,17 +11,9 @@ class Products extends DbModel
     public $description;
     public $price;
     public $img;
-//    public $category;
-//    public $type;
-//    public $name_unit;
     public $id_unit;
     public $id_product_type;
     public $id_product_category;
-
-    public static $condition = "p.id_unit=u.id_unit AND p.id_product_category = c.id_product_category AND p.id_product_type = t.id_product_type";
-    public static $params = [];
-    public static $columns = "id_product, name_product, price, img, description, category, type, name_unit";
-
 
     public function __construct($name = null, $description = null, $price = null, $img=null, $id_category_type=null, $id_unit=null, $id_product_type=null)
     {
@@ -29,9 +22,6 @@ class Products extends DbModel
         $this->description = $description;
         $this->price = $price;
         $this->img=$img;
-//        $this->category=$category;
-//        $this->type=$type;
-//        $this->name_unit=$name_unit;
         $this->id_unit = $id_unit;
         $this->id_product_type = $id_product_type;
         $this->id_product_category = $id_category_type;
@@ -39,48 +29,40 @@ class Products extends DbModel
 
     public static function getTableName()
     {
-        return 'products as p, units as u, product_category as c, product_types as t';
-    }
-    public static function getInsertTableName()
-    {
         return 'products';
     }
+    public static function getAll(){
 
-    public static function getId4Query()
-    {
-        return 'id_product';
+        $sql = "SELECT id_product, name_product, `price`, `img`, `description` FROM products as p, units as u, product_category as c, product_types as t WHERE p.id_unit=u.id_unit AND p.id_product_category = c.id_product_category AND p.id_product_type = t.id_product_type";
+//        var_dump($sql);
+        return Db::getInstance()->queryAll($sql);
     }
-    public static function getParams(){
+    public static function getOne($id){
 
-        return [];
+        $tableName = static::getTableName();
+        $sql = "SELECT id_product, `name_product`, `price`, `img`, `description` FROM products as p WHERE id_product = :id";
+//        var_dump($sql,$id);
+        return Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
     }
-    public function getValues(){
+    public function update(){
 
-        return ":name_product,:price, :img, :id_unit,:id_product_type, :id_product_category, :description";
+        $params = [];
+        $set = [];
+
+        foreach ($this as $key => $value) {
+
+            if ($key == "db" || $key == "id") continue;
+            $params[":{$key}"] = $value;
+            $set[] = "`$key`=:{$key}";
+        }
+        $params[':id'] = $this->id_product;
+
+        $set = implode(", ", $set);
+        $value = implode(", ", array_keys($params));
+
+        $sql = "UPDATE `products` SET {$set} WHERE 'id_product'=:id";
+        var_dump($sql,$params);
+        Db::getInstance()->execute($sql, $params);
     }
-    public function getColumns(){
-
-        return "`name_product`, `price`, `img`, `id_unit`, `id_product_type`, `id_product_category`, `description`";
-    }
-
-    public function getInsertParams(){
-
-        return ['name_product'=>$this->name_product,'price'=>$this->price,'img'=>$this->img,'id_unit'=>$this->id_unit,'id_product_type'=>$this->id_product_type,'id_product_category'=>$this->id_product_category,'description'=>$this->description];
-    }
-    public function getId(){
-
-        return 'id_product';
-    }
-    public function setId($value){
-
-        $this->id_product = $value;
-    }
-    public  function getUpdateSet(){
-
-        return "`name_product`= '$this->name_product',`price`=$this->price,`img`='$this->img',`id_unit`=$this->id_unit,`id_product_type`=$this->id_product_type,`id_product_category`=$this->id_product_category,`description`='$this->description'";
-    }
-    public function getUpdateCondition(){
-
-        return "id_product = $this->id_product";
-    }
+//
 }

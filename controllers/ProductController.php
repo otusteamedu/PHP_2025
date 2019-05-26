@@ -28,7 +28,7 @@ class ProductController extends Controller
     public function actionCard() {
         $id = $_GET['id'];
         $product = Products::getOne($id);
-        $product->img=explode(',', $product->img);
+        //$product->img=explode(',', $product->img);
 //        var_dump($product);die('actionCard');
         echo $this->render('card.tmpl', [
         product => \app\models\Products::getOne($id),
