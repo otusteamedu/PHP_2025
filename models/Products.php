@@ -64,5 +64,10 @@ class Products extends DbModel
         var_dump($sql,$params);
         Db::getInstance()->execute($sql, $params);
     }
-//
+    public function __set($property, $value)
+    {
+        if (property_exists($this, $property)) {
+            $this->$property = $value;
+        }
+    }
 }

@@ -7,9 +7,6 @@ use app\models\Products;
 
 class ProductController extends Controller
 {
-
-    protected $defaulAction = 'catalog';
-
     public function __construct(IRender $renderer)
     {
         parent::__construct($renderer);

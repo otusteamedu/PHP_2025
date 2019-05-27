@@ -14,8 +14,8 @@ use app\models\Products;
 
 spl_autoload_register([new Autoload(), 'loadClass']);
 
-$controllerName = $_GET['c'] ?: 'product';
-$actionName = $_GET['a'] ?: 'catalog';
+$controllerName = $_GET['c'] ?: 'default';
+$actionName = $_GET['a'] ?: 'view';
 //var_dump($_GET['a']);
 //var_dump($_GET['c']);
 //var_dump(Products::getOne(1));die();

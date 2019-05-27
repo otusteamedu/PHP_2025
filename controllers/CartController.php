@@ -3,11 +3,14 @@
 
 namespace app\controllers;
 use app\models\Carts;
-
+use app\interfaces\IRender;
 
 class CartController extends Controller
 {
-
+    public function __construct(IRender $renderer)
+    {
+        parent::__construct($renderer);
+    }
     public function actionView() {
 
         $cart =  Carts::getAll();
