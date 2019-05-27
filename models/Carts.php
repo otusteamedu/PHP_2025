@@ -18,9 +18,9 @@ class Carts extends DbModel
     protected $id_user;
     protected $id_session;
     protected $quantity;
-    public static $condition = "c.id_product=p.id_product AND id_session= :id AND ctg.id_product_category=p.id_product_category AND u.id_unit=p.id_unit AND t.id_product_type=p.id_product_type";
-//    public static $params = ['id'=>session_id()];
-    public static $columns = "id_cart,p.id_product,name_product,price,img,description, category, name_unit, type, quantity";
+//    public static $condition = "c.id_product=p.id_product AND id_session= :id AND ctg.id_product_category=p.id_product_category AND u.id_unit=p.id_unit AND t.id_product_type=p.id_product_type";
+////    public static $params = ['id'=>session_id()];
+//    public static $columns = "id_cart,p.id_product,name_product,price,img,description, category, name_unit, type, quantity";
 
     public function __construct($id_cart,$id_product = null, $id_user = null, $id_session = null, $quantity = null)
     {
@@ -35,7 +35,7 @@ class Carts extends DbModel
 
     public static function getTableName()
     {
-        return 'carts as c, products as p, units as u, product_category as ctg,product_types as t';
+        return 'carts';
     }
 
     public static function getAll(){

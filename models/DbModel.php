@@ -49,7 +49,7 @@ abstract class DbModel extends Models implements IModel
 
         $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$value})";
 
-        //var_dump($sql, $params);
+//        var_dump($sql, $params);die();
 
         Db::getInstance()->execute($sql, $params);
 
