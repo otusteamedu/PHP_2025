@@ -6,14 +6,15 @@ use app\engine\Db;
 class Products extends DbModel
 {
 
-    public $id_product;
-    public $name_product;
-    public $description;
-    public $price;
-    public $img;
-    public $id_unit;
-    public $id_product_type;
-    public $id_product_category;
+    protected $id_product;
+    protected $name_product;
+    protected $description;
+    protected $price;
+    protected $img;
+    protected $id_unit;
+    protected $id_product_type;
+    protected $id_product_category;
+    protected $changes=[];
 
     public function __construct($name = null, $description = null, $price = null, $img=null, $id_category_type=null, $id_unit=null, $id_product_type=null)
     {
@@ -39,35 +40,12 @@ class Products extends DbModel
     }
     public static function getOne($id){
 
-        $tableName = static::getTableName();
         $sql = "SELECT id_product, `name_product`, `price`, `img`, `description` FROM products as p WHERE id_product = :id";
 //        var_dump($sql,$id);
         return Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
     }
-    public function update(){
+    public function getId(){
 
-        $params = [];
-        $set = [];
-
-        foreach ($this as $key => $value) {
-
-            if ($key == "db" || $key == "id") continue;
-            $params[":{$key}"] = $value;
-            $set[] = "`$key`=:{$key}";
-        }
-        $params[':id'] = $this->id_product;
-
-        $set = implode(", ", $set);
-        $value = implode(", ", array_keys($params));
-
-        $sql = "UPDATE `products` SET {$set} WHERE 'id_product'=:id";
-        var_dump($sql,$params);
-        Db::getInstance()->execute($sql, $params);
-    }
-    public function __set($property, $value)
-    {
-        if (property_exists($this, $property)) {
-            $this->$property = $value;
-        }
+        return $this->id_product;
     }
 }

@@ -38,7 +38,7 @@ abstract class DbModel extends Models implements IModel
 
         foreach ($this as $key => $value) {
 
-            if ($key == "db" || $key == "id") continue;
+            if ($key == "db" || $key == "id" || $key == 'changes') continue;
             $params[":{$key}"] = $value;
             $columns[] = "`$key`";
 
@@ -64,17 +64,40 @@ abstract class DbModel extends Models implements IModel
         Db::getInstance()->execute($sql, ["id" => $id]);
 
     }
+    public function update(){
 
-    public function update()
-    {
+        $params = [];
+        $set = [];
 
+        $params[':id'] = (int)$this->getId();
+        foreach($this->changes as $el){
+
+            $set[] = $el . "= :" . $el;
+            $params[':'. $el] = $this->$el;
+        }
+        $set = implode(", ", $set);
+
+        $sql = "UPDATE `products` SET {$set} WHERE id_product=:id";
+        Db::getInstance()->execute($sql, $params);
     }
 
     public function save() {
-        if (is_null($this->id))
+        if (is_null($this->getId()))
             $this->insert();
         else
             $this->update();
+    }
+    public function __set($property, $value)
+    {
+        if (property_exists($this, $property)) {
+
+            $this->$property = $value;
+
+            if(!in_array($property,$this->changes)){
+
+                array_push($this->changes,$property);
+            }
+        }
     }
 
     abstract static public function getTableName();
