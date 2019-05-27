@@ -20,6 +20,7 @@ abstract class Controller
 
     public function render($template, $params = []) {
 
+//        var_dump($template,$params);
         if ($this->useLayout) {
             return $this->renderTemplate("layouts/{$this->layout}" . '.tmpl',[
                 'content' => $this->renderTemplate($template, $params)
@@ -36,7 +37,7 @@ abstract class Controller
 
         $this->action = $action ?: $this->defaultAction;
         $method = "action" . ucfirst($this->action);
-//        var_dump('controllerRunAction',$method);
+
         if (method_exists($this, $method)) {
 
             $this->$method();

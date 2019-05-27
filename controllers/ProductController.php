@@ -13,12 +13,11 @@ class ProductController extends Controller
     }
 
     public function actionCatalog() {
-        $products = Products::getAll();
-//        var_dump($products);
 
+        $products = Products::getAll();
         echo $this->render('catalog.tmpl', [
-            products => \app\models\Products::getAll(),
-            imgDir => "img/gallery_img/small/"
+            'products' => $products,
+            'imgDir' => "img/gallery_img/small/"
         ]);
     }
 
@@ -26,10 +25,9 @@ class ProductController extends Controller
         $id = $_GET['id'];
         $product = Products::getOne($id);
         //$product->img=explode(',', $product->img);
-//        var_dump($product);die('actionCard');
         echo $this->render('card.tmpl', [
-        product => \app\models\Products::getOne($id),
-        imgDir => "img/gallery_img/big/"
+        'product' => $product,
+        'imgDir' => "img/gallery_img/big/"
     ]);
     }
 

@@ -41,15 +41,12 @@ abstract class DbModel extends Models implements IModel
             if ($key == "db" || $key == "id" || $key == 'changes') continue;
             $params[":{$key}"] = $value;
             $columns[] = "`$key`";
-
         }
 
         $columns = implode(", ", $columns);
         $value = implode(", ", array_keys($params));
 
         $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$value})";
-
-//        var_dump($sql, $params);die();
 
         Db::getInstance()->execute($sql, $params);
 
