@@ -18,9 +18,9 @@ $controllerName = $_GET['c'] ?: 'default';
 $actionName = $_GET['a'] ?: 'view';
 
 $controllerClass = "app\\controllers\\" . ucfirst($controllerName) . "Controller";
-
+//var_dump($controllerClass,$actionName);
 if (class_exists($controllerClass)) {
-    $controller = new $controllerClass(new TwigRender());
+    $controller = new $controllerClass(new Render());
     $controller->runAction($actionName);
 }
 //Добавление нового товара

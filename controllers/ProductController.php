@@ -15,7 +15,11 @@ class ProductController extends Controller
     public function actionCatalog() {
 
         $products = Products::getAll();
-        echo $this->render('catalog.tmpl', [
+        foreach ($products as &$item){
+
+            $item['img'] = explode(',', $item['img']);
+        }
+        echo $this->render('catalog', [
             'products' => $products,
             'imgDir' => "img/gallery_img/small/"
         ]);
@@ -24,8 +28,9 @@ class ProductController extends Controller
     public function actionCard() {
         $id = $_GET['id'];
         $product = Products::getOne($id);
-        //$product->img=explode(',', $product->img);
-        echo $this->render('card.tmpl', [
+        $product->img=explode(',', $product->img);
+//        var_dump($product);
+        echo $this->render('card', [
         'product' => $product,
         'imgDir' => "img/gallery_img/big/"
     ]);

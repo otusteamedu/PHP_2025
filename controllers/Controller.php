@@ -22,7 +22,7 @@ abstract class Controller
 
 //        var_dump($template,$params);
         if ($this->useLayout) {
-            return $this->renderTemplate("layouts/{$this->layout}" . '.tmpl',[
+            return $this->renderTemplate("layouts/{$this->layout}",[
                 'content' => $this->renderTemplate($template, $params)
             ]);
         } else {

@@ -6,15 +6,15 @@ use app\engine\Db;
 class Products extends DbModel
 {
 
-    public $id_product;
-    public $name_product;
-    public $description;
-    public $price;
-    public $img;
-    public $id_unit;
-    public $id_product_type;
-    public $id_product_category;
-    public $changes=[];
+    protected $id_product;
+    protected $name_product;
+    protected $description;
+    protected $price;
+    protected $img;
+    protected $id_unit;
+    protected $id_product_type;
+    protected $id_product_category;
+    protected $changes=[];
 
     public function __construct($name = null, $description = null, $price = null, $img=null, $id_category_type=null, $id_unit=null, $id_product_type=null)
     {

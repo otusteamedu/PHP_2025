@@ -14,9 +14,12 @@ class CartController extends Controller
     public function actionView() {
 
         $cart =  Carts::getAll();
-//        var_dump($cart);
+        foreach ($cart as &$item) {
 
-        echo $this->render("cart" . ".tmpl", [
+            $item['img']=explode(',', $item['img']);
+        }
+//        var_dump();
+        echo $this->render("cart", [
             'cart' => $cart,
             'img_small' => IMG_SMALL
         ]);
