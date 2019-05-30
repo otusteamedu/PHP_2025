@@ -11,11 +11,17 @@ use app\models\Users;
 use app\utils\{Render};
 use app\utils\TwigRender;
 use app\models\Products;
+use app\engine\Request;
 
 spl_autoload_register([new Autoload(), 'loadClass']);
+//var_dump('$_SERVER', $_SERVER['REQUEST_URI']);
+$request = new Request();
+$controllerName = $request->getControllerName()?: 'default';
+$actionName = $request->getActionName() ?: 'view';
 
-$controllerName = $_GET['c'] ?: 'default';
-$actionName = $_GET['a'] ?: 'view';
+//var_dump($request->getControllerName(),$request->getActionName());
+
+//var_dump($_POST);
 
 $controllerClass = "app\\controllers\\" . ucfirst($controllerName) . "Controller";
 //var_dump($controllerClass,$actionName);

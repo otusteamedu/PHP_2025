@@ -19,6 +19,7 @@ class ProductController extends Controller
 
             $item['img'] = explode(',', $item['img']);
         }
+//        var_dump($products);
         echo $this->render('catalog', [
             'products' => $products,
             'imgDir' => "img/gallery_img/small/"
@@ -26,15 +27,14 @@ class ProductController extends Controller
     }
 
     public function actionCard() {
+
         $id = $_GET['id'];
         $product = Products::getOne($id);
-        $product->img=explode(',', $product->img);
+        $product->setImg(explode(',', $product->getImg()));
 //        var_dump($product);
         echo $this->render('card', [
         'product' => $product,
         'imgDir' => "img/gallery_img/big/"
     ]);
     }
-
-
 }

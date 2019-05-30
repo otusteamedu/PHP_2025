@@ -13,10 +13,10 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand" href="/?c=product&a=catalog">InShop</a>
+            <a class="navbar-brand" href="/">InShop</a>
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/?c=product&a=catalog">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="/product/catalog">Каталог <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Link</a>
@@ -26,7 +26,7 @@
                 </li>
             </ul>
 <!--            <button type="button" class="btn btn-light">Light</button>-->
-            <a href="?c=cart&a=view" class="btn btn-light navbar-btn">Корзина</a>
+            <a href="/cart/view" class="btn btn-light navbar-btn">Корзина</a>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>

@@ -2,8 +2,10 @@
 
 
 namespace app\controllers;
+use app\Models\Cart;
 use app\models\Carts;
 use app\interfaces\IRender;
+use app\engine\Request;
 
 class CartController extends Controller
 {
@@ -27,8 +29,9 @@ class CartController extends Controller
     public function actionAdd(){
 
 //        var_dump('actionAdd',$_GET);
-        $id =$_GET['id'];
+        $id =(new Request())->getParams()['id'];//$_GET['id'];
         $session_id = session_id();
+//        var_dump(Carts::getCount($id));
         $cart= new Carts(
             null,
             $id,
@@ -37,7 +40,11 @@ class CartController extends Controller
             1.
         );
 //        var_dump($cart);die("Carts");
-        $cart->insert();
-        header("location: /?c=product&a=catalog");
+        //$cart->insert();
+        header("location: /product/catalog");
+    }
+    public function actionDelete(){
+
+
     }
 }

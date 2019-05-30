@@ -17,7 +17,7 @@ class defaultController extends Controller
     }
     public function actionView() {
 
-        echo $this->render("index" . ".tmpl", []);
+        echo $this->render("index", []);
     }
 
 }

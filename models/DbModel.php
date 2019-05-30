@@ -53,13 +53,11 @@ abstract class DbModel extends Models implements IModel
         $this->id = Db::getInstance()->lastInsertId();
     }
 
-    public function delete()
+    public static function delete($id)
     {
         $tableName = static::getTableName();
         $sql = "DELETE FROM {$tableName} WHERE id = :id";
-        $id = $this->getId();
         Db::getInstance()->execute($sql, ["id" => $id]);
-
     }
     public function update(){
 
@@ -96,6 +94,7 @@ abstract class DbModel extends Models implements IModel
             }
         }
     }
+
 
     abstract static public function getTableName();
 }

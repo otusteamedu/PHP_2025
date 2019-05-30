@@ -5,7 +5,7 @@
         <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
     </ol>
     <div class="carousel-inner">
-        <?foreach ($product->img as $img):?>
+        <?foreach ($product->getImg() as $img):?>
             <div class="carousel-item active">
                 <img src="<?=IMG_BIG . $img?>" class="d-block w-100" alt="...">
             </div>
@@ -22,9 +22,9 @@
 </div>
 <div class="card-catalog">
     <h2 class="card-title">
-        <?=$product->name_product?>
+        <?=$product->getNameProduct()?>
     </h2>
     <p class="card-text">
-        <?=$product->description?>
+        <?=$product->getDescription()?>
     </p>
 </div>

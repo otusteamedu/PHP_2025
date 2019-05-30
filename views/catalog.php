@@ -5,7 +5,7 @@
     <div class="col-lg-3 col-md-4 col-6 ">
 
             <div class="card card-catalog" style="width: 18rem;">
-                <a href="?c=product&a=card&id=<?=$product['id_product']?>">
+                <a href="/product/card/?id=<?=$product['id_product']?>">
                     <img src="<?=IMG_SMALL . $product['img'][0]?>" class="card-img-top card-img-top-catalog" alt="...">
                 </a>
                 <div class="card-body">
@@ -21,7 +21,7 @@
                     <p class="card-text">
                         <?=$product['category']?>
                     </p>
-                    <a href="?c=cart&a=add&id=<?=$product['id_product']?>" class="btn btn-primary">
+                    <a href="/cart/add/?id=<?=$product['id_product']?>" class="btn btn-primary">
                         Купить
                     </a>
                 </div>

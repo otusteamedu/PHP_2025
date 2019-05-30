@@ -28,6 +28,31 @@ class Products extends DbModel
         $this->id_product_category = $id_category_type;
     }
 
+    public function getImg()
+    {
+        return $this->img;
+    }
+
+    public function setImg($img): void
+    {
+        $this->img = $img;
+    }
+
+    public function getNameProduct()
+    {
+        return $this->name_product;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
     public static function getTableName()
     {
         return 'products';

@@ -46,4 +46,16 @@ class Carts extends DbModel
 
         return $this->id_cart;
     }
+    public static function delete($id)
+    {
+        $tableName = static::getTableName();
+        $sql = "DELETE FROM {$tableName} WHERE id_cart = :id";
+        Db::getInstance()->execute($sql, ["id" => $id]);
+    }
+    public static function getCount($id){
+
+        $tableName = static::getTableName();
+        $sql = "SELECT count(*) FROM $tableName WHERE id_product= :id";
+        return Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
+    }
 }
