@@ -7,13 +7,16 @@
  */
 
 namespace app\controllers;
+use app\engine\Request;
 use app\interfaces\IRender;
+use app\interfaces\IAuthorization;
 
 class defaultController extends Controller
 {
-    public function __construct(IRender $renderer)
+    public function __construct(IRender $renderer, IAuthorization $autherizator)
     {
-        parent::__construct($renderer);
+//        var_dump($autherizator);
+        parent::__construct($renderer, $autherizator);
     }
     public function actionView() {
 

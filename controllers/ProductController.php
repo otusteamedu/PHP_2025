@@ -4,12 +4,13 @@ namespace app\controllers;
 
 use app\interfaces\IRender;
 use app\models\Products;
+use app\interfaces\IAuthorization;
 
 class ProductController extends Controller
 {
-    public function __construct(IRender $renderer)
+    public function __construct(IRender $renderer, IAuthorization $autherizator)
     {
-        parent::__construct($renderer);
+        parent::__construct($renderer, $autherizator);
     }
 
     public function actionCatalog() {

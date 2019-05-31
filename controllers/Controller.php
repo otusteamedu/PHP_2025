@@ -5,6 +5,9 @@ namespace app\controllers;
 
 
 use app\interfaces\IRender;
+use app\models\Carts;
+use app\interfaces\IAuthorization;
+use app\engine\Authorization;
 
 abstract class Controller
 {
@@ -12,18 +15,30 @@ abstract class Controller
     protected $layout = 'main';
     protected $useLayout = true;
     private $renderer;
+    protected $autherizator;
 
-    public function __construct(IRender $renderer)
+    public function __construct(IRender $renderer, IAuthorization $autherizator)
     {
+//        var_dump($autherizator);
         $this->renderer = $renderer;
+        $this->autherizator = $autherizator;
+//        var_dump($this->autherizator );
     }
 
     public function render($template, $params = []) {
 
-//        var_dump($template,$params);
+        $allow = false;
+        $user = '';
+        if ($this->autherizator->is_auth()) {
+            $allow = true;
+            $user = $this->autherizator->get_user();
+        }
+//        var_dump($this->autherizator );
+
         if ($this->useLayout) {
             return $this->renderTemplate("layouts/{$this->layout}",[
-                'content' => $this->renderTemplate($template, $params)
+                'content' => $this->renderTemplate($template, $params),
+                'menu' => [Carts::getGoodsQuantity(), $allow, $user]
             ]);
         } else {
             return $this->renderTemplate($template, $params);

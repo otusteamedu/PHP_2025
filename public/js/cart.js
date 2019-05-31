@@ -8,6 +8,7 @@ Array.from(delete_btns).forEach(x=>{
             .then((res)=> {
 
                 document.getElementById(res.deleted).style.display = 'none';
+                document.getElementById('cart_quantity').innerHTML = document.getElementById('cart_quantity').innerHTML - 1;
             });
     })
 });

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: iluka
- * Date: 22.05.2019
- * Time: 13:51
- */
 
 namespace app\models;
 use app\controllers\Controller;
@@ -20,7 +14,7 @@ class Carts extends DbModel
     protected $quantity;
     protected $changes=[];
 
-    public function __construct($id_cart,$id_product = null, $id_user = null, $id_session = null, $quantity = null)
+    public function __construct($id_cart=null,$id_product = null, $id_user = null, $id_session = null, $quantity = null)
     {
         parent::__construct();
         $this->id_cart = $id_cart;
@@ -28,6 +22,16 @@ class Carts extends DbModel
         $this->id_user = $id_user;
         $this->id_session = $id_session;
         $this->quantity = $quantity;
+    }
+
+    public function setQuantity($quantity): void
+    {
+        $this->quantity = $quantity;
+    }
+
+    public function getQuantity()
+    {
+        return $this->quantity;
     }
 
     public static function getTableName()
@@ -46,6 +50,11 @@ class Carts extends DbModel
 
         return $this->id_cart;
     }
+    public function getIdProduct()
+    {
+        return $this->id_product;
+    }
+
     public static function delete($id)
     {
         $tableName = static::getTableName();
@@ -55,7 +64,39 @@ class Carts extends DbModel
     public static function getCount($id){
 
         $tableName = static::getTableName();
-        $sql = "SELECT count(*) FROM $tableName WHERE id_product= :id";
-        return Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
+        $session_id = session_id();
+        $sql = "SELECT count(*) as count FROM $tableName WHERE id_product= :id AND id_session = :id_session";
+//        var_dump($sql,$session_id,$id);
+        return Db::getInstance()->queryAll($sql, [':id'=>$id, ':id_session'=>$session_id]);
+    }
+    public static function getOne($id)
+    {
+        $tableName = static::getTableName();
+        $id_session = session_id();
+        $sql = "SELECT * FROM {$tableName} WHERE id_product = :id AND id_session = :id_session";
+        return Db::getInstance()->queryObject($sql, [':id' => $id, ':id_session'=>$id_session], static::class);
+    }
+    public static function getGoodsQuantity(){
+
+        $tableName = static::getTableName();
+        $id_session = session_id();
+        $sql = "SELECT count(*) as count FROM {$tableName} WHERE id_session = :id_session";
+
+        return Db::getInstance()->queryOne($sql, [':id_session'=>$id_session], static::class);
+    }
+    public function update(){
+
+        $params = [];
+        $set = [];
+
+        $params[':id'] = (int)$this->getId();
+        $params[':id_session'] = session_id();
+        $params[':id_product'] = $this->getIdProduct();
+        $params[':quantity'] = $this->getQuantity();
+
+        $sql = "UPDATE `carts` SET `id_product`= :id_product,`quantity`= :quantity WHERE id_cart=:id AND id_session = :id_session";
+//        var_dump($sql, $params,$this->changes);
+
+        Db::getInstance()->execute($sql, $params);
     }
 }

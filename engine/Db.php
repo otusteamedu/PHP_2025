@@ -44,7 +44,7 @@ class Db
 // "SELECT * FROM products WHERE id = :id", ["id", 1]
     private function query($sql, $params) {
         $stmt = $this->getConnection()->prepare($sql);
-//        var_dump($$params);
+
         $stmt->execute($params);
         return $stmt;
     }
@@ -66,6 +66,7 @@ class Db
     }
 
     public function queryAll($sql, $params = []) {
+
         return $this->query($sql, $params)->fetchAll();
     }
     public function __toString()

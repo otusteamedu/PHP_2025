@@ -77,6 +77,7 @@ abstract class DbModel extends Models implements IModel
     }
 
     public function save() {
+
         if (is_null($this->getId()))
             $this->insert();
         else

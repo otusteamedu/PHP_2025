@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Май 27 2019 г., 12:36
+-- Время создания: Май 31 2019 г., 14:23
 -- Версия сервера: 5.7.25
 -- Версия PHP: 7.1.22
 
@@ -41,10 +41,11 @@ CREATE TABLE `carts` (
 --
 
 INSERT INTO `carts` (`id_cart`, `id_product`, `id_user`, `id_session`, `quantity`) VALUES
-(2, 1, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 1),
 (15, 3, NULL, '5cglecpglen37m5rq1nts6lcb34ugpn6', 1),
-(19, 2, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 1),
-(20, 4, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 1);
+(25, 7, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 2),
+(32, 3, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 3),
+(34, 10, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 1),
+(37, 2, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 1);
 
 -- --------------------------------------------------------
 
@@ -80,8 +81,8 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id_product`, `name_product`, `price`, `img`, `id_unit`, `id_product_type`, `id_product_category`, `description`) VALUES
-(1, 'Товар1', '1', '01.jpg', 2, 2, 2, 'Описание товара1'),
-(2, 'Товар 2', '998', '02.jpg', 1, 2, 1, 'Описание товара1'),
+(1, 'Товар1', '1', '01.jpg,15.jpg', 2, 2, 2, 'Описание товара1'),
+(2, 'Товар 2', '998', '02.jpg,14.jpg', 1, 2, 1, 'Описание товара1'),
 (3, 'Товар3', '456', '03.jpg', 1, 1, 1, 'Описание товара3'),
 (4, 'Товар4', '654', '04.jpg', 1, 1, 1, 'Описание товара4'),
 (7, 'Товар5', '900', '05.jpg', 1, 1, 1, 'Описание товара5'),
@@ -156,7 +157,7 @@ CREATE TABLE `users` (
   `id_user` int(11) NOT NULL,
   `login` varchar(256) NOT NULL,
   `password` varchar(256) NOT NULL,
-  `hash` int(11) DEFAULT NULL
+  `hash` varchar(35) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -164,7 +165,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `login`, `password`, `hash`) VALUES
-(1, 'admin', '123', NULL);
+(1, 'admin', '$2y$10$GAh95KWqFf1Fw4YyH/BCnuODYbJ1Mln78vDuOIwj7WQvChhR8QcX.', '14336237665cf0fb841a53a7.95354060');
 
 --
 -- Индексы сохранённых таблиц
@@ -220,7 +221,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id_cart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_cart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT для таблицы `orders`

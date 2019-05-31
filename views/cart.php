@@ -1,4 +1,5 @@
 <div class="row">
+<!--    --><?//var_dump($cart)?>
 <? foreach ($cart as $item):?>
     <div class="cart-cont col-12" id="<?=$item['id_cart']?>">
         <a href="/product/card/?id=<?=$item['id_product']?>">
