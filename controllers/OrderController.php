@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\engine\Request;
 use app\interfaces\IRender;
 use app\models\Order;
 use app\models\Products;
@@ -23,8 +24,11 @@ class OrderController extends Controller
     }
     public function actionDo(){
 
-        $order = new Order(null, session_id(), 'Обрабатывается');
+        $telefon = (new Request())->getParams()['approve']? (new Request())->getParams()['telefon'] : null;
 
+        if($telefon){
+
+            $order = new Order(null, session_id(), 'Обрабатывается', $telefon);
 //        try{
 
             $order->insert();
@@ -33,7 +37,13 @@ class OrderController extends Controller
 //
 //            echo $ex->getMessage();
 //        }
-        session_destroy();
-        header("Location: /");
+            session_destroy();
+            header("Location: /");
+        }
+    }
+    public function actionView(){
+
+
+        echo $this->render("orderContent", []);
     }
 }

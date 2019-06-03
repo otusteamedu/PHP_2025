@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Май 31 2019 г., 14:23
+-- Время создания: Июн 03 2019 г., 14:32
 -- Версия сервера: 5.7.25
 -- Версия PHP: 7.1.22
 
@@ -55,9 +55,17 @@ INSERT INTO `carts` (`id_cart`, `id_product`, `id_user`, `id_session`, `quantity
 
 CREATE TABLE `orders` (
   `id_order` int(11) NOT NULL,
-  `id_session` int(11) NOT NULL,
+  `id_session` varchar(35) NOT NULL,
+  `telefon` int(20) NOT NULL,
   `status` varchar(100) NOT NULL DEFAULT 'Обрабатывается'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `orders`
+--
+
+INSERT INTO `orders` (`id_order`, `id_session`, `telefon`, `status`) VALUES
+(3, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 6758765, 'Обрабатывается');
 
 -- --------------------------------------------------------
 
@@ -227,7 +235,7 @@ ALTER TABLE `carts`
 -- AUTO_INCREMENT для таблицы `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `products`

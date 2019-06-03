@@ -27,7 +27,8 @@
                 </li>
             </ul>
             <?if($menu[1]):?>
-                    <?=$menu[2]?> <a href="/login/logout/?logout=true">[Выход]</a>
+                <a href="/order/view" class="btn btn-light navbar-btn">Заказы</a>
+                <?=$menu[2]?> <a href="/login/logout/?logout=true">[Выход]</a>
             <?endif;?>
             <a href="/cart/view" id="cart" class="btn btn-light navbar-btn">Корзина (<span id="cart_quantity"><?=$menu[0]['count']?></span>)</a>
             <form class="form-inline my-2 my-lg-0">
