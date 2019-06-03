@@ -47,7 +47,7 @@ abstract class DbModel extends Models implements IModel
         $value = implode(", ", array_keys($params));
 
         $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$value})";
-
+//        var_dump($sql, $params);
         Db::getInstance()->execute($sql, $params);
 
         $this->id = Db::getInstance()->lastInsertId();

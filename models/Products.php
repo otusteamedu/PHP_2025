@@ -2,6 +2,7 @@
 
 namespace app\models;
 use app\engine\Db;
+use mysql_xdevapi\Exception;
 
 class Products extends DbModel
 {
@@ -60,14 +61,26 @@ class Products extends DbModel
     public static function getAll(){
 
         $sql = "SELECT id_product, name_product, `price`, `img`, `description` FROM products as p, units as u, product_category as c, product_types as t WHERE p.id_unit=u.id_unit AND p.id_product_category = c.id_product_category AND p.id_product_type = t.id_product_type";
-//        var_dump($sql);
-        return Db::getInstance()->queryAll($sql);
+        $result = Db::getInstance()->queryAll($sql);
+
+        if(count($result)==0){
+
+            $error = 'В каталоге нет товаров';
+            throw new \Exception($error);
+        };
+        return $result;
     }
     public static function getOne($id){
 
         $sql = "SELECT id_product, `name_product`, `price`, `img`, `description` FROM products as p WHERE id_product = :id";
-//        var_dump($sql,$id);
-        return Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
+        $result =  Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
+
+        if(!$result){
+
+            $error = 'Такого товара нет';
+            throw new \Exception($error);
+        }
+        return $result;
     }
     public function getId(){
 

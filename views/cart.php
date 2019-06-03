@@ -32,6 +32,7 @@
     </div>
 <?endforeach;?>
 </div>
+<a href = "/order/prepear" class="btn btn-light" type="button">Оформить</a>
 <script src="/js/cart.js">
 
 </script>

@@ -15,7 +15,13 @@ class ProductController extends Controller
 
     public function actionCatalog() {
 
-        $products = Products::getAll();
+        try{
+
+            $products = Products::getAll();
+        }catch (\Exception $ex){
+
+            echo $ex->getMessage();
+        }
         foreach ($products as &$item){
 
             $item['img'] = explode(',', $item['img']);
@@ -30,9 +36,15 @@ class ProductController extends Controller
     public function actionCard() {
 
         $id = $_GET['id'];
-        $product = Products::getOne($id);
+        try{
+
+            $product = Products::getOne($id);
+        }catch (\Exception $ex){
+
+            echo "Такого товара нет";
+        }
         $product->setImg(explode(',', $product->getImg()));
-//        var_dump($product);
+
         echo $this->render('card', [
         'product' => $product,
         'imgDir' => "img/gallery_img/big/"

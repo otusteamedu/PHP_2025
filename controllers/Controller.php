@@ -52,7 +52,7 @@ abstract class Controller
 
         $this->action = $action ?: $this->defaultAction;
         $method = "action" . ucfirst($this->action);
-//        var_dump($method);
+//        var_dump($method,method_exists($this, $method),$this);
         if (method_exists($this, $method)) {
 
             $this->$method();

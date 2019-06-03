@@ -36,9 +36,8 @@ if (class_exists($controllerClass)) {
 //Добавление нового товара
 //$p=new Products("Товар7","Описание товара7", 700,"07.jpg",1,1,1);
 //$p->save();
-
 // Обновление товара
-//$product2Update = Products::getOne(1);
+$product2Update = Products::getOne(198);
 //
 //$product2Update->price = 1;
 //$product2Update->description = "Новое описание товара1";
