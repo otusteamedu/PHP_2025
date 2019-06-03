@@ -2,7 +2,7 @@
 
 
 session_start();
-include "../engine/Autoload.php";
+//include "../engine/Autoload.php";
 include "../config/main.php";
 require_once '../vendor/autoload.php';
 
