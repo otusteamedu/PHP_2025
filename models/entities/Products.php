@@ -17,7 +17,6 @@ class Products extends DataEntity
     protected $id_unit;
     protected $id_product_type;
     protected $id_product_category;
-    protected $changes=[];
 
     public function __construct($name = null, $description = null, $price = null, $img=null, $id_category_type=null, $id_unit=null, $id_product_type=null)
     {
@@ -62,5 +61,9 @@ class Products extends DataEntity
     public function getIdName(){
 
         return 'id_product';
+    }
+    public function setId($value){
+
+        $this->id_product = $value;
     }
 }

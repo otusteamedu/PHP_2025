@@ -7,6 +7,9 @@ use app\models\Models;
 
 abstract class DataEntity extends Models
 {
+
+    protected $changes=[];
+
     public function __set($property, $value)
     {
         if (property_exists($this, $property)) {
@@ -19,4 +22,22 @@ abstract class DataEntity extends Models
             }
         }
     }
+
+    /**
+     * @return array
+     */
+    public function getChanges(): array
+    {
+        return $this->changes;
+    }
+
+    /**
+     * @param array $changes
+     */
+    public function setChanges(array $changes): void
+    {
+        $this->changes = $changes;
+    }
+    abstract public function getId();
+    abstract public function getIdName();
 }

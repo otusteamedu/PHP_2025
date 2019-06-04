@@ -29,4 +29,16 @@ class Order extends DataEntity
         $this->status = $status;
         $this->telefon = $telefon;
     }
+    public function getId(){
+
+        return $this->id_order;
+    }
+    public function getIdName(){
+
+        return 'id_order';
+    }
+    public function setId($value){
+
+        $this->id_order = $value;
+    }
 }

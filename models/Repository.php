@@ -54,14 +54,17 @@ abstract class Repository
 //        var_dump($sql, $params);
         $this->db->execute($sql, $params);
 
-        $entity->id = $this->db->lastInsertId();
+        $entity->setId($this->db->lastInsertId());
     }
 
     public function delete(DataEntity $entity)
     {
         $tableName = $this->getTableName();
-        $sql = "DELETE FROM {$tableName} WHERE id = :id";
-        $this->db->execute($sql, ["id" => $entity->id]);
+        $id_name = $entity->getIdName();
+
+        $sql = "DELETE FROM {$tableName} WHERE $id_name = :id";
+
+        $this->db->execute($sql, ["id" => $entity->getId()]);
     }
     public function update(DataEntity $entity){
 
@@ -69,15 +72,17 @@ abstract class Repository
         $set = [];
 
         $params[':id'] = (int)$entity->getId();
-        foreach($entity->changes as $el){
+        foreach($entity->getChanges() as $el){
 
             $set[] = $el . "= :" . $el;
             $params[':'. $el] = $this->$el;
         }
         $set = implode(", ", $set);
+
         $tableName = $this->getTableName();
-        $id = $this->getIdName();
-        $sql = "UPDATE $tableName SET {$set} WHERE $id=:id";
+        $id_name = $this->getIdName();
+
+        $sql = "UPDATE $tableName SET {$set} WHERE $id_name = :id";
 
         $this->db->execute($sql, $params);
     }

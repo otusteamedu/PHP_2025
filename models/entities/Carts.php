@@ -34,4 +34,16 @@ class Carts extends DataEntity
     {
         return $this->quantity;
     }
+    public function getId(){
+
+    return $this->id_cart;
+}
+    public function getIdName(){
+
+        return 'id_cart';
+    }
+    public function setId($value){
+
+        $this->id_cart = $value;
+    }
 }

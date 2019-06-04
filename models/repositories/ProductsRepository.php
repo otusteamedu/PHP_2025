@@ -48,7 +48,7 @@ class ProductsRepository extends Repository
         $set = [];
 
         $params[':id'] = (int)$entity->getId();
-        foreach($entity->changes as $el){
+        foreach($entity->getChanges() as $el){
 
             $set[] = $el . "= :" . $el;
             $params[':'. $el] = $this->$el;
