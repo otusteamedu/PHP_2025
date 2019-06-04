@@ -4,9 +4,9 @@ namespace app\controllers;
 
 use app\engine\Request;
 use app\interfaces\IRender;
-use app\models\Order;
-use app\models\Products;
+use app\models\entities\Order;
 use app\interfaces\IAuthorization;
+use app\models\repositories\OrderRepository;
 
 
 class OrderController extends Controller
@@ -31,7 +31,7 @@ class OrderController extends Controller
             $order = new Order(null, session_id(), 'Обрабатывается', $telefon);
 //        try{
 
-            $order->insert();
+            (new OrderRepository)->insert($order);
 
 //        }catch (\Exception $ex){
 //

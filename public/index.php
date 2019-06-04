@@ -6,22 +6,25 @@ session_start();
 include "../config/main.php";
 require_once '../vendor/autoload.php';
 
+
 use app\engine\Autoload;
 use app\models\Users;
 use app\utils\{Render};
 use app\utils\TwigRender;
-use app\models\Products;
+use app\models\entities\Products;
 use app\engine\Request;
 use app\interfaces\IAuthorization;
 use app\engine\Authorization;
+use app\models\repositories\ProductsRepository;
 
-spl_autoload_register([new Autoload(), 'loadClass']);
+//spl_autoload_register([new Autoload(), 'loadClass']);
 
 
 //var_dump('$_SERVER', $_SERVER['REQUEST_URI']);
 $request = new Request();
 $controllerName = $request->getControllerName()?: 'default';
 $actionName = $request->getActionName() ?: 'view';
+
 
 //var_dump($request->getControllerName(),$request->getActionName());
 
@@ -37,7 +40,7 @@ if (class_exists($controllerClass)) {
 //$p=new Products("Товар7","Описание товара7", 700,"07.jpg",1,1,1);
 //$p->save();
 // Обновление товара
-$product2Update = Products::getOne(198);
+//$product2Update = Products::getOne(198);
 //
 //$product2Update->price = 1;
 //$product2Update->description = "Новое описание товара1";

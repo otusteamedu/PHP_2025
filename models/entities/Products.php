@@ -1,10 +1,12 @@
 <?php
 
-namespace app\models;
+namespace app\models\entities;
+
 use app\engine\Db;
+use app\models\entities\DataEntity;
 use mysql_xdevapi\Exception;
 
-class Products extends DbModel
+class Products extends DataEntity
 {
 
     protected $id_product;
@@ -19,7 +21,7 @@ class Products extends DbModel
 
     public function __construct($name = null, $description = null, $price = null, $img=null, $id_category_type=null, $id_unit=null, $id_product_type=null)
     {
-        parent::__construct();
+
         $this->name_product = $name;
         $this->description = $description;
         $this->price = $price;
@@ -53,37 +55,12 @@ class Products extends DbModel
     {
         return $this->price;
     }
-
-    public static function getTableName()
-    {
-        return 'products';
-    }
-    public static function getAll(){
-
-        $sql = "SELECT id_product, name_product, `price`, `img`, `description` FROM products as p, units as u, product_category as c, product_types as t WHERE p.id_unit=u.id_unit AND p.id_product_category = c.id_product_category AND p.id_product_type = t.id_product_type";
-        $result = Db::getInstance()->queryAll($sql);
-
-        if(count($result)==0){
-
-            $error = 'В каталоге нет товаров';
-            throw new \Exception($error);
-        };
-        return $result;
-    }
-    public static function getOne($id){
-
-        $sql = "SELECT id_product, `name_product`, `price`, `img`, `description` FROM products as p WHERE id_product = :id";
-        $result =  Db::getInstance()->queryObject($sql, ['id' => $id], static::class);
-
-        if(!$result){
-
-            $error = 'Такого товара нет';
-            throw new \Exception($error);
-        }
-        return $result;
-    }
     public function getId(){
 
         return $this->id_product;
+    }
+    public function getIdName(){
+
+        return 'id_product';
     }
 }

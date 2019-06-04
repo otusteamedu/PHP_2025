@@ -8,6 +8,7 @@ use app\interfaces\IRender;
 use app\models\Carts;
 use app\interfaces\IAuthorization;
 use app\engine\Authorization;
+use app\models\repositories\CartRepository;
 
 abstract class Controller
 {
@@ -38,7 +39,7 @@ abstract class Controller
         if ($this->useLayout) {
             return $this->renderTemplate("layouts/{$this->layout}",[
                 'content' => $this->renderTemplate($template, $params),
-                'menu' => [Carts::getGoodsQuantity(), $allow, $user]
+                'menu' => [(new CartRepository())->getGoodsQuantity(), $allow, $user]
             ]);
         } else {
             return $this->renderTemplate($template, $params);

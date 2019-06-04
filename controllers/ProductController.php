@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\interfaces\IRender;
 use app\models\Products;
 use app\interfaces\IAuthorization;
+use app\models\repositories\ProductsRepository;
 
 class ProductController extends Controller
 {
@@ -17,7 +18,7 @@ class ProductController extends Controller
 
         try{
 
-            $products = Products::getAll();
+            $products = (new ProductsRepository())->getAll();
         }catch (\Exception $ex){
 
             echo $ex->getMessage();
@@ -38,7 +39,7 @@ class ProductController extends Controller
         $id = $_GET['id'];
         try{
 
-            $product = Products::getOne($id);
+            $product = (new ProductsRepository())->getOne($id);
         }catch (\Exception $ex){
 
             echo "Такого товара нет";

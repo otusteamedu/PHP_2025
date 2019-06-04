@@ -6,6 +6,7 @@ use app\models\Carts;
 use app\interfaces\IRender;
 use app\engine\Request;
 use app\interfaces\IAuthorization;
+use app\models\repositories\CartRepository;
 
 class CartController extends Controller
 {
@@ -15,7 +16,7 @@ class CartController extends Controller
     }
     public function actionView() {
 
-        $cart =  Carts::getAll();
+        $cart =  (new CartRepository())->getAll();
 
         foreach ($cart as &$item) {
 
@@ -33,7 +34,7 @@ class CartController extends Controller
         $id =(new Request())->getParams()['id'];//$_GET['id'];
         $session_id = session_id();
 
-        $count = Carts::getCount($id)[0]['count'];
+        $count = (new CartRepository())->getCount($id)[0]['count'];
         $cart=null;
         if ($count == 0){
 
@@ -47,7 +48,7 @@ class CartController extends Controller
             $cart->insert();
         }else{
 
-            $cart = Carts::getOne($id);
+            $cart = (new CartRepository())->getOne($id);
             $cart->setQuantity($cart->getQuantity()+1);
             $cart->update();
 //            var_dump($cart);
