@@ -34,7 +34,7 @@ class ProductsRepository extends Repository
 
         $sql = "SELECT id_product, `name_product`, `price`, `img`, `description` FROM products as p WHERE id_product = :id";
         $result =  $this->db->queryObject($sql, ['id' => $id], $this->getEntityClass());
-        var_dump($result,$this->getEntityClass());
+//        var_dump($result,$this->getEntityClass());
         if(!$result){
 
             $error = 'Такого товара нет';

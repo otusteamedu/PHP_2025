@@ -15,7 +15,7 @@
            Цена: <?=$item['price']?>
         </p>
         <p class="card-text" style="flex-grow: 1">
-           Количество: <?=$item['quantity']?>
+           Количество: <span class="quantity"><?=$item['quantity']?></span>
         </p>
         <p class="card-text" style="flex-grow: 1">
             Ед.изм.: <?=$item['name_unit']?>

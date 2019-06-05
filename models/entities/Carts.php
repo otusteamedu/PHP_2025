@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\models\entities;
 use app\controllers\Controller;
 use app\models\DbModel;
 use app\engine\Db;
@@ -13,11 +13,10 @@ class Carts extends DataEntity
     protected $id_user;
     protected $id_session;
     protected $quantity;
-    protected $changes=[];
+    public $properties = ['id_cart','id_product','id_user','id_session','quantity'];
 
     public function __construct($id_cart=null,$id_product = null, $id_user = null, $id_session = null, $quantity = null)
     {
-        parent::__construct();
         $this->id_cart = $id_cart;
         $this->id_product = $id_product;
         $this->id_user = $id_user;
@@ -28,6 +27,12 @@ class Carts extends DataEntity
     public function setQuantity($quantity): void
     {
         $this->quantity = $quantity;
+
+        if(!in_array($quantity, $this->changes)){
+
+            $this->changes['quantity'] = $quantity;
+//          var_dump($this->changes); die();
+        }
     }
 
     public function getQuantity()
@@ -45,5 +50,9 @@ class Carts extends DataEntity
     public function setId($value){
 
         $this->id_cart = $value;
+    }
+    public function getTableName(){
+
+        return 'Carts';
     }
 }

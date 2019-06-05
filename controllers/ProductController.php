@@ -9,6 +9,16 @@ use app\models\repositories\ProductsRepository;
 
 class ProductController extends Controller
 {
+    protected $defaultAction = 'Catalog';
+
+    /**
+     * @return string
+     */
+    public function getDefaultAction(): string
+    {
+        return $this->defaultAction;
+    }
+
     public function __construct(IRender $renderer, IAuthorization $autherizator)
     {
         parent::__construct($renderer, $autherizator);

@@ -3,6 +3,7 @@
 namespace app\models;
 use app\engine\Db;
 use app\models\entities\DataEntity;
+use app\models\entities\Carts;
 
 abstract class Repository
 {
@@ -40,18 +41,17 @@ abstract class Repository
         $params = [];
         $columns = [];
 
-        foreach ($entity as $key => $value) {
+        foreach ($entity->properties as $value) {
 
-            if ($key == "db" || $key == "id" || $key == 'changes') continue;
-            $params[":{$key}"] = $value;
-            $columns[] = "`$key`";
+            $params[":{$value}"] = $entity->$value;
+            $columns[] = "`$value`";
         }
 
         $columns = implode(", ", $columns);
         $value = implode(", ", array_keys($params));
 
         $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$value})";
-//        var_dump($sql, $params);
+//        var_dump('INSERT',$sql, $params,$entity);
         $this->db->execute($sql, $params);
 
         $entity->setId($this->db->lastInsertId());
@@ -72,18 +72,19 @@ abstract class Repository
         $set = [];
 
         $params[':id'] = (int)$entity->getId();
-        foreach($entity->getChanges() as $el){
+//        var_dump($entity->getChanges()); die();
+        foreach($entity->getChanges() as $key => $el){
 
-            $set[] = $el . "= :" . $el;
-            $params[':'. $el] = $this->$el;
+            $set[] = $key . "= :" . $key;
+            $params[':'. $key] = $el;
         }
         $set = implode(", ", $set);
 
-        $tableName = $this->getTableName();
-        $id_name = $this->getIdName();
+        $tableName = $entity->getTableName();
+        $id_name = $entity->getIdName();
 
         $sql = "UPDATE $tableName SET {$set} WHERE $id_name = :id";
-
+//var_dump('update',$sql, $params);die();
         $this->db->execute($sql, $params);
     }
 
@@ -96,6 +97,7 @@ abstract class Repository
 
             $this->update($entity);
     }
+
     abstract public function getEntityClass();
     abstract public function getTableName();
 }

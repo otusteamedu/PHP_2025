@@ -2,7 +2,7 @@
 
 
 namespace app\controllers;
-use app\models\Carts;
+use app\models\entities\Carts;
 use app\interfaces\IRender;
 use app\engine\Request;
 use app\interfaces\IAuthorization;
@@ -45,21 +45,17 @@ class CartController extends Controller
                 $session_id,
                 1.
             );
-            $cart->insert();
+            (new CartRepository())->insert($cart);
         }else{
 
             $cart = (new CartRepository())->getOne($id);
             $cart->setQuantity($cart->getQuantity()+1);
-            $cart->update();
+            (new CartRepository())->update($cart);
 //            var_dump($cart);
         }
 //        $cart->save();
 //        var_dump($cart);
 
         header("location: /product/catalog");
-    }
-    public function actionDelete(){
-
-
     }
 }

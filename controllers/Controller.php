@@ -5,7 +5,7 @@ namespace app\controllers;
 
 
 use app\interfaces\IRender;
-use app\models\Carts;
+use app\models\entities\Carts;
 use app\interfaces\IAuthorization;
 use app\engine\Authorization;
 use app\models\repositories\CartRepository;
@@ -51,9 +51,9 @@ abstract class Controller
     }
     public function runAction($action = null, $data = null) {
 
-        $this->action = $action ?: $this->defaultAction;
+        $this->action = $action ?: $this->getDefaultAction();
         $method = "action" . ucfirst($this->action);
-//        var_dump($method,method_exists($this, $method),$this);
+//        var_dump('runAction',$this,$method,method_exists($this, $method),$this);
         if (method_exists($this, $method)) {
 
             $this->$method();

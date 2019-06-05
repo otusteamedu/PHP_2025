@@ -53,7 +53,8 @@ class Authorization implements IAuthorization
             }
             $this->allow = true;
             $this->user = $this->get_user();
-            header("Location: /");
+            $origin = $_SERVER["HTTP_REFERER"];
+            header("Location: " . $origin);
         }
     }
 

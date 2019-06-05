@@ -1,15 +1,25 @@
 delete_btns = document.getElementsByClassName('delete-from-cart-btn');
-console.log(delete_btns);
+// console.log(delete_btns);
 Array.from(delete_btns).forEach(x=>{
 
     x.addEventListener('click',(e)=>{
 
-        console.log(e.target.dataset['id_cart']);
+        // console.log(e.target.dataset['id_cart']);
         deleteItemHandler(e.target.dataset['id_cart'], e.target.dataset['id_product'])
             .then((res)=> {
 
-                document.getElementById(res.deleted).style.display = 'none';
-                document.getElementById('cart_quantity').innerHTML = document.getElementById('cart_quantity').innerHTML - 1;
+                console.log(res.deleted,res.count);
+                item = document.getElementById(res.deleted);
+                if(res.count === 0){
+
+                    item.style.display = 'none';
+                    document.getElementById('cart_quantity').innerText -=1;
+                }else{
+
+                    item.querySelector('.quantity').innerText = res.count;
+                }
+                // document.getElementById(res.deleted).style.display = 'none';
+                // document.getElementById('cart_quantity').innerHTML = document.getElementById('cart_quantity').innerHTML - 1;
             });
     })
 });

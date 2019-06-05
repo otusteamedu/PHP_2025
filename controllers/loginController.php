@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: iluka
- * Date: 31.05.2019
- * Time: 11:19
- */
 
 namespace app\controllers;
 use app\engine\Request;
@@ -21,6 +15,7 @@ class loginController extends Controller
 
             $auth = new \app\engine\Authorization();
 //            var_dump($auth->auth($t['login'],$t['pass']));
+
             $auth->login($t['login'],$t['pass'],$t['save']);
 //            $auth->is_auth();
         }
@@ -32,7 +27,8 @@ class loginController extends Controller
 
             session_destroy();
             setcookie("hash");
-            header("Location: /");
+            $origin = $_SERVER["HTTP_REFERER"];
+            header("Location: " . $origin);
         }
     }
 }
