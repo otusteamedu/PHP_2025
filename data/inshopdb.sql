@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Июн 03 2019 г., 14:32
+-- Время создания: Июн 06 2019 г., 13:34
 -- Версия сервера: 5.7.25
 -- Версия PHP: 7.1.22
 
@@ -42,10 +42,15 @@ CREATE TABLE `carts` (
 
 INSERT INTO `carts` (`id_cart`, `id_product`, `id_user`, `id_session`, `quantity`) VALUES
 (15, 3, NULL, '5cglecpglen37m5rq1nts6lcb34ugpn6', 1),
-(25, 7, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 2),
-(32, 3, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 3),
-(34, 10, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 1),
-(37, 2, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 1);
+(32, 3, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 105),
+(38, 2, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 6),
+(39, 8, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 2),
+(41, 4, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 5),
+(42, 7, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 2),
+(43, 2, NULL, '8qrooel5hoehikd1caup9fhmjdpgfbm7', 1),
+(44, 3, NULL, '8qrooel5hoehikd1caup9fhmjdpgfbm7', 1),
+(45, 1, NULL, '8qrooel5hoehikd1caup9fhmjdpgfbm7', 1),
+(46, 10, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 3);
 
 -- --------------------------------------------------------
 
@@ -56,7 +61,7 @@ INSERT INTO `carts` (`id_cart`, `id_product`, `id_user`, `id_session`, `quantity
 CREATE TABLE `orders` (
   `id_order` int(11) NOT NULL,
   `id_session` varchar(35) NOT NULL,
-  `telefon` int(20) NOT NULL,
+  `telefon` varchar(30) NOT NULL,
   `status` varchar(100) NOT NULL DEFAULT 'Обрабатывается'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -65,7 +70,8 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id_order`, `id_session`, `telefon`, `status`) VALUES
-(3, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 6758765, 'Обрабатывается');
+(3, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', '6758765', 'Обрабатывается'),
+(11, '8qrooel5hoehikd1caup9fhmjdpgfbm7', '8978675', 'Обрабатывается');
 
 -- --------------------------------------------------------
 
@@ -229,13 +235,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id_cart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id_cart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT для таблицы `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT для таблицы `products`
