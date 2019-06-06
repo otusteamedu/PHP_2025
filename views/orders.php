@@ -29,9 +29,21 @@
                 <?=$item['telefon']?>
             </p>
             </a>
-            <p >
-                <?=$item['status']?>
-            </p>
+            <select class="status">
+
+                <option value="Принят" <?if($item['status'] =='Принят')echo "selected"?> data-orderID="<?=$item['id_order']?>">
+                    Принят
+                </option>
+                <option value="Передан в обработку" <?if($item['status'] =='Передан в обработку')echo "selected"?> data-orderID="<?=$item['id_order']?>">
+                    Передан в обработку
+                </option>
+                <option value="Обрабатывается" <?if($item['status'] =='Обрабатывается')echo "selected"?> data-orderID="<?=$item['id_order']?>">
+                    Обрабатывается
+                </option>
+            </select>
+<!--            <p >-->
+<!--                --><?//=$item['status']?>
+<!--            </p>-->
         </div>
 
     <hr/>

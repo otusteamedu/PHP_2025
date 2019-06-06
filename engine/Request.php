@@ -30,6 +30,7 @@ class Request
         $this->controllerName = $url[1];
         $this->actionName = $url[2];
         $this->params = $_REQUEST;
+//        var_dump('REQUESTCLASS',$_REQUEST);
     }
 
     /**

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Июн 06 2019 г., 13:34
+-- Время создания: Июн 06 2019 г., 17:39
 -- Версия сервера: 5.7.25
 -- Версия PHP: 7.1.22
 
@@ -50,7 +50,8 @@ INSERT INTO `carts` (`id_cart`, `id_product`, `id_user`, `id_session`, `quantity
 (43, 2, NULL, '8qrooel5hoehikd1caup9fhmjdpgfbm7', 1),
 (44, 3, NULL, '8qrooel5hoehikd1caup9fhmjdpgfbm7', 1),
 (45, 1, NULL, '8qrooel5hoehikd1caup9fhmjdpgfbm7', 1),
-(46, 10, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 3);
+(46, 10, NULL, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', 3),
+(47, 1, NULL, 'jh93knepfk608df5f37vr4ruabtcvs0h', 1);
 
 -- --------------------------------------------------------
 
@@ -70,8 +71,9 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id_order`, `id_session`, `telefon`, `status`) VALUES
-(3, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', '6758765', 'Обрабатывается'),
-(11, '8qrooel5hoehikd1caup9fhmjdpgfbm7', '8978675', 'Обрабатывается');
+(3, 'o4tg99ce059norrtmc9vqva9v8cb5nd5', '6758765', 'Передан в обработку'),
+(11, '8qrooel5hoehikd1caup9fhmjdpgfbm7', '8978675', 'Передан в обработку'),
+(12, 'jh93knepfk608df5f37vr4ruabtcvs0h', '654365', 'Принят');
 
 -- --------------------------------------------------------
 
@@ -235,13 +237,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id_cart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id_cart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT для таблицы `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT для таблицы `products`

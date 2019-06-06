@@ -84,7 +84,7 @@ abstract class Repository
         $id_name = $entity->getIdName();
 
         $sql = "UPDATE $tableName SET {$set} WHERE $id_name = :id";
-//var_dump('update',$sql, $params);die();
+//var_dump('update',$sql, $params,$entity->getChanges());die();
         $this->db->execute($sql, $params);
     }
 

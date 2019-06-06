@@ -46,4 +46,26 @@ class Order extends DataEntity
 
         return 'orders';
     }
+
+    /**
+     * @param null $status
+     */
+    public function setStatus($status): void
+    {
+        $this->status = $status;
+        if(!in_array($status, $this->changes)){
+
+            $this->changes['status'] = $status;
+//          var_dump($this->changes); die();
+        }
+    }
+
+    /**
+     * @return null
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
 }
