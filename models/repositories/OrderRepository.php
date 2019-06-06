@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: iluka
- * Date: 04.06.2019
- * Time: 17:56
- */
 
 namespace app\models\repositories;
 

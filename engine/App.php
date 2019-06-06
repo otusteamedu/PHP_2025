@@ -4,6 +4,7 @@ namespace app\engine;
 use app\models\repositories\CartRepository;
 use app\models\repositories\ProductsRepository;
 use app\models\repositories\UsersRepository;
+use app\models\repositories\OrderRepository;
 use app\traits\Tsingletone;
 use app\utils\Render;
 
@@ -49,9 +50,11 @@ class App
     //создание компонента при обращении, возвращает объект для хранилища
     public function createComponent($name)
     {
+//        var_dump('CREATECOMPONENT ++++++++++++++++', $this->config['components'][$name]);
         if (isset($this->config['components'][$name])) {
             $params = $this->config['components'][$name];
             $class = $params['class'];
+//            var_dump('class_exists',class_exists($class));
             if (class_exists($class)) {
                 unset($params['class']);
                 //воспользуемся библиотекой ReflectionClass для создания класса
@@ -82,6 +85,7 @@ class App
     //Чтобы обращаться к компонентам как к свойствам, переопределим геттер
     function __get($name)
     {
+//        var_dump($name,$this->components);
         return $this->components->get($name);
     }
 

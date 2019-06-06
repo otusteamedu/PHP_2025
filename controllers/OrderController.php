@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\engine\App;
 use app\engine\Request;
 use app\interfaces\IRender;
 use app\models\entities\Order;
@@ -24,22 +25,23 @@ class OrderController extends Controller
     }
     public function actionDo(){
 
-        $telefon = (new Request())->getParams()['approve']? (new Request())->getParams()['telefon'] : null;
+        $telefon = App::call()->request->getParams()['approve']? App::call()->request->getParams()['telefon'] : null;
 
         if($telefon){
 
             $order = new Order(null, session_id(), 'Обрабатывается', $telefon);
 //        try{
 
-            (new OrderRepository)->insert($order);
+            App::call()->orderRepository->insert($order);
 
 //        }catch (\Exception $ex){
 //
 //            echo $ex->getMessage();
 //        }
-            session_destroy();
-            header("Location: /");
         }
+        session_regenerate_id(true);
+//        $this->autherizator->login();
+        header("Location: /");
     }
     public function actionView(){
 

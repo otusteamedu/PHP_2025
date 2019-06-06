@@ -6,6 +6,7 @@ use app\engine\Request;
 use app\models\repositories\CartRepository;
 use app\models\repositories\ProductsRepository;
 use app\models\repositories\UsersRepository;
+use app\models\repositories\OrderRepository;
 use app\engine\Db;
 
 return [
@@ -35,6 +36,9 @@ return [
         ],
         'userRepository' => [
             'class' => UsersRepository::class
+        ],
+        'orderRepository' => [
+            'class' => OrderRepository::class
         ]
 
     ]

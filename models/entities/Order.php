@@ -15,6 +15,7 @@ class Order extends DataEntity
     protected $id_session;
     protected $status;
     protected $telefon;
+    public $properties = ['id_session','status', 'telefon'];
 
     /**
      * Order constructor.
@@ -40,5 +41,9 @@ class Order extends DataEntity
     public function setId($value){
 
         $this->id_order = $value;
+    }
+    public function getTableName(){
+
+        return 'orders';
     }
 }

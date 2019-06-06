@@ -51,7 +51,7 @@ abstract class Repository
         $value = implode(", ", array_keys($params));
 
         $sql = "INSERT INTO {$tableName} ({$columns}) VALUES ({$value})";
-//        var_dump('INSERT',$sql, $params,$entity);
+//        var_dump('INSERT',$sql, $params,$entity);die();
         $this->db->execute($sql, $params);
 
         $entity->setId($this->db->lastInsertId());
