@@ -19,7 +19,7 @@ class CartRepository extends Repository
 
         $sql = "SELECT id_cart,p.id_product,name_product,price,img,description, category, name_unit, type, quantity FROM carts as c, products as p, units as u, product_category as ctg,product_types as t WHERE id_session = :id_session AND c.id_product=p.id_product AND ctg.id_product_category=p.id_product_category AND u.id_unit=p.id_unit AND t.id_product_type=p.id_product_type";
         $params = [':id_session' => session_id()];
-      var_dump($sql,$params);
+//      var_dump($sql,$params);
         return $this->db->queryAll($sql, $params);
     }
     public function getId(){

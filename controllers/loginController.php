@@ -1,6 +1,7 @@
 <?php
 
 namespace app\controllers;
+use app\engine\App;
 use app\engine\Request;
 
 class loginController extends Controller
@@ -8,7 +9,7 @@ class loginController extends Controller
 
     public function actionLogin(){
 
-        $t = (new Request())->getParams();
+        $t = App::call()->request->getParams();
 //        var_dump($t);
 
         if($t['send']){
@@ -23,7 +24,7 @@ class loginController extends Controller
 
     public function actionLogout(){
 
-        if (isset((new Request())->getParams()['logout'])) {
+        if (isset(App::call()->request->getParams()['logout'])) {
 
             session_destroy();
             setcookie("hash");

@@ -32,7 +32,7 @@ class CartController extends Controller
     public function actionAdd(){
 
 //        var_dump('actionAdd',$_GET);
-        $id =(new Request())->getParams()['id'];//$_GET['id'];
+        $id = App::call()->request->getParams()['id'];//$_GET['id'];
         $session_id = session_id();
 
         $count = App::call()->cartRepository->getCount($id)[0]['count'];
@@ -46,15 +46,15 @@ class CartController extends Controller
                 $session_id,
                 1.
             );
-            App::call()->cartRepository->insert($cart);
+//            App::call()->cartRepository->insert($cart);
         }else{
 
             $cart = App::call()->cartRepository->getOne($id);
             $cart->setQuantity($cart->getQuantity()+1);
-            App::call()->cartRepository->update($cart);
+//            App::call()->cartRepository->update($cart);
 //            var_dump($cart);
         }
-//        $cart->save();
+        App::call()->cartRepository->save($cart);
 //        var_dump($cart);
 
         header("location: /product/catalog");
