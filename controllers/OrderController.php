@@ -39,13 +39,31 @@ class OrderController extends Controller
 //            echo $ex->getMessage();
 //        }
         }
+        $login =  $_SESSION['login'];
         session_regenerate_id(true);
 //        $this->autherizator->login();
+        $_SESSION['login'] = $login;
         header("Location: /");
     }
     public function actionView(){
 
+        $orders =  App::call()->orderRepository->getAll();
 
-        echo $this->render("orderContent", []);
+        echo $this->render("orders", [
+            'orders' => $orders
+        ]);
+    }
+    public function actionSingle(){
+
+        $order =  App::call()->orderRepository->getOne(App::call()->request->getParams()['id_order']);
+//        var_dump($order);die();
+        foreach ($order as &$item) {
+
+            $item['img']=explode(',', $item['img']);
+        }
+        echo $this->render("orderContent", [
+            'order' => $order,
+            'id_order' => App::call()->request->getParams()['id_order']
+        ]);
     }
 }
