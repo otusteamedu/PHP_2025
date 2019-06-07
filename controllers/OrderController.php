@@ -40,9 +40,11 @@ class OrderController extends Controller
 //        }
         }
         $login =  $_SESSION['login'];
+        $id = $_SESSION['id'];
         session_regenerate_id(true);
 //        $this->autherizator->login();
         $_SESSION['login'] = $login;
+        $_SESSION['id'] = $id;
         header("Location: /");
     }
     public function actionView(){

@@ -60,14 +60,12 @@ class Authorization implements IAuthorization
 
     public function auth($login, $pass)
     {
-        $sql = "SELECT * FROM users WHERE login = :login";
-
-        $row = Db::getInstance()->queryAll($sql, [':login' => $login])[0];
-
-        if (password_verify($pass, $row['password'])) {
+        $user = App::call()->authRepository->getObject($login);
+//var_dump($user);die();
+        if (password_verify($pass, $user->password)) {
 
             $_SESSION['login'] = $login;
-            $_SESSION['id'] = $row['id_user'];
+            $_SESSION['id'] = $user->id_user;
 
             return true;
         }

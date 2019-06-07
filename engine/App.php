@@ -5,6 +5,7 @@ use app\models\repositories\CartRepository;
 use app\models\repositories\ProductsRepository;
 use app\models\repositories\UsersRepository;
 use app\models\repositories\OrderRepository;
+use app\models\repositories\AuthRepository;
 use app\traits\Tsingletone;
 use app\utils\Render;
 
