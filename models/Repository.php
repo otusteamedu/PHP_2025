@@ -22,7 +22,7 @@ abstract class Repository
     {
         $tableName = $this->getTableName();
         $sql = "SELECT * FROM {$tableName} WHERE id = :id";
-
+//var_dump($sql, ['id' => $id]);
         return $this->db->queryObject($sql, ['id' => $id], $this->getEntityClass());
     }
 
@@ -99,5 +99,5 @@ abstract class Repository
     }
 
     abstract public function getEntityClass();
-    abstract public function getTableName();
+//    abstract public function getTableName();
 }

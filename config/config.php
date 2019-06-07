@@ -3,7 +3,7 @@
 //define("DIR_ROOT", $_SERVER['DOCUMENT_ROOT']);
 //define("DS", DIRECTORY_SEPARATOR);
 use app\engine\{Request,Db};
-use app\models\repositories\{CartRepository,ProductsRepository,UsersRepository,OrderRepository,AuthRepository};
+use app\models\repositories\{CartRepository,ProductsRepository,UsersRepository,OrderRepository};
 
 return [
     'root_dir' => __DIR__ . "/../",
@@ -35,9 +35,6 @@ return [
         ],
         'orderRepository' => [
             'class' => OrderRepository::class
-        ],
-        'authRepository' => [
-            'class' => AuthRepository::class
         ]
 
     ]

@@ -7,7 +7,7 @@ use app\engine\App;
 use app\models\entities\Users;
 use app\models\Repository;
 
-class AuthRepository extends Repository
+class UsersRepository extends Repository
 {
 
     public function getObject($login)
