@@ -1,0 +1,66 @@
+services:
+    # Nginx Service container
+    nginx:
+        image: nginx:stable-alpine
+        container_name: app-nginx
+        restart: always
+        volumes:
+            - ./public:/var/www/public
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        ports:
+            - "80:80"
+        depends_on:
+            - app
+        networks:
+            - backend
+    # PHP fpm container
+    app:
+        build:
+            context: .
+            dockerfile: docker/app/Dockerfile
+        restart: always
+        working_dir: /var/www/public
+        volumes:
+            - ./public:/var/www/public
+        depends_on:
+            - db
+        container_name: app-php-fpm
+        networks:
+            - backend
+    # Database Container
+    db:
+        image: mysql:8.0
+        restart: always
+        volumes:
+            - mysql-data:/var/lib/mysql
+            - ./docker/mysql/my.cnf:/etc/my.cnf
+        environment:
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        networks:
+            - backend
+        ports:
+            - "3306:3306"
+        command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci' ]
+        container_name: app-mysql
+    # Redis Container
+    redis:
+        image: redis:latest
+        container_name: app-redis
+        networks:
+            - backend
+    # Memcached Container
+    memcached:
+        image: memcached:latest
+        container_name: app-memcached
+        networks:
+            - backend
+# Networks
+networks:
+    backend:
+        driver: bridge
+# Volumes
+volumes:
+    mysql-data:
