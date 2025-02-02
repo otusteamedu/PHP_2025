@@ -33,11 +33,13 @@ services:
   redis:
     container_name: redis_base
     image: redis:latest
+    volumes:
+      - ./db/redis:/data
     networks:
       - inner_network
 
   memcached:
-    container_name: memcached_cashe
+    container_name: memcached_cache
     image: memcached:latest
     networks:
       - inner_network
