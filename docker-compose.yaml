@@ -1,0 +1,123 @@
+services:
+  nginx_balancer:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: balance/nginx_balancer
+    container_name: nginx_balancer
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/upstream-web.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - nginx_1
+      - nginx_2
+    networks:
+      - app-network
+
+  nginx_1:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: balance/nginx_1
+    container_name: nginx_1
+    volumes:
+      - ./html:/var/www/html
+      - ./src:/var/www/src
+      - ./vendor:/var/www/vendor
+      - ./nginx/hosts/mysite.local.conf:/etc/nginx/conf.d/mysite.local.conf
+    depends_on:
+      - backend1
+    networks:
+      - app-network
+
+  nginx_2:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: balance/nginx_2
+    container_name: nginx_2
+    volumes:
+      - ./html:/var/www/html
+      - ./src:/var/www/src
+      - ./vendor:/var/www/vendor
+      - ./nginx/hosts/mysite.local.conf:/etc/nginx/conf.d/mysite.local.conf
+    depends_on:
+      - backend2
+    networks:
+      - app-network
+
+  backend1:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ./html:/var/www/html
+      - ./src:/var/www/src
+      - ./vendor:/var/www/vendor
+    restart: always
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - REDIS_HOST
+      - REDIS_HOST_PORT
+    networks:
+      - app-network
+
+  backend2:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ./html:/var/www/html
+      - ./src:/var/www/src
+      - ./vendor:/var/www/vendor
+    restart: always
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - REDIS_HOST
+      - REDIS_HOST_PORT
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    restart: always
+    environment:
+      - REDIS_HOST
+      - REDIS_HOST_PORT
+      - ALLOW_EMPTY_PASSWORD
+    networks:
+      - app-network
+
+  memcached:
+    image: memcached:latest
+    restart: always
+    networks:
+      - app-network
+
+  db:
+    image: postgres:14
+    container_name: postgres
+    hostname: 'postgres'
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
