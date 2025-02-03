@@ -17,7 +17,7 @@ services:
     container_name: php
     build: ./php
     working_dir: /var/www/html
-    environment:
+    environment: 
       - REDIS_HOST=${REDIS_HOST}
       - MEMCACHED_HOST=${MEMCACHED_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
