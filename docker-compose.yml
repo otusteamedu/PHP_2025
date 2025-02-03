@@ -18,12 +18,12 @@ services:
     build: ./php
     working_dir: /var/www/html
     environment:
-      - REDIS_HOST=redis
-      - MEMCACHED_HOST=memcached
-      - MYSQL_HOST=mysql 
-      - MYSQL_DATABASE=test 
-      - MYSQL_USER=user1
-      - MYSQL_PASSWORD=s123
+      - REDIS_HOST=${REDIS_HOST}
+      - MEMCACHED_HOST=${MEMCACHED_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE} 
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - ./src:/var/www/html
       - ./logs/php:/var/log
@@ -47,7 +47,7 @@ services:
     container_name: mysql_base
     image: mysql:9.1
     environment:
-      - MYSQL_ROOT_PASSWORD=s123123
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./db/mysql:/var/lib/mysql:rw
     ports:
