@@ -1,0 +1,78 @@
+services:
+    nginx:
+        build:
+            context: ./docker/nginx
+            dockerfile: Dockerfile
+        image: ${APP_NAME}/nginx
+        container_name: ${APP_NAME}-nginx
+        ports:
+            - '${APP_PORT:-80}:80'
+        volumes:
+            - './code:/data'
+            - 'phpsocket:/var/run'
+        networks:
+            - backend-network
+
+    php:
+        build:
+            context: ./docker/fpm
+            dockerfile: Dockerfile
+        image: ${APP_NAME}/php_fpm
+        container_name: ${APP_NAME}-php_fpm
+        volumes:
+            - './code:/data'
+            - ./docker/fpm/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+            - 'phpsocket:/var/run'
+        networks:
+            - backend-network
+
+    mysql:
+        image: mysql:8.0
+        container_name: ${APP_NAME}-mysql
+        environment:
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+        ports:
+            - '${FORWARD_DB_PORT:-3306}:3306'
+        volumes:
+            - 'mysql:/var/lib/mysql'
+            - './docker/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+        networks:
+            - backend-network
+
+    redis:
+        image: 'redis:alpine'
+        container_name: ${APP_NAME}-redis
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        volumes:
+            - 'redis:/data'
+        networks:
+            - backend-network
+
+    memcached:
+        image: memcached:alpine
+        container_name: ${APP_NAME}-memcached
+        ports:
+            - '${FORWARD_MEMCACHED_PORT:-11211}:11211'
+        command:
+            - --conn-limit=1024
+            - --memory-limit=64
+            - --threads=4
+        networks:
+            - backend-network
+
+networks:
+    backend-network:
+        driver: bridge
+
+volumes:
+    phpsocket:
+        driver: local
+    redis:
+        driver: local
+    mysql:
+        driver: local
