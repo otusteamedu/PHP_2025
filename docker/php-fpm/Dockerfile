@@ -7,6 +7,7 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; \
       pecl install xdebug && docker-php-ext-enable xdebug; \
     fi;
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+COPY ./zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 
 # Install packages
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \

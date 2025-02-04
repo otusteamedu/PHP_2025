@@ -10,6 +10,7 @@ services:
       - '9000:9000'
     volumes:
       - ./app:/app:rw
+      - ./php-socket:/var/run/php
     depends_on:
       manager_redis:
         condition: service_started
@@ -27,6 +28,7 @@ services:
       - ./app:/app:rw
       - ./docker/nginx/logs:/var/log/nginx:rw
       - ./docker/nginx/hosts:/etc/nginx/conf.d
+      - ./php-socket:/var/run/php
     ports:
       - '80:80'
 
