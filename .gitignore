@@ -3,3 +3,7 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+.env
+_ide_helper.php
+_ide_helper_models.php
+.bash_history
