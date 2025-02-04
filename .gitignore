@@ -10,3 +10,4 @@
 /vendor/
 ###< symfony/framework-bundle ###
 /cache/dump.rdb
+/.env
