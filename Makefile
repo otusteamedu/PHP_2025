@@ -1,8 +1,9 @@
 up:
-	docker compose up -d
+	@docker compose up -d
 
 down:
-	docker compose down
+	@docker compose down
 
+.PHONY: console
 console:
-	docker compose exec app bash
+	@docker compose exec app bash
