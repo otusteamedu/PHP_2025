@@ -1,0 +1,75 @@
+version: '1'
+
+name: 'PHP 2025 homework'
+
+services:
+  #Контейнер с Nginx
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: app/nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - '${NGINX_PORT}:80'
+    volumes:
+      - ./src/public:/var/www/dev/mysite.local
+      - ./exchange/php-socket:/var/run/php
+    networks:
+      - app-network
+
+  #Контейнер с PHP-FPM
+  php-fpm:
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    image: app/php-fpm
+    container_name: php-fpm
+    restart: always
+    environment:
+      - "REDIS_HOST=${REDIS_HOST}"
+      - "MEMCACHED_HOST=${MEMCACHED_HOST}"
+    volumes:
+      - ./src/public:/var/www/dev/mysite.local
+      - ./exchange/php-socket:/var/run/php
+    networks:
+      - app-network
+
+  #Контейнер с redis
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    networks:
+      - app-network
+
+  #Контейнер с memcached
+  memcached:
+    image: memcached:latest
+    container_name: memcached
+    restart: always
+    networks:
+      - app-network
+
+  #Контейнер с mysql
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./exchange/db_data:/var/lib/mysql
+    ports:
+      - '${MYSQL_PORT}:3306'
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
