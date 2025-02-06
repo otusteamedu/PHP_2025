@@ -16,7 +16,7 @@ $obMemcached = new Memcached();
 try {
     $obMemcached->addServer(getenv('MEMCACHED_HOST'), 11211);
     $obMemcached->set('test_key', 'Test memcached');
-    echo $obMemcached->get('key') . PHP_EOL;
+    echo $obMemcached->get('test_key') . PHP_EOL;
 } catch (MemcachedException $e) {
     die('Error memcached: ' . $e->getMessage());
 }

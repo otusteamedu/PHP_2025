@@ -27,6 +27,9 @@ services:
     image: app/php-fpm
     container_name: php-fpm
     restart: always
+    environment:
+      - "REDIS_HOST=${REDIS_HOST}"
+      - "MEMCACHED_HOST=${MEMCACHED_HOST}"
     volumes:
       - ./src/public:/var/www/dev/mysite.local
       - ./exchange/php-socket:/var/run/php
