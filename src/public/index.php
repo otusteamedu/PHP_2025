@@ -2,16 +2,24 @@
 declare(strict_types=1);
 
 $obRedis = new Redis();
-$obRedis->connect('redis', 6379);
-$obRedis->set('key', 'test-redis');
-echo $obRedis->get('key') . PHP_EOL;
+try {
+    $obRedis->connect(getenv('REDIS_HOST'), 6379);
+    $obRedis->set('test_key', 'Test redis');
+    echo $obRedis->get('test_key') . PHP_EOL;
+} catch (RedisException $e) {
+    die('Error redis: ' . $e->getMessage());
+}
 ?>
     <br>
 <?php
 $obMemcached = new Memcached();
-$obMemcached->addServer('memcached', 11211);
-$obMemcached->set('key', 'test-memcached');
-echo $obMemcached->get('key') . PHP_EOL;
+try {
+    $obMemcached->addServer(getenv('MEMCACHED_HOST'), 11211);
+    $obMemcached->set('test_key', 'Test memcached');
+    echo $obMemcached->get('key') . PHP_EOL;
+} catch (MemcachedException $e) {
+    die('Error memcached: ' . $e->getMessage());
+}
 ?>
     <br>
 <?php

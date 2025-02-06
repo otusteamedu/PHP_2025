@@ -10,8 +10,9 @@ services:
       dockerfile: Dockerfile
     image: app/nginx
     container_name: nginx
+    restart: always
     ports:
-      - '80:80'
+      - '${NGINX_PORT}:80'
     volumes:
       - ./src/public:/var/www/dev/mysite.local
       - ./exchange/php-socket:/var/run/php
@@ -25,6 +26,7 @@ services:
       dockerfile: Dockerfile
     image: app/php-fpm
     container_name: php-fpm
+    restart: always
     volumes:
       - ./src/public:/var/www/dev/mysite.local
       - ./exchange/php-socket:/var/run/php
@@ -35,8 +37,7 @@ services:
   redis:
     image: redis:latest
     container_name: redis
-    ports:
-      - '6379:6379'
+    restart: always
     networks:
       - app-network
 
@@ -44,8 +45,7 @@ services:
   memcached:
     image: memcached:latest
     container_name: memcached
-    ports:
-      - '11211:11211'
+    restart: always
     networks:
       - app-network
 
@@ -53,6 +53,7 @@ services:
   mysql:
     image: mysql:latest
     container_name: mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -61,7 +62,7 @@ services:
     volumes:
       - ./exchange/db_data:/var/lib/mysql
     ports:
-      - '3306:3306'
+      - '${MYSQL_PORT}:3306'
     networks:
       - app-network
 
