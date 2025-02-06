@@ -30,8 +30,6 @@ services:
 
   redis:
     image: "redis:latest"
-    ports:
-      - "${REDIS_PORT}:6379"
     volumes:
       - "./docker/redis/dаta:/root/redis"
     command: "/bin/sh -c \"redis-server --requirepass ${REDIS_PASSWORD}\""
@@ -44,8 +42,6 @@ services:
 
   memcached:
     image: "memcached:latest"
-    ports:
-      - "${MEMCACHED_PORT}:11211"
     networks:
       - projectNetwork
 
