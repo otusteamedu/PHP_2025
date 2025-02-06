@@ -1,0 +1,65 @@
+name: php_nginx
+services:
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - inner_network
+
+  php:
+    container_name: php
+    build: ./php
+    working_dir: /var/www/html
+    environment: 
+      - REDIS_HOST=${REDIS_HOST} 
+      - MEMCACHED_HOST=${MEMCACHED_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE} 
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./src:/var/www/html
+      - ./logs/php:/var/log
+    networks:
+      - inner_network
+
+  redis:
+    container_name: redis_base
+    image: redis:latest
+    volumes:
+      - ./db/redis:/data
+    networks:
+      - inner_network
+
+  memcached:
+    container_name: memcached_cache
+    image: memcached:latest
+    networks:
+      - inner_network
+  mysql:
+    container_name: mysql_base
+    image: mysql:9.1
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./db/mysql:/var/lib/mysql:rw
+    ports:
+      - 3306:3306
+    networks:
+      - inner_network
+
+volumes:
+  src:
+  logs:
+  db:
+
+networks:
+  inner_network:
+    driver: bridge
