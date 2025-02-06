@@ -4,8 +4,8 @@ services:
   database:
     image: mariadb:10.6
     environment:
-      MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: database
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
     volumes:
     - ./db:/var/lib/mysql
     - ./config/mysql:/etc/mysql/mariadb.conf.d
@@ -47,8 +47,6 @@ services:
   redis:
     image: redis:latest
     container_name: redis
-    ports:
-      - '6379:6379'
     networks:
       - app-network
 
@@ -56,8 +54,6 @@ services:
   memcached:
     image: memcached:latest
     container_name: memcached
-    ports:
-      - '11211:11211'
     networks:
       - app-network
 
