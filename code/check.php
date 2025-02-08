@@ -1,8 +1,10 @@
 <?php
 
 $redisPort = \getenv('REDIS_PORT');
+$redisHost = \getenv('REDIS_CONTAINER_NAME');
 
 $memcachedPort = \getenv('MEMCACHED_PORT');
+$memcachedHost = \getenv('MEMCACHED_CONTAINER_NAME');
 
 $pswd = \getenv('POSTGRES_PASSWORD');
 $user = \getenv('POSTGRES_USER');
@@ -27,21 +29,21 @@ try {
 
 try {
     $redis = new Redis();
-    $redis->connect('redis', $redisPort);
+    $redis->connect($redisHost, $redisPort);
     $messages[] = 'Redis работает!';
 } catch (RedisException $e) {
     $messages[] = 'Redis: ' . $e->getMessage();
 }
 
 $memcached = new Memcached();
-$memcached->addServer('memcached', $memcachedPort);
+$memcached->addServer($memcachedHost, $memcachedPort);
 $memcached->set('key', 'value', 10);
 $value = $memcached->get('key');
 
 if ($value) {
     $messages[] = 'Memcached работает!';
 } else {
-    $messages[] = 'Ошибка: ' . $memcached->getResultMessage();
+    $messages[] = 'Memcached. Ошибка: ' . $memcached->getResultMessage();
 }
 
 echo \implode("<br>", $messages);

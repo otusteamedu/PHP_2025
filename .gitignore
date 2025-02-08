@@ -5,3 +5,6 @@
 .AppleDouble
 .LSOverride
 .env
+.env.docker
+/php_socket
+/postgres_data

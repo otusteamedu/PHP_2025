@@ -6,6 +6,7 @@ WORKDIR /data
 
 VOLUME /data
 
-EXPOSE 6379
+EXPOSE ${REDIS_PORT}
 
-CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]
+CMD sed -i "s/^port 6379 .*/port $REDIS_PORT/" /usr/local/etc/redis/redis.conf && \
+    redis-server /usr/local/etc/redis/redis.conf
