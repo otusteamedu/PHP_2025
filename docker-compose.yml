@@ -43,17 +43,21 @@ services:
     networks:
       - app-network
 
-  composer:
-    image: composer:latest
+  script-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
-      - ./html:/html
-    working_dir: /html
+      - ./scripts:/scripts
+      - ./:/data
+    working_dir: /scripts
     networks:
       - app-network
+    entrypoint: ["/bin/bash"]
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
   db_data:
-
