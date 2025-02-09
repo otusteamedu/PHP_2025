@@ -8,5 +8,4 @@ VOLUME /data
 
 EXPOSE ${REDIS_PORT}
 
-CMD sed -i "s/^port 6379 .*/port $REDIS_PORT/" /usr/local/etc/redis/redis.conf && \
-    redis-server /usr/local/etc/redis/redis.conf
+CMD ["/bin/sh", "-c", "sed -i \"s/^port 6379 .*/port $REDIS_PORT/\" /usr/local/etc/redis/redis.conf && redis-server /usr/local/etc/redis/redis.conf"]
