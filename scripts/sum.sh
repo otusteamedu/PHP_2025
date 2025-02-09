@@ -12,5 +12,6 @@ if [[ ! $1 =~ $re || ! $2 =~ $re ]]; then
     exit 1
 fi
 
-sum=$(echo "$1 + $2" | bc)
+sum=$(awk "BEGIN {print $1 + $2}")
 echo "Сумма: $sum"
+
