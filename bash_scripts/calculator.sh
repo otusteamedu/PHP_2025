@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #checking if bc package present in the operating system
 isBCinstalled=0
 I=`dpkg -s bc | grep "installed" `
@@ -19,8 +18,6 @@ else
       exit 1
    fi 
 fi
-
-
 #if bc package installed starting the calculator
 if [ $isBCinstalled -eq 1  ]
  then
@@ -36,7 +33,6 @@ if [ $isBCinstalled -eq 1  ]
     elif [[ ! $b =~ $REGEX ]];
       then echo 'Error: Second Number has wrong format' >&2; exit 1
     fi
-
    sum=$(echo "$a + $b" | bc)
    echo Sum is $sum
    exit 0
