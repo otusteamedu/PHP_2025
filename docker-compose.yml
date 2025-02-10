@@ -1,0 +1,17 @@
+name: php_linux
+services:
+  php_2:
+    container_name: php_2
+    build: ./php
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - inner_network
+      
+volumes:
+  src:
+
+networks:
+  inner_network:
+    driver: bridge
