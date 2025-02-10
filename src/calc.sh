@@ -16,8 +16,12 @@ calc() {
       exit 1
     fi
 
-    sum=$(echo "$result1 + $result2" | bc)
+    #sum=$(echo "$result1 + $result2" | bc)
+    #echo "Сумма: $sum"
+
+    sum=$(awk "BEGIN {print $result1 + $result2}")
     echo "Сумма: $sum"
+
     exit 0
     
 }
