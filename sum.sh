@@ -13,7 +13,7 @@ do
   fi
 done
 
-sum=$(echo "$1" "$2" | awk "BEGIN {print $1 + $2}")
+sum=$(awk "BEGIN {print $1 + $2}")
 
 echo "$sum"
 
