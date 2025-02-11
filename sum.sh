@@ -10,7 +10,6 @@ if ! [[ $1 =~ $regex && $2 =~ $regex ]]; then
     exit 1
 fi
 
-sum=$(echo "$1 + $2" | bc)
+sum=$(awk "BEGIN {print $1 + $2}")
 
-# Выводим результат
 echo "Сумма: $sum"
