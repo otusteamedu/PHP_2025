@@ -1,0 +1,12 @@
+version: "3"
+services:
+  ubuntu:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: ubuntu
+    image: ubuntu
+    restart: on-failure
+    tty: true
+    volumes:
+      - ./bash_scripts:/home/bash_scripts
