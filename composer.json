@@ -10,5 +10,6 @@
             "name": "pavel"
         }
     ],
+    "minimum-stability": "dev",
     "require": {}
 }
