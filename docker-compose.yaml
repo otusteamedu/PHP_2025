@@ -18,59 +18,9 @@ services:
       - ./:/var/www/app
     networks:
       - internal
-    links:
-      - redis
-      - memcached
-  pgsql:
-    image: postgres:14.1-alpine
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports:
-      - '5496:5432'
-    networks:
-      - internal
-    volumes:
-      - ./var/db-data:/var/lib/postgresql/data
-  redis:
-    image: redis:latest
-    restart: always
-    command: redis-server --save 20 1 --loglevel warning
-    volumes:
-      - ./cache:/data/redis
-    networks:
-      - internal
-  memcached:
-    image: memcached
-    restart: always
-    command:
-      - --conn-limit=1024
-      - --memory-limit=64
-      - --threads=4
-    volumes:
-      - ./cache:/data/memcached
-    networks:
-      - internal
-
-  database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
-    healthcheck:
-      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
-      timeout: 5s
-      retries: 5
-      #start_period: 60s
-    volumes:
-      - database_data:/var/lib/postgresql/data:rw
 
 networks:
   internal:
-
 
 volumes:
   database_data:
