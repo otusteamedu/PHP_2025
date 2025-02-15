@@ -1,0 +1,13 @@
+{
+    "name": "mdmitriev/hw3",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Mdmitriev\\Hw3\\": "src/"
+        }
+    },
+    "require": {
+        "php": "~8.2",
+        "alte0/otus-tets-app": "^1.0"
+    }
+}

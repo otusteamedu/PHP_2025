@@ -1,0 +1,51 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "adaa7109c306b2fa0c1c5288798500ef",
+    "packages": [
+        {
+            "name": "alte0/otus-tets-app",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alte0/otus-test-app.git",
+                "reference": "39400f7c579e1588c72f3a6a2fa1df7d525b2e5a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alte0/otus-test-app/zipball/39400f7c579e1588c72f3a6a2fa1df7d525b2e5a",
+                "reference": "39400f7c579e1588c72f3a6a2fa1df7d525b2e5a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Alte0\\OtusTestApp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/alte0/otus-test-app/issues",
+                "source": "https://github.com/alte0/otus-test-app/tree/1.0.0"
+            },
+            "time": "2025-02-15T07:05:38+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "~8.2"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
