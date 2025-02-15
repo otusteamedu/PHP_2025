@@ -4,7 +4,7 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     image: myapp/nginx
-    container_name: ${CONTAINER_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME}
     ports:
       - "${NGINX_PORT}:80"
     volumes:
@@ -21,7 +21,7 @@ services:
       context: ./php-fpm
       dockerfile: Dockerfile
     image: myapp/php
-    container_name: app
+    container_name: ${COMPOSE_PROJECT_NAME}_app
     volumes:
       - ./code:/data/mysite.local
       - ./php_socket:/var/run/php
@@ -35,7 +35,7 @@ services:
       context: ./redis
       dockerfile: Dockerfile
     image: myapp/redis
-    container_name: ${REDIS_CONTAINER_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}_${REDIS_CONTAINER_NAME}
     volumes:
       - redis_data:/data
     networks:
@@ -43,14 +43,14 @@ services:
 
   memcached:
     image: memcached
-    container_name: ${MEMCACHED_CONTAINER_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}_${MEMCACHED_CONTAINER_NAME}
     command: [ "memcached", "-m", "64", "-p", "${MEMCACHED_PORT}", "-l", "0.0.0.0" ]
     networks:
       - app-network
 
   postgres:
     image: postgres:latest
-    container_name: ${POSTGRES_CONTAINER_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}_${POSTGRES_CONTAINER_NAME}
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
