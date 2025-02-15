@@ -1,0 +1,55 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "d7a0722ff4625f91665c1947561b5297",
+    "packages": [
+        {
+            "name": "hafiz/simple-logger",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Dragon2323343/simple-logger.git",
+                "reference": "c1e0d040de0f2a262b456d9d88097060ad4c4f89"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Dragon2323343/simple-logger/zipball/c1e0d040de0f2a262b456d9d88097060ad4c4f89",
+                "reference": "c1e0d040de0f2a262b456d9d88097060ad4c4f89",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hafiz\\SimpleLogger\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Hafizov Timur",
+                    "email": "shsjs339@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/Dragon2323343/simple-logger/issues",
+                "source": "https://github.com/Dragon2323343/simple-logger/tree/v1.0.0"
+            },
+            "time": "2025-02-15T14:18:59+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
+}
