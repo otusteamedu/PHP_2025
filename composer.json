@@ -11,5 +11,7 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "pavelklimenko/otus-test-package": "dev-master"
+    }
 }
