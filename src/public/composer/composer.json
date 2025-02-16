@@ -1,0 +1,20 @@
+{
+    "name": "zibrov/otus-php-2025-hw4",
+    "description": "A project for testing work with an external library",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Zibrov Oleg",
+            "email": "zibroff@inbox.ru"
+        }
+    ],
+    "require":  {
+        "php": ">=8.1",
+        "zibrov-oleg/otus-php-2025-hw4": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zibrov\\OtusPhp2025Hw4\\": "../app"
+        }
+    }
+}
