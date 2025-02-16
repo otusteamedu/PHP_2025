@@ -1,0 +1,59 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "53ac3e52773fcfb12251fe2d1fbb89be",
+    "packages": [
+        {
+            "name": "nvanzhin/randomizer",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Vanzhin/randomizer-package.git",
+                "reference": "476843785147ca2cc9e37cb395e248d48fc490fb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Vanzhin/randomizer-package/zipball/476843785147ca2cc9e37cb395e248d48fc490fb",
+                "reference": "476843785147ca2cc9e37cb395e248d48fc490fb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nvanzhin\\Randomizer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "nikolay vanzhin",
+                    "email": "nikolay.vanzhin@yandex.ru"
+                }
+            ],
+            "description": "Shuffles words in a sentence and characters in words",
+            "support": {
+                "issues": "https://github.com/Vanzhin/randomizer-package/issues",
+                "source": "https://github.com/Vanzhin/randomizer-package/tree/1.0.2"
+            },
+            "time": "2025-02-16T11:46:28+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}
