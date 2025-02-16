@@ -1,18 +1,20 @@
+COMPOSE = docker compose --env-file .env.docker
+
 dc-create-env:
 	cp .env.docker.example .env.docker
 	@echo "!-> Need changed .env.docker <-!"
 
 dc-build:
-	docker compose --env-file .env.docker build
+	${COMPOSE} build
 
 dc-up:
-	docker compose --env-file .env.docker up
+	${COMPOSE} up
 
 dc-up-d:
-	docker compose --env-file .env.docker up -d
+	${COMPOSE} up -d
 
 dc-down:
-	docker compose --env-file .env.docker down -v
+	${COMPOSE} down -v
 
 dc-stop:
-	docker compose --env-file .env.docker stop
+	${COMPOSE} stop
