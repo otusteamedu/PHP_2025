@@ -1,0 +1,24 @@
+{
+    "name": "shoronovivan/task3",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Shoronovivan\\Task3_1\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Shoronov Ivan",
+            "email": "shoronov.ivan@mail.ru"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Safec/otus_package.git"
+        }
+    ],
+    "require": {
+        "shoronovivan/otus_package": "^1.0"
+    }
+}
