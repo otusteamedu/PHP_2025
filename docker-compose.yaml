@@ -1,0 +1,83 @@
+version: '3'
+
+services:
+  app-nginx:
+    build:
+      context: nginx
+      dockerfile: ./Dockerfile
+    image: otus-1/nginx
+    container_name: otus_1_nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+       - ./code:/data/mysite.local
+    networks:
+      - app-network
+
+  app-php:
+    build:
+      context: fpm
+      dockerfile: ./Dockerfile
+    image: otus-1/php
+    container_name: otus_1_fpm
+    restart: always
+    volumes:
+       - ./code:/data/mysite.local
+    networks:
+      - app-network
+      - db-network
+      - redis-network
+      - memcached-network
+    env_file:
+      - .env
+
+  app-db:
+    build:
+      context: db
+      dockerfile: ./Dockerfile
+    image: otus_1/mysql
+    container_name: otus_1_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - db-network
+
+  app-redis:
+    image: redis:latest
+    container_name: otus_1_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - redis-network
+
+  app-memcached:
+    image: memcached:latest
+    container_name: otus_1_memcached
+    restart: always
+    ports:
+      - "11211:11211"
+    networks:
+      - memcached-network
+
+networks:
+  app-network:
+    driver: bridge
+  db-network:
+    driver: bridge
+    internal: true
+  redis-network:
+    driver: bridge
+  memcached-network:
+    driver: bridge
