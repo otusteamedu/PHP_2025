@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Pavel-Klimenko/otus-test-package.git",
-                "reference": "ae0b0bd9daac1813121d5ab3da3b229a4feafad3"
+                "reference": "3120c964802018120b3b240afa2b1f578c37e107"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Pavel-Klimenko/otus-test-package/zipball/ae0b0bd9daac1813121d5ab3da3b229a4feafad3",
-                "reference": "ae0b0bd9daac1813121d5ab3da3b229a4feafad3",
+                "url": "https://api.github.com/repos/Pavel-Klimenko/otus-test-package/zipball/3120c964802018120b3b240afa2b1f578c37e107",
+                "reference": "3120c964802018120b3b240afa2b1f578c37e107",
                 "shasum": ""
             },
             "require": {
@@ -42,7 +42,7 @@
                 "issues": "https://github.com/Pavel-Klimenko/otus-test-package/issues",
                 "source": "https://github.com/Pavel-Klimenko/otus-test-package/tree/master"
             },
-            "time": "2025-02-15T14:50:37+00:00"
+            "time": "2025-02-16T17:01:24+00:00"
         }
     ],
     "packages-dev": [],

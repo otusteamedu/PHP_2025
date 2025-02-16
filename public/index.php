@@ -7,7 +7,9 @@ use Pavelklimenko\OtusTestPackage\Functions\TestFunctionalClass;
 $pavelClass = new TestFunctionalClass();
 
 $sum = $pavelClass->calculateSum(3, 5);
+//echo $sum; 
 
-echo $sum; 
+$operation = $pavelClass->selectOperation('sum');
+echo $operation;
 
 ?>
