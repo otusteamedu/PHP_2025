@@ -8,20 +8,20 @@
     "packages": [
         {
             "name": "nvanzhin/randomizer",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Vanzhin/randomizer-package.git",
-                "reference": "fc7c7307913aca992a409e07aaa2becc38f51f0d"
+                "reference": "476843785147ca2cc9e37cb395e248d48fc490fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Vanzhin/randomizer-package/zipball/fc7c7307913aca992a409e07aaa2becc38f51f0d",
-                "reference": "fc7c7307913aca992a409e07aaa2becc38f51f0d",
+                "url": "https://api.github.com/repos/Vanzhin/randomizer-package/zipball/476843785147ca2cc9e37cb395e248d48fc490fb",
+                "reference": "476843785147ca2cc9e37cb395e248d48fc490fb",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.4"
+                "php": "^7.0 || ^8.0"
             },
             "type": "library",
             "autoload": {
@@ -42,9 +42,9 @@
             "description": "Shuffles words in a sentence and characters in words",
             "support": {
                 "issues": "https://github.com/Vanzhin/randomizer-package/issues",
-                "source": "https://github.com/Vanzhin/randomizer-package/tree/1.0.1"
+                "source": "https://github.com/Vanzhin/randomizer-package/tree/1.0.2"
             },
-            "time": "2025-02-15T09:51:06+00:00"
+            "time": "2025-02-16T11:46:28+00:00"
         }
     ],
     "packages-dev": [],
