@@ -30,7 +30,7 @@ services:
       - redis-network
       - memcached-network
     env_file:
-      - .env
+      - .env.example
 
   app-db:
     build:
@@ -45,7 +45,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3306"
     volumes:
       - ./mysql-data:/var/lib/mysql
     networks:
@@ -56,7 +56,7 @@ services:
     container_name: otus_1_redis
     restart: always
     ports:
-      - "6379:6379"
+      - "6379"
     volumes:
       - ./redis-data:/data
     networks:
@@ -67,7 +67,7 @@ services:
     container_name: otus_1_memcached
     restart: always
     ports:
-      - "11211:11211"
+      - "11211"
     networks:
       - memcached-network
 
