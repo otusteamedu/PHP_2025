@@ -30,7 +30,7 @@ services:
       - redis-network
       - memcached-network
     env_file:
-      - .env.example
+      - .env
 
   app-db:
     build:
