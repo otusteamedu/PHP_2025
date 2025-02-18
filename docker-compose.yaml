@@ -1,0 +1,77 @@
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: otus-hw1/nginx
+    container_name: ${CONTAINER_NAME_NGINX}
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./code:/data/mysite.local
+      - php_socket:/var/run/php
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: otus-hw1/php
+    container_name: ${CONTAINER_NAME_APP}
+    restart: always
+    volumes:
+      - ./code:/data/mysite.local
+      - php_socket:/var/run/php
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+      - redis
+      - memcached
+
+  mysql:
+    image: mysql:8.0
+    container_name: ${CONTAINER_NAME_MYSQL}
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    container_name: ${CONTAINER_NAME_REDIS}
+    restart: always
+    networks:
+      - app-network
+
+  memcached:
+    image: memcached:latest
+    container_name: ${CONTAINER_NAME_MEMCACHED}
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
+  php_socket:
