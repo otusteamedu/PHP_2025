@@ -4,7 +4,7 @@ services:
       context: ./docker/nginx
       dockerfile: Dockerfile
     image: otus-hw1/nginx
-    container_name: webserver
+    container_name: ${CONTAINER_NAME_NGINX}
     restart: always
     ports:
       - "80:80"
@@ -21,7 +21,7 @@ services:
       context: ./docker/fpm
       dockerfile: Dockerfile
     image: otus-hw1/php
-    container_name: app
+    container_name: ${CONTAINER_NAME_APP}
     restart: always
     volumes:
       - ./code:/data/mysite.local
@@ -40,7 +40,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: ${CONTAINER_NAME_MYSQL}
     restart: always
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -56,14 +56,14 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis
+    container_name: ${CONTAINER_NAME_REDIS}
     restart: always
     networks:
       - app-network
 
   memcached:
     image: memcached:latest
-    container_name: memcached
+    container_name: ${CONTAINER_NAME_MEMCACHED}
     restart: always
     networks:
       - app-network
