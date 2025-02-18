@@ -1,0 +1,23 @@
+{
+    "name": "afenin/hw1-4",
+    "autoload": {
+        "psr-4": {
+            "Afenin\\Hw14\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "url": "https://github.com/AdelFenin/otus-task.git",
+            "type": "git"
+        }
+    ],
+    "authors": [
+        {
+            "name": "fav",
+            "email": "a.fenin@soglasie.ru"
+        }
+    ],
+    "require": {
+        "adelfenin/otus-task": "1.0.1"
+    }
+}

@@ -1,0 +1,45 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "65e53f08d04d137d867077bfaf84ba9d",
+    "packages": [
+        {
+            "name": "adelfenin/otus-task",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AdelFenin/otus-task.git",
+                "reference": "e965a06951c2e9c7552a28d7c0ee843b48eaadc5"
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Adelfenin\\OtusTask\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "fav",
+                    "email": "a.fenin@soglasie.ru"
+                }
+            ],
+            "description": "hw1-4",
+            "time": "2025-02-18T05:22:37+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.2.0"
+}
