@@ -1,3 +1,11 @@
-# PHP_2025
+Браузерное приложение и балансировщик
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Тест балансировщика:
+    
+    http://localhost/test_balance.php (выводит последовательность балансировки nginx серверов и php-fpm)
+
+Блок http://localhost работает на обработку запросов
+
+    curl -X POST http://localhost -d "string=)()"
+
+на верификацию строки со скобками 
