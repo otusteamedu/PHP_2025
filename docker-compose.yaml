@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  load-balancer:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginx:latest
+    container_name: load-balancer
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    networks:
+      - backend-network
+
+  nginx1:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginx:latest
+    container_name: nginx1
+    volumes:
+      - ./nginx/nginx1.conf:/etc/nginx/nginx.conf:ro
+      - ./data:/var/www/html
+    networks:
+      - backend-network
+
+  nginx2:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginx:latest
+    container_name: nginx2
+    volumes:
+      - ./nginx/nginx2.conf:/etc/nginx/nginx.conf:ro
+      - ./data:/var/www/html
+    networks:
+      - backend-network
+
+  php-fpm1:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: otusapp/php
+    container_name: php-fpm1
+    volumes:
+      - ./data:/var/www/html
+    networks:
+      - backend-network
+
+  php-fpm2:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: otusapp/php
+    container_name: php-fpm2
+    volumes:
+      - ./data:/var/www/html
+    networks:
+      - backend-network
+
+  redis:
+    image: redis:latest
+    container_name: balance_redis_service
+    restart: always
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
