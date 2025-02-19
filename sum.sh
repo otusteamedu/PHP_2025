@@ -19,8 +19,11 @@ if ! [[ $2 =~ $re ]]; then
     exit 1
 fi
 
-# Вычисление суммы
-sum=$(echo "$1 + $2" | bc)
-
-# Вывод результата
-echo "Сумма: $sum"
+# Проверяем, установлен ли bc
+if command -v bc &> /dev/null; then
+    # Если bc есть, используем его
+    echo "$1 + $2" | bc
+else
+    # Если bc нет, используем awk
+    awk "BEGIN {print $1 + $2}"
+fi
