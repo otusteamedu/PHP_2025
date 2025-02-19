@@ -8,20 +8,20 @@
     "packages": [
         {
             "name": "napastyuk/counter",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/napastyuk/otus-homework.git",
-                "reference": "5fc66531bb3059720d269a22057d59ec9401157e"
+                "reference": "7dcc0a27f5f71ce4cac8051764940335c50e2f37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/napastyuk/otus-homework/zipball/5fc66531bb3059720d269a22057d59ec9401157e",
-                "reference": "5fc66531bb3059720d269a22057d59ec9401157e",
+                "url": "https://api.github.com/repos/napastyuk/otus-homework/zipball/7dcc0a27f5f71ce4cac8051764940335c50e2f37",
+                "reference": "7dcc0a27f5f71ce4cac8051764940335c50e2f37",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0"
+                "php": ">=7.0"
             },
             "type": "library",
             "autoload": {
@@ -42,9 +42,9 @@
             "description": "Simple PHP counter",
             "support": {
                 "issues": "https://github.com/napastyuk/otus-homework/issues",
-                "source": "https://github.com/napastyuk/otus-homework/tree/v1.0.1"
+                "source": "https://github.com/napastyuk/otus-homework/tree/v1.0.2"
             },
-            "time": "2025-02-17T20:46:25+00:00"
+            "time": "2025-02-19T21:24:39+00:00"
         }
     ],
     "packages-dev": [],
