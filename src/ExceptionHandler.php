@@ -1,6 +1,6 @@
 <?php
 
-namespace Src;
+namespace Hafiz\Php2025;
 
 class ExceptionHandler {
     public static function handle(\Exception $e, int $code = 400): string {

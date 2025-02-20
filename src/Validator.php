@@ -1,6 +1,6 @@
 <?php
 
-namespace Src;
+namespace Hafiz\Php2025;
 
 class Validator {
     public static function isValidBrackets(string $string): bool {

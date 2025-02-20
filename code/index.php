@@ -1,12 +1,8 @@
 <?php
 
-require __DIR__ . '/src/App.php';
-require __DIR__ . '/src/Validator.php';
-require __DIR__ . '/src/ExceptionHandler.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-use Src\App;
-
-header('Content-Type: application/json');
+use Hafiz\Php2025\App;
 
 $app = new App();
-echo $app->run();
+$app->run();

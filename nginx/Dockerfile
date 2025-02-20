@@ -1,6 +1,6 @@
 FROM nginx:latest
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx-balancer.conf /etc/nginx/nginx.conf
 
 WORKDIR /data
 
