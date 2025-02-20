@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: otusapp/nginx_email
+    container_name: nginx_service_email
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./data:/var/www/html
+    depends_on:
+      - php-fpm
+    networks:
+      - app_network
+
+  php-fpm:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: otusapp/php_email # имя будущего образа
+    container_name: php_fpm_service_email
+    restart: always
+    volumes:
+      - ./data:/var/www/html
+    environment:
+      - PHP_MEMORY_LIMIT=512M
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
