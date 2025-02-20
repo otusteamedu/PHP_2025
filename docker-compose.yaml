@@ -4,23 +4,95 @@ services:
     build:
       context: .
       dockerfile: ./docker/nginx/Nginx.Dockerfile
+    image: balance/nginx
+    container_name: balancer-nginx
     ports:
       - "8096:80"
     networks:
       - internal
     volumes:
       - ./:/var/www/app
-  fpm:
+  fpm1:
     build:
       context: .
       dockerfile: ./docker/php/Fpm.Dockerfile
+    image: balance/php
+    container_name: fpm1
     volumes:
       - ./:/var/www/app
     networks:
       - internal
+      #- fpm-redis-1
+#  redis1:
+#    image: redis:latest
+#    restart: always
+#    command: redis-server --save 20 1 --loglevel warning
+#    volumes:
+#      - ./cache:/data/redis
+#    networks:
+#      - internal
+#      - fpm-redis-1
+  fpm2:
+    build:
+      context: .
+      dockerfile: ./docker/php/Fpm.Dockerfile
+    image: balance/php
+    container_name: fpm2
+    volumes:
+      - ./:/var/www/app
+    networks:
+      - internal
+      #- fpm-redis-2
+#  redis2:
+#    image: redis:latest
+#    restart: always
+#    command: redis-server --save 20 1 --loglevel warning
+#    volumes:
+#      - ./cache:/data/redis
+#    networks:
+#      - internal
+#      - fpm-redis-2
+
+  redis-node-1:
+    image: redis:7.2.3
+    command: [ "/tmp/redis.sh", "10.11.12.13", "7001" ]
+    volumes:
+      - ./config/redis.sh:/tmp/redis.sh
+  redis-node-2:
+      image: redis:7.2.3
+      command: [ "/tmp/redis.sh", "10.11.12.13", "7002" ]
+      volumes:
+        - ./config/redis.sh:/tmp/redis.sh
+  redis-cluster-creator:
+      image: redis:7.2.3
+      command: redis-cli auth 'redispassw' --cluster create 10.11.12.13:7001 10.11.12.13:7002 --cluster-replicas 1 --cluster-yes
+      depends_on:
+        - redis-node-1
+        - redis-node-2
+        - redis-proxy
+  redis-proxy:
+      image: haproxytech/haproxy-alpine:2.4
+      volumes:
+        - ./haproxy:/usr/local/etc/haproxy:ro
+      ports:
+        - 8404:8404
+        - 7001-7006:9001-9006
+        - 7101-7106:9101-9106
+      depends_on:
+        - redis-node-1
+        - redis-node-2
+  redis-insight:
+      container_name: redis-insight
+      image: redislabs/redisinsight:1.14.0
+      ports:
+        - 8001:8001
+      depends_on:
+        - redis-proxy
 
 networks:
   internal:
+  #fpm-redis-1:
+  ##fpm-redis-2:
 
 volumes:
   database_data:
