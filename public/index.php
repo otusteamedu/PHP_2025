@@ -1,19 +1,18 @@
 <?php
     require __DIR__.'/../vendor/autoload.php';
 
-    use App\Controllers\HomeController;
-    use App\Tests\TestBalance;
+    use App\Router;
+    use App\Http\Request;
 
-    $requestUri = $_SERVER['REQUEST_URI'];
+    $request = new Request();
 
-    $app = new HomeController();
+    $response = Router::dispatch($request);
 
-    if ($requestUri == '/test') {
-        header("Content-Type: text/plain");
-        echo $app->viewTest();
-    } else {
-        $result = $app->checkStr();
-        http_response_code($result['status']);
-        echo $result['message'];
+    // Отправляем HTTP-заголовки и код состояния
+    http_response_code($response->getStatusCode());
+    foreach ($response->getHeaders() as $key => $value) {
+        header("$key: $value");
     }
 
+    // Выводим ответ в нужном формате
+    echo $response->getBody();

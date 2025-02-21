@@ -4,34 +4,30 @@ namespace App\Controllers;
 
 use App\Models\Validator;
 
+use App\Http\Request;
+use App\Http\Response;
+
 class HomeController
 {
-    public function checkStr()
+    public function checkStr(Request $request): Response
     {
-        $string = $_POST['string'] ?? '';
+        $data = $request->getBody();
 
         try {
             // Проверка строки с помощью модели Validator
-            Validator::validateString($string);
+            Validator::validateString($data['string']);
 
             // Если строка корректна, возвращаем успешный результат
-            $response = [
-                'status' => 200,
-                'message' => 'Все хорошо'
-            ];
+            return new Response(200, ['Content-Type' => 'application/json'], json_encode(['message' => 'All right']));
         } catch (\Exception $e) {
             // Если строка некорректна, возвращаем ошибку
-            $response = [
-                'status' => 400,
-                'message' => 'Все плохо: ' . $e->getMessage()
-            ];
+            return new Response(200, ['Content-Type' => 'application/json'], json_encode(['message' => 'Error: '.$e->getMessage()]));
         }
-
-        return $response;
     }
 
     public function viewTest() {
-            return "Request Chain: " . ($_SERVER['HTTP_X_REQUEST_CHAIN'] ?? 'Unknown') . gethostname(). "\n";
-        }
+        $message = "Request Chain: " . ($_SERVER['HTTP_X_REQUEST_CHAIN'] ?? 'Unknown') . gethostname();
+        return new Response(200, ['Content-Type' => 'text/plain'], json_encode(['message' => $message]));
+    }
 
 }
