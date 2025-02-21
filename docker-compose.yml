@@ -1,0 +1,74 @@
+services:
+  nginx-upstream:
+    image: nginx:latest
+    container_name: nginx-upstream
+    volumes:
+      - ./docker/nginx/nginx-upstream.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - nginx1
+      - nginx2
+
+  nginx1:
+    image: nginx:latest
+    container_name: nginx-webserver1
+    volumes:
+      - .:/data
+      - ./docker/nginx/nginx1.conf:/etc/nginx/nginx.conf
+    networks:
+      - app-network
+    depends_on:
+      - app1
+      - app2
+
+  nginx2:
+    image: nginx:latest
+    container_name: nginx-webserver2
+    volumes:
+      - .:/data
+      - ./docker/nginx/nginx2.conf:/etc/nginx/nginx.conf
+    networks:
+      - app-network
+    depends_on:
+      - app1
+      - app2
+
+  app1:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: balancer/app1
+    container_name: app1
+    volumes:
+      - .:/data
+    networks:
+      - app-network
+    depends_on:
+      - redis
+
+  app2:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: balancer/app2
+    container_name: app2
+    volumes:
+      - .:/data
+    networks:
+      - app-network
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,19 @@
+{
+  "name": "mkuzmina/hw-5",
+  "description": "Otus: homework for lesson 5 (PHP WebServers)",
+  "type": "project",
+  "license": "BSD-3-Clause",
+  "autoload": {
+    "psr-4": {
+      "App\\": "app"
+    }
+  },
+  "authors": [
+    {
+      "name": "Kuzmina Mariia",
+      "email": "orriole@yandex.ru"
+    }
+  ],
+  "require": {
+  }
+}
