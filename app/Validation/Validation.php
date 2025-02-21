@@ -13,7 +13,7 @@ class Validation
      */
     public static function validate(): ?array
     {
-        $input = self::getInput();
+        $input = $_POST;
         $string = $input['string'];
 
         if (empty($string)) {
@@ -42,18 +42,5 @@ class Validation
         }
 
         return $input;
-    }
-
-    /**
-     * @return array|null
-     */
-    public static function getInput(): ?array
-    {
-        if (empty($_POST)) {
-            $_POST = file_get_contents("php://input");
-            $_POST = json_decode($_POST, true);
-        }
-
-        return $_POST;
     }
 }
