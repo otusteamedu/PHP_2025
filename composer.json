@@ -1,0 +1,16 @@
+{
+    "name": "ivan/task5",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Shoronov Ivan",
+            "email": "shoronov.ivan@mail.ru"
+        }
+    ],
+    "require": {}
+}

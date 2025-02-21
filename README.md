@@ -1,3 +1,8 @@
-# PHP_2025
+Для инициализации пространства имен 
+    composer install
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Блок http://localhost работает на обработку запросов по верификации скобок
+    curl -X POST http://localhost/check -d "{\"string\": \"((()\"}"
+
+Тест балансировщика:
+    curl http://localhost/test
