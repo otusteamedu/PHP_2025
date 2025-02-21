@@ -16,7 +16,7 @@ services:
     image: nginx:latest
     container_name: nginx-webserver1
     volumes:
-      - ./app:/data
+      - .:/data
       - ./docker/nginx/nginx1.conf:/etc/nginx/nginx.conf
     networks:
       - app-network
@@ -28,7 +28,7 @@ services:
     image: nginx:latest
     container_name: nginx-webserver2
     volumes:
-      - ./app:/data
+      - .:/data
       - ./docker/nginx/nginx2.conf:/etc/nginx/nginx.conf
     networks:
       - app-network
@@ -43,7 +43,7 @@ services:
     image: balancer/app1
     container_name: app1
     volumes:
-      - ./app:/data
+      - .:/data
     networks:
       - app-network
     depends_on:
@@ -56,7 +56,7 @@ services:
     image: balancer/app2
     container_name: app2
     volumes:
-      - ./app:/data
+      - .:/data
     networks:
       - app-network
     depends_on:
