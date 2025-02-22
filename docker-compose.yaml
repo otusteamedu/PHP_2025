@@ -1,37 +1,96 @@
 services:
 
-  manager_php-fpm:
+  manager_php-fpm1:
+    container_name: app1
     build:
       context: docker/php-fpm
       dockerfile: Dockerfile
       args:
         - INSTALL_XDEBUG=${INSTALL_XDEBUG}
-    ports:
-      - '9000:9000'
     volumes:
       - ./app:/app:rw
     depends_on:
       manager_redis:
         condition: service_started
-      manager_memcached:
-        condition: service_started
     working_dir: /app
+    networks:
+      - app-network
 
-  manager_nginx:
-    image: nginx:1.25.4
-    depends_on:
-      - manager_php-fpm
+  manager_php-fpm2:
+    container_name: app2
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+      args:
+        - INSTALL_XDEBUG=${INSTALL_XDEBUG}
     volumes:
       - ./app:/app:rw
-      - ./docker/nginx/logs:/var/log/nginx:rw
-      - ./docker/nginx/hosts:/etc/nginx/conf.d
+    depends_on:
+      manager_redis:
+        condition: service_started
+    working_dir: /app
+    networks:
+      - app-network
+
+  manager_nginx_main:
+    image: nginx:1.25.4
+    container_name: nginx_main
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx_main/logs:/var/log/nginx:rw
+      - ./docker/nginx_main/hosts:/etc/nginx/conf.d
     ports:
       - '80:80'
+    networks:
+      - app-network
+    depends_on:
+      manager_nginx_1:
+        condition: service_started
+      manager_nginx_2:
+        condition: service_started
+
+  manager_nginx_1:
+    container_name: nginx_1
+    image: nginx:1.25.4
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx1/logs:/var/log/nginx:rw
+      - ./docker/nginx1/hosts:/etc/nginx/conf.d
+    networks:
+      - app-network
+    depends_on:
+      manager_php-fpm2:
+        condition: service_started
+      manager_php-fpm1:
+        condition: service_started
+
+  manager_nginx_2:
+    container_name: nginx_2
+    image: nginx:1.25.4
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx2/logs:/var/log/nginx:rw
+      - ./docker/nginx2/hosts:/etc/nginx/conf.d
+    networks:
+      - app-network
+    depends_on:
+      manager_php-fpm2:
+        condition: service_started
+      manager_php-fpm1:
+        condition: service_started
 
   manager_redis:
+    container_name: redis
     image: redis:7.2.1
     restart: always
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./docker/redis/config/redis.conf:/usr/local/etc/redis/redis.conf:rw
+      - ./docker/redis/data/:/data:rw
+      - ./logs/redis:/var/log/redis:rw
+    networks:
+      - app-network
 
-  manager_memcached:
-    image: memcached:1.6.34
-    restart: always
+networks:
+  app-network:
+    driver: bridge

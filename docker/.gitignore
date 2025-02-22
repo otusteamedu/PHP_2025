@@ -4,3 +4,7 @@
 /db/data/
 /supervisor/log/
 
+/redis/data/
+/nginx2/logs/
+/nginx1/logs/
+/nginx_main/logs/
