@@ -10,12 +10,9 @@ services:
       - '9000:9000'
     volumes:
       - ./app:/app:rw
-      - ./php-socket:/var/run/php
     depends_on:
       manager_redis:
         condition: service_started
-      manager_db:
-        condition: service_healthy
       manager_memcached:
         condition: service_started
     working_dir: /app
@@ -28,7 +25,6 @@ services:
       - ./app:/app:rw
       - ./docker/nginx/logs:/var/log/nginx:rw
       - ./docker/nginx/hosts:/etc/nginx/conf.d
-      - ./php-socket:/var/run/php
     ports:
       - '80:80'
 
@@ -39,23 +35,3 @@ services:
   manager_memcached:
     image: memcached:1.6.34
     restart: always
-
-  manager_db:
-    image: postgres:17-alpine
-    shm_size: 128mb
-    restart: always
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_NAME}", "-U", "${DB_USER}" ]
-      timeout: 45s
-      interval: 10s
-      retries: 10
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - ./docker/db/data:/var/lib/postgresql/data
-    ports:
-      - ${DB_EXTERNAL_PORT}:5432
-    command: [ "postgres", "-c", "logging_collector=on", "-c", "log_directory=/var/lib/postgresql/data/pg_log", "-c", "log_filename=postgresql.log", "-c", "log_statement=all" ]
-
