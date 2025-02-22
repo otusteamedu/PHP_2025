@@ -1,24 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App;
 
-use App\Validator\ParenthesisValidator;
+use App\Service\EmailVerificationService;
 
 class Application
 {
     public function run(): void
     {
-        try {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $parenthesisValidate = new ParenthesisValidator($_POST['string'] ?? '');
-                $parenthesisValidate->isValidate();
-            } else {
-                throw new \Exception('Не правильный метод проверки', 400);
-            }
-        } catch (\Exception $e) {
-            http_response_code($e->getCode());
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $emails = \explode(";", trim($_POST['emails']));
+            $emailVerificationService = new EmailVerificationService();
+            $resEmails = $emailVerificationService($emails);
 
-            echo $e->getMessage();
+            foreach ($resEmails as $email => $emailRes) {
+                echo "{$email} - {$emailRes['isValidByChars']}, {$emailRes['isValidByMX']}<br>";
+            }
         }
     }
 }

@@ -11,8 +11,9 @@
     <div class="container">
         <form action="/" method="post">
             <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Введите набор символов круглых скобок</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" name="string">
+                <label for="exampleFormControlInput1" class="form-label">Введите набор email адресов, через ";"</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" name="emails"
+                       value="press@vk.com;test@test.com" autocomplete="off">
             </div>
             <button class="btn btn-primary" type="submit">Проверить</button>
         </form>

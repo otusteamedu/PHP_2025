@@ -2,11 +2,7 @@
 
 Не проходит:
 ```
-curl -X POST -d 'string=(()()()()))((((()()()))(()()()(((()))))))' http://mysite.local
-```
-Проходит:
-```
-curl -X POST -d 'string=(()())' http://mysite.local
+curl -X POST -d 'emails=press@vk.com;test@test.com' http://mysite.local
 ```
 
 или через форму http://mysite.local/form.php
