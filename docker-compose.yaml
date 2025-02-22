@@ -1,0 +1,71 @@
+version: '3'
+
+services:
+  nginx-balancer:
+    image: nginx:latest
+    container_name: ${CONTAINER_NGINX_BALANCER}
+    volumes:
+      - ./docker/nginx/nginx-balancer.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - nginx1
+      - nginx2
+    networks:
+      - app_network
+
+  nginx1:
+    image: nginx:latest
+    container_name: ${CONTAINER_NGINX_1}
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - .:/data
+    depends_on:
+      - app1
+      - app2
+    networks:
+      - app_network
+
+  nginx2:
+    image: nginx:latest
+    container_name: ${CONTAINER_NGINX_2}
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - .:/data
+    depends_on:
+      - app1
+      - app2
+    networks:
+      - app_network
+
+  app1:
+    build:
+      context: docker/fpm
+    container_name: ${CONTAINER_APP_1}
+    volumes:
+      - .:/data
+    depends_on:
+      - redis
+    networks:
+      - app_network
+
+  app2:
+    build:
+      context: docker/fpm
+    container_name: ${CONTAINER_APP_2}
+    volumes:
+      - .:/data
+    depends_on:
+      - redis
+    networks:
+      - app_network
+
+  redis:
+    image: redis:latest
+    container_name: ${CONTAINER_REDIS}
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
