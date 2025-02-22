@@ -1,5 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+session_start();
+
 try {
     $postParam = 'string';
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
