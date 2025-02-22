@@ -4,20 +4,29 @@ namespace App\Http;
 
 class Response
 {
-    public function setHeader($header): Response
+    private array $data;
+
+    public function setHeader(string $header): Response
     {
         header($header);
         return $this;
     }
 
-    public function json($data): string
+    public function json(array $data): string
     {
         $this->setHeader('Content-Type: application/json');
         return json_encode($data);
     }
 
-    public function send($statusCode, $data): string
+    public function send(int $statusCode, array $data): Response
     {
-        return $this->json($data);
+        http_response_code($statusCode);
+        $this->data = $data;
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->json($this->data);
     }
 }

@@ -19,7 +19,7 @@ class App
         $this->response = new Response();
     }
 
-    public function run(): void
+    public function run(): Response
     {
         try {
             if ($this->request->getMethod() !== 'POST') {
@@ -33,18 +33,18 @@ class App
             }
 
             if ($this->isValid($str)) {
-                echo $this->response->send(200, [
+                return $this->response->send(200, [
                     'message' => 'String is correct',
                 ]);
             } else {
                 throw new ValidationException('String is invalid');
             }
         } catch (HttpException $e) {
-            echo $this->response->send($e->getHttpCode(), [
+            return $this->response->send($e->getHttpCode(), [
                 'message' => $e->getMessage(),
             ]);
         } catch (\Exception $e) {
-            echo $this->response->send(500, [
+            return $this->response->send(500, [
                 'message' => 'Internal server error',
             ]);
         }
