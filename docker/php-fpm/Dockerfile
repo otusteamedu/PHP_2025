@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libmcrypt-dev \
     libpq-dev \
+    unzip \
     && pecl install redis memcached \
     && docker-php-ext-install -j$(nproc) iconv mbstring pdo_mysql pdo_pgsql zip \
     && docker-php-ext-enable pdo_mysql redis memcached

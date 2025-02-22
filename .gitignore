@@ -8,3 +8,4 @@
 .env.docker
 /php_socket
 /postgres_data
+/redis_data
