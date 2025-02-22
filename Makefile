@@ -18,3 +18,14 @@ dc-down:
 
 dc-stop:
 	${COMPOSE} stop
+
+c-i:
+	composer install
+c-v:
+	composer validate
+c-r:
+	composer require $(filter-out $@,$(MAKECMDGOALS))
+c-r-dev:
+	composer require --dev $(filter-out $@,$(MAKECMDGOALS))
+c-d-a:
+	composer dump-autoload
