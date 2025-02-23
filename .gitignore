@@ -6,3 +6,5 @@ vendor/
 db/
 logs/
 .env
+composer.lock
+
