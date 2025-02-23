@@ -57,11 +57,11 @@ https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_
     },
     "test@google.con": {
         "result": false,
-        "error": "Invalid DNS MX"
+        "error": "Invalid DNS"
     },
     "тест@абракадабра.рус": {
         "result": false,
-        "error": "Invalid DNS MX"
+        "error": "Invalid DNS"
     }
 }
 ```
@@ -93,7 +93,7 @@ https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_
     },
     "test@google.con": {
         "result": false,
-        "error": "Invalid DNS MX"
+        "error": "Invalid DNS"
     },
     "тест@абракадабра.рус": {
         "result": false,

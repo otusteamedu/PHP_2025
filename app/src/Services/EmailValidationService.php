@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Validators\EmailValidator;
+use App\Validators\ValidationException;
 
 /**
  * Class EmailValidationService
@@ -11,15 +12,21 @@ use App\Validators\EmailValidator;
 class EmailValidationService
 {
     /**
+     * @var bool
+     */
+    private bool $validateDNS;
+    /**
      * @var bool whether validation process should take into account IDN (internationalized domain names).
      */
     private bool $enableIDN;
 
     /**
+     * @param bool $validateDNS
      * @param bool $enableIDN
      */
-    public function __construct(bool $enableIDN = false)
+    public function __construct(bool $validateDNS = false, bool $enableIDN = false)
     {
+        $this->validateDNS = $validateDNS;
         $this->enableIDN = $enableIDN;
     }
 
@@ -29,29 +36,21 @@ class EmailValidationService
      */
     public function validate(array $emails): array
     {
-        $validator = new EmailValidator($this->enableIDN);
+        $validator = new EmailValidator($this->validateDNS, $this->enableIDN);
         $result = [];
 
         foreach ($emails as $email) {
-            if (!$validator->validateFormat($email)) {
+            try {
+                $validator->validate($email);
+                $result[$email] = [
+                    'result' => true,
+                ];
+            } catch (ValidationException $e) {
                 $result[$email] = [
                     'result' => false,
-                    'error' => 'Invalid format',
+                    'error' => $e->getMessage(),
                 ];
-                continue;
             }
-
-            if (!$validator->validateDnsMx($email)) {
-                $result[$email] = [
-                    'result' => false,
-                    'error' => 'Invalid DNS MX',
-                ];
-                continue;
-            }
-
-            $result[$email] = [
-                'result' => true,
-            ];
         }
 
         return $result;

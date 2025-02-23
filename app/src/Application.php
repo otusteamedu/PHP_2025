@@ -28,13 +28,14 @@ class Application
     private EmailValidationService $service;
 
     /**
+     * @param bool $validateDNS
      * @param bool $enableIDN whether validation process should take into account IDN (internationalized domain names).
      */
-    public function __construct(bool $enableIDN = false)
+    public function __construct(bool $validateDNS = false, bool $enableIDN = false)
     {
         $this->request = new Request();
         $this->response = new Response();
-        $this->service = new EmailValidationService($enableIDN);
+        $this->service = new EmailValidationService($validateDNS, $enableIDN);
     }
 
     /**

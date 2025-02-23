@@ -4,5 +4,5 @@ require(__DIR__ . '/../src/init.php');
 
 use App\Application;
 
-$application = new Application(true);
+$application = new Application(true, true);
 $application->run();

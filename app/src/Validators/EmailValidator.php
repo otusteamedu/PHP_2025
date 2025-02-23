@@ -11,6 +11,10 @@ use DomainException;
 class EmailValidator
 {
     /**
+     * @var bool
+     */
+    private bool $validateDNS;
+    /**
      * @var bool whether validation process should take into account IDN (internationalized domain names).
      * Note that in order to use IDN validation you have to install and enable `intl` PHP extension,
      * otherwise an exception would be thrown.
@@ -18,10 +22,12 @@ class EmailValidator
     private bool $enableIDN;
 
     /**
+     * @param bool $validateDNS
      * @param bool $enableIDN
      */
-    public function __construct(bool $enableIDN = false)
+    public function __construct(bool $validateDNS = false, bool $enableIDN = false)
     {
+        $this->validateDNS = $validateDNS;
         $this->enableIDN = $enableIDN;
 
         if ($this->enableIDN && !function_exists('idn_to_ascii')) {
@@ -31,29 +37,55 @@ class EmailValidator
 
     /**
      * @param string $email
-     * @return bool
+     * @return void
      */
-    public function validateFormat(string $email): bool
+    public function validate(string $email): void
     {
         if ($this->enableIDN) {
             $email = $this->normalizeEmail($email);
         }
 
-        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+        $this->validateFormat($email);
+
+        if ($this->validateDNS) {
+            $this->validateDNS($email);
+        }
     }
 
     /**
      * @param string $email
+     * @return void
+     * @throws ValidationException
+     */
+    private function validateFormat(string $email): void
+    {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            throw new ValidationException('Invalid format');
+        }
+    }
+
+    /**
+     * @param string $email
+     * @return void
+     * @throws ValidationException
+     */
+    private function validateDNS(string $email): void
+    {
+        $domain = $this->getDomain($email);
+
+        if (!$domain || !$this->hasDNSRecord($domain)) {
+            throw new ValidationException('Invalid DNS');
+        }
+    }
+
+    /**
+     * @param string $domain
      * @return bool
      */
-    public function validateDnsMx(string $email): bool
+    private function hasDNSRecord(string $domain): bool
     {
-        if ($this->enableIDN) {
-            $email = $this->normalizeEmail($email);
-        }
-
-        $domain = $this->getDomain($email);
-        return $domain && checkdnsrr($domain);
+        $normalizedDomain = $domain . '.';
+        return checkdnsrr($normalizedDomain);
     }
 
     /**
