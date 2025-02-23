@@ -14,8 +14,7 @@ if(isset($_POST["email_list"])) {
         if(\MyTestApp\EmailValidation::isValidEmail($email))
             $renderHtml->renderHtml("<p>$email верный</p>");
         else 
-        $renderHtml->renderHtml("<p>$email ошибочный</p>");
-            echo "";
+            $renderHtml->renderHtml("<p>$email ошибочный</p>");
 
     $renderHtml->renderHtml("<h2>Проверка через DNS</h2>");
 
@@ -23,8 +22,7 @@ if(isset($_POST["email_list"])) {
         if(\MyTestApp\EmailValidation::isValidEmailThrowDNS($email))
             $renderHtml->renderHtml("<p>$email верный</p>");
         else 
-        $renderHtml->renderHtml("<p>$email ошибочный</p>");
-            echo "";
+            $renderHtml->renderHtml("<p>$email ошибочный</p>");
     
         
 }
