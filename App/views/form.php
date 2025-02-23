@@ -8,7 +8,18 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container">
+    <div class="container py-2">
+        <?php if ($alert) { ?>
+            <div class="alert alert-primary" role="alert"><?= $alert ?></div>
+        <?php } ?>
+
+        <?php if (\is_array($resEmails) && \count($resEmails)) { ?>
+        <ul>
+            <?php foreach ($resEmails as $email => $emailRes) { ?>
+                <li><?= "{$email} - {$emailRes['isValidByChars']}, {$emailRes['isValidByMX']}"; ?></li>
+            <?php } ?>
+        </ul>
+        <?php } else { ?>
         <form action="/" method="post">
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Введите набор email адресов, через ";"</label>
@@ -17,6 +28,7 @@
             </div>
             <button class="btn btn-primary" type="submit">Проверить</button>
         </form>
+        <?php } ?>
     </div>
 </body>
 </html>
