@@ -5,9 +5,9 @@ namespace app;
 class EmailVerifierTest
 {
     /**
-     * @return array
+     * @return string
      */
-    public function runTests(): array
+    public function runTests(): string
     {
         $verifier = new EmailVerifier();
 

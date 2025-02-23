@@ -8,23 +8,39 @@ class EmailVerifier
 
     /**
      * @param array $emails
-     * @return array
+     * @return string
      */
-    public function verifyEmails(array $emails): array
+    public function verifyEmails(array $emails): string
     {
         $results = [];
 
         foreach ($emails as $email) {
-            $isValidFormat = $this->isValidFormat($email);
-            $hasMxRecords = $this->hasMxRecords($email);
+            $isValidFormat = false;
+            $hasMxRecords = false;
+
+            if ($this->isValidFormat($email)) {
+                $isValidFormat = true;
+            }
+
+            if ($this->hasMxRecords($email)) {
+                $hasMxRecords = true;
+            }
+
+            if ($isValidFormat) {
+                $resultMessage = "Valid format, " . ($hasMxRecords ? "Has MX records" : "Does not have MX records");
+            } else {
+                $resultMessage = "Invalid format, " . ($hasMxRecords ? "Has MX records" : "Does not have MX records");
+            }
 
             $results[$email] = [
                 'valid_format' => $isValidFormat,
-                'has_mx_records' => $hasMxRecords
+                'has_mx_records' => $hasMxRecords,
+                'result' => $resultMessage
             ];
         }
 
-        return $results;
+        header('Content-type: application/json');
+        return json_encode($results, JSON_UNESCAPED_UNICODE);
     }
 
     /**
