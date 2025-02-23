@@ -6,35 +6,44 @@ namespace App;
 
 use App\Validator\ParenthesisValidator;
 use App\View\View;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Application
 {
     public function run(): void
     {
         $view = new View();
-        $isMethodPost = $_SERVER['REQUEST_METHOD'] === 'POST';
+        $request = Request::createFromGlobals();
+        $isMethodPost = $request->isMethod(Request::METHOD_POST);
 
         try {
-            $dateTemplate = [
+            $dataTemplate = [
                 'alert' => 'Используйте форму для проверки или curl с методом POST',
                 'isMethodPost' => $isMethodPost,
             ];
+            $httpCode = Response::HTTP_OK;
 
             if ($isMethodPost) {
-                $parenthesisValidate = new ParenthesisValidator($_POST['string'] ?? '');
+                $stringInput = $request->request->get('string', '');
+                $parenthesisValidate = new ParenthesisValidator($stringInput);
+
                 $parenthesisValidate->isValidate() ?
-                    throw new \Exception('Всё хорошо', 200) :
-                    throw new \Exception('Всё плохо', 400);
+                    throw new \Exception('Всё хорошо', Response::HTTP_OK) :
+                    throw new \Exception('Всё плохо', Response::HTTP_BAD_REQUEST);
             }
         } catch (\Exception $e) {
-            http_response_code($e->getCode());
+            $httpCode = $e->getCode();
 
-            $dateTemplate = [
+            $dataTemplate = [
                 'alert' => $e->getMessage(),
                 'isMethodPost' => $isMethodPost,
             ];
         }
 
-        echo $view->render('form', $dateTemplate);
+        $content = $view->render('form', $dataTemplate);
+
+        $response = new Response($content, $httpCode);
+        $response->send();
     }
 }
