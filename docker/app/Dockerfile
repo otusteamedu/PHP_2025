@@ -14,16 +14,10 @@ RUN apt-get update && apt-get install -y \
 
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
-ARG PUID
-ARG PGID
-
-RUN groupmod -o -g ${PGID} www-data && \
-    usermod -o -u ${PUID} -g www-data www-data
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --filename=composer \
     --install-dir=/usr/local/bin
-
-USER www-data
 
 WORKDIR /var/www
