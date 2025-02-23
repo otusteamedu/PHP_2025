@@ -1,0 +1,20 @@
+{
+  "name": "mkuzmina/hw-6",
+  "description": "Otus: homework for lesson 6",
+  "type": "project",
+  "license": "BSD-3-Clause",
+  "autoload": {
+    "psr-4": {
+      "App\\": "src"
+    }
+  },
+  "authors": [
+    {
+      "name": "Kuzmina Mariia",
+      "email": "orriole@yandex.ru"
+    }
+  ],
+  "require": {
+    "ext-intl": "*"
+  }
+}
