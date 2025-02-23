@@ -9,4 +9,4 @@ curl -X POST -d 'string=(()()()()))((((()()()))(()()()(((()))))))' http://mysite
 curl -X POST -d 'string=(()())' http://mysite.local
 ```
 
-или через форму http://mysite.local/form.php
+или через форму http://mysite.local/

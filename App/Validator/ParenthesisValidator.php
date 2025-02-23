@@ -20,9 +20,9 @@ class ParenthesisValidator
     /**
      * @throws Exception
      */
-    public function isValidate(): void
+    public function isValidate(): bool
     {
-        $this->isCorrectStr($this->string);
+        return $this->isCorrectStr($this->string);
     }
 
     /**
@@ -36,9 +36,7 @@ class ParenthesisValidator
             throw new Exception('Мало символов для проверки', 400);
         }
 
-        $this->isCorrectChars($string, $this->checkedChars, 0, 1, $strLen - 1) ?
-            throw new Exception('Всё хорошо', 200) :
-            throw new Exception('Всё плохо', 400);
+        return $this->isCorrectChars($string, $this->checkedChars, 0, 1, $strLen - 1);
     }
 
     /** Проверяет корректность пар символов
