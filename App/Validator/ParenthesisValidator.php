@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Validator;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 class ParenthesisValidator
 {
@@ -33,7 +34,7 @@ class ParenthesisValidator
         $strLen = \mb_strlen($string);
 
         if ($strLen <= 1) {
-            throw new Exception('Мало символов для проверки', 400);
+            throw new Exception('Мало символов для проверки', Response::HTTP_BAD_REQUEST);
         }
 
         return $this->isCorrectChars($string, $this->checkedChars, 0, 1, $strLen - 1);
