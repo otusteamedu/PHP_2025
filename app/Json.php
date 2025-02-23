@@ -4,10 +4,14 @@ namespace app;
 
 class Json
 {
-    public static function getResponse(int $code, array $response)
+    /**
+     * @param int $code
+     * @param array $response
+     * @return string
+     */
+    public static function getResponse(int $code, array $response): string
     {
         http_response_code($code);
-        echo json_encode($response, JSON_UNESCAPED_UNICODE);
-        exit;
+        return json_encode($response, JSON_UNESCAPED_UNICODE);
     }
 }

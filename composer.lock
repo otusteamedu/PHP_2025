@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59e9a491988aba51a43e1de03a2fcb3b",
+    "content-hash": "8d98829ec376768c00bde9762dc3e852",
     "packages": [
         {
             "name": "dmitrijm/composer",
@@ -47,7 +47,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-json": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }
