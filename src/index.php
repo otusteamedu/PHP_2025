@@ -9,7 +9,7 @@ $redis->connect(getenv('REDIS_HOST'), 6379);
 
 $renderHtml = new \MyTestApp\RenderHtml();
 
-if(isset($_POST["string"])) {
+if(isset($_POST["string"])) { 
     
     // Если строка не валидна отдаем код 400 и записываем данные в Редис об ошибочной валидации
 
