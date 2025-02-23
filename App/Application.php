@@ -6,17 +6,23 @@ namespace App;
 
 use App\Service\EmailVerificationService;
 use App\View\View;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Application
 {
     public function run(): void
     {
         $view = new View();
+        $request = Request::createFromGlobals();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $emails = \explode(";", trim($_POST['emails']));
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $emailsInput =$request->request->get('emails', '');
+            $emails = \explode(';', trim($emailsInput));
+            $emailsFiltered = \array_filter($emails, fn ($email) => !empty($email));
+
             $emailVerificationService = new EmailVerificationService();
-            $resEmails = $emailVerificationService($emails);
+            $resEmails = $emailVerificationService($emailsFiltered);
 
             $dataTemplate = [
                 'alert' => '',
@@ -29,6 +35,9 @@ class Application
             ];
         }
 
-        echo $view->render('form', $dataTemplate);
+        $content = $view->render('form', $dataTemplate);
+
+        $response = new Response($content);
+        $response->send();
     }
 }

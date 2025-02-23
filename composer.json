@@ -4,7 +4,8 @@
     "description": "Learn project",
     "proprietary": "MIT",
     "require": {
-        "symfony/dotenv": "^7.2"
+        "symfony/dotenv": "^7.2",
+        "symfony/http-foundation": "^7.2"
     },
     "autoload": {
         "psr-4": {
