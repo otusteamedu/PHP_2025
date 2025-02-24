@@ -1,0 +1,17 @@
+{
+  "name": "afenin/hw1-6",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Adel"
+    }
+  ],
+  "require": {
+    "ext-json": "*"
+  }
+}
