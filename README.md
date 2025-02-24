@@ -1,3 +1,8 @@
-# PHP_2025
+### Использование
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Не проходит:
+```
+curl -X POST -d 'emails=press@vk.com;test@test.com' http://mysite.local
+```
+
+или через форму http://mysite.local/
