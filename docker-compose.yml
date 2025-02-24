@@ -19,10 +19,10 @@ services:
     build:
       context: ./docker/app
     restart: always
-    working_dir: /var/www/public
+    working_dir: /var/www
     container_name: "${DOCKER_COMPOSE_APP_NAME}__app_1"
     volumes:
-      - ./public:/var/www/public
+      - .:/var/www
     networks:
       - backend
 
@@ -30,10 +30,10 @@ services:
       build:
         context: ./docker/app
       restart: always
-      working_dir: /var/www/public
+      working_dir: /var/www
       container_name: "${DOCKER_COMPOSE_APP_NAME}__app_2"
       volumes:
-        - ./public:/var/www/public
+        - .:/var/www
       networks:
         - backend
 
@@ -41,10 +41,10 @@ services:
         build:
           context: ./docker/app
         restart: always
-        working_dir: /var/www/public
+        working_dir: /var/www
         container_name: "${DOCKER_COMPOSE_APP_NAME}__app_3"
         volumes:
-          - ./public:/var/www/public
+          - .:/var/www
         networks:
           - backend
 
@@ -52,8 +52,6 @@ services:
     image: redis
     container_name: "${DOCKER_COMPOSE_APP_NAME}__redis"
     command: redis-server
-    ports:
-      - ${REDIS_PORT}:6379
     networks:
       - backend
 
