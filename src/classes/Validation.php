@@ -2,7 +2,7 @@
 
 namespace MyTestApp;
 
-Class Common {
+Class Validation {
 
     public static function isValidBrackets($string) {
         // Определяем открывающие и закрывающие скобки
