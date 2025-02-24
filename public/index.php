@@ -18,7 +18,6 @@ try {
 } catch (\Exception $exception) {
     http_response_code(400);
     echo json_encode([
-        'string' => $_POST['string'],
         'status' => 'error',
         'message' => $exception->getMessage(),
     ]);
