@@ -3,6 +3,7 @@
 namespace App\Request;
 
 use App\Exceptions\ValidationException;
+use App\Response\Response;
 use Exception;
 
 class Request
@@ -41,9 +42,9 @@ class Request
     }
 
     /**
-     * @return array
+     * @return Response
      */
-    public function init(): array
+    public function init(): Response
     {
         $list = $this->data['list'];
 
@@ -74,7 +75,7 @@ class Request
             ];
         }
 
-        return $result;
+        return new Response($result);
     }
 
     /**

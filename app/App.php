@@ -4,40 +4,28 @@ namespace App;
 
 use App\Exceptions\ValidationException;
 use App\Request\Request;
+use App\Response\Response;
 use Exception;
 use Throwable;
 
 class App
 {
+    /**
+     * @return void
+     */
     public function run()
     {
         try {
             $request = new Request($_SERVER['REQUEST_METHOD'], $_POST);
-            $data = $request->init();
-            $response = [
-                'success' => true,
-                'data' => $data,
-            ];
+            $response = $request->init();
         } catch (ValidationException $e) {
-            http_response_code(400);
-            $message = $e->getMessage();
-            $response['success'] = false;
+            $response = new Response([], 400, $e->getMessage());
         } catch (Exception $e) {
-            http_response_code($e->getCode() ?? 400);
-            $message = $e->getMessage();
-            $response['success'] = false;
+            $response = new Response([], $e->getCode() ?? 400, $e->getMessage());
         } catch (Throwable $e) {
-            http_response_code(500);
-            $response['success'] = false;
-            $message = "Something wrong";
+            $response = new Response([], 500, "Something wrong");
         } finally {
-            header('Content-Type: application/json; charset=utf-8');
-
-            if (empty($message) === false) {
-                $response['message'] = $message;
-            }
-
-            echo json_encode($response);
+            $response->init();
         }
     }
 }
