@@ -4,11 +4,11 @@ up:
 down:
 	@docker compose down
 
-console 1:
+console_1:
 	@docker compose exec app_1 bash
 
-console 2:
+console_2:
 	@docker compose exec app_2 bash
 
-console 3:
+console_3:
 	@docker compose exec app_3 bash
