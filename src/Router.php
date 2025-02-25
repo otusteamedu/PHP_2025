@@ -2,9 +2,9 @@
 
 namespace App;
 
-use App\Http\Request;
-use App\Http\Response;
-use App\Controllers\HomeController;
+use src\Http\Request;
+use src\Http\Response;
+use src\Controllers\HomeController;
 
 class Router
 {
