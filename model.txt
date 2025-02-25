@@ -1,0 +1,56 @@
+Table halls {
+  id integer [primary key]
+  number_rows integer [note: 'Количество рядов']
+  number_seats integer [note: 'Количество сидений']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table films {
+  id integer [primary key]
+  title varchar(255) [note: 'Название фильма']
+  duration integer [note: 'Продолжительность, мин']
+  rating decimal
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table reviews {
+  id integer [primary key]
+  film_id integer
+  grade integer [note: 'Оценка']
+  text text [note: 'Текст отзыва']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table sessions {
+  id integer [primary key]
+  hall_id integer
+  film_id integer
+  start_time datetime
+  min_price integer
+  max_price integer
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tickets {
+  id integer [primary key]
+  session_id integer
+  row_number integer
+  seat_number integer
+  customer_name varchar(255) [note: 'Имя клиента']
+  customer_email varchar(255) [note: 'Почта клиента']
+  customer_phone varchar(255) [note: 'Телефон клиента']
+  created_at timestamp
+  updated_at timestamp
+}
+
+
+Ref: reviews.film_id > films.id // many-to-one
+
+Ref: sessions.film_id > films.id
+Ref: sessions.hall_id > halls.id
+
+Ref: tickets.session_id > sessions.id
