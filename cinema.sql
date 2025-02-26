@@ -41,6 +41,7 @@ CREATE TABLE tickets (
     session_id INT REFERENCES session(id) ON DELETE CASCADE,
     order_id INT REFERENCES orders(id) ON DELETE CASCADE,
     seat_number VARCHAR(10) NOT NULL,
+    row_number VARCHAR(10) NOT NULL,
     price DECIMAL(10,2) NOT NULL
 );
 
