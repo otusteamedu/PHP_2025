@@ -42,7 +42,7 @@ CREATE TABLE tickets (
     order_id INT REFERENCES orders(id) ON DELETE CASCADE,
     seat_number VARCHAR(10) NOT NULL,
     row_number VARCHAR(10) NOT NULL,
-    price DECIMAL(10,2) NOT NULL
+    price DECIMAL(10,2) DEFAULT NULL
 );
 
 CREATE TABLE payment (
