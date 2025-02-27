@@ -4,12 +4,30 @@ namespace classes;
 
 class EmailValidator
 {
-    public function validateEmailFormat(string $email):bool
+
+    public function validateEmailList(array $arEmails):void
+    {
+        if (!is_array($arEmails)) throw new \RuntimeException('$arEmails is not an array');
+        if (empty($arEmails)) throw new \RuntimeException('There is no list of emails');
+
+
+        $arResult = [];
+        foreach ($arEmails as $email) {
+            $arResult[$email]['IS_FORMAT_VALID'] = $this->validateEmailFormat($email);
+            $arResult[$email]['ARE_DNS_MX_EXIST'] = $this->checkEmailByDnsMX($email);
+        }
+
+        echo '<pre>';
+        var_dump($arResult);
+        echo '</pre>';
+    }
+
+    private function validateEmailFormat(string $email):bool
     {
         return (filter_var($email, FILTER_VALIDATE_EMAIL) !== false);
     }
 
-    public function checkEmailByDnsMX(string $email):bool
+    private function checkEmailByDnsMX(string $email):bool
     {
         $domain = substr(strrchr($email, "@"), 1);
 
@@ -21,5 +39,4 @@ class EmailValidator
 
         return $isValid;
     }
-
 }
