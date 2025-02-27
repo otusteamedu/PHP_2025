@@ -1,0 +1,65 @@
+name: otus-test-work
+services:
+  nginx:
+    container_name: nginx-otus-test-work
+    build: ./nginx
+    ports:
+      - "800:80"
+      - "4430:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - otus-test-work-network
+
+  php:
+    container_name: php-otus-test-work
+    build: ./php
+    working_dir: /var/www/html
+    environment: 
+      - REDIS_HOST=${REDIS_HOST} 
+      - MEMCACHED_HOST=${MEMCACHED_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE} 
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./src:/var/www/html
+      - ./logs/php:/var/log
+    networks:
+      - otus-test-work-network
+
+  redis:
+    container_name: redis-base-otus-test-work
+    image: redis:latest
+    volumes:
+      - ./db/redis:/data
+    networks:
+      - otus-test-work-network
+
+  memcached:
+    container_name: memcached-cache-otus-test-work
+    image: memcached:latest
+    networks:
+      - otus-test-work-network
+  mysql:
+    container_name: mysql-base-otus-test-work
+    image: mysql:9.1
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./db/mysql:/var/lib/mysql:rw
+    ports:
+      - 4000:3306
+    networks:
+      - otus-test-work-network
+
+volumes:
+  src:
+  logs:
+  db:
+
+networks:
+  otus-test-work-network:
+    driver: bridge
