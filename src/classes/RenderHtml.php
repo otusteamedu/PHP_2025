@@ -2,12 +2,12 @@
 
 namespace MyTestApp;
 
-Class RenderHtml {
+Class RenderHtml implements iRenderData {
 
-    public $html = "";
+    public $data = "";
 
-    public function renderHtml($html) {
-        $this->html .= $html;
+    public function renderData($data) {
+        $this->data .= $data;
     }
 
 }

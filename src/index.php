@@ -2,8 +2,16 @@
 
 require_once "vendor/autoload.php";
 
-$myapp = new \MyTestApp\MyApp;
-echo $myapp->render();
+try {
+    $myapp = new \MyTestApp\MyApp("RenderArray");
+    $myapp->render();
+}
+
+catch(\Exception $e) {
+    echo "Ошибка данных: ".$e->getMessage();
+}
+
+
 
 
 

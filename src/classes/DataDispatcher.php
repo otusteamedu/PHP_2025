@@ -4,29 +4,41 @@ namespace MyTestApp;
 
 Class DataDispatcher {
 
-    public function __construct(RenderHtml $renderHtml) {
+    public $data = "";
+
+    public function __construct(iRenderData $renderData) {
 
         if(isset($_POST["email_list"])) {
     
             $email_list = explode(PHP_EOL, $_POST["email_list"]);
-        
-            $renderHtml->renderHtml("<h2>Обычная проверка</h2>");
+
+            $renderData->renderData("<h2>Обычная проверка</h2>");
         
             foreach ($email_list as $email) 
                 if(\MyTestApp\EmailValidation::isValidEmail($email))
-                    $renderHtml->renderHtml("<p>$email верный</p>");
+                    $renderData->renderData("<p>$email верный</p>");
                 else 
-                    $renderHtml->renderHtml("<p>$email ошибочный</p>");
+                    $renderData->renderData("<p>$email ошибочный</p>");
         
-            $renderHtml->renderHtml("<h2>Проверка через DNS</h2>");
+            $renderData->renderData("<h2>Проверка через DNS</h2>");
         
             foreach ($email_list as $email) 
                 if(\MyTestApp\EmailValidation::isValidEmailThrowDNS($email))
-                    $renderHtml->renderHtml("<p>$email верный</p>");
+                    $renderData->renderData("<p>$email верный</p>");
                 else 
-                    $renderHtml->renderHtml("<p>$email ошибочный</p>");
+                    $renderData->renderData("<p>$email ошибочный</p>");
             
         }
+
+        $renderData->renderData("<hr/>");
+        $renderData->renderData("
+        <form method='post'>
+            <textarea name='email_list' style='width:300px; height:200px;' placeholder='Список эл. почты по строкам' ></textarea>
+            <p><input type='submit' value='Проверить'/></p>
+        </form>
+        ");
+
+        $this->data = $renderData->data;
 
     }
 

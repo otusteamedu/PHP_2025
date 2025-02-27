@@ -6,28 +6,29 @@ Class MyApp {
 
     public $render;
 
-    public function __construct() {
+    public function __construct($str_type) {
 
-        $renderHtml = new \MyTestApp\RenderHtml();
+        $class_name = '\\MyTestApp\\'.$str_type;
+        if (class_exists($class_name)) 
+            $this->render = (new \MyTestApp\DataDispatcher(new $class_name))->data;
+        else
+            throw new \Exception("Класс отсутствует");
         
-        new \MyTestApp\DataDispatcher($renderHtml);
-
-        $email_list = $_POST["email_list"] ?? 'usermail1@ya.ru'.PHP_EOL.'usermail1@yandex.ru2'.PHP_EOL.'usermail1';
-        
-        $renderHtml->renderHtml("<hr/>");
-        $renderHtml->renderHtml("
-        <form method='post'>
-            <textarea name='email_list' style='width:300px; height:200px;'>{$email_list}</textarea>
-            <p><input type='submit' value='Проверить'/></p>
-        </form>
-        ");
-
-        $this->render = $renderHtml->html;
-
     }
 
     public function render() {
-        return $this->render;
+
+        switch (gettype($this->render)) {
+            case "string":
+                echo $this->render;
+                break;
+            case "array":
+                echo "<pre>".json_encode($this->render, JSON_UNESCAPED_UNICODE)."</pre>";
+                break;
+            default:
+                echo "Ошибка данных";
+        }
+
     }
 
 }
