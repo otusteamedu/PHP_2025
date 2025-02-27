@@ -1,4 +1,3 @@
-# в этом блоке мы описываем контейнеры, которые будут запускаться
 services:
   nginx-balancer:
     build:
@@ -6,7 +5,6 @@ services:
       dockerfile: ./Dockerfile
     image: otus-5/nginx-balancer
     container_name: nginx
-    # проброс портов
     ports:
       - "80:80"
     volumes:
@@ -25,7 +23,7 @@ services:
     image: otus-5/nginx01
     container_name: nginx01
     volumes:
-       - ./code:/data/mysite.local
+       - ./app:/data/mysite.local
        - ./nginx/hosts/mysite.local1.conf:/etc/nginx/conf.d/mysite.local.conf
     depends_on:
       - app1
@@ -39,7 +37,7 @@ services:
     image: otus-5/nginx02
     container_name: nginx02
     volumes:
-      - ./code:/data/mysite.local
+      - ./app:/data/mysite.local
       - ./nginx/hosts/mysite.local2.conf:/etc/nginx/conf.d/mysite.local.conf
     depends_on:
       - app2
@@ -53,7 +51,7 @@ services:
     image: otus-5/nginx03
     container_name: nginx03
     volumes:
-      - ./code:/data/mysite.local
+      - ./app:/data/mysite.local
       - ./nginx/hosts/mysite.local3.conf:/etc/nginx/conf.d/mysite.local.conf
     depends_on:
       - app3
@@ -64,11 +62,10 @@ services:
     build:
       context: fpm
       dockerfile: ./Dockerfile
-    image: otus-5/php # имя будущего образа
-    container_name: app1 # имя контейнера после запуска
+    image: otus-5/php
+    container_name: app1
     volumes:
-       - ./code:/data/mysite.local
-    # мы можем создать для контейнеров внутреннюю сеть
+       - ./app:/data/mysite.local
     networks:
       - app-network
       - redis-network
@@ -77,11 +74,10 @@ services:
     build:
       context: fpm
       dockerfile: ./Dockerfile
-    image: otus-5/php # имя будущего образа
-    container_name: app2 # имя контейнера после запуска
+    image: otus-5/php
+    container_name: app2
     volumes:
-      - ./code:/data/mysite.local
-    # мы можем создать для контейнеров внутреннюю сеть
+      - ./app:/data/mysite.local
     networks:
       - app-network
       - redis-network
@@ -90,11 +86,10 @@ services:
     build:
       context: fpm
       dockerfile: ./Dockerfile
-    image: otus-5/php # имя будущего образа
-    container_name: app3 # имя контейнера после запуска
+    image: otus-5/php
+    container_name: app3
     volumes:
-      - ./code:/data/mysite.local
-    # мы можем создать для контейнеров внутреннюю сеть
+      - ./app:/data/mysite.local
     networks:
       - app-network
       - redis-network
@@ -110,7 +105,6 @@ services:
     networks:
       - redis-network
 
-#Docker Networks
 networks:
   app-network:
     driver: bridge
