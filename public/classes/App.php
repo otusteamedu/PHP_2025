@@ -16,7 +16,7 @@ class App
             'testMail@eeeeeee.su',
         ];
 
-        $emailValidator->validateEmailList($arEmails);
+        return $emailValidator->validateEmailList($arEmails);
     }
 
 }

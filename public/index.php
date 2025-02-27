@@ -6,7 +6,9 @@ use classes\App;
 
 try {
     $app = new App();
-    $app->run();
+    echo '<pre>';
+    var_dump($app->run());
+    echo '</pre>';
 }
 catch (Exception $e) {
      print_r($e->getMessage());
