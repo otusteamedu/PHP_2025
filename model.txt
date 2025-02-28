@@ -29,8 +29,7 @@ Table sessions {
   hall_id integer
   film_id integer
   start_time datetime
-  min_price integer
-  max_price integer
+  price integer
   created_at timestamp
   updated_at timestamp
 }
@@ -40,6 +39,7 @@ Table tickets {
   session_id integer
   row_number integer
   seat_number integer
+  price integer
   customer_name varchar(255) [note: 'Имя клиента']
   customer_email varchar(255) [note: 'Почта клиента']
   customer_phone varchar(255) [note: 'Телефон клиента']
