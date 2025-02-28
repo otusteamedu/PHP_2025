@@ -7,16 +7,18 @@ CREATE TABLE IF NOT EXISTS halls (
     title VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS hall_line (
+   id INT PRIMARY KEY AUTO_INCREMENT,
+   hall_id INT,
+   line_number TINYINT UNSIGNED NOT NULL,
+   line_capacity TINYINT UNSIGNED NOT NULL,
+   FOREIGN KEY (hall_id) REFERENCES halls (id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS genres (
     id INT PRIMARY KEY AUTO_INCREMENT,
     code VARCHAR(255) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS clients (
-   id INT PRIMARY KEY AUTO_INCREMENT,
-   fio VARCHAR(255) NOT NULL,
-   phone VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS films (
@@ -26,24 +28,38 @@ CREATE TABLE IF NOT EXISTS films (
    FOREIGN KEY (genre_id) REFERENCES genres (id) ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS hall_film (
+CREATE TABLE IF NOT EXISTS screenings (
    id INT PRIMARY KEY AUTO_INCREMENT,
    hall_id INT,
    film_id INT,
+   datetime DATETIME,
    FOREIGN KEY (hall_id) REFERENCES halls (id) ON DELETE CASCADE,
    FOREIGN KEY (film_id) REFERENCES films (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS tickets (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  client_id INT,
-  film_id INT,
+  screening_id INT,
+  line TINYINT UNSIGNED,
   place TINYINT UNSIGNED,
   price FLOAT,
-  datetime DATETIME,
-  FOREIGN KEY (film_id) REFERENCES films (id) ON DELETE CASCADE,
-  FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE
+  FOREIGN KEY (screening_id) REFERENCES screenings (id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS clients (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  fio VARCHAR(255) NOT NULL,
+  phone VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ticket_client (
+   id INT PRIMARY KEY AUTO_INCREMENT,
+   ticket_id INT,
+   client_id INT,
+   FOREIGN KEY (ticket_id) REFERENCES tickets (id) ON DELETE CASCADE,
+   FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE
+);
+
 
 INSERT INTO halls (code, title) VALUES
 ('action_movies_hall', 'Зал боевиков'),
