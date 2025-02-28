@@ -55,6 +55,8 @@ create table orders
     user_id    int references users (id),
     number     varchar(255) unique,
     status     varchar(255),
+    price_max  decimal(10, 2) not null  default '0',
+    price_min  decimal(10, 2) not null  default '0',
     created_at timestamp with time zone default now()
 );
 
@@ -65,7 +67,6 @@ create table tickets
     session_id int references sessions (id),
     place_id   int references places (id),
     order_id   int references orders (id),
-    number     varchar(255) unique,
     constraint unique_tickets_session_id_and_place_id unique (session_id, place_id)
 );
 
