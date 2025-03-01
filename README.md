@@ -1,3 +1,11 @@
-# PHP_2025
+### Примеры запросов
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Успешный:
+```
+curl -X POST -d 'string=()' http://localhost
+```
+
+Неудачный:
+```
+curl -X POST -d 'string=(()()()()))((((()()()))(()()()(((()))))))' http://localhost
+```
