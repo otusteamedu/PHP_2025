@@ -35,6 +35,7 @@ class Request
         $requestBody = file_get_contents('php://input');
         if ($postBody = json_decode($requestBody, true)) {
             $this->post = $postBody;
+            return;
         }
         if (is_string($requestBody) and strlen($requestBody) > 0) {
             foreach (explode(',', $requestBody) as $postParam) {
@@ -42,6 +43,7 @@ class Request
                 $param = explode('=', $matches[0], 2);
                 $this->post[$param[0]] = $param[1];
             };
+            return;
         }
     }
 
