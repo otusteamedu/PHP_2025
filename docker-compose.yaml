@@ -1,0 +1,31 @@
+
+services:
+ #Контейнер с nginx
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: nginx
+    ports:
+      - "80:8080"
+    networks:
+      - app-network
+
+  #Контейнер с PHP-FPM
+  app:
+    build:
+      context: .
+      dockerfile: docker/fpm/Dockerfile
+    image: myapp/php 
+    container_name: app
+    volumes:
+      - ./code:/data/code
+      - ./public:/data/public
+    networks:
+      - app-network
+
+#виртуальная сеть
+networks:
+  app-network:
+    driver: bridge

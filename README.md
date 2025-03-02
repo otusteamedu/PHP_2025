@@ -1,3 +1,3 @@
-# PHP_2025
+Пример использования:
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+curl -X POST -d "string=()" http://localhost
