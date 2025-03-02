@@ -16,6 +16,7 @@ class App
 
     public function __construct()
     {
+        session_start();
         $this->request = new Request();
         $this->response = new Response();
     }
