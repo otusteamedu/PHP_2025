@@ -1,0 +1,61 @@
+services:
+  # Nginx Service
+  nginx:
+    image: nginx:stable-alpine
+    container_name: "${APP_NAME}_nginx"
+    restart: always
+    volumes:
+      - ./public:/var/www/public
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - "${APP_PORT}:80"
+    depends_on:
+      - app_f
+      - app_s
+      - app_r
+    networks:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Application Services (app_f, app_s, app_r)
+  app_f:
+    &app_config
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    container_name: "${APP_NAME}_app_f"
+    networks:
+      - backend
+
+  app_s:
+    <<: *app_config
+    container_name: "${APP_NAME}_app_s"
+
+  app_r:
+    <<: *app_config
+    container_name: "${APP_NAME}_app_r"
+
+  # Redis Service
+  redis:
+    image: redis:alpine
+    container_name: "${APP_NAME}_redis"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+# Networks
+networks:
+  backend:
+    driver: bridge
