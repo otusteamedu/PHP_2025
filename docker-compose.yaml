@@ -3,7 +3,7 @@ services:
  #Контейнер с nginx
   nginx:
     build:
-      context: ./nginx
+      context: docker/nginx
       dockerfile: Dockerfile
     image: myapp/nginx
     container_name: nginx
@@ -11,18 +11,17 @@ services:
       - "80:8080"
     networks:
       - app-network
-    volumes:
-       - ./code:/data/mysite.local
 
   #Контейнер с PHP-FPM
   app:
     build:
-      context: ./fpm
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/fpm/Dockerfile
     image: myapp/php 
-    container_name: app 
+    container_name: app
     volumes:
-       - ./code:/data/mysite.local
+      - ./code:/data/code
+      - ./public:/data/public
     networks:
       - app-network
 

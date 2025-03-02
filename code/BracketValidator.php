@@ -1,4 +1,7 @@
 <?php
+
+namespace App;
+
 class BracketValidator {
 
     private string $input;
@@ -7,30 +10,36 @@ class BracketValidator {
     {
         $this->input = $input;
     }
-        
-    public function isValid():bool
+
+    public function isValid(): array
+    {
+        if (!$this->isFirstCharOpenBracket()) {
+            return ['error' => 'Скобочки не согласованы: первый символ не открывающая скобочка'];
+        } elseif (!$this->isOnlyBracketsInStr()) {
+            return ['error' => 'Скобочки не согласованы: в строке есть другие символы кроме круглых скобочек'];
+        } elseif (!$this->isBracketsMatched()) {
+            return ['error' => 'Скобочки не согласованы: открывающие скобочки не соответствуют закрывающим'];
+        } elseif ($this->isBracketsMatched()) {
+            return ['success' => 'Все Ок. Скобочки согласованы'];
+        } else {
+            return ['error' => 'Неизвестная ошибка'];    
+        }
+    }
+
+    protected function isFirstCharOpenBracket():bool
+    {
+        return isset($this->input[0]) && $this->input[0] === '(';
+    }
+
+    protected function isOnlyBracketsInStr():bool
+    {
+        return preg_match('/^[\(\)]+$/', $this->input) === 1;
+    }
+
+    protected function isBracketsMatched():bool
     {
         $stack = [];
-
-        //сначала проверим на очевидные ошибки
-        $len = strlen($this->input);
-
-        //на пустую строку
-        if ($len === 0) {
-            return false;
-        }; 
-
-        //проверка что первая скобочка открывающая
-        if ($this->input[0] !== '(') {
-            return false;
-        }
-        
-        //проверка что в строке только скобочки
-        if (preg_match('/^[\(\)]+$/', $this->input) !== 1) {
-            return false;
-        };
-
-        for ($i=0; $i < $len; $i++) {
+        for ($i=0; $i < strlen($this->input); $i++) {
             $char = $this->input[$i];
 
             if ($char === '(') {
@@ -40,8 +49,10 @@ class BracketValidator {
                 //если скобочка закрывающая, проверяем была ли открывающая
                 if (empty($stack) || array_pop($stack) !== '(' ) {
                     return false;
-                }
-            }
+                };
+            } else {
+                return false;
+            } 
         }
         //если к окончанию строки стек пустой , значит скобочки расставлены правильно
         return empty($stack);
