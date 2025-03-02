@@ -1,0 +1,25 @@
+services:
+
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/var/www/html"
+    networks:
+      - projectNetwork
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - "./:/var/www/html"
+    networks:
+      - projectNetwork
+
+networks:
+  projectNetwork:
+    driver: bridge
