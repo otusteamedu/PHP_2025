@@ -1,0 +1,234 @@
+services:
+
+  manager_php-fpm1:
+    container_name: app1
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+      args:
+        - INSTALL_XDEBUG=${INSTALL_XDEBUG}
+    volumes:
+      - ./app:/app:rw
+    depends_on:
+      redis_cluster:
+        condition: service_started
+    working_dir: /app
+    networks:
+      - app-network
+      - network_redis_cluster
+
+  manager_php-fpm2:
+    container_name: app2
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+      args:
+        - INSTALL_XDEBUG=${INSTALL_XDEBUG}
+    volumes:
+      - ./app:/app:rw
+    depends_on:
+      redis_cluster:
+        condition: service_started
+    working_dir: /app
+    networks:
+      - app-network
+      - network_redis_cluster
+
+  manager_nginx_main:
+    image: nginx:1.25.4
+    container_name: nginx_main
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx_main/logs:/var/log/nginx:rw
+      - ./docker/nginx_main/hosts:/etc/nginx/conf.d
+    ports:
+      - '80:80'
+    networks:
+      - app-network
+    depends_on:
+      manager_nginx_1:
+        condition: service_started
+      manager_nginx_2:
+        condition: service_started
+
+  manager_nginx_1:
+    container_name: nginx_1
+    image: nginx:1.25.4
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx1/logs:/var/log/nginx:rw
+      - ./docker/nginx1/hosts:/etc/nginx/conf.d
+    networks:
+      - app-network
+    depends_on:
+      manager_php-fpm2:
+        condition: service_started
+      manager_php-fpm1:
+        condition: service_started
+
+  manager_nginx_2:
+    container_name: nginx_2
+    image: nginx:1.25.4
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx2/logs:/var/log/nginx:rw
+      - ./docker/nginx2/hosts:/etc/nginx/conf.d
+    networks:
+      - app-network
+    depends_on:
+      manager_php-fpm2:
+        condition: service_started
+      manager_php-fpm1:
+        condition: service_started
+
+#  manager_redis:
+#    container_name: redis
+#    image: redis:7.2.1
+#    restart: always
+#    command: redis-server /usr/local/etc/redis/redis.conf
+#    volumes:
+#      - ./docker/redis/config/redis.conf:/usr/local/etc/redis/redis.conf:rw
+#      - ./docker/redis/data/:/data:rw
+#      - ./docker/logs/redis:/var/log/redis:rw
+#    networks:
+#      - app-network
+  redis_1:
+    image: redis:7.2.1
+    restart: always
+    hostname: redis-node-1
+    container_name: redis_1
+    sysctls:
+      - net.core.somaxconn=65536
+    ports:
+      - "5381:5381"
+    networks:
+      - network_redis_cluster
+      - app-network
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+    volumes:
+      - ./docker/redis1/logs:/var/log/redis:rw
+      - ./docker/redis1/data/:/data:rw
+      - ./docker/redis1/config/redis.conf:/usr/local/etc/redis/redis.conf:rw"
+
+  redis_2:
+    image: redis:7.2.1
+    restart: always
+    container_name: redis_2
+    hostname: redis-node-2
+    sysctls:
+      - net.core.somaxconn=65536
+    networks:
+      - network_redis_cluster
+      - app-network
+    ports:
+      - "5382:5382"
+    volumes:
+      - ./docker/redis2/logs:/var/log/redis:rw
+      - ./docker/redis2/data/:/data:rw
+      - ./docker/redis2/config/redis.conf:/usr/local/etc/redis/redis.conf:rw"
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+  redis_3:
+    image: redis:7.2.1
+    restart: always
+    container_name: redis_3
+    hostname: redis-node-3
+    sysctls:
+      - net.core.somaxconn=65536
+    networks:
+      - network_redis_cluster
+      - app-network
+    ports:
+      - "5383:5383"
+    volumes:
+      - ./docker/redis3/logs:/var/log/redis:rw
+      - ./docker/redis3/data/:/data:rw
+      - ./docker/redis3/config/redis.conf:/usr/local/etc/redis/redis.conf:rw"
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+  redis_4:
+    image: redis:7.2.1
+    restart: always
+    container_name: redis_4
+    hostname: redis-node-4
+    sysctls:
+      - net.core.somaxconn=65536
+    networks:
+      - network_redis_cluster
+      - app-network
+    ports:
+      - "5384:5384"
+    volumes:
+      - ./docker/redis4/logs:/var/log/redis:rw
+      - ./docker/redis4/data/:/data:rw
+      - ./docker/redis4/config/redis.conf:/usr/local/etc/redis/redis.conf:rw"
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+  redis_5:
+    image: redis:7.2.1
+    restart: always
+    container_name: redis_5
+    hostname: redis-node-5
+    sysctls:
+      - net.core.somaxconn=65536
+    networks:
+      - network_redis_cluster
+      - app-network
+    ports:
+      - "5385:5385"
+    volumes:
+      - ./docker/redis5/logs:/var/log/redis:rw
+      - ./docker/redis5/data/:/data:rw
+      - ./docker/redis5/config/redis.conf:/usr/local/etc/redis/redis.conf:rw"
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+  redis_6:
+    image: redis:7.2.1
+    restart: always
+    container_name: redis_6
+    hostname: redis-node-6
+    sysctls:
+      - net.core.somaxconn=65536
+    networks:
+      - network_redis_cluster
+      - app-network
+    ports:
+      - "5386:5386"
+    volumes:
+      - ./docker/redis6/logs:/var/log/redis:rw
+      - ./docker/redis6/data/:/data:rw
+      - ./docker/redis6/config/redis.conf:/usr/local/etc/redis/redis.conf:rw"
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+  redis_cluster:
+    image: redis:7.2.1
+    container_name: redis_cluster
+    ports:
+      - "6999:6999"
+    sysctls:
+      - net.core.somaxconn=65536
+    networks:
+      - network_redis_cluster
+      - app-network
+    tty: true
+    command: redis-cli -p 5381 --cluster create redis-node-1:5381 redis-node-2:5382 redis-node-3:5383 redis-node-4:5384 redis-node-5:5385 redis-node-6:5386 --cluster-replicas 1 --cluster-yes
+    depends_on:
+      - redis_1
+      - redis_2
+      - redis_3
+      - redis_4
+      - redis_5
+      - redis_6
+
+networks:
+  app-network:
+    driver: bridge
+  network_redis_cluster:
+      driver: bridge
+#      ipam:
+#        driver: default
+#        config:
+#          - subnet: 173.18.0.0/16
+
+#volumes:
+#  redis_1_data: {}
+#  redis_2_data: {}
+#  redis_3_data: {}
+#  redis_4_data: {}
+#  redis_5_data: {}
+#  redis_6_data: {}
