@@ -3,13 +3,12 @@
 namespace App\Validator;
 
 use App\Exception\EmptyValueException;
-use App\Exception\HumanReadableException;
 use App\Exception\InvalidCharacterException;
 use App\Exception\TypeException;
 
 class Validator
 {
-    public function validate($value): string
+    public function validate($value): bool
     {
         if (!is_string($value)) {
             throw new TypeException(humanReadableException: 'Неизвестный формат данных');
