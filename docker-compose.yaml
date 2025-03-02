@@ -1,0 +1,77 @@
+services:
+    # Nginx балансировщик нагрузки
+    nginx-balancer:
+        image: nginx
+        container_name: nginx-balancer
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/hosts/balancer.conf:/etc/nginx/nginx.conf
+        networks:
+            - app-network
+        depends_on:
+            - nginx-web1
+            - nginx-web2
+
+    # Nginx веб-сервер 1
+    nginx-web1:
+        build:
+            context: nginx
+            dockerfile: Dockerfile
+        container_name: nginx-web1
+        volumes:
+            - ./code:/data/mysite.local
+            - ./nginx/hosts/mysite.local-web1.conf:/etc/nginx/conf.d/mysite.local.conf
+        networks:
+            - app-network
+        depends_on:
+            - app1
+
+    # Nginx веб-сервер 2
+    nginx-web2:
+        build:
+            context: nginx
+            dockerfile: Dockerfile
+        container_name: nginx-web2
+        volumes:
+            - ./code:/data/mysite.local
+            - ./nginx/hosts/mysite.local-web2.conf:/etc/nginx/conf.d/mysite.local.conf
+        networks:
+            - app-network
+        depends_on:
+            - app2
+
+    # PHP-FPM для веб-сервера 1
+    app1:
+        build:
+            context: fpm
+            dockerfile: ./Dockerfile
+        container_name: app1
+        volumes:
+            - ./code:/data/mysite.local
+        networks:
+            - app-network
+
+    # PHP-FPM для веб-сервера 2
+    app2:
+        build:
+            context: fpm
+            dockerfile: ./Dockerfile
+        container_name: app2
+        volumes:
+            - ./code:/data/mysite.local
+        networks:
+            - app-network
+
+    # Контейнер с Redis
+    redis:
+        image: redis
+        container_name: redis
+        restart: always
+        # redis в общей сети с PHP-FPM поэтому оба PHP-FPM будут к нему обращатся
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
