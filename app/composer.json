@@ -1,0 +1,17 @@
+{
+    "name": "nikolay_vanzhin/app",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nikolay vanzhin",
+            "email": "nikolay.vanzhin@yandex.ru"
+        }
+    ],
+    "require": {
+        "symfony/validator": "^7.2"
+    }
+}
