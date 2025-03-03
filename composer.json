@@ -1,0 +1,17 @@
+{
+    "name": "mbelomoin/hw1-6",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "iam-in",
+            "email": "m.belomoin@yandex.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
