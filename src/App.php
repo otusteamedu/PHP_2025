@@ -3,21 +3,18 @@
 namespace App;
 
 use App\Exceptions\ValidationException;
-use App\Http\Requests\Request;
 use App\Http\Response;
 use App\Validations\EmailValidation;
 
 class App
 {
-    private Request $request;
     private Response $response;
     private EmailValidation $validator;
 
-    public function __construct(Request $request, Response $response, EmailValidation $validator)
+    public function __construct()
     {
-        $this->request = $request;
-        $this->response = $response;
-        $this->validator = $validator;
+        $this->response = new Response();
+        $this->validator = new EmailValidation();
     }
 
     /**
@@ -26,7 +23,15 @@ class App
     public function run(): Response
     {
         try {
-            $validated = $this->validator->validate($this->request->getPost(), 'emails');
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                $this->response->setStatusCode(405);
+                $this->response->setData([
+                    'message' => 'Method not allowed',
+                ]);
+
+                return $this->response;
+            }
+            $validated = $this->validator->validate($_POST, 'emails');
 
             $this->response->setData($validated);
         } catch (ValidationException $e) {

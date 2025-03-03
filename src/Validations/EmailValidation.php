@@ -32,7 +32,9 @@ class EmailValidation
 
         $this->validateEmails($emails);
 
-        return $emails;
+        return [
+            $key => $emails,
+        ];
     }
 
     /**
