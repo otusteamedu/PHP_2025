@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: mysql
--- Время создания: Мар 03 2025 г., 15:01
+-- Время создания: Мар 03 2025 г., 15:33
 -- Версия сервера: 9.1.0
 -- Версия PHP: 8.2.26
 
@@ -105,20 +105,21 @@ INSERT INTO `halls_seats` (`id`, `hall_id`, `seat_id`, `row_id`) VALUES
 CREATE TABLE `tikets` (
   `id` int NOT NULL,
   `timetable_seatings_id` int DEFAULT NULL,
-  `user_id` int DEFAULT NULL
+  `user_id` int DEFAULT NULL,
+  `price` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Купленные билеты';
 
 --
 -- Дамп данных таблицы `tikets`
 --
 
-INSERT INTO `tikets` (`id`, `timetable_seatings_id`, `user_id`) VALUES
-(1, 1, 1),
-(3, 3, 5),
-(4, 5, 3),
-(5, 6, 2),
-(6, 7, 1),
-(7, 8, 4);
+INSERT INTO `tikets` (`id`, `timetable_seatings_id`, `user_id`, `price`) VALUES
+(1, 1, 1, 450),
+(3, 3, 5, 280),
+(4, 5, 3, 400),
+(5, 6, 2, 300),
+(6, 7, 1, 700),
+(7, 8, 4, 650);
 
 -- --------------------------------------------------------
 
