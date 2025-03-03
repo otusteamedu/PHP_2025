@@ -3,21 +3,18 @@
 namespace App;
 
 use App\Exceptions\ValidationException;
-use App\Http\Requests\Request;
 use App\Http\Response;
 use App\Validations\StringVerify;
 
 class App
 {
-    private Request $request;
     private Response $response;
     private StringVerify $validator;
 
-    public function __construct(Request $request, Response $response, StringVerify $validator)
+    public function __construct()
     {
-        $this->request = $request;
-        $this->response = $response;
-        $this->validator = $validator;
+        $this->response = new Response();
+        $this->validator = new StringVerify();
     }
 
     /**
@@ -26,7 +23,16 @@ class App
     public function run(): Response
     {
         try {
-            $validatedString = $this->validator->validate($this->request->getPost(), 'string');
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                $this->response->setStatusCode(405);
+                $this->response->setData([
+                    'message' => 'Method not allowed',
+                ]);
+
+                return $this->response;
+            }
+
+            $validatedString = $this->validator->validate($_POST, 'string');
             $this->response->setData([
                 'message' => $this->createSuccessMessage($validatedString),
             ]);
