@@ -63,6 +63,7 @@ CREATE TABLE sessions (
     id SERIAL PRIMARY KEY,
     movie_id INT REFERENCES movies(id),
     hall_id INT REFERENCES halls(id),
+    price DECIMAL(10, 2) NOT NULL,
     start_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
@@ -75,6 +76,7 @@ CREATE TABLE seats (
     row_number INT NOT NULL CHECK (row_number > 0),
     place_number INT NOT NULL CHECK (place_number > 0),
     hall_id INT REFERENCES halls(id),
+    coefficient NUMERIC(5, 2) DEFAULT 1,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
@@ -83,8 +85,8 @@ CREATE TABLE seats (
 CREATE TABLE tickets (
     id SERIAL PRIMARY KEY,
     session_id INT REFERENCES sessions(id),
-    price DECIMAL(10, 2) NOT NULL,
     seat_id INT REFERENCES seats(id),
+    price DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     CONSTRAINT unique_tickets_session_id_seat_id UNIQUE (session_id, seat_id)
