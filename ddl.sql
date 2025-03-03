@@ -67,6 +67,7 @@ create table tickets
     session_id int references sessions (id),
     place_id   int references places (id),
     order_id   int references orders (id),
+    price      decimal(10, 2) not null default '0',
     constraint unique_tickets_session_id_and_place_id unique (session_id, place_id)
 );
 
