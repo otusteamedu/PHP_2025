@@ -25,7 +25,7 @@ create table session
 	id			SERIAL PRIMARY KEY,
 	date		DATE NOT NULL,
 	film_id		INT NOT NULL REFERENCES film (id) ON DELETE CASCADE,
-	hole_id		INT NOT NULL REFERENCES hole (id) ON DELETE CASCADE,
+	hall_id		INT NOT NULL REFERENCES hall (id) ON DELETE CASCADE,
 );
 
 create table film
@@ -42,7 +42,7 @@ create table film
 	show_period_to		DATE,
 );
 
-create table hole
+create table hall
 (
 	id			SERIAL PRIMARY KEY,
 	is_active	BOOLEAN NOT NULL DEFAULT 1,
@@ -62,17 +62,10 @@ create table сinema
 create table place
 (
 	id			SERIAL PRIMARY KEY,
-	hole_id		INT NOT NULL REFERENCES hole (id) ON DELETE CASCADE,
+	hall_id		INT NOT NULL REFERENCES hall (id) ON DELETE CASCADE,
 	number		INT,
 	range		INT,
 	type		enum_place_type,
-);
-
-create table free_place
-(
-	session_id	INT NOT NULL REFERENCES session (id),
-	place_id	INT NOT NULL REFERENCES place (id),
-	is_active	BOOLEAN NOT NULL DEFAULT 0,
 );
 
 create table price_list
