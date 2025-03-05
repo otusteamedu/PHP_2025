@@ -1,0 +1,29 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: balance/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - '.:/data/mysite.local'
+    networks:
+      - app-network
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: balance/php
+    container_name: app
+    volumes:
+      - '.:/data/mysite.local'
+      - './vendor:/data/vendor'
+      - './app:/data/app'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
