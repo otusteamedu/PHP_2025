@@ -1,3 +1,8 @@
-# PHP_2025
+Таблица halls - список залов
+Таблица halls_seats - таблица мест в залах по рядам
+Таблица films - список фильмов в прокате
+Таблица timetable - расписание сеансов
+Таблица timetable_seatings - стоимсть конкретных мест в привязке к расписанию
+Таблица tikets - купленные билеты
+Таблица users - посетители
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
