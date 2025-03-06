@@ -21,7 +21,7 @@ class ListNode {
         $dummy = new ListNode(0);
         $current = $dummy;
 
-        while ($list1 != null && $list2 != null) {
+        while ($list1 != null AND $list2 != null) {
             if ($list1->val <= $list2->val) {
                 $current->next = $list1;
                 $list1 = $list1->next;
