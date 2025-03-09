@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: ./docker/app
+    restart: always
+    working_dir: /var/www
+    container_name: "${DOCKER_COMPOSE_APP_NAME}__app"
+    volumes:
+      - .:/var/www
+    environment:
+      PHP_IDE_CONFIG: "serverName=${DOCKER_COMPOSE_APP_NAME}"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    networks:
+      - backend
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: "${DOCKER_COMPOSE_APP_NAME}__nginx"
+    restart: unless-stopped
+    depends_on:
+      - app
+    volumes:
+      - ./public:/var/www/public
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - "${DOCKER_COMPOSE_APP_PORT}:80"
+    networks:
+        - backend
+
+networks:
+  backend:
+    driver: bridge
