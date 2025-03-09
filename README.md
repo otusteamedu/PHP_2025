@@ -1,3 +1,32 @@
 # PHP_2025
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus21.
+
+## Задание: Merge Two Sorted Lists
+
+[Задача на LeetCode](https://leetcode.com/problems/merge-two-sorted-lists/description/)
+
+Вы получаете головные элементы двух отсортированных связанных списков `list1` и `list2`.
+
+Ваша задача — слить два списка в один отсортированный список. Новый список должен быть создан путем объединения узлов из двух списков.
+
+Верните голову объединенного связанного списка.
+
+### Примеры
+
+#### Пример 1:
+- **Input:** `list1 = [1,2,4]`, `list2 = [1,3,4]`
+- **Output:** `[1,1,2,3,4,4]`
+
+#### Пример 2:
+- **Input:** `list1 = []`, `list2 = []`
+- **Output:** `[]`
+
+#### Пример 3:
+- **Input:** `list1 = []`, `list2 = [0]`
+- **Output:** `[0]`
+
+### Ограничения
+- Количество узлов в обоих списках находится в диапазоне `[0, 50]`.
+- Значения узлов находятся в диапазоне `[-100, 100]`.
+- Оба списка `list1` и `list2` отсортированы в неубывающем порядке.
