@@ -1,3 +1,12 @@
-# PHP_2025
+```
+POST 127.0.0.1:8088/index.php
+Content-Type: application/json
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+{
+  "emails": [
+  "jax",
+  "elk@tr.ru",
+  "val@sc.com"
+  ]
+}
+```
