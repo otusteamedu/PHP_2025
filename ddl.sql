@@ -32,6 +32,9 @@ create table attribute_values
     value_date   timestamp null
 );
 
+create index index_attribute_values_attribute_id on attribute_values (attribute_id);
+create index index_attribute_values_film_id on attribute_values (film_id);
+
 -- Представление служебных данных
 create view marketing_view as
 select F.name   as film_name,
