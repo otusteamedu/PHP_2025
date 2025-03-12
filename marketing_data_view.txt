@@ -1,0 +1,14 @@
+CREATE VIEW marketing_data AS
+SELECT 
+    m.movie_id,
+    m.title AS movie_title,
+    atype.type_name AS attribute_type,
+    a.attribute_name AS attribute_name,
+    COALESCE(av.value_text, 
+             CAST(av.value_date AS CHAR), 
+             CAST(av.value_boolean AS CHAR), 
+             CAST(av.value_numeric AS CHAR)) AS attribute_value
+FROM movies m
+JOIN attribute_values av ON m.movie_id = av.movie_id
+JOIN attributes a ON av.attribute_id = a.attribute_id
+JOIN attribute_types atype ON a.type_id = atype.type_id;
