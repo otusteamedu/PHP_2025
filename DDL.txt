@@ -22,7 +22,7 @@ CREATE TABLE attribute_values (
     value_text TEXT,                -- Для текстовых значений (например, рецензии)
     value_date DATE,                -- Для дат (например, премьера фильма)
     value_boolean BOOLEAN,          -- Для логических значений (например, премия)
-    value_float FLOAT,              -- Для числовых значений (например, рейтинг)
+    value_numeric DECIMAL(10, 2),   -- Для числовых значений (например, рейтинг)
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
     FOREIGN KEY (attribute_id) REFERENCES attributes(attribute_id)
 );

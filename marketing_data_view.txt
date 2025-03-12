@@ -7,7 +7,7 @@ SELECT
     COALESCE(av.value_text, 
              CAST(av.value_date AS CHAR), 
              CAST(av.value_boolean AS CHAR), 
-             CAST(av.value_float AS CHAR)) AS attribute_value
+             CAST(av.value_numeric AS CHAR)) AS attribute_value
 FROM movies m
 JOIN attribute_values av ON m.movie_id = av.movie_id
 JOIN attributes a ON av.attribute_id = a.attribute_id
