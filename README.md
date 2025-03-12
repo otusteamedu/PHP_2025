@@ -1,3 +1,6 @@
-# PHP_2025
+### Пример использования
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Через консоль:
+```
+php verifier.php test@foo.bar not-email admin@yandex.ru
+```
