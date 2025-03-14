@@ -21,3 +21,11 @@ WHERE date_of_purchase > DATE_SUB(CURDATE(), INTERVAL '7' DAY)
 GROUP BY screening_id
 ORDER BY total_week_film_profit DESC
 LIMIT 3;
+
+/* Вывести диапазон минимальной и максимальной цены за билет на конкретный сеанс */;
+SELECT films.title, MIN(tickets.price) AS min_screening_ticket_price, MAX(tickets.price) AS max_screening_ticket_price
+FROM tickets
+LEFT JOIN screenings ON tickets.screening_id = screenings.id
+LEFT JOIN films ON screenings.film_id = films.id
+WHERE tickets.screening_id = 3
+GROUP BY screening_id;
