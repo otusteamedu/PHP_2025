@@ -29,3 +29,11 @@ LEFT JOIN screenings ON tickets.screening_id = screenings.id
 LEFT JOIN films ON screenings.film_id = films.id
 WHERE tickets.screening_id = 3
 GROUP BY screening_id;
+
+/* Сформировать схему зала и показать на ней свободные и занятые места на конкретный сеанс */;
+
+-- Занятые места:
+-- получаем все билеты на конкретный сеанс (из билета получаем: screening_id->hall_id, line, place),
+--
+-- Свободные места:
+-- внутри зала по каждой line знаем какие места куплены, соотв. оставшиеся свободные
