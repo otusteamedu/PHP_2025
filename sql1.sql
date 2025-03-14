@@ -1,3 +1,5 @@
+/* Выводим список фильмоав с атрибутами*/
+
 SELECT 
 	films.name film_name,
     films_attrs_values.text attr_value_text,
