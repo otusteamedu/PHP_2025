@@ -28,7 +28,7 @@ create table attribute_values
     film_id      int references films (id),
     value_text   text null,
     value_bool   boolean null,
-    value_number DECIMAL(10, 2) null,
+    value_number real null,
     value_date   timestamp null
 );
 
