@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: mysql
--- Время создания: Мар 10 2025 г., 13:42
+-- Время создания: Мар 14 2025 г., 10:42
 -- Версия сервера: 9.1.0
--- Версия PHP: 8.2.26
+-- Версия PHP: 8.2.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `test_films`
+-- База данных: `test2`
 --
 
 -- --------------------------------------------------------
@@ -66,7 +66,10 @@ INSERT INTO `films_attrs` (`id`, `film_id`, `attr_id`) VALUES
 (6, 2, 9),
 (7, 3, 12),
 (8, 3, 4),
-(9, 3, 10);
+(9, 3, 10),
+(10, 1, 13),
+(11, 2, 14),
+(12, 3, 15);
 
 -- --------------------------------------------------------
 
@@ -76,18 +79,22 @@ INSERT INTO `films_attrs` (`id`, `film_id`, `attr_id`) VALUES
 
 CREATE TABLE `films_attrs_types` (
   `id` int NOT NULL,
-  `type` tinytext
+  `type` tinytext,
+  `data_type` tinytext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Дамп данных таблицы `films_attrs_types`
 --
 
-INSERT INTO `films_attrs_types` (`id`, `type`) VALUES
-(1, 'рецензии'),
-(2, 'премьера'),
-(3, 'важные даты'),
-(4, 'служебные даты');
+INSERT INTO `films_attrs_types` (`id`, `type`, `data_type`) VALUES
+(1, 'Рецензия', 'text'),
+(2, 'Премьера', 'date'),
+(3, 'Предпоказ', 'date'),
+(4, 'Начало продаж', 'date'),
+(5, 'Оскар', 'boolean'),
+(6, 'Ника', 'boolean'),
+(7, 'Золотой граммофон', 'boolean');
 
 -- --------------------------------------------------------
 
@@ -98,26 +105,31 @@ INSERT INTO `films_attrs_types` (`id`, `type`) VALUES
 CREATE TABLE `films_attrs_values` (
   `id` int NOT NULL,
   `attr_type_id` int DEFAULT NULL,
-  `value` text
+  `text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `date` date DEFAULT NULL,
+  `boolean` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Дамп данных таблицы `films_attrs_values`
 --
 
-INSERT INTO `films_attrs_values` (`id`, `attr_type_id`, `value`) VALUES
-(1, 3, 'Премьера фильма 1'),
-(2, 1, 'Рецензия на фильм 1'),
-(3, 1, 'Рецензия на фильм 2'),
-(4, 1, 'Рецензия на фильм 3'),
-(5, 2, 'премьера фильм 1'),
-(6, 2, 'Премьера фильма 2'),
-(7, 2, 'премьера фильма 3'),
-(8, 4, 'Служебная дата фильма 1'),
-(9, 4, 'Служебная дата фильма 2'),
-(10, 4, 'Служебная дата фильма 3'),
-(11, 2, 'Премьера фильма 2'),
-(12, 2, 'Премьера фильма 3');
+INSERT INTO `films_attrs_values` (`id`, `attr_type_id`, `text`, `date`, `boolean`) VALUES
+(1, 3, NULL, '2025-03-28', NULL),
+(2, 1, 'Рецензия на фильм 1', NULL, NULL),
+(3, 1, 'Рецензия на фильм 2', NULL, NULL),
+(4, 1, 'Рецензия на фильм 3', NULL, NULL),
+(5, 2, NULL, '2025-03-14', NULL),
+(6, 2, NULL, '2025-03-15', NULL),
+(7, 2, NULL, '2025-03-16', NULL),
+(8, 4, NULL, '2025-03-27', NULL),
+(9, 4, NULL, '2025-03-30', NULL),
+(10, 4, NULL, '2025-03-25', NULL),
+(11, 2, NULL, '2025-03-19', NULL),
+(12, 2, NULL, '2025-03-20', NULL),
+(13, 5, NULL, NULL, 1),
+(14, 6, NULL, NULL, 1),
+(15, 5, NULL, NULL, 1);
 
 --
 -- Индексы сохранённых таблиц
@@ -165,19 +177,19 @@ ALTER TABLE `films`
 -- AUTO_INCREMENT для таблицы `films_attrs`
 --
 ALTER TABLE `films_attrs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT для таблицы `films_attrs_types`
 --
 ALTER TABLE `films_attrs_types`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `films_attrs_values`
 --
 ALTER TABLE `films_attrs_values`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
