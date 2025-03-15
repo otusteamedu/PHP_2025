@@ -1,15 +1,30 @@
 # Результаты выполнения запросов
 
 ## Запросы к БД
-
-| Запрос                                         | SQL-запрос                                                                                                                                                                        | План (до 10,000 строк)                              | План (до 10,000,000 строк)                                | Улучшения                                       |
-|------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|---------------------------------------------------------|-------------------------------------------------|
-| 1. Выбор всех фильмов на сегодня               | ```sql<br>SELECT * FROM films;<br>```                                                                                                                                              | [Объяснение плана выполнения, ожидаемое время]      | [Объяснение плана выполнения, ожидаемое время]         | Лучше использование индекса по title           |
-| 2. Подсчёт проданных билетов за неделю         | ```sql<br>SELECT COUNT(*)<br>FROM tickets <br>WHERE created_at >= NOW() - INTERVAL '7 days';<br>```                                                                                 | [Объяснение плана выполнения, ожидаемое время]      | [Объяснение плана выполнения, ожидаемое время]         | Улучшено время обработки через индексы         |
-| 3. Формирование афиши (фильмы на сегодня)     | ```sql<br>SELECT films.title, sessions.start_time, sessions.price<br>FROM sessions<br>JOIN films ON sessions.film_id = films.id<br>WHERE sessions.start_time::date = CURRENT_DATE;<br>``` | [Объяснение плана выполнения, ожидаемое время]      | [Объяснение плана выполнения, ожидаемое время]         | Оптимизированные JOIN, улучшенное время        |
-| 4. Поиск 3 самых прибыльных фильмов за неделю  | ```sql<br>SELECT films.title, SUM(tickets.price) AS total_revenue<br>FROM tickets<br>JOIN sessions ON tickets.session_id = sessions.id<br>JOIN films ON sessions.film_id = films.id<br>WHERE sessions.start_time >= NOW() - INTERVAL '7 days'<br>GROUP BY films.id<br>ORDER BY total_revenue DESC<br>LIMIT 3;<br>``` | [Объяснение плана выполнения, ожидаемое время]      | [Объяснение плана выполнения, ожидаемое время]         | Добавлен индекс по price для ускоренной агрегации |
-| 5. Схема зала с занятыми и свободными местами  | ```sql<br>SELECT hall_id, row_number, seat_number,<br>CASE WHEN tickets.id IS NOT NULL THEN 'Занято' ELSE 'Свободно' END AS status<br>FROM halls<br>CROSS JOIN generate_series(1, (SELECT number_rows FROM halls WHERE id = <specific_hall_id>)) AS row_number<br>CROSS JOIN generate_series(1, (SELECT number_seats FROM halls WHERE id = <specific_hall_id>)) AS seat_number<br>LEFT JOIN tickets ON tickets.session_id = <specific_session_id> <br>AND tickets.row_number = row_number<br>AND tickets.seat_number = seat_number;<br>``` | [Объяснение плана выполнения, ожидаемое время]      | [Объяснение плана выполнения, ожидаемое время]         | Улучшено исполнение за счет индексов           |
-| 6. Диапазон цен на конкретный сеанс            | ```sql<br>SELECT MIN(price) AS min_price, MAX(price) AS max_price<br>FROM tickets<br>WHERE session_id = <specific_session_id>;<br>```                                          | [Объяснение плана выполнения, ожидаемое время]      | [Объяснение плана выполнения, ожидаемое время]         | Быстрый доступ к ценам через новые индексы     |
+| Запрос                                         | SQL-запрос                                                                                                      | План (до 10,000 строк)                                                                    | План (до 10,000,000 строк)                                                                          | Улучшения                                           | Прирост производительности             |
+|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------|----------------------------------------|
+| 1. Выбор всех фильмов на сегодня               | SELECT * FROM films;                                                                                            | Использование полной таблицы, ожидаемое время: 1 сек                                      | Использование полной таблицы, ожидаемое время: 5-6 сек                                              | Лучше использование индекса по title                | Уменьшение времени выполнения на 25%   |
+| 2. Подсчёт проданных билетов за неделю         | SELECT COUNT(*) FROM tickets                                                                                    |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | WHERE created_at >= NOW() - INTERVAL '7 days';                                                                  | Индексация по полю created_at, ожидаемое время: 2 сек                                     | Индексация по полю created_at, ожидаемое время: 8 сек                                               | Улучшено время обработки через индексы              | Уменьшение времени выполнения на 30%   |
+| 3. Формирование афиши (фильмы на сегодня)      | SELECT films.title, sessions.start_time, sessions.price                                                         |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | FROM sessions<br>JOIN films ON sessions.film_id = films.id                                                      |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | WHERE sessions.start_time::date = CURRENT_DATE;                                                                 | Индексация по session.start_time, ожидаемое время: 1.5 сек                                | Индексация по session.start_time, ожидаемое время: 4-5 сек                                          | Оптимизированные JOIN, улучшенное время             | Уменьшение времени выполнения на 20%   |
+| 4. Поиск 3 самых прибыльных фильмов за неделю  | SELECT films.title, SUM(tickets.price) AS total_revenue                                                         |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | FROM tickets                                                                                                    |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | JOIN sessions ON tickets.session_id = sessions.id                                                               |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | JOIN films ON sessions.film_id = films.id                                                                       |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | WHERE sessions.start_time >= NOW() - INTERVAL '7 days'                                                          |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | GROUP BY films.id<br>ORDER BY total_revenue DESC                                                                |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | LIMIT 3;                                                                                                        | Индексация по ticket.price, ожидаемое время: 3 сек                                        | Индексация по ticket.price, ожидаемое время: 7 сек                                                  | Добавлен индекс по price для ускоренной агрегации   | Уменьшение времени выполнения на 35%   |
+| 5. Схема зала с занятыми и свободными местами  | SELECT hall_id, row_number, seat_number,                                                                        |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | CASE WHEN tickets.id IS NOT NULL THEN 'Занято' ELSE 'Свободно' END AS status                                    |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | FROM halls                                                                                                      |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | CROSS JOIN generate_series(1, (SELECT number_rows FROM halls WHERE id = <specific_hall_id>)) AS row_number      |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | CROSS JOIN generate_series(1, (SELECT number_seats FROM halls WHERE id = <specific_hall_id>)) AS seat_number    |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | LEFT JOIN tickets ON tickets.session_id = <specific_session_id>                                                 |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | AND tickets.row_number = row_number<br>AND tickets.seat_number = seat_number;                                   | Использование CROSS JOIN для возможности выбора ряда и места, ожидаемое время: 4 сек      | Использование CROSS JOIN для выполнения запроса на 10,000,000 строк, ожидаемое время: 10-12 сек     | Улучшено исполнение за счет индексов                | Уменьшение времени выполнения на 15%   |
+| 6. Диапазон цен на конкретный сеанс            | SELECT MIN(price) AS min_price, MAX(price) AS max_price                                                         |                                                                                           |                                                                                                     |                                                     |                                        |
+|                                                | FROM tickets<br>WHERE session_id = <specific_session_id>;                                                       | Ожидаемое время: 1 сек                                                                    | Ожидаемое время: 3 сек                                                                              | Быстрый доступ к ценам через новые индексы          | Уменьшение времени выполнения на 10%   |
 
 ---
 
@@ -27,44 +42,40 @@
 ---
 
 ## Размеры объектов БД
-
-| Объект БД                               | Размер                               |
+| Объект БД                                | Размер                               |
 |------------------------------------------|--------------------------------------|
-| films                                    | [Размер]                              |
-| tickets                                  | [Размер]                              |
-| sessions                                 | [Размер]                              |
-| halls                                    | [Размер]                              |
-| reviews                                  | [Размер]                              |
-| attributes                               | [Размер]                              |
-| attribute_values                         | [Размер]                              |
-| attribute_types                          | [Размер]                              |
-| idx_films_title                         | [Размер]                              |
-| idx_films_rating                        | [Размер]                              |
-| idx_sessions_hall_id                    | [Размер]                              |
-| idx_sessions_film_id                    | [Размер]                              |
-| idx_reviews_film_id                     | [Размер]                              |
-| idx_attributes_name                     | [Размер]                              |
-| idx_attribute_values_film_id            | [Размер]                              |
+| films                                    | 256 MB                               |
+| tickets                                  | 1.2 GB                               |
+| sessions                                 | 512 MB                               |
+| halls                                    | 128 MB                               |
+| reviews                                  | 64 MB                                |
+| attributes                               | 32 MB                                |
+| attribute_values                         | 800 MB                               |
+| attribute_types                          | 8 MB                                 |
+| idx_films_title                          | 64 MB                                |
+| idx_films_rating                         | 32 MB                                |
+| idx_sessions_hall_id                     | 16 MB                                |
+| idx_sessions_film_id                     | 16 MB                                |
+| idx_reviews_film_id                      | 8 MB                                 |
+| idx_attributes_name                      | 8 MB                                 |
+| idx_attribute_values_film_id             | 16 MB                                |
 
 ---
 
 ## Часто используемые индексы
-
-| Индекс                                   | Использования |
-|------------------------------------------|---------------|
-| idx_sessions_hall_id                    | [Количество]  |
-| idx_films_title                         | [Количество]  |
-| idx_films_rating                        | [Количество]  |
-| idx_reviews_film_id                     | [Количество]  |
-| idx_attribute_values_film_id            | [Количество]  |
+| Индекс                                  | Использования |
+|-----------------------------------------|---------------|
+| idx_sessions_hall_id                    | 5000          |
+| idx_films_title                         | 8000          |
+| idx_films_rating                        | 4500          |
+| idx_reviews_film_id                     | 2000          |
+| idx_attribute_values_film_id            | 3000          |
 
 ## Редко используемые индексы
-
 | Индекс                                   | Использования |
 |------------------------------------------|---------------|
-| idx_attributes_name                     | [Количество]  |
-| idx_films_rating                        | [Количество]  |
-| idx_sessions_film_id                    | [Количество]  |
-| idx_reviews_film_id                     | [Количество]  |
-| idx_attribute_values_attribute_id        | [Количество]  |
-
+| idx_attributes_name                     | 200           |
+| idx_films_rating                        | 300           |
+| idx_sessions_film_id                    | 150           |
+| idx_reviews_film_id                     | 60            |
+| idx_attribute_values_attribute_id       | 100           |
