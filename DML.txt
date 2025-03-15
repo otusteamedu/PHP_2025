@@ -1,0 +1,51 @@
+-- Вставка типов атрибутов
+INSERT INTO attribute_types (type_name) VALUES ('Текстовое значение'), ('Логическое значение'), ('Дата');
+
+-- Вставка атрибутов
+INSERT INTO attributes (name, attribute_type_id) VALUES
+('Рецензия критика', 1),
+('Оскар', 2),
+('Мировая премьера', 3),
+('Дата начала продажи билетов', 3),
+('Когда запускать рекламу на ТВ', 3);
+
+-- Вставка фильмов
+DO $$
+DECLARE
+    i INT;
+BEGIN
+    FOR i IN 1..10000 LOOP
+        INSERT INTO films (title, duration, rating, created_at, updated_at)
+        VALUES (CONCAT('Фильм ', i), 100 + (i % 60), ROUND(random() * 10, 1), NOW(), NOW());
+    END LOOP;
+END $$;
+
+-- Вставка значений атрибутов для фильмов
+INSERT INTO attribute_values (film_id, attribute_id, value_text, value_date, value_image) VALUES
+(1, 1, 'Отличный фильм!', NULL, NULL),
+(1, 2, NULL, NULL, 'image1.jpg'),
+(2, 2, NULL, NULL, 'image2.jpg'),
+(3, 3, NULL, '2025-03-15', NULL),
+(1, 4, NULL, '2025-03-20', NULL);
+
+-- Вставка рецензий
+INSERT INTO reviews (film_id, grade, text, created_at, updated_at) VALUES
+(1, 5, 'Замечательно!', NOW(), NOW()),
+(2, 4, 'Хороший фильм', NOW(), NOW());
+
+-- Вставка сеансов
+INSERT INTO sessions (hall_id, film_id, start_time, price, created_at, updated_at) VALUES
+(1, 1, '2025-03-16 19:00:00', 500.00, NOW(), NOW()),
+(1, 2, '2025-03-17 21:00:00', 450.00, NOW(), NOW());
+
+-- Вставка билетов
+DO $$
+DECLARE
+    i INT;
+BEGIN
+    FOR i IN 1..10000 LOOP
+        INSERT INTO tickets (session_id, row_number, seat_number, price, customer_name, customer_email, customer_phone, created_at, updated_at)
+        VALUES (1, (random()*10)::INT + 1, (random()*10)::INT + 1, ROUND(random() * 1000, 2),
+        CONCAT('Customer ', i), CONCAT('customer', i, '@example.com'), '1234567890', NOW(), NOW());
+    END LOOP;
+END $$;
