@@ -3,7 +3,7 @@ SELECT
     f.title AS film,
     at.type_name AS attribute_type,
     a.name AS attribute,
-    COALESCE(av.value_text, TO_CHAR(av.value_date, 'YYYY-MM-DD'), av.value_image) AS value
+    COALESCE(av.value_text, TO_CHAR(av.value_date, 'YYYY-MM-DD'), av.value_image, av.value_numeric::TEXT) AS value
 FROM films f
 JOIN attribute_values av ON f.id = av.film_id
 JOIN attributes a ON av.attribute_id = a.id
