@@ -1,0 +1,9 @@
+CREATE VIEW service_data AS
+SELECT
+    f.title AS film,
+    MAX(CASE WHEN av.attribute_id = (SELECT id FROM attributes WHERE name = 'Дата начала продажи билетов') THEN av.value_date END) AS task_today,
+    MAX(CASE WHEN av.attribute_id = (SELECT id FROM attributes WHERE name = 'Когда запускать рекламу на ТВ') THEN av.value_date END) AS task_in_20_days
+FROM films f
+JOIN attribute_values av ON f.id = av.film_id
+WHERE av.value_date >= CURRENT_DATE
+GROUP BY f.id;
