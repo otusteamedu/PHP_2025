@@ -5,6 +5,7 @@ SELECT
     films_attrs_values.text attr_value_text,
     films_attrs_values.date attr_value_date,
     films_attrs_values.boolean attr_value_boolean,
+    films_attrs_values.float attr_value_float,
     films_attrs_types.type attr_type
 FROM `films` 
 LEFT JOIN films_attrs ON films_attrs.film_id = films.id
