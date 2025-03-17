@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: mysql
--- Время создания: Мар 14 2025 г., 12:00
+-- Время создания: Мар 17 2025 г., 18:30
 -- Версия сервера: 9.1.0
--- Версия PHP: 8.2.9
+-- Версия PHP: 8.2.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,8 +29,8 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `films` (
   `id` int NOT NULL,
-  `name` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Список фильмов в прокате';
+  `name` tinytext
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Дамп данных таблицы `films`
@@ -69,7 +69,12 @@ INSERT INTO `films_attrs` (`id`, `film_id`, `attr_id`) VALUES
 (9, 3, 10),
 (10, 1, 13),
 (11, 2, 14),
-(12, 3, 15);
+(12, 3, 15),
+(13, 1, 16),
+(14, 1, 17),
+(15, 2, 18),
+(16, 3, 19),
+(17, 1, 20);
 
 -- --------------------------------------------------------
 
@@ -94,7 +99,9 @@ INSERT INTO `films_attrs_types` (`id`, `type`, `data_type`) VALUES
 (4, 'Начало продаж', 'date'),
 (5, 'Оскар', 'boolean'),
 (6, 'Ника', 'boolean'),
-(7, 'Золотой граммофон', 'boolean');
+(7, 'Золотой граммофон', 'boolean'),
+(8, 'Сборы в мире', 'float'),
+(9, 'Окончание показа', 'date');
 
 -- --------------------------------------------------------
 
@@ -107,29 +114,35 @@ CREATE TABLE `films_attrs_values` (
   `attr_type_id` int DEFAULT NULL,
   `text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `date` date DEFAULT NULL,
-  `boolean` tinyint(1) DEFAULT NULL
+  `boolean` tinyint(1) DEFAULT NULL,
+  `float` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Дамп данных таблицы `films_attrs_values`
 --
 
-INSERT INTO `films_attrs_values` (`id`, `attr_type_id`, `text`, `date`, `boolean`) VALUES
-(1, 3, NULL, '2025-03-28', NULL),
-(2, 1, 'Рецензия на фильм 1', NULL, NULL),
-(3, 1, 'Рецензия на фильм 2', NULL, NULL),
-(4, 1, 'Рецензия на фильм 3', NULL, NULL),
-(5, 2, NULL, '2025-03-14', NULL),
-(6, 2, NULL, '2025-03-15', NULL),
-(7, 2, NULL, '2025-03-16', NULL),
-(8, 4, NULL, '2025-03-27', NULL),
-(9, 4, NULL, '2025-03-30', NULL),
-(10, 4, NULL, '2025-03-25', NULL),
-(11, 2, NULL, '2025-03-19', NULL),
-(12, 2, NULL, '2025-03-20', NULL),
-(13, 5, NULL, NULL, 1),
-(14, 6, NULL, NULL, 1),
-(15, 5, NULL, NULL, 1);
+INSERT INTO `films_attrs_values` (`id`, `attr_type_id`, `text`, `date`, `boolean`, `float`) VALUES
+(1, 3, NULL, '2025-03-28', NULL, NULL),
+(2, 1, 'Рецензия на фильм 1', NULL, NULL, NULL),
+(3, 1, 'Рецензия на фильм 2', NULL, NULL, NULL),
+(4, 1, 'Рецензия на фильм 3', NULL, NULL, NULL),
+(5, 2, NULL, '2025-03-14', NULL, NULL),
+(6, 2, NULL, '2025-03-15', NULL, NULL),
+(7, 2, NULL, '2025-03-16', NULL, NULL),
+(8, 4, NULL, '2025-03-27', NULL, NULL),
+(9, 4, NULL, '2025-03-30', NULL, NULL),
+(10, 4, NULL, '2025-03-25', NULL, NULL),
+(11, 2, NULL, '2025-03-19', NULL, NULL),
+(12, 2, NULL, '2025-03-20', NULL, NULL),
+(13, 5, NULL, NULL, 1, NULL),
+(14, 6, NULL, NULL, 1, NULL),
+(15, 5, NULL, NULL, 1, NULL),
+(16, 8, NULL, NULL, NULL, 1000.05),
+(17, 9, NULL, '2025-03-31', NULL, NULL),
+(18, 9, NULL, '2025-03-30', NULL, NULL),
+(19, 9, NULL, '2025-03-28', NULL, NULL),
+(20, 2, NULL, '2025-03-06', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -293,7 +306,8 @@ INSERT INTO `users` (`id`, `name`, `email`, `phone`) VALUES
 -- Индексы таблицы `films`
 --
 ALTER TABLE `films`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
 
 --
 -- Индексы таблицы `films_attrs`
@@ -317,50 +331,6 @@ ALTER TABLE `films_attrs_values`
   ADD KEY `films_attrs_values_ibfk_1` (`attr_type_id`);
 
 --
--- Индексы таблицы `halls`
---
-ALTER TABLE `halls`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `halls_seats`
---
-ALTER TABLE `halls_seats`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `hall_id` (`hall_id`,`seat_id`);
-
---
--- Индексы таблицы `tikets`
---
-ALTER TABLE `tikets`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `timetable_seatings_id` (`timetable_seatings_id`),
-  ADD KEY `tikets_ibfk_2` (`user_id`);
-
---
--- Индексы таблицы `timetable`
---
-ALTER TABLE `timetable`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `time` (`time`,`hall_id`,`film_id`),
-  ADD KEY `film_id_fk` (`film_id`),
-  ADD KEY `hall_id_fk` (`hall_id`);
-
---
--- Индексы таблицы `timetable_seatings`
---
-ALTER TABLE `timetable_seatings`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `timetable_id` (`timetable_id`,`hall_seat_id`),
-  ADD KEY `timetable_seatings_fk` (`hall_seat_id`);
-
---
--- Индексы таблицы `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -374,55 +344,19 @@ ALTER TABLE `films`
 -- AUTO_INCREMENT для таблицы `films_attrs`
 --
 ALTER TABLE `films_attrs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT для таблицы `films_attrs_types`
 --
 ALTER TABLE `films_attrs_types`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT для таблицы `films_attrs_values`
 --
 ALTER TABLE `films_attrs_values`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
---
--- AUTO_INCREMENT для таблицы `halls`
---
-ALTER TABLE `halls`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT для таблицы `halls_seats`
---
-ALTER TABLE `halls_seats`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- AUTO_INCREMENT для таблицы `tikets`
---
-ALTER TABLE `tikets`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT для таблицы `timetable`
---
-ALTER TABLE `timetable`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT для таблицы `timetable_seatings`
---
-ALTER TABLE `timetable_seatings`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT для таблицы `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -440,33 +374,6 @@ ALTER TABLE `films_attrs`
 --
 ALTER TABLE `films_attrs_values`
   ADD CONSTRAINT `films_attrs_values_ibfk_1` FOREIGN KEY (`attr_type_id`) REFERENCES `films_attrs_types` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `halls_seats`
---
-ALTER TABLE `halls_seats`
-  ADD CONSTRAINT `halls_places_fk` FOREIGN KEY (`hall_id`) REFERENCES `halls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `tikets`
---
-ALTER TABLE `tikets`
-  ADD CONSTRAINT `tikets_ibfk_1` FOREIGN KEY (`timetable_seatings_id`) REFERENCES `timetable_seatings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `tikets_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `timetable`
---
-ALTER TABLE `timetable`
-  ADD CONSTRAINT `timetable_ibfk_1` FOREIGN KEY (`film_id`) REFERENCES `films` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `timetable_ibfk_2` FOREIGN KEY (`hall_id`) REFERENCES `halls` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `timetable_seatings`
---
-ALTER TABLE `timetable_seatings`
-  ADD CONSTRAINT `timetable_seatings_fk` FOREIGN KEY (`hall_seat_id`) REFERENCES `halls_seats` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `timetable_seatings_ibfk_1` FOREIGN KEY (`timetable_id`) REFERENCES `timetable` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
