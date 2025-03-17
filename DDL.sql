@@ -98,6 +98,7 @@ CREATE TABLE attribute_values
     value_date  timestamp NULL,
     value_bool  bool NULL,
     value_float float4 NULL,
+    value_int int4 NULL,
     CONSTRAINT value_attribute_fk FOREIGN KEY (attibute_id) REFERENCES "attributes" (id) ON DELETE CASCADE,
     CONSTRAINT value_entity_fk FOREIGN KEY (film_id) REFERENCES films (id) ON DELETE CASCADE
 );
