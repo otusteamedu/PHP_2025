@@ -7,7 +7,7 @@ CREATE TABLE movies (
 CREATE TABLE attribute_types (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    data_type VARCHAR(50) NOT NULL CHECK (data_type IN ('TEXT', 'BOOLEAN', 'DATE', 'FLOAT'))
+    data_type VARCHAR(50) NOT NULL CHECK (data_type IN ('TEXT', 'BOOLEAN', 'DATE', 'INT', 'FLOAT'))
 );
 
 CREATE TABLE attributes (
@@ -24,6 +24,7 @@ CREATE TABLE values (
     value_text TEXT,
     value_boolean BOOLEAN,
     value_date DATE,
+    value_int INT,
     value_float FLOAT,
     FOREIGN KEY (movie_id) REFERENCES movies(id),
     FOREIGN KEY (attribute_id) REFERENCES attributes(id)
