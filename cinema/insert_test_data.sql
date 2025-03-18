@@ -14,6 +14,3 @@ CALL create_clients(10000);
 CALL create_films(10000);
 CALL create_screenings(10000);
 CALL create_tickets(10000);
-
-
-
