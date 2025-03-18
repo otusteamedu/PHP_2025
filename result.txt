@@ -1,0 +1,304 @@
+
+
+-- Выбор всех фильмов на сегодня(Без оптимизации)
+explain analyze
+select f.id   as film_id,
+       f.name as film_name
+from sessions s
+         join films f on f.id = s.film_id
+         join times t on s.time_id = t.id
+where s.date = CURRENT_DATE
+  AND time > current_time
+group by f.id;
+-- Finalize HashAggregate  (cost=24542.98..24656.87 rows=11389 width=35) (actual time=94.119..96.718 rows=10938 loops=1)
+--   Group Key: f.id
+--   Batches: 1  Memory Usage: 1425kB
+--   ->  Gather  (cost=23522.80..24519.25 rows=9490 width=35) (actual time=90.482..93.599 rows=10970 loops=1)
+--         Workers Planned: 2
+--         Workers Launched: 2
+--         ->  Partial HashAggregate  (cost=22522.80..22570.25 rows=4745 width=35) (actual time=60.053..60.502 rows=3657 loops=3)
+--               Group Key: f.id
+--               Batches: 1  Memory Usage: 721kB
+--               Worker 0:  Batches: 1  Memory Usage: 465kB
+--               Worker 1:  Batches: 1  Memory Usage: 465kB
+--               ->  Nested Loop  (cost=54.62..22510.94 rows=4745 width=35) (actual time=0.189..58.383 rows=3665 loops=3)
+--                     ->  Hash Join  (cost=54.20..13694.65 rows=4745 width=4) (actual time=0.155..39.659 rows=3665 loops=3)
+--                           Hash Cond: (s.time_id = t.id)
+--                           ->  Parallel Seq Scan on sessions s  (cost=0.00..13603.00 rows=14236 width=8) (actual time=0.016..38.187 rows=11056 loops=3)
+--                                 Filter: (date = CURRENT_DATE)
+--                                 Rows Removed by Filter: 322277
+--                           ->  Hash  (cost=45.70..45.70 rows=680 width=4) (actual time=0.079..0.080 rows=2 loops=3)
+--                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+--                                 ->  Seq Scan on times t  (cost=0.00..45.70 rows=680 width=4) (actual time=0.071..0.072 rows=2 loops=3)
+-- "                                      Filter: ((""time"")::time with time zone > CURRENT_TIME)"
+--                                       Rows Removed by Filter: 4
+--                     ->  Index Scan using films_pkey on films f  (cost=0.42..1.86 rows=1 width=35) (actual time=0.005..0.005 rows=1 loops=10995)
+--                           Index Cond: (id = s.film_id)
+-- Planning Time: 0.238 ms
+-- Execution Time: 97.408 ms
+
+-- Выбор всех фильмов на сегодня(С оптимизацией)
+CREATE INDEX idx_sessions_date ON sessions(date);
+CREATE INDEX idx_times_time ON times(time);
+
+explain analyze
+select f.id   as film_id,
+       f.name as film_name
+from sessions s
+         join films f on f.id = s.film_id
+         join times t on s.time_id = t.id
+where s.date = CURRENT_DATE
+  AND time > current_time
+group by f.id;
+
+-- Finalize HashAggregate  (cost=18865.00..18978.89 rows=11389 width=35) (actual time=67.511..69.514 rows=10938 loops=1)
+--   Group Key: f.id
+--   Batches: 1  Memory Usage: 1425kB
+--   ->  Gather  (cost=17844.82..18841.27 rows=9490 width=35) (actual time=63.778..66.373 rows=10955 loops=1)
+--         Workers Planned: 2
+--         Workers Launched: 2
+--         ->  Partial HashAggregate  (cost=16844.82..16892.27 rows=4745 width=35) (actual time=32.153..32.588 rows=3652 loops=3)
+--               Group Key: f.id
+--               Batches: 1  Memory Usage: 1169kB
+--               Worker 0:  Batches: 1  Memory Usage: 337kB
+--               Worker 1:  Batches: 1  Memory Usage: 337kB
+--               ->  Nested Loop  (cost=386.78..16832.96 rows=4745 width=35) (actual time=1.078..30.702 rows=3665 loops=3)
+--                     ->  Hash Join  (cost=386.35..8016.66 rows=4745 width=4) (actual time=1.049..13.450 rows=3665 loops=3)
+--                           Hash Cond: (s.time_id = t.id)
+--                           ->  Parallel Bitmap Heap Scan on sessions s  (cost=385.22..7951.77 rows=14236 width=8) (actual time=0.961..11.879 rows=11056 loops=3)
+--                                 Recheck Cond: (date = CURRENT_DATE)
+--                                 Heap Blocks: exact=5657
+--                                 ->  Bitmap Index Scan on idx_sessions_date  (cost=0.00..376.68 rows=34167 width=0) (actual time=1.876..1.876 rows=33168 loops=1)
+--                                       Index Cond: (date = CURRENT_DATE)
+--                           ->  Hash  (cost=1.10..1.10 rows=2 width=4) (actual time=0.053..0.053 rows=2 loops=3)
+--                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+--                                 ->  Seq Scan on times t  (cost=0.00..1.10 rows=2 width=4) (actual time=0.047..0.048 rows=2 loops=3)
+-- "                                      Filter: ((""time"")::time with time zone > CURRENT_TIME)"
+--                                       Rows Removed by Filter: 4
+--                     ->  Index Scan using films_pkey on films f  (cost=0.42..1.86 rows=1 width=35) (actual time=0.004..0.004 rows=1 loops=10995)
+--                           Index Cond: (id = s.film_id)
+-- Planning Time: 0.247 ms
+-- Execution Time: 70.225 ms
+
+
+-- Подсчёт проданных билетов за неделю(Без оптимизации)
+explain analyze
+select count(t.id) as count_tickets
+from tickets t
+         join sessions s on t.session_id = s.id
+where s.date BETWEEN (CURRENT_DATE - INTERVAL '7 days')
+          AND CURRENT_DATE;
+
+-- Finalize Aggregate  (cost=28815.84..28815.85 rows=1 width=8) (actual time=153.425..157.997 rows=1 loops=1)
+--   ->  Gather  (cost=28815.62..28815.83 rows=2 width=8) (actual time=152.581..157.992 rows=3 loops=1)
+--         Workers Planned: 2
+--         Workers Launched: 2
+--         ->  Partial Aggregate  (cost=27815.62..27815.63 rows=1 width=8) (actual time=124.066..124.067 rows=1 loops=3)
+--               ->  Parallel Hash Join  (cost=14923.11..27536.52 rows=111639 width=4) (actual time=33.387..120.810 rows=88704 loops=3)
+--                     Hash Cond: (t.session_id = s.id)
+--                     ->  Parallel Seq Scan on tickets t  (cost=0.00..11519.67 rows=416667 width=8) (actual time=0.115..23.256 rows=333333 loops=3)
+--                     ->  Parallel Hash  (cost=13527.62..13527.62 rows=111639 width=4) (actual time=32.709..32.710 rows=88716 loops=3)
+--                           Buckets: 524288  Batches: 1  Memory Usage: 14528kB
+--                           ->  Parallel Bitmap Heap Scan on sessions s  (cost=3662.75..13527.62 rows=111639 width=4) (actual time=4.238..18.503 rows=88716 loops=3)
+--                                 Recheck Cond: ((date >= (CURRENT_DATE - '7 days'::interval)) AND (date <= CURRENT_DATE))
+--                                 Heap Blocks: exact=4628
+--                                 ->  Bitmap Index Scan on idx_sessions_date  (cost=0.00..3595.76 rows=267933 width=0) (actual time=11.681..11.681 rows=266147 loops=1)
+--                                       Index Cond: ((date >= (CURRENT_DATE - '7 days'::interval)) AND (date <= CURRENT_DATE))
+-- Planning Time: 0.163 ms
+-- Execution Time: 158.026 ms
+
+-- Подсчёт проданных билетов за неделю(C оптимизацией)
+alter table tickets
+    add column date date null;
+
+UPDATE tickets
+SET date = (SELECT sessions.date FROM sessions WHERE id = tickets.session_id)
+where id > 0;
+
+explain analyze
+select count(t.id) as count_tickets
+from tickets t
+WHERE date BETWEEN (CURRENT_DATE - INTERVAL '7 days')
+          AND CURRENT_DATE;
+
+-- Finalize Aggregate  (cost=34466.63..34466.64 rows=1 width=8) (actual time=105.664..109.799 rows=1 loops=1)
+--   ->  Gather  (cost=34466.42..34466.63 rows=2 width=8) (actual time=105.525..109.794 rows=3 loops=1)
+--         Workers Planned: 2
+--         Workers Launched: 2
+--         ->  Partial Aggregate  (cost=33466.42..33466.43 rows=1 width=8) (actual time=74.039..74.039 rows=1 loops=3)
+--               ->  Parallel Seq Scan on tickets t  (cost=0.00..33456.00 rows=4167 width=4) (actual time=0.081..70.677 rows=88704 loops=3)
+--                     Filter: ((date <= CURRENT_DATE) AND (date >= (CURRENT_DATE - '7 days'::interval)))
+--                     Rows Removed by Filter: 244629
+-- Planning Time: 0.066 ms
+-- Execution Time: 109.818 ms
+
+-- Формирование афиши(Без оптимизации)
+explain analyze
+select f.id, f.name
+from films f
+where f.id in (select film_id from sessions s where s.date = CURRENT_DATE) order by f.name;
+
+-- Gather Merge  (cost=24876.62..28198.59 rows=28472 width=35) (actual time=147.571..176.604 rows=32582 loops=1)
+--   Workers Planned: 2
+--   Workers Launched: 2
+--   ->  Sort  (cost=23876.60..23912.19 rows=14236 width=35) (actual time=102.460..103.252 rows=10861 loops=3)
+--         Sort Key: f.name
+--         Sort Method: quicksort  Memory: 1167kB
+--         Worker 0:  Sort Method: quicksort  Memory: 880kB
+--         Worker 1:  Sort Method: quicksort  Memory: 887kB
+--         ->  Parallel Hash Semi Join  (cost=8129.72..22894.51 rows=14236 width=35) (actual time=7.884..61.741 rows=10861 loops=3)
+--               Hash Cond: (f.id = s.film_id)
+--               ->  Parallel Seq Scan on films f  (cost=0.00..13512.67 rows=416667 width=35) (actual time=0.061..18.837 rows=333333 loops=3)
+--               ->  Parallel Hash  (cost=7951.77..7951.77 rows=14236 width=4) (actual time=7.646..7.647 rows=11056 loops=3)
+--                     Buckets: 65536  Batches: 1  Memory Usage: 1824kB
+--                     ->  Parallel Bitmap Heap Scan on sessions s  (cost=385.22..7951.77 rows=14236 width=4) (actual time=2.559..17.720 rows=33168 loops=1)
+--                           Recheck Cond: (date = CURRENT_DATE)
+--                           Heap Blocks: exact=7263
+--                           ->  Bitmap Index Scan on idx_sessions_date  (cost=0.00..376.68 rows=34167 width=0) (actual time=1.742..1.742 rows=33168 loops=1)
+--                                 Index Cond: (date = CURRENT_DATE)
+-- Planning Time: 0.168 ms
+-- Execution Time: 177.823 ms
+
+
+-- Формирование афиши(С оптимизацией)
+explain analyze
+select f.id as film_id, f.name
+from sessions s
+         join films f on f.id = s.film_id
+where s.date = CURRENT_DATE;
+
+-- Gather  (cost=9129.72..27680.90 rows=34167 width=35) (actual time=22.073..99.873 rows=33168 loops=1)
+--   Workers Planned: 2
+--   Workers Launched: 2
+--   ->  Parallel Hash Join  (cost=8129.72..23264.20 rows=14236 width=35) (actual time=7.469..62.623 rows=11056 loops=3)
+--         Hash Cond: (f.id = s.film_id)
+--         ->  Parallel Seq Scan on films f  (cost=0.00..13512.67 rows=416667 width=35) (actual time=0.060..19.116 rows=333333 loops=3)
+--         ->  Parallel Hash  (cost=7951.77..7951.77 rows=14236 width=4) (actual time=7.203..7.203 rows=11056 loops=3)
+--               Buckets: 65536  Batches: 1  Memory Usage: 1824kB
+--               ->  Parallel Bitmap Heap Scan on sessions s  (cost=385.22..7951.77 rows=14236 width=4) (actual time=2.523..16.723 rows=33168 loops=1)
+--                     Recheck Cond: (date = CURRENT_DATE)
+--                     Heap Blocks: exact=7263
+--                     ->  Bitmap Index Scan on idx_sessions_date  (cost=0.00..376.68 rows=34167 width=0) (actual time=1.655..1.655 rows=33168 loops=1)
+--                           Index Cond: (date = CURRENT_DATE)
+-- Planning Time: 0.152 ms
+-- Execution Time: 100.751 ms
+
+-- Поиск 3 самых прибыльных фильмов за неделю (Без оптимизации)
+explain analyze
+select sum(t.session_price * t.seat_price_coefficient) as sales_by_film,
+       count(t.id)                                     as count_tickets,
+       f.id                                            as film_id,
+       f.name                                          as film_name
+from tickets t
+         join sessions s on t.session_id = s.id
+         join films f on f.id = s.film_id
+where s.date BETWEEN (CURRENT_DATE - INTERVAL '7 days') AND CURRENT_DATE
+group by f.id
+order by sales_by_film desc
+limit 3;
+
+-- Limit  (cost=103611.67..103611.67 rows=3 width=75) (actual time=504.041..510.398 rows=3 loops=1)
+--   ->  Sort  (cost=103611.67..104281.50 rows=267933 width=75) (actual time=504.040..510.397 rows=3 loops=1)
+--         Sort Key: (sum((t.session_price * t.seat_price_coefficient))) DESC
+--         Sort Method: top-N heapsort  Memory: 25kB
+--         ->  Finalize GroupAggregate  (cost=66003.94..100148.68 rows=267933 width=75) (actual time=345.111..489.433 rows=155092 loops=1)
+--               Group Key: f.id
+--               ->  Gather Merge  (cost=66003.94..94566.74 rows=223278 width=75) (actual time=345.104..414.756 rows=155092 loops=1)
+--                     Workers Planned: 2
+--                     Workers Launched: 2
+--                     ->  Partial GroupAggregate  (cost=65003.92..67794.90 rows=111639 width=75) (actual time=280.105..324.821 rows=51697 loops=3)
+--                           Group Key: f.id
+--                           ->  Sort  (cost=65003.92..65283.02 rows=111639 width=49) (actual time=280.095..287.521 rows=88704 loops=3)
+--                                 Sort Key: f.id
+--                                 Sort Method: external merge  Disk: 5496kB
+--                                 Worker 0:  Sort Method: external merge  Disk: 5192kB
+--                                 Worker 1:  Sort Method: external merge  Disk: 5224kB
+--                                 ->  Parallel Hash Join  (cost=36285.01..51825.34 rows=111639 width=49) (actual time=162.960..257.847 rows=88704 loops=3)
+--                                       Hash Cond: (f.id = s.film_id)
+--                                       ->  Parallel Seq Scan on films f  (cost=0.00..13512.67 rows=416667 width=35) (actual time=0.004..19.873 rows=333333 loops=3)
+--                                       ->  Parallel Hash  (cost=34889.52..34889.52 rows=111639 width=18) (actual time=162.402..162.463 rows=88704 loops=3)
+--                                             Buckets: 524288  Batches: 1  Memory Usage: 18720kB
+--                                             ->  Parallel Hash Join  (cost=14923.11..34889.52 rows=111639 width=18) (actual time=33.902..141.752 rows=88704 loops=3)
+--                                                   Hash Cond: (t.session_id = s.id)
+--                                                   ->  Parallel Seq Scan on tickets t  (cost=0.00..18872.67 rows=416667 width=18) (actual time=0.525..33.762 rows=333333 loops=3)
+--                                                   ->  Parallel Hash  (cost=13527.62..13527.62 rows=111639 width=8) (actual time=32.456..32.457 rows=88716 loops=3)
+--                                                         Buckets: 524288  Batches: 1  Memory Usage: 14560kB
+--                                                         ->  Parallel Bitmap Heap Scan on sessions s  (cost=3662.75..13527.62 rows=111639 width=8) (actual time=6.485..27.375 rows=133074 loops=2)
+--                                                               Recheck Cond: ((date >= (CURRENT_DATE - '7 days'::interval)) AND (date <= CURRENT_DATE))
+--                                                               Heap Blocks: exact=5314
+--                                                               ->  Bitmap Index Scan on idx_sessions_date  (cost=0.00..3595.76 rows=267933 width=0) (actual time=11.618..11.618 rows=266147 loops=1)
+--                                                                     Index Cond: ((date >= (CURRENT_DATE - '7 days'::interval)) AND (date <= CURRENT_DATE))
+-- Planning Time: 0.288 ms
+-- Execution Time: 511.291 ms
+
+-- Сформировать схему зала и показать на ней свободные и занятые места на конкретный сеанс
+explain analyze
+select h.id                                               as hall_id,
+       h.name                                             as hall_name,
+       hs.id                                              as hall_seat_id,
+       hs.number                                          as hall_seat_number,
+       count(t.id)                                        as count_tickets,
+       case when count(t.id) > 0 then false else true END as is_empty
+from halls h
+         join hall_seats hs
+              on h.id = hs.hall_id
+         left join tickets t on hs.id = t.hall_seat_id
+         left join sessions s on t.session_id = s.id
+where s.id = 24
+group by h.id, hs.id;
+
+-- GroupAggregate  (cost=10998.00..20962.90 rows=2 width=1049) (actual time=70.570..74.664 rows=2 loops=1)
+-- "  Group Key: h.id, hs.id"
+--   ->  Incremental Sort  (cost=10998.00..20962.86 rows=2 width=1044) (actual time=70.565..74.660 rows=2 loops=1)
+-- "        Sort Key: h.id, hs.id"
+--         Presorted Key: h.id
+--         Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 25kB  Peak Memory: 25kB
+--         ->  Nested Loop  (cost=1033.21..20962.77 rows=2 width=1044) (actual time=70.550..74.649 rows=2 loops=1)
+--               Join Filter: (hs.id = t.hall_seat_id)
+--               Rows Removed by Join Filter: 26
+--               ->  Merge Join  (cost=32.78..35.58 rows=140 width=1040) (actual time=0.028..0.034 rows=14 loops=1)
+--                     Merge Cond: (h.id = hs.hall_id)
+--                     ->  Sort  (cost=16.39..16.74 rows=140 width=520) (actual time=0.014..0.015 rows=2 loops=1)
+--                           Sort Key: h.id
+--                           Sort Method: quicksort  Memory: 25kB
+--                           ->  Seq Scan on halls h  (cost=0.00..11.40 rows=140 width=520) (actual time=0.009..0.010 rows=2 loops=1)
+--                     ->  Sort  (cost=16.39..16.74 rows=140 width=524) (actual time=0.011..0.012 rows=14 loops=1)
+--                           Sort Key: hs.hall_id
+--                           Sort Method: quicksort  Memory: 25kB
+--                           ->  Seq Scan on hall_seats hs  (cost=0.00..11.40 rows=140 width=524) (actual time=0.006..0.007 rows=14 loops=1)
+--               ->  Materialize  (cost=1000.42..20923.00 rows=2 width=8) (actual time=1.973..5.329 rows=2 loops=14)
+--                     ->  Gather  (cost=1000.42..20922.99 rows=2 width=8) (actual time=27.623..74.600 rows=2 loops=1)
+--                           Workers Planned: 2
+--                           Workers Launched: 2
+--                           ->  Nested Loop  (cost=0.42..19922.79 rows=1 width=8) (actual time=22.806..37.061 rows=1 loops=3)
+--                                 ->  Parallel Seq Scan on tickets t  (cost=0.00..19914.33 rows=1 width=12) (actual time=22.797..37.047 rows=1 loops=3)
+--                                       Filter: (session_id = 24)
+--                                       Rows Removed by Filter: 333333
+--                                 ->  Index Only Scan using sessions_pkey on sessions s  (cost=0.42..8.44 rows=1 width=4) (actual time=0.015..0.015 rows=1 loops=2)
+--                                       Index Cond: (id = 24)
+--                                       Heap Fetches: 0
+-- Planning Time: 0.238 ms
+-- Execution Time: 74.716 ms
+
+-- Вывести диапазон миниальной и максимальной цены за билет на конкретный сеанс
+explain analyze
+select max(t.session_price * t.seat_price_coefficient) as max_price,
+       min(t.session_price * t.seat_price_coefficient) as min_price
+from tickets t
+         join sessions s on t.session_id = s.id
+where s.id = 2;
+
+-- Aggregate  (cost=20923.01..20923.02 rows=1 width=64) (actual time=67.207..71.363 rows=1 loops=1)
+--   ->  Gather  (cost=1000.42..20922.99 rows=2 width=10) (actual time=17.431..71.349 rows=3 loops=1)
+--         Workers Planned: 2
+--         Workers Launched: 2
+--         ->  Nested Loop  (cost=0.42..19922.79 rows=1 width=10) (actual time=12.568..33.571 rows=1 loops=3)
+--               ->  Parallel Seq Scan on tickets t  (cost=0.00..19914.33 rows=1 width=14) (actual time=12.528..33.526 rows=1 loops=3)
+--                     Filter: (session_id = 2)
+--                     Rows Removed by Filter: 333332
+--               ->  Index Only Scan using sessions_pkey on sessions s  (cost=0.42..8.44 rows=1 width=4) (actual time=0.041..0.041 rows=1 loops=3)
+--                     Index Cond: (id = 2)
+--                     Heap Fetches: 0
+-- Planning Time: 0.097 ms
+-- Execution Time: 71.389 ms
+
