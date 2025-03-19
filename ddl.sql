@@ -8,7 +8,7 @@ CREATE TABLE attribute_types
 (
     id        serial primary key,
     name      text unique not null,
-    data_type text not null check (data_type in ('text', 'boolean', 'date', 'float'))
+    data_type text not null check (data_type in ('text', 'boolean', 'date', 'float', 'integer'))
 );
 
 CREATE TABLE attributes
@@ -26,6 +26,7 @@ CREATE TABLE movie_attributes
     value_boolean boolean,
     value_date    date,
     value_float   double precision,
+    value_integer int,
     primary key (movie_id, attribute_id)
 );
 
