@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: mysql
--- Время создания: Мар 17 2025 г., 18:30
+-- Время создания: Мар 19 2025 г., 14:55
 -- Версия сервера: 9.1.0
--- Версия PHP: 8.2.26
+-- Версия PHP: 8.2.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `cinemahall`
+-- База данных: `otus`
 --
 
 -- --------------------------------------------------------
@@ -331,6 +331,50 @@ ALTER TABLE `films_attrs_values`
   ADD KEY `films_attrs_values_ibfk_1` (`attr_type_id`);
 
 --
+-- Индексы таблицы `halls`
+--
+ALTER TABLE `halls`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `halls_seats`
+--
+ALTER TABLE `halls_seats`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `hall_id` (`hall_id`,`seat_id`);
+
+--
+-- Индексы таблицы `tikets`
+--
+ALTER TABLE `tikets`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `timetable_seatings_id` (`timetable_seatings_id`),
+  ADD KEY `tikets_ibfk_2` (`user_id`);
+
+--
+-- Индексы таблицы `timetable`
+--
+ALTER TABLE `timetable`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `time` (`time`,`hall_id`,`film_id`),
+  ADD KEY `film_id_fk` (`film_id`),
+  ADD KEY `hall_id_fk` (`hall_id`);
+
+--
+-- Индексы таблицы `timetable_seatings`
+--
+ALTER TABLE `timetable_seatings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `timetable_id` (`timetable_id`,`hall_seat_id`),
+  ADD KEY `timetable_seatings_fk` (`hall_seat_id`);
+
+--
+-- Индексы таблицы `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -359,6 +403,42 @@ ALTER TABLE `films_attrs_values`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
+-- AUTO_INCREMENT для таблицы `halls`
+--
+ALTER TABLE `halls`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT для таблицы `halls_seats`
+--
+ALTER TABLE `halls_seats`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT для таблицы `tikets`
+--
+ALTER TABLE `tikets`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT для таблицы `timetable`
+--
+ALTER TABLE `timetable`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT для таблицы `timetable_seatings`
+--
+ALTER TABLE `timetable_seatings`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT для таблицы `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- Ограничения внешнего ключа сохраненных таблиц
 --
 
@@ -374,6 +454,33 @@ ALTER TABLE `films_attrs`
 --
 ALTER TABLE `films_attrs_values`
   ADD CONSTRAINT `films_attrs_values_ibfk_1` FOREIGN KEY (`attr_type_id`) REFERENCES `films_attrs_types` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `halls_seats`
+--
+ALTER TABLE `halls_seats`
+  ADD CONSTRAINT `halls_places_fk` FOREIGN KEY (`hall_id`) REFERENCES `halls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `tikets`
+--
+ALTER TABLE `tikets`
+  ADD CONSTRAINT `tikets_ibfk_1` FOREIGN KEY (`timetable_seatings_id`) REFERENCES `timetable_seatings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `tikets_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `timetable`
+--
+ALTER TABLE `timetable`
+  ADD CONSTRAINT `timetable_ibfk_1` FOREIGN KEY (`film_id`) REFERENCES `films` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `timetable_ibfk_2` FOREIGN KEY (`hall_id`) REFERENCES `halls` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `timetable_seatings`
+--
+ALTER TABLE `timetable_seatings`
+  ADD CONSTRAINT `timetable_seatings_fk` FOREIGN KEY (`hall_seat_id`) REFERENCES `halls_seats` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `timetable_seatings_ibfk_1` FOREIGN KEY (`timetable_id`) REFERENCES `timetable` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
