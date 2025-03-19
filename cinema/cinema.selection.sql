@@ -24,16 +24,16 @@ LIMIT 3;
 
 /* Сформировать схему зала и показать на ней свободные и занятые места на конкретный сеанс */;
 /* Занятые и свободные места будут сформированы скриптом на PHP */;
-SELECT DISTINCT screenings.id as screening_id, screenings.hall_id, tickets.line, tickets.place, hall_line.line_capacity
+EXPLAIN SELECT DISTINCT screenings.id as screening_id, screenings.hall_id, tickets.line, tickets.place, hall_line.line_capacity
 FROM tickets
-LEFT JOIN screenings ON tickets.screening_id = screenings.id
-LEFT JOIN hall_line ON screenings.hall_id = hall_line.hall_id
-WHERE tickets.screening_id = 3;
+JOIN screenings ON tickets.screening_id = screenings.id
+JOIN hall_line ON screenings.hall_id = hall_line.hall_id
+WHERE tickets.screening_id = 88;
 
 /* Вывести диапазон минимальной и максимальной цены за билет на конкретный сеанс */;
 SELECT films.title, MIN(tickets.price) AS min_screening_ticket_price, MAX(tickets.price) AS max_screening_ticket_price
 FROM tickets
-LEFT JOIN screenings ON tickets.screening_id = screenings.id
-LEFT JOIN films ON screenings.film_id = films.id
+JOIN screenings ON tickets.screening_id = screenings.id
+JOIN films ON screenings.film_id = films.id
 WHERE tickets.screening_id = 3
 GROUP BY screening_id;

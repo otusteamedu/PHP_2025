@@ -30,11 +30,12 @@ BEGIN
     DECLARE i INT DEFAULT 1;
     WHILE i <= max_num
         DO
+            SET i = i + 1;
             INSERT INTO screenings(hall_id, film_id, base_price, datetime) VALUES
                 ((SELECT halls.id FROM halls ORDER BY RAND() LIMIT 1),
                  (SELECT films.id FROM films ORDER BY RAND() LIMIT 1),
-                 RAND()*(20-10)+10,NOW());
-            SET i = i + 1;
+                 RAND()*(20-10)+10,
+                 DATE_ADD(NOW(), INTERVAL i SECOND));
         END WHILE;
 END //
 DELIMITER ;
