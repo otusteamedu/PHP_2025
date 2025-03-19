@@ -55,7 +55,7 @@ CREATE TABLE seat_prices
     id               SERIAL PRIMARY KEY,
     session_id       INT            NOT NULL,
     seat_category_id INT            NOT NULL,
-    price            DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
+    price            DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     CONSTRAINT "fk-seat_prices-seat_category_id" FOREIGN KEY (seat_category_id) REFERENCES seat_categories (id),
     CONSTRAINT "fk-seat_prices-session_id" FOREIGN KEY (session_id) REFERENCES sessions (id)
 );
@@ -65,8 +65,8 @@ CREATE TABLE seats
     id               SERIAL PRIMARY KEY,
     seat_category_id INT NOT NULL,
     hall_id          INT NOT NULL,
-    row              INT NOT NULL CHECK (row >= 0),
-    seat_number      INT NOT NULL CHECK (seat_number >= 0),
+    row              INT NOT NULL CHECK (row > 0),
+    seat_number      INT NOT NULL CHECK (seat_number > 0),
     CONSTRAINT "fk-seats-seat_category_id" FOREIGN KEY (seat_category_id) REFERENCES seat_categories (id),
     CONSTRAINT "fk-seats-hall_id" FOREIGN KEY (hall_id) REFERENCES halls (id)
 );
@@ -77,7 +77,7 @@ CREATE TABLE tickets
     order_id   INT            NOT NULL,
     session_id INT            NOT NULL,
     seat_id    INT            NOT NULL,
-    price      DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
+    price      DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     CONSTRAINT "fk-tickets-order_id" FOREIGN KEY (order_id) REFERENCES orders (id),
     CONSTRAINT "fk-tickets-seat_id" FOREIGN KEY (seat_id) REFERENCES seats (id),
     CONSTRAINT "fk-tickets-session_id" FOREIGN KEY (session_id) REFERENCES sessions (id)
