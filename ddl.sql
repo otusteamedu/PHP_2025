@@ -62,16 +62,18 @@ CREATE TABLE tickets
     UNIQUE (session_id, row_number, seat_number)
 );
 
-CREATE INDEX idx_session_movie_id ON sessions (movie_id);
-CREATE INDEX idx_session_hall_start_time ON sessions (hall_id, start_time);
-CREATE INDEX idx_ticket_session_id ON tickets (session_id);
-CREATE INDEX idx_ticket_purchase_time ON tickets (purchase_time);
+CREATE INDEX idx_movies_release_date ON movies (release_date);
+CREATE INDEX idx_tickets_purchase_time ON tickets (purchase_time);
 
-SELECT m.title, SUM(t.price) AS total_revenue
-FROM orders o
-         JOIN tickets t ON o.id = t.order_id
-         JOIN sessions s ON t.session_id = s.id
-         JOIN movies m ON s.movie_id = m.id
-GROUP BY m.title
-ORDER BY total_revenue DESC
-    LIMIT 1;
+CREATE INDEX idx_sessions_movie_id ON sessions (movie_id);
+CREATE INDEX idx_tickets_session_id ON tickets (session_id);
+
+CREATE INDEX idx_tickets_price ON tickets (session_id, price);
+
+CREATE INDEX idx_seats_hall_row_seat ON seats (hall_id, row_number, seat_number);
+
+CREATE INDEX idx_tickets_session_seat ON tickets (session_id, row_number, seat_number);
+
+CREATE INDEX idx_tickets_session_purchase_time ON tickets (session_id, purchase_time);
+
+CREATE INDEX idx_tickets_session_row_seat ON tickets (session_id, row_number, seat_number, purchase_time);
