@@ -1,0 +1,47 @@
+INSERT INTO attribute_types (name) VALUES
+('text'),     -- Текстовые значения (рецензии)
+('boolean'),  -- Логические (премии)
+('date'),     -- Даты (важные и служебные даты)
+('numeric');  -- float данные (рейтинг, цена)
+
+INSERT INTO attributes (name, attribute_type_id) VALUES
+('Рецензия критиков', 1),
+('Отзыв неизвестной киноакадемии', 1),
+('Оскар', 2),
+('Золотой глобус', 2),
+('Мировая премьера', 3),
+('Премьера в РФ', 3),
+('Дата начала продаж билетов', 3),
+('Дата запуска рекламы на ТВ', 3),
+('Рейтинг', 4);
+
+INSERT INTO movies (title) VALUES
+('Интерстеллар'),
+('Тёмный рыцарь');
+
+-- Рецензии
+INSERT INTO attribute_values (movie_id, attribute_id, value_text) VALUES
+(1, 1, 'Шедевр научной фантастики'),
+(1, 2, 'Фильм года!'),
+(2, 1, 'Лучший фильм о Бэтмене!');
+
+-- Премии
+INSERT INTO attribute_values (movie_id, attribute_id, value_boolean) VALUES
+(1, 3, TRUE),  -- Интерстеллар получил Оскар
+(2, 4, TRUE);  -- Тёмный рыцарь получил Золотой глобус
+
+-- Рейтинг
+INSERT INTO attribute_values (movie_id, attribute_id, value_numeric) VALUES
+(1, 9, 6.45),
+(2, 9, 9.82);
+
+-- Даты
+INSERT INTO attribute_values (movie_id, attribute_id, value_date) VALUES
+(1, 5, '2014-11-05'),
+(1, 6, '2014-11-07'),
+(2, 5, '2008-07-18'),
+(2, 6, '2008-07-24'),
+(1, 7, '2025-03-19'),
+(1, 8, '2025-03-20'),
+(2, 7, '2025-04-19'),
+(2, 8, '2025-03-26');
