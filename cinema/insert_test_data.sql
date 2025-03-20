@@ -10,8 +10,6 @@ INSERT INTO hall_line(hall_id, line_number, line_capacity) VALUES
 
 INSERT INTO genres (code, title) VALUES ('action', 'Боевики'), ('love', 'Мелодрамы'), ('comedy', 'Комедии');
 
-SET autocommit=0;
-
 CALL create_clients(500000);
 CALL create_films(1510000);
 CALL create_screenings(1500);

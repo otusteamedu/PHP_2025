@@ -1,65 +1,64 @@
-CREATE DATABASE IF NOT EXISTS cinema;
-USE cinema;
+CREATE DATABASE cinema;
 
-CREATE TABLE IF NOT EXISTS halls (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE halls (
+  id serial primary key,
+  code VARCHAR(255) UNIQUE NOT NULL,
+  title VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE hall_line (
+  id serial primary key,
+  hall_id INT,
+  line_number smallint NOT NULL,
+  line_capacity smallint NOT NULL,
+  FOREIGN KEY (hall_id) REFERENCES halls (id) ON DELETE CASCADE
+);
+
+CREATE TABLE genres (
+    id serial primary key,
     code VARCHAR(255) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS hall_line (
-   id INT PRIMARY KEY AUTO_INCREMENT,
-   hall_id INT,
-   line_number TINYINT UNSIGNED NOT NULL,
-   line_capacity TINYINT UNSIGNED NOT NULL,
-   FOREIGN KEY (hall_id) REFERENCES halls (id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS genres (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    code VARCHAR(255) UNIQUE NOT NULL,
-    title VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS films (
-   id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE films (
+   id serial primary key,
    title VARCHAR(255) NOT NULL,
    genre_id INT,
    FOREIGN KEY (genre_id) REFERENCES genres (id) ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS screenings (
-   id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE screenings (
+   id serial primary key,
    hall_id INT,
    film_id INT,
    base_price FLOAT,
-   datetime DATETIME,
+   datetime TIMESTAMP,
    FOREIGN KEY (hall_id) REFERENCES halls (id) ON DELETE CASCADE,
    FOREIGN KEY (film_id) REFERENCES films (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS hall_price_modificators (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE hall_price_modificators (
+    id serial primary key,
     hall_line_id INT,
-    place TINYINT UNSIGNED,
+    place smallint,
     price_modificator FLOAT,
     FOREIGN KEY (hall_line_id) REFERENCES hall_line (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS clients (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE clients (
+  id serial primary key,
   fio VARCHAR(255) NOT NULL,
   phone VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS tickets (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE tickets (
+  id serial primary key,
   screening_id INT,
   client_id INT,
-  line TINYINT UNSIGNED,
-  place TINYINT UNSIGNED,
+  line smallint,
+  place smallint,
   price FLOAT,
-  date_of_purchase DATETIME,
+  date_of_purchase TIMESTAMP,
   FOREIGN KEY (screening_id) REFERENCES screenings (id) ON DELETE CASCADE,
   FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE
 );
