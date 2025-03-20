@@ -13,5 +13,5 @@ INSERT INTO genres (code, title) VALUES ('action', 'Боевики'), ('love', '
 CALL create_clients(1510000);
 CALL create_films(1510000);
 
-CALL create_screenings(1500);
-CALL create_tickets(1500);
+CALL create_screenings(50000);
+CALL create_tickets(50000);

@@ -6,17 +6,17 @@ SELECT films.title,genres.title as film_genre, datetime
 FROM screenings
 RIGHT JOIN films ON screenings.film_id = films.id
 RIGHT JOIN genres ON films.genre_id = genres.id
-WHERE datetime BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL '1' DAY)
+WHERE datetime BETWEEN CURRENT_DATE AND CURRENT_DATE + interval '1 day'
 ORDER BY datetime DESC;
 
 /* Подсчёт проданных билетов за неделю */;
-SELECT COUNT(id) AS tickets_purchased_last_week_amount FROM tickets WHERE date_of_purchase > DATE_SUB(CURDATE(), INTERVAL '7' DAY);
+SELECT COUNT(id) AS tickets_purchased_last_week_amount FROM tickets WHERE date_of_purchase > CURRENT_DATE - INTERVAL '7 day';
 
 /* Поиск 3 самых прибыльных фильмов за неделю */;
 SELECT screening_id, SUM(tickets.price) AS total_week_film_profit
 FROM tickets
 RIGHT JOIN screenings ON tickets.screening_id = screenings.id
-WHERE date_of_purchase > DATE_SUB(CURDATE(), INTERVAL '7' DAY)
+WHERE date_of_purchase > CURRENT_DATE - INTERVAL '7 day'
 GROUP BY screening_id
 ORDER BY total_week_film_profit DESC
 LIMIT 3;
