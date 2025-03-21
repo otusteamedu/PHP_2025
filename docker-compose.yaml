@@ -26,6 +26,7 @@ services:
       XDEBUG_TRIGGER: yes
 
   elasticsearch:
+    container_name: elasticsearch_elk
     restart: always
     image: elasticsearch:7.17.6
     profiles: [elastic]
