@@ -2,7 +2,7 @@ CREATE VIEW marketing_data AS
 SELECT films.title as film,
        attributes.title as attribute,
        attribute_types.code as attribute_type,
-       COALESCE(value_text,value_varchar,value_boolean,value_datetime) as attribute_value
+       COALESCE(value_text,value_boolean,value_datetime) as attribute_value
 FROM film_attribute_values
 LEFT JOIN attributes ON film_attribute_values.attribute_id = attributes.id
 LEFT JOIN attribute_types ON attributes.attribute_type_id = attribute_types.id

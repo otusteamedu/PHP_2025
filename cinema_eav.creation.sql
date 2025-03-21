@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS film_attribute_values (
    film_id INT,
    attribute_id INT,
    value_text TEXT,
-   value_varchar VARCHAR(255),
    value_int INT,
    value_float FLOAT,
    value_boolean BOOL,
@@ -44,7 +43,7 @@ INSERT INTO films (title, code) VALUES
 ('Тупой и еще тупее', 'dumb_and_dumber'),
 ('Любовь и голуби', 'love_and_doves');
 
-INSERT INTO attribute_types (code) VALUES ('text'),('varchar'),('int'),('float'),('boolean'),('datetime');
+INSERT INTO attribute_types (code) VALUES ('text'),('int'),('float'),('boolean'),('datetime');
 
 INSERT INTO attributes (title, code, is_service_attribute, attribute_type_id) VALUES
 ('Рецензии', 'reviews',0, (SELECT attribute_types.id FROM attribute_types WHERE attribute_types.code = 'text')),
@@ -52,5 +51,5 @@ INSERT INTO attributes (title, code, is_service_attribute, attribute_type_id) VA
 ('Премьера в РФ', 'russian_premiere',0, (SELECT attribute_types.id FROM attribute_types WHERE attribute_types.code = 'datetime')),
 ('Дата начала рекламы на ТВ', 'adv_start_date_on_tv',1, (SELECT attribute_types.id FROM attribute_types WHERE attribute_types.code = 'datetime')),
 ('Дата начала продажи билетов', 'saling_start_date',1, (SELECT attribute_types.id FROM attribute_types WHERE attribute_types.code = 'datetime')),
-('Премия (изображение)', 'prize_url',0, (SELECT attribute_types.id FROM attribute_types WHERE attribute_types.code = 'varchar')),
+('Премия (изображение)', 'prize_url',0, (SELECT attribute_types.id FROM attribute_types WHERE attribute_types.code = 'text')),
 ('Только 18+', '18_plus_only',0, (SELECT attribute_types.id FROM attribute_types WHERE attribute_types.code = 'boolean'));
