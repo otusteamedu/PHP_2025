@@ -18,9 +18,25 @@ services:
       - ./:/var/www/app
     networks:
       - internal
+  elasticsearch:
+    restart: always
+    image: elasticsearch:7.17.6
+    profiles: [elastic]
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - internal
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data
+      - ./elastic:/usr/share/elasticsearch/config/hunspell
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
 
 networks:
   internal:
 
 volumes:
-  database_data:
+  elastic-data:
+    driver: local
