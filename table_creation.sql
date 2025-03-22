@@ -1,3 +1,5 @@
+CREATE SCHEMA public;
+
 CREATE TABLE film
 (
     id    SERIAL PRIMARY KEY NOT NULL,
@@ -23,11 +25,11 @@ CREATE TABLE value
     v_id           SERIAL PRIMARY KEY NOT NULL,
     v_film_id      INTEGER            NOT NULL REFERENCES film (id),
     v_attribute_id INTEGER            NOT NULL REFERENCES attribute (a_id),
-    v_text         TEXT                        DEFAULT NULL,
     v_date         DATE                        DEFAULT NULL,
     v_date_time    TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
-    v_varchar      VARCHAR(255)                DEFAULT NULL,
+    v_varchar      VARCHAR                     DEFAULT NULL,
     v_numeric      NUMERIC(10, 2)              DEFAULT NULL,
+    v_float        DOUBLE PRECISION            DEFAULT NULL,
     v_int          INT                         DEFAULT NULL,
     v_bool         BOOLEAN                     DEFAULT NULL,
     v_small_int    SMALLINT                    DEFAULT NULL
