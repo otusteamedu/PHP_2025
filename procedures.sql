@@ -15,12 +15,30 @@ DELIMITER $$
 CREATE DEFINER=`root`@`%` PROCEDURE `fill_films_attrs`()
 BEGIN
     DECLARE counter INT DEFAULT 1;
+    DECLARE i INT DEFAULT 1;
+    DECLARE j INT DEFAULT 1;
     WHILE counter <= (SELECT COUNT(id) count FROM films) DO
-    
-    	INSERT INTO `films_attrs`(`film_id`, `attr_id`) VALUES (
-			counter,
-			FLOOR(1 + RAND() * 1000)
-		);
+ 
+
+        
+        SET j = 1;
+
+        WHILE j <= 9 DO
+	    INSERT INTO `films_attrs`(`film_id`, `attr_id`) VALUES (
+		    counter,
+		    i
+	    );
+
+	    SET j = j + 1;
+
+        IF j > 9 THEN
+            SET i = counter + 9; 
+        ELSE              
+            SET i = i + 1; 
+
+	    END IF;
+
+        END WHILE;
 
     	SET counter = counter + 1;
         
@@ -35,9 +53,9 @@ BEGIN
     WHILE counter <= (SELECT COUNT(id) count FROM films) DO
     
     	INSERT INTO `films_attrs_values`(`attr_type_id`, `text`, `date`, `boolean`, `float`) VALUES (
-            '1',
+            FLOOR(1 + RAND() * 9),
             counter,
-            NOW(),
+            DATE_ADD(NOW(), INTERVAL FLOOR(RAND() * 15 - 7) DAY),
             true,
             '5.01'
         );
