@@ -1,3 +1,5 @@
+-- region Тестовое наполнение
+
 INSERT INTO users (email)
 VALUES ('user1@example.com'),
        ('user2@example.com'),
@@ -219,3 +221,93 @@ VALUES
 
 -- Заказ 5 (1 VIP билет на "Бэтмена" в Зале 2)
 (5, 5, 2, 4, 6, 'vip', 800.00);
+
+-- endregion
+
+-- region Наполнение БД до 10000 строк
+
+INSERT INTO users (email)
+SELECT 'user' || generate_series(1, 1000) || '@example.com';
+
+INSERT INTO sessions (hall_id, movie_id, start_time, end_time, price_regular, price_vip)
+SELECT
+    (floor(random() * 3) + 1)::INT AS hall_id,  -- Генерация только 1, 2 или 3
+    (floor(random() * 5) + 1)::INT AS movie_id,  -- 5 фильмов
+    NOW() + (random() * INTERVAL '30 days') AS start_time,
+    NOW() + (random() * INTERVAL '30 days') + INTERVAL '2 hours' AS end_time,
+    (random() * 200 + 500)::INT AS price_regular,
+    (random() * 300 + 800)::INT AS price_vip
+FROM generate_series(1, 2000);
+
+INSERT INTO orders (user_id, order_time, total_amount)
+SELECT
+    floor(random() * 1000) + 1,
+    NOW() - (random() * interval '30 days'),
+    (random() * 300 + 800)::INT  -- случайная сумма от 800 до 1100
+FROM generate_series(1, 5000);  -- создаем 5000 заказов
+
+INSERT INTO tickets (order_id, session_id, hall_id, row_number, seat_number, seat_type, price)
+SELECT
+    o.id AS order_id,
+    s.id AS session_id,
+    se.hall_id,
+    se.row_number,
+    se.seat_number,
+    CASE WHEN random() > 0.8 THEN 'vip' ELSE 'regular' END AS seat_type,
+    (random() * 300 + 800)::INT AS price
+FROM sessions s
+         JOIN seats se ON s.hall_id = se.hall_id
+         JOIN orders o ON o.id = (SELECT id FROM orders ORDER BY random() LIMIT 1)
+ORDER BY random()
+LIMIT 10000
+ON CONFLICT (session_id, row_number, seat_number) DO NOTHING; -- создаем 10000 билетов
+
+-- endregion
+
+
+-- region Наполнение БД до 1000000 строк
+
+INSERT INTO users (email)
+SELECT 'user' || generate_series(1, 100000) || '@example.com';
+
+INSERT INTO movies (title, description, release_date, duration_minutes)
+SELECT 'Фильм ' || generate_series(1, 50),
+       'Описание фильма ' || generate_series(1, 50),
+       NOW() - (random() * INTERVAL '365 days'),
+       floor(random() * 120 + 80)
+FROM generate_series(1, 50);
+
+INSERT INTO sessions (hall_id, movie_id, start_time, end_time, price_regular, price_vip)
+SELECT
+    (floor(random() * 3) + 1)::INT,
+    (floor(random() * 50) + 1)::INT,
+    NOW() + (random() * INTERVAL '30 days'),
+    NOW() + (random() * INTERVAL '30 days') + INTERVAL '2 hours',
+    floor(random() * 500 + 300),
+    floor(random() * 800 + 500)
+FROM generate_series(1, 200000);
+
+INSERT INTO orders (user_id, order_time, total_amount)
+SELECT
+    floor(random() * 1000) + 1,
+    NOW() - (random() * interval '30 days'),
+    (random() * 300 + 800)::INT  -- случайная сумма от 800 до 1100
+FROM generate_series(1, 500000); -- создаем 500000 заказов
+
+INSERT INTO tickets (order_id, session_id, hall_id, row_number, seat_number, seat_type, price)
+SELECT
+    o.id AS order_id,
+    s.id AS session_id,
+    se.hall_id,
+    se.row_number,
+    se.seat_number,
+    CASE WHEN random() > 0.8 THEN 'vip' ELSE 'regular' END AS seat_type,
+    (random() * 300 + 800)::INT AS price
+FROM sessions s
+         JOIN seats se ON s.hall_id = se.hall_id
+         JOIN orders o ON o.id = (SELECT id FROM orders ORDER BY random() LIMIT 1)
+ORDER BY random()
+LIMIT 1000000
+ON CONFLICT (session_id, row_number, seat_number) DO NOTHING; -- создаем 1000000 билетов
+
+-- endregion

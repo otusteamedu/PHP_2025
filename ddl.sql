@@ -62,18 +62,7 @@ CREATE TABLE tickets
     UNIQUE (session_id, row_number, seat_number)
 );
 
-CREATE INDEX idx_movies_release_date ON movies (release_date);
-CREATE INDEX idx_tickets_purchase_time ON tickets (purchase_time);
-
-CREATE INDEX idx_sessions_movie_id ON sessions (movie_id);
-CREATE INDEX idx_tickets_session_id ON tickets (session_id);
-
-CREATE INDEX idx_tickets_price ON tickets (session_id, price);
-
+CREATE INDEX idx_tickets_purchase_time ON tickets(purchase_time);
+CREATE INDEX idx_sessions_date ON sessions(start_time);
 CREATE INDEX idx_seats_hall_row_seat ON seats (hall_id, row_number, seat_number);
-
-CREATE INDEX idx_tickets_session_seat ON tickets (session_id, row_number, seat_number);
-
-CREATE INDEX idx_tickets_session_purchase_time ON tickets (session_id, purchase_time);
-
-CREATE INDEX idx_tickets_session_row_seat ON tickets (session_id, row_number, seat_number, purchase_time);
+CREATE INDEX idx_tickets_session_id ON tickets(session_id);
