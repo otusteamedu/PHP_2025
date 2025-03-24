@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: otus-hw13/php
+    container_name: ${APP_CONTAINER}
+    volumes:
+      - ./app:/app
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+    tty: true
+    env_file: .env
+
+  elasticsearch:
+    image: elasticsearch:8.17.3
+    container_name: ${ELASTIC_CONTAINER}
+    ports:
+      - ${ELASTIC_PORT}:${ELASTIC_PORT}
+    environment:
+      - discovery.type=single-node
+    networks:
+      - app-network
+    env_file: .env
+
+networks:
+  app-network:
+    driver: bridge
