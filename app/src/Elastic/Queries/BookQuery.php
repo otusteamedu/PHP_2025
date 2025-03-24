@@ -60,11 +60,11 @@ class BookQuery
 
     /**
      * @param Query $query
-     * @param string $stockShop
-     * @param int $stockMin
+     * @param string|null $stockShop
+     * @param int|null $stockMin
      * @return array|array[]
      */
-    private static function prepareStock(Query $query, string $stockShop, int $stockMin): array
+    private static function prepareStock(Query $query, ?string $stockShop = null, ?int $stockMin = null): array
     {
         $result = [
             'nested' => [
@@ -81,7 +81,7 @@ class BookQuery
             $result['nested']['query']['bool']['filter'][] = $query->prepareMatch('stock.shop', $stockShop);
         }
 
-        if ($stockMin) {
+        if ($stockMin !== null) {
             $result['nested']['query']['bool']['filter'][] = $query->prepareRange('stock.stock', 'gte', $stockMin);
         }
 
