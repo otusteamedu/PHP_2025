@@ -1,0 +1,80 @@
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000
+-- =======================================
+-- 6) Вывести диапазон минимальной и максимальной цены за билет на конкретный сеанс
+-- =======================================
+SELECT MIN(t.final_price), MAX(t.final_price), f.name
+FROM tickets AS t
+         JOIN sessions AS s ON t.session_id = s.id
+         JOIN films AS f ON s.film_id = f.id
+WHERE s.id = 7235
+GROUP BY f.id
+--     QUERY PLAN                                                                                                                                     |
+-- -----------------------------------------------------------------------------------------------------------------------------------------------+
+-- GroupAggregate  (cost=2399.94..2400.18 rows=12 width=87) (actual time=6.200..6.201 rows=1 loops=1)                                             |
+-- Group Key: f.id                                                                                                                              |
+--     ->  Sort  (cost=2399.94..2399.97 rows=12 width=28) (actual time=6.190..6.191 rows=12 loops=1)                                                |
+--     Sort Key: f.id                                                                                                                         |
+--     Sort Method: quicksort  Memory: 25kB                                                                                                   |
+--     ->  Nested Loop  (cost=0.57..2399.73 rows=12 width=28) (actual time=1.184..6.176 rows=12 loops=1)                                      |
+--     ->  Nested Loop  (cost=0.57..16.61 rows=1 width=31) (actual time=0.032..0.035 rows=1 loops=1)                                    |
+--     ->  Index Scan using sessions_pk on sessions s  (cost=0.29..8.30 rows=1 width=16) (actual time=0.019..0.022 rows=1 loops=1)|
+--     Index Cond: (id = 7235)                                                                                              |
+--     ->  Index Scan using films_pk on films f  (cost=0.29..8.30 rows=1 width=23) (actual time=0.009..0.009 rows=1 loops=1)      |
+--     Index Cond: (id = s.film_id)                                                                                         |
+--     ->  Seq Scan on tickets t  (cost=0.00..2383.00 rows=12 width=13) (actual time=1.151..6.136 rows=12 loops=1)                      |
+--     Filter: (session_id = 7235)                                                                                                |
+--     Rows Removed by Filter: 119988                                                                                             |
+--     Planning Time: 0.372 ms                                                                                                                        |
+--     Execution Time: 6.259 ms                                                                                                                       |
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000_000
+-- =======================================
+--     QUERY PLAN                                                                                                                                          |
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------+
+-- GroupAggregate  (cost=1542790.06..1543042.80 rows=12637 width=90) (actual time=10314.338..10318.733 rows=1 loops=1)                                 |
+-- Group Key: f.id                                                                                                                                   |
+--     ->  Sort  (cost=1542790.06..1542821.65 rows=12637 width=31) (actual time=10314.197..10318.594 rows=12 loops=1)                                    |
+--     Sort Key: f.id                                                                                                                              |
+--     Sort Method: quicksort  Memory: 25kB                                                                                                        |
+--     ->  Nested Loop  (cost=1000.87..1541929.14 rows=12637 width=31) (actual time=10239.811..10318.553 rows=12 loops=1)                          |
+--     ->  Nested Loop  (cost=0.87..16.91 rows=1 width=34) (actual time=73.968..73.977 rows=1 loops=1)                                       |
+--     ->  Index Scan using sessions_pk on sessions s  (cost=0.43..8.45 rows=1 width=16) (actual time=73.352..73.356 rows=1 loops=1)   |
+--     Index Cond: (id = 7235)                                                                                                   |
+--     ->  Index Scan using films_pk on films f  (cost=0.43..8.45 rows=1 width=26) (actual time=0.601..0.601 rows=1 loops=1)           |
+--     Index Cond: (id = s.film_id)                                                                                              |
+--     ->  Gather  (cost=1000.00..1541785.86 rows=12637 width=13) (actual time=10165.839..10244.566 rows=12 loops=1)                         |
+--     Workers Planned: 2                                                                                                              |
+--     Workers Launched: 2                                                                                                             |
+--     ->  Parallel Seq Scan on tickets t  (cost=0.00..1539522.16 rows=5265 width=13) (actual time=10134.975..10205.601 rows=4 loops=3)|
+--     Filter: (session_id = 7235)                                                                                               |
+--     Rows Removed by Filter: 39999996                                                                                          |
+--     Planning Time: 89.608 ms                                                                                                                            |
+--     JIT:                                                                                                                                                |
+--     Functions: 27                                                                                                                                     |
+--     Options: Inlining true, Optimization true, Expressions true, Deforming true                                                                       |
+--     Timing: Generation 2.558 ms (Deform 0.853 ms), Inlining 97.468 ms, Optimization 40.898 ms, Emission 38.255 ms, Total 179.180 ms                   |
+--     Execution Time: 10321.103 ms                                                                                                                        |
+-- =======================================
+-- После индексов 10_000_000
+-- =======================================
+-- используется idx_id созданный в 3_5_queries.sql
+-- используется idx_hash_id созданный в 3_1_queries.sql
+-- используется idx_session_id созданный в 3_4_queries.sql
+--     QUERY PLAN                                                                                                                                          |
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------+
+-- GroupAggregate  (cost=68.58..68.82 rows=12 width=90) (actual time=0.105..0.107 rows=1 loops=1)                                                      |
+-- Group Key: f.id                                                                                                                                   |
+--     ->  Sort  (cost=68.58..68.61 rows=12 width=31) (actual time=0.084..0.087 rows=12 loops=1)                                                         |
+--     Sort Key: f.id                                                                                                                              |
+--     Sort Method: quicksort  Memory: 25kB                                                                                                        |
+--     ->  Nested Loop  (cost=0.00..68.37 rows=12 width=31) (actual time=0.040..0.071 rows=12 loops=1)                                             |
+--     ->  Nested Loop  (cost=0.00..16.04 rows=1 width=34) (actual time=0.029..0.031 rows=1 loops=1)                                         |
+--     ->  Index Scan using idx_id on sessions s  (cost=0.00..8.02 rows=1 width=16) (actual time=0.018..0.020 rows=1 loops=1)          |
+--     Index Cond: (id = 7235)                                                                                                   |
+--     ->  Index Scan using idx_hash_id on films f  (cost=0.00..8.02 rows=1 width=26) (actual time=0.007..0.007 rows=1 loops=1)        |
+--     Index Cond: (id = s.film_id)                                                                                              |
+--     ->  Index Scan using idx_session_id on tickets t  (cost=0.00..52.21 rows=12 width=13) (actual time=0.010..0.034 rows=12 loops=1)|
+--     Index Cond: (session_id = 7235)                                                                                                 |
+--     Planning Time: 0.544 ms                                                                                                                             |
+--     Execution Time: 0.171 ms                                                                                                                            |
