@@ -1,0 +1,28 @@
+services:
+  elasticsearch:
+    image: elasticsearch:8.16.3
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-cluster
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - "xpack.security.enabled=false"
+      - "xpack.security.transport.ssl.enabled=false"
+      - "xpack.security.http.ssl.enabled=false"
+      - "http.host=0.0.0.0"
+      - ELASTIC_PASSWORD=elastic_password
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./esdata:/usr/share/elasticsearch/data
+    networks:
+      - es-net
+
+volumes:
+  esdata:
+    driver: local
+
+networks:
+  es-net:
+    driver: bridge
