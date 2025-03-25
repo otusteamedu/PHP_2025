@@ -31,17 +31,12 @@ $$
         start_datetime   timestamp;
         end_datetime     timestamp;
         current_datetime timestamp;
-        rating
-                         record;
-        film
-                         record;
-        minutes
-                         varchar;
+        rating           record;
+        film             record;
+        minutes          varchar;
     BEGIN
-        start_datetime
-            := timestamp '2025-03-01 09:00:00';
-        end_datetime
-            := start_datetime + INTERVAL '10 days';
+        start_datetime := timestamp '2025-03-01 09:00:00';
+        end_datetime := start_datetime + INTERVAL '10 days';
         WHILE
             end_datetime >= start_datetime
             LOOP
@@ -96,8 +91,50 @@ $$
                             LOOP
                                 INSERT INTO cinema_room_seat (id, row, place, cinema_room_id, rating)
                                 VALUES (gen_random_uuid(), r, s, cinema_room.id, random() + 1);
-
                             END LOOP;
+                    END LOOP;
+            END LOOP;
+    END;
+$$;
+
+-- таблица билетов
+DO
+$$
+    DECLARE
+        session            record;
+        film_price         float;
+        seat_count         integer;
+        seat               record;
+        session_rating     float;
+        cinema_room_rating float;
+    BEGIN
+        FOR session IN
+            SELECT *
+            FROM public.session
+            LOOP
+                seat_count := random(10, 30);
+                SELECT price
+                INTO film_price
+                FROM film
+                WHERE id = session.film_id;
+                SELECT rating
+                INTO session_rating
+                FROM session_rating
+                WHERE id = session.rating_id;
+                SELECT rating
+                INTO cinema_room_rating
+                FROM cinema_room
+                WHERE id = session.cinema_room_id;
+                FOR seat IN SELECT *
+                            FROM public.cinema_room_seat crs
+                            WHERE crs.cinema_room_id = session.cinema_room_id
+                            ORDER BY RANDOM()
+                            LIMIT seat_count
+                    LOOP
+                        INSERT INTO ticket (id, price, seat_id, session_id)
+                        VALUES (gen_random_uuid(),
+                                round(film_price * session_rating * seat.rating * cinema_room_rating),
+                                seat.id, session.id);
                     END LOOP;
             END LOOP;
     END;
