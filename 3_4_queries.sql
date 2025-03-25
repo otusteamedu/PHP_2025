@@ -1,0 +1,85 @@
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000
+-- =======================================
+-- 4) Поиск 3 самых прибыльных фильмов за неделю
+-- =======================================
+SELECT SUM(t.final_price), f.name
+FROM tickets AS t
+         JOIN sessions AS s ON t.session_id = s.id
+         JOIN films AS f ON s.film_id = f.id
+WHERE s.start_at BETWEEN (CURRENT_DATE - INTERVAL '7 days') AND (CURRENT_DATE + INTERVAL '1 day' - INTERVAL '1 second')
+GROUP BY f.id LIMIT 3
+-- QUERY PLAN                                                                                                                                                               |
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Limit  (cost=0.29..641.30 rows=3 width=55) (actual time=61.780..86.985 rows=3 loops=1)                                                                                   |
+--   ->  GroupAggregate  (cost=0.29..284608.87 rows=1332 width=55) (actual time=61.778..86.983 rows=3 loops=1)                                                              |
+-- Group Key: f.id                                                                                                                                                  |
+--     ->  Nested Loop  (cost=0.29..284585.56 rows=1332 width=28) (actual time=3.331..86.950 rows=37 loops=1)                                                           |
+--     Join Filter: (s.id = t.session_id)                                                                                                                         |
+--     Rows Removed by Join Filter: 360189                                                                                                                        |
+--     ->  Nested Loop  (cost=0.29..17356.56 rows=111 width=31) (actual time=3.301..4.713 rows=4 loops=1)                                                         |
+--     Join Filter: (f.id = s.film_id)                                                                                                                      |
+--     Rows Removed by Join Filter: 23850                                                                                                                   |
+--     ->  Index Scan using films_pk on films f  (cost=0.29..337.29 rows=10000 width=23) (actual time=0.014..0.046 rows=226 loops=1)                        |
+--     ->  Materialize  (cost=0.00..369.56 rows=111 width=16) (actual time=0.000..0.016 rows=106 loops=226)                                                 |
+--     ->  Seq Scan on sessions s  (cost=0.00..369.00 rows=111 width=16) (actual time=0.031..2.757 rows=106 loops=1)                                  |
+--     Filter: ((start_at >= (CURRENT_DATE - '7 days'::interval)) AND (start_at <= ((CURRENT_DATE + '1 day'::interval) - '00:00:01'::interval)))|
+--     Rows Removed by Filter: 9894                                                                                                             |
+--     ->  Materialize  (cost=0.00..3269.00 rows=120000 width=13) (actual time=0.042..16.506 rows=90056 loops=4)                                                  |
+--     ->  Seq Scan on tickets t  (cost=0.00..2083.00 rows=120000 width=13) (actual time=0.011..8.467 rows=120000 loops=1)                                  |
+--     Planning Time: 2.082 ms                                                                                                                                                  |
+--     Execution Time: 87.975 ms                                                                                                                                                |
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000_000
+-- =======================================
+--     QUERY PLAN                                                                                                                                                                     |
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Limit  (cost=1000.43..633156.19 rows=3 width=58) (actual time=114476.317..133869.059 rows=3 loops=1)                                                                           |
+--   ->  GroupAggregate  (cost=1000.43..274930860808.55 rows=1304730 width=58) (actual time=114387.311..133780.045 rows=3 loops=1)                                                |
+-- Group Key: f.id                                                                                                                                                        |
+--     ->  Nested Loop  (cost=1000.43..274930837975.77 rows=1304730 width=31) (actual time=68115.038..133779.522 rows=37 loops=1)                                             |
+--     Join Filter: (s.id = t.session_id)                                                                                                                               |
+--     Rows Removed by Join Filter: 417191004                                                                                                                           |
+--     ->  Nested Loop  (cost=1000.43..15511685966.86 rows=103405 width=34) (actual time=1710.543..2463.929 rows=4 loops=1)                                             |
+--     Join Filter: (f.id = s.film_id)                                                                                                                            |
+--     Rows Removed by Join Filter: 14339653                                                                                                                      |
+--     ->  Index Scan using films_pk on films f  (cost=0.43..333211.14 rows=10000247 width=26) (actual time=1.432..1.817 rows=132 loops=1)                        |
+--     ->  Materialize  (cost=1000.00..219898.71 rows=103405 width=16) (actual time=0.006..14.592 rows=108634 loops=132)                                          |
+--     ->  Gather  (cost=1000.00..219381.68 rows=103405 width=16) (actual time=0.531..1035.034 rows=109463 loops=1)                                         |
+--     Workers Planned: 2                                                                                                                             |
+--     Workers Launched: 2                                                                                                                            |
+--     ->  Parallel Seq Scan on sessions s  (cost=0.00..208041.18 rows=43085 width=16) (actual time=64.810..1059.727 rows=36488 loops=3)              |
+--     Filter: ((start_at >= (CURRENT_DATE - '7 days'::interval)) AND (start_at <= ((CURRENT_DATE + '1 day'::interval) - '00:00:01'::interval)))|
+--     Rows Removed by Filter: 3296846                                                                                                          |
+--     ->  Materialize  (cost=0.00..3391097.19 rows=126176479 width=13) (actual time=0.284..28636.018 rows=104297760 loops=4)                                           |
+--     ->  Seq Scan on tickets t  (cost=0.00..2144117.79 rows=126176479 width=13) (actual time=0.093..53928.275 rows=120000000 loops=1)                           |
+--     Planning Time: 17.232 ms                                                                                                                                                       |
+--     JIT:                                                                                                                                                                           |
+--     Functions: 28                                                                                                                                                                |
+--     Options: Inlining true, Optimization true, Expressions true, Deforming true                                                                                                  |
+--     Timing: Generation 2.285 ms (Deform 0.540 ms), Inlining 122.025 ms, Optimization 66.624 ms, Emission 41.842 ms, Total 232.775 ms                                             |
+--     Execution Time: 133965.734 ms                                                                                                                                                  |
+-- =======================================
+-- После индексов 10_000_000
+-- =======================================
+-- ускорение join
+CREATE INDEX idx_session_id ON tickets USING hash (session_id);
+-- ускорение join
+CREATE INDEX idx_film_id ON sessions USING hash (film_id);
+-- QUERY PLAN                                                                                                                                                         |
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Limit  (cost=0.43..104.53 rows=3 width=58) (actual time=0.465..0.685 rows=3 loops=1)                                                                               |
+--   ->  GroupAggregate  (cost=0.43..46332417.02 rows=1335324 width=58) (actual time=0.463..0.683 rows=3 loops=1)                                                     |
+--         Group Key: f.id                                                                                                                                            |
+--         ->  Nested Loop  (cost=0.43..46309048.85 rows=1335324 width=31) (actual time=0.279..0.662 rows=37 loops=1)                                                 |
+--               ->  Nested Loop  (cost=0.43..42099603.44 rows=111277 width=34) (actual time=0.272..0.587 rows=4 loops=1)                                             |
+--                     ->  Index Scan using films_pk on films f  (cost=0.43..333207.43 rows=10000000 width=26) (actual time=0.012..0.042 rows=132 loops=1)            |
+--                     ->  Index Scan using idx_film_id on sessions s  (cost=0.00..4.17 rows=1 width=16) (actual time=0.004..0.004 rows=0 loops=132)                  |
+--                           Index Cond: (film_id = f.id)                                                                                                             |
+--                           Rows Removed by Index Recheck: 0                                                                                                         |
+--                           Filter: ((start_at >= (CURRENT_DATE - '7 days'::interval)) AND (start_at <= ((CURRENT_DATE + '1 day'::interval) - '00:00:01'::interval)))|
+--                           Rows Removed by Filter: 1                                                                                                                |
+--               ->  Index Scan using idx_session_id on tickets t  (cost=0.00..37.71 rows=12 width=13) (actual time=0.004..0.017 rows=9 loops=4)                |
+--                     Index Cond: (session_id = s.id)                                                                                                                |
+-- Planning Time: 0.460 ms                                                                                                                                            |
+-- Execution Time: 0.723 ms                                                                                                                                           |

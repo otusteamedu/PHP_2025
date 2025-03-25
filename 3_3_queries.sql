@@ -1,0 +1,61 @@
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000
+-- =======================================
+-- 3) Формирование афиши (фильмы, которые показывают сегодня)
+-- =======================================
+SELECT f."name"
+FROM sessions AS s
+         JOIN films AS f ON s.film_id = f.id
+WHERE s.start_at BETWEEN (CURRENT_DATE - INTERVAL '0 days') AND (CURRENT_DATE + INTERVAL '1 day' - INTERVAL '1 second')
+--     QUERY PLAN                                                                                                                                         |
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Nested Loop  (cost=0.29..477.54 rows=15 width=15) (actual time=0.314..3.521 rows=13 loops=1)                                                       |
+--   ->  Seq Scan on sessions s  (cost=0.00..369.00 rows=15 width=8) (actual time=0.295..3.422 rows=13 loops=1)                                       |
+--     Filter: ((start_at >= (CURRENT_DATE - '00:00:00'::interval)) AND (start_at <= ((CURRENT_DATE + '1 day'::interval) - '00:00:01'::interval)))|
+--     Rows Removed by Filter: 9987                                                                                                               |
+--     ->  Index Scan using films_pk on films f  (cost=0.29..7.24 rows=1 width=23) (actual time=0.006..0.006 rows=1 loops=13)                           |
+--     Index Cond: (id = s.film_id)                                                                                                               |
+--     Planning Time: 0.353 ms                                                                                                                            |
+--     Execution Time: 3.552 ms                                                                                                                           |
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000_000
+-- =======================================
+--     QUERY PLAN                                                                                                                                               |
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Gather  (cost=1000.43..251827.27 rows=13582 width=18) (actual time=13.705..2724.965 rows=13670 loops=1)                                                  |
+--   Workers Planned: 2                                                                                                                                     |
+--   Workers Launched: 2                                                                                                                                    |
+--   ->  Nested Loop  (cost=0.43..249469.07 rows=5659 width=18) (actual time=14.696..2690.571 rows=4557 loops=3)                                            |
+--         ->  Parallel Seq Scan on sessions s  (cost=0.00..208041.18 rows=5659 width=8) (actual time=7.352..869.924 rows=4557 loops=3)                     |
+--     Filter: ((start_at >= (CURRENT_DATE - '00:00:00'::interval)) AND (start_at <= ((CURRENT_DATE + '1 day'::interval) - '00:00:01'::interval)))|
+--     Rows Removed by Filter: 3328777                                                                                                            |
+--     ->  Index Scan using films_pk on films f  (cost=0.43..7.32 rows=1 width=26) (actual time=0.398..0.398 rows=1 loops=13670)                        |
+--     Index Cond: (id = s.film_id)                                                                                                               |
+--     Planning Time: 1.798 ms                                                                                                                                  |
+--     JIT:                                                                                                                                                     |
+--     Functions: 27                                                                                                                                          |
+--     Options: Inlining false, Optimization false, Expressions true, Deforming true                                                                          |
+--     Timing: Generation 3.381 ms (Deform 0.548 ms), Inlining 0.000 ms, Optimization 1.820 ms, Emission 17.264 ms, Total 22.464 ms                           |
+--     Execution Time: 2727.246 ms                                                                                                                              |
+-- =======================================
+-- После индексов 10_000_000
+-- =======================================
+-- ускорение фильтрации по start_at
+CREATE INDEX idx_start_at_2 ON sessions (start_at);
+-- так же используется idx_hash_id созданный в 3_1_queries.sql
+-- QUERY PLAN                                                                                                                                                         |
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Gather  (cost=1216.11..88110.46 rows=15577 width=18) (actual time=7.062..834.854 rows=13670 loops=1)                                                               |
+--   Workers Planned: 2                                                                                                                                               |
+--   Workers Launched: 2                                                                                                                                              |
+--   ->  Nested Loop  (cost=216.11..85552.76 rows=6490 width=18) (actual time=9.374..802.827 rows=4557 loops=3)                                                       |
+--         ->  Parallel Bitmap Heap Scan on sessions s  (cost=216.11..40990.38 rows=6490 width=8) (actual time=4.538..182.867 rows=4557 loops=3)                      |
+--               Recheck Cond: ((start_at >= (CURRENT_DATE - '00:00:00'::interval)) AND (start_at <= ((CURRENT_DATE + '1 day'::interval) - '00:00:01'::interval)))    |
+--               Heap Blocks: exact=4396                                                                                                                              |
+--               ->  Bitmap Index Scan on idx_start_at_2  (cost=0.00..212.22 rows=15577 width=0) (actual time=2.944..2.945 rows=13670 loops=1)                        |
+--                     Index Cond: ((start_at >= (CURRENT_DATE - '00:00:00'::interval)) AND (start_at <= ((CURRENT_DATE + '1 day'::interval) - '00:00:01'::interval)))|
+--         ->  Index Scan using idx_hash_id on films f  (cost=0.00..6.87 rows=1 width=26) (actual time=0.135..0.135 rows=1 loops=13670)                               |
+--               Index Cond: (id = s.film_id)                                                                                                                         |
+--               Rows Removed by Index Recheck: 0                                                                                                                     |
+-- Planning Time: 1.407 ms                                                                                                                                            |
+-- Execution Time: 836.497 ms                                                                                                                                         |

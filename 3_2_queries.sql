@@ -1,0 +1,52 @@
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000
+-- =======================================
+-- 2) Подсчёт проданных билетов за неделю
+-- =======================================
+SELECT count(*) AS count_tickets
+FROM orders AS o
+WHERE o.sale_at BETWEEN (now() - INTERVAL '7 days') AND now()
+--     QUERY PLAN                                                                                                      |
+-- ----------------------------------------------------------------------------------------------------------------+
+-- Aggregate  (cost=3467.97..3467.98 rows=1 width=8) (actual time=17.439..17.439 rows=1 loops=1)                   |
+--   ->  Seq Scan on orders o  (cost=0.00..3465.00 rows=1189 width=0) (actual time=0.039..17.372 rows=1149 loops=1)|
+--     Filter: ((sale_at <= now()) AND (sale_at >= (now() - '7 days'::interval)))                              |
+--     Rows Removed by Filter: 118851                                                                          |
+--     Planning Time: 1.747 ms                                                                                         |
+--     Execution Time: 17.491 ms                                                                                       |
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000_000
+-- =======================================
+--     QUERY PLAN                                                                                                                                      |
+-- ------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Finalize Aggregate  (cost=1891571.70..1891571.71 rows=1 width=8) (actual time=41993.765..42001.105 rows=1 loops=1)                              |
+--   ->  Gather  (cost=1891571.49..1891571.70 rows=2 width=8) (actual time=41992.952..42001.088 rows=3 loops=1)                                    |
+--         Workers Planned: 2                                                                                                                      |
+--         Workers Launched: 2                                                                                                                     |
+--         ->  Partial Aggregate  (cost=1890571.49..1890571.50 rows=1 width=8) (actual time=41976.736..41976.737 rows=1 loops=3)                   |
+--               ->  Parallel Seq Scan on orders o  (cost=0.00..1889333.16 rows=495331 width=0) (actual time=47.094..41957.467 rows=384497 loops=3)|
+--     Filter: ((sale_at <= now()) AND (sale_at >= (now() - '7 days'::interval)))                                                  |
+--     Rows Removed by Filter: 39615503                                                                                            |
+--     Planning Time: 14.852 ms                                                                                                                        |
+--     JIT:                                                                                                                                            |
+--     Functions: 17                                                                                                                                 |
+--     Options: Inlining true, Optimization true, Expressions true, Deforming true                                                                   |
+--     Timing: Generation 5.006 ms (Deform 0.175 ms), Inlining 98.817 ms, Optimization 19.997 ms, Emission 22.192 ms, Total 146.013 ms               |
+--     Execution Time: 42001.615 ms                                                                                                                    |
+-- =======================================
+-- После индексов 10_000_000
+-- =======================================
+-- ускорение фильтрации по sale_at
+CREATE INDEX idx_sale_at ON orders (sale_at);
+-- QUERY PLAN                                                                                                                                                         |
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Finalize Aggregate  (cost=29286.73..29286.74 rows=1 width=8) (actual time=114.452..117.066 rows=1 loops=1)                                                         |
+--   ->  Gather  (cost=29286.51..29286.72 rows=2 width=8) (actual time=114.398..117.062 rows=3 loops=1)                                                               |
+--         Workers Planned: 2                                                                                                                                         |
+--         Workers Launched: 2                                                                                                                                        |
+--         ->  Partial Aggregate  (cost=28286.51..28286.52 rows=1 width=8) (actual time=102.073..102.074 rows=1 loops=3)                                              |
+--               ->  Parallel Index Only Scan using idx_sale_at on orders o  (cost=0.57..27039.26 rows=498902 width=0) (actual time=1.084..84.533 rows=384428 loops=3)|
+--                     Index Cond: ((sale_at >= (now() - '7 days'::interval)) AND (sale_at <= now()))                                                                 |
+--                     Heap Fetches: 27                                                                                                                               |
+-- Planning Time: 0.080 ms                                                                                                                                            |
+-- Execution Time: 117.084 ms                                                                                                                                         |

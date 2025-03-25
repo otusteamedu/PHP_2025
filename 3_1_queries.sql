@@ -1,0 +1,67 @@
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000
+-- =======================================
+-- Выбор всех фильмов на сегодня
+SELECT f."name", s.start_at
+FROM sessions AS s
+         JOIN films AS f ON s.film_id = f.id
+WHERE date (s.start_at) = CURRENT_DATE
+--     QUERY PLAN                                                                                                         |
+-- -------------------------------------------------------------------------------------------------------------------+
+--     Hash Join  (cost=269.62..471.62 rows=50 width=23) (actual time=2.205..4.400 rows=13 loops=1)                       |
+--     Hash Cond: (f.id = s.film_id)                                                                                    |
+--     ->  Seq Scan on films f  (cost=0.00..164.00 rows=10000 width=23) (actual time=0.017..1.073 rows=10000 loops=1)   |
+--     ->  Hash  (cost=269.00..269.00 rows=50 width=16) (actual time=2.051..2.052 rows=13 loops=1)                      |
+--     Buckets: 1024  Batches: 1  Memory Usage: 9kB                                                               |
+--     ->  Seq Scan on sessions s  (cost=0.00..269.00 rows=50 width=16) (actual time=0.184..2.041 rows=13 loops=1)|
+--     Filter: (date(start_at) = CURRENT_DATE)                                                              |
+--     Rows Removed by Filter: 9987                                                                         |
+--     Planning Time: 2.059 ms                                                                                            |
+--     Execution Time: 4.440 ms                                                                                           |
+-- =======================================
+-- Без индексов, только первичные ключи на 10_000_000
+-- =======================================
+--     QUERY PLAN                                                                                                                            |
+-- --------------------------------------------------------------------------------------------------------------------------------------+
+-- Gather  (cost=1000.43..287579.81 rows=50000 width=26) (actual time=17.078..1400.535 rows=13670 loops=1)                               |
+--   Workers Planned: 2                                                                                                                  |
+--   Workers Launched: 2                                                                                                                 |
+--   ->  Nested Loop  (cost=0.43..281579.81 rows=20833 width=26) (actual time=10.897..1354.788 rows=4557 loops=3)                        |
+--         ->  Parallel Seq Scan on sessions s  (cost=0.00..166374.57 rows=20833 width=16) (actual time=8.449..471.177 rows=4557 loops=3)|
+--     Filter: (date(start_at) = CURRENT_DATE)                                                                                 |
+--     Rows Removed by Filter: 3328777                                                                                         |
+--     ->  Index Scan using films_pk on films f  (cost=0.43..5.53 rows=1 width=26) (actual time=0.193..0.193 rows=1 loops=13670)     |
+--     Index Cond: (id = s.film_id)                                                                                            |
+--     Planning Time: 5.208 ms                                                                                                               |
+--     JIT:                                                                                                                                  |
+--     Functions: 27                                                                                                                       |
+--     Options: Inlining false, Optimization false, Expressions true, Deforming true                                                       |
+--     Timing: Generation 8.471 ms (Deform 0.946 ms), Inlining 0.000 ms, Optimization 2.516 ms, Emission 20.481 ms, Total 31.469 ms        |
+--     Execution Time: 1402.986 ms                                                                                                           |
+-- =======================================
+-- После индексов 10_000_000
+-- =======================================
+-- ускорение join
+CREATE INDEX idx_hash_id ON films USING hash (id);
+-- ускорение фильтрации по результату date() от start_at
+CREATE INDEX idx_hash_start_at ON sessions USING hash (date(start_at));
+-- QUERY PLAN                                                                                                                                       |
+-- -------------------------------------------------------------------------------------------------------------------------------------------------+
+-- Gather  (cost=2527.50..198620.34 rows=50000 width=26) (actual time=12.853..836.728 rows=13670 loops=1)                                           |
+--   Workers Planned: 2                                                                                                                             |
+--   Workers Launched: 2                                                                                                                            |
+--   ->  Nested Loop  (cost=1527.50..192620.34 rows=20833 width=26) (actual time=19.596..809.251 rows=4557 loops=3)                                 |
+--         ->  Parallel Bitmap Heap Scan on sessions s  (cost=1527.50..82797.51 rows=20833 width=16) (actual time=11.163..193.832 rows=4557 loops=3)|
+--               Recheck Cond: (date(start_at) = CURRENT_DATE)                                                                                      |
+--               Heap Blocks: exact=4522                                                                                                            |
+--               ->  Bitmap Index Scan on idx_hash_start_at  (cost=0.00..1515.00 rows=50000 width=0) (actual time=8.292..8.292 rows=13670 loops=1)  |
+--                     Index Cond: (date(start_at) = CURRENT_DATE)                                                                                  |
+--         ->  Index Scan using idx_hash_id on films f  (cost=0.00..5.27 rows=1 width=26) (actual time=0.134..0.134 rows=1 loops=13670)             |
+--               Index Cond: (id = s.film_id)                                                                                                       |
+--               Rows Removed by Index Recheck: 0                                                                                                   |
+-- Planning Time: 0.577 ms                                                                                                                          |
+-- JIT:                                                                                                                                             |
+--   Functions: 30                                                                                                                                  |
+--   Options: Inlining false, Optimization false, Expressions true, Deforming true                                                                  |
+--   Timing: Generation 3.210 ms (Deform 0.629 ms), Inlining 0.000 ms, Optimization 0.945 ms, Emission 11.217 ms, Total 15.372 ms                   |
+-- Execution Time: 839.191 ms                                                                                                                       |
