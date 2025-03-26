@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9aaca7d97ca83c3380f5aec4cef4510f",
+    "content-hash": "c0b7b2873f3b7046b338bfb95f2a7a01",
     "packages": [
         {
             "name": "elastic/transport",
@@ -772,6 +772,52 @@
             "time": "2024-10-02T11:48:29+00:00"
         },
         {
+            "name": "phplucidframe/console-table",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phplucidframe/console-table.git",
+                "reference": "62e5e698a1804c6dbe66215601767e93564002e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phplucidframe/console-table/zipball/62e5e698a1804c6dbe66215601767e93564002e8",
+                "reference": "62e5e698a1804c6dbe66215601767e93564002e8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "LucidFrame\\": "src/",
+                    "LucidFrameTest\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sithu",
+                    "email": "sithu@phplucidframe.com"
+                }
+            ],
+            "description": "Console Table",
+            "support": {
+                "issues": "https://github.com/phplucidframe/console-table/issues",
+                "source": "https://github.com/phplucidframe/console-table/tree/v1.3.1"
+            },
+            "time": "2025-03-04T14:26:32+00:00"
+        },
+        {
             "name": "psr/http-client",
             "version": "dev-master",
             "source": {
@@ -1178,7 +1224,9 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "elasticsearch/elasticsearch": 20
+        "elasticsearch/elasticsearch": 20,
+        "guzzlehttp/guzzle": 20,
+        "phplucidframe/console-table": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
