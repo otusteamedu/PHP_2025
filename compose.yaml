@@ -23,38 +23,6 @@ services:
       XDEBUG_MODE: debug
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_TRIGGER: yes
-  es01:
-    image: elasticsearch:8.17.3
-    container_name: es01
-    environment:
-      - node.name=node01
-      - xpack.security.enabled=false
-      - discovery.type=single-node
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65535
-        hard: 65535
-    volumes:
-      - type: bind
-        source: ./elasticsearch/plugins
-        target: /usr/share/elasticsearch/plugins
-#      - type: bind
-#        source: ./elasticsearch/data01
-      - type: volume
-        source: esdata01
-        target: /usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-    networks:
-      - esnet
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
 volumes:
   esdata01:
     driver: local
