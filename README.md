@@ -13,4 +13,4 @@
 Заполнение через _bulk
 
 Консольное приложение поиска:
-php search_books.php --query="рыцОри" --category="Исторический роман" --max_price=2000 --in_stock=1
+php bin/console search_books --query="рыцОри" --category="Исторический роман" --max_price=2000 --in_stock=1
