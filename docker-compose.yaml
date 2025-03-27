@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: otusapp/nginx
+    container_name: nginx_service
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - php-fpm
+    networks:
+      - app_network
+
+  php-fpm:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: otusapp/php # имя будущего образа
+    container_name: php_fpm_service
+    restart: always
+    volumes:
+      - .:/var/www/html
+    environment:
+      - PHP_MEMORY_LIMIT=512M
+    networks:
+      - app_network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - http.cors.allow-methods=OPTIONS,HEAD,GET,POST,PUT,DELETE
+      - http.cors.allow-headers=X-Requested-With,Content-Type,Content-Length,Authorization
+    ports:
+      - "9200:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: 4GB  # Ограничение памяти
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
