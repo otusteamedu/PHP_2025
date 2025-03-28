@@ -1,0 +1,107 @@
+==== 1. Выбор всех фильмов на сегодня ====
+План выполнения                                                                                 
+--------------------------------------------------------------------------------------------------------------
+Hash Join  (cost=24.05..37.80 rows=4 width=218) (actual time=0.015..0.016 rows=0 loops=1)                     
+  Hash Cond: (m.id = s.movie_id)                                                                              
+  ->  Seq Scan on movie m  (cost=0.00..12.70 rows=270 width=222) (actual time=0.003..0.003 rows=1 loops=1)    
+  ->  Hash  (cost=24.00..24.00 rows=4 width=4) (actual time=0.004..0.004 rows=0 loops=1)                      
+        Buckets: 1024  Batches: 1  Memory Usage: 8kB                                                          
+        ->  Seq Scan on session s  (cost=0.00..24.00 rows=4 width=4) (actual time=0.004..0.004 rows=0 loops=1)
+              Filter: (date(start_time) = CURRENT_DATE)                                                       
+              Rows Removed by Filter: 9                                                                       
+Planning Time: 0.292 ms                                                                                       
+Execution Time: 0.029 ms                                                                                      
+
+==== 2. Подсчёт проданных билетов за неделю ====
+План выполнения                                                                                       
+--------------------------------------------------------------------------------------------------------------------
+Aggregate  (cost=53.24..53.25 rows=1 width=8) (actual time=0.017..0.018 rows=1 loops=1)                             
+  ->  Hash Join  (cost=28.05..53.22 rows=6 width=0) (actual time=0.015..0.017 rows=0 loops=1)                       
+        Hash Cond: (t.session_id = s.id)                                                                            
+        ->  Seq Scan on ticket t  (cost=0.00..22.00 rows=1200 width=4) (actual time=0.002..0.002 rows=1 loops=1)    
+        ->  Hash  (cost=28.00..28.00 rows=4 width=4) (actual time=0.004..0.005 rows=0 loops=1)                      
+              Buckets: 1024  Batches: 1  Memory Usage: 8kB                                                          
+              ->  Seq Scan on session s  (cost=0.00..28.00 rows=4 width=4) (actual time=0.003..0.004 rows=0 loops=1)
+                    Filter: ((start_time <= now()) AND (start_time >= (now() - '7 days'::interval)))                
+                    Rows Removed by Filter: 9                                                                       
+Planning Time: 0.084 ms                                                                                             
+Execution Time: 0.028 ms                                                                                            
+
+==== 3. Формирование афиши (фильмы, которые показывают сегодня) ====
+План выполнения                                                                                             
+--------------------------------------------------------------------------------------------------------------------------
+Unique  (cost=37.84..37.86 rows=4 width=218) (actual time=0.014..0.014 rows=0 loops=1)                                    
+  ->  Sort  (cost=37.84..37.85 rows=4 width=218) (actual time=0.013..0.014 rows=0 loops=1)                                
+        Sort Key: m.title                                                                                                 
+        Sort Method: quicksort  Memory: 25kB                                                                              
+        ->  Hash Join  (cost=24.05..37.80 rows=4 width=218) (actual time=0.006..0.006 rows=0 loops=1)                     
+              Hash Cond: (m.id = s.movie_id)                                                                              
+              ->  Seq Scan on movie m  (cost=0.00..12.70 rows=270 width=222) (actual time=0.002..0.002 rows=1 loops=1)    
+              ->  Hash  (cost=24.00..24.00 rows=4 width=4) (actual time=0.002..0.002 rows=0 loops=1)                      
+                    Buckets: 1024  Batches: 1  Memory Usage: 8kB                                                          
+                    ->  Seq Scan on session s  (cost=0.00..24.00 rows=4 width=4) (actual time=0.002..0.002 rows=0 loops=1)
+                          Filter: (date(start_time) = CURRENT_DATE)                                                       
+                          Rows Removed by Filter: 9                                                                       
+Planning Time: 0.044 ms                                                                                                   
+Execution Time: 0.024 ms                                                                                                  
+
+==== 4. Поиск 3 самых прибыльных фильмов за неделю ====
+План выполнения                                                                                                                     
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Limit  (cost=67.34..67.35 rows=3 width=250) (actual time=0.041..0.041 rows=0 loops=1)                                                             
+  ->  Sort  (cost=67.34..67.36 rows=6 width=250) (actual time=0.040..0.040 rows=0 loops=1)                                                        
+        Sort Key: (sum(t.price)) DESC                                                                                                             
+        Sort Method: quicksort  Memory: 25kB                                                                                                      
+        ->  GroupAggregate  (cost=67.15..67.27 rows=6 width=250) (actual time=0.030..0.030 rows=0 loops=1)                                        
+              Group Key: m.title                                                                                                                  
+              ->  Sort  (cost=67.15..67.16 rows=6 width=234) (actual time=0.030..0.030 rows=0 loops=1)                                            
+                    Sort Key: m.title                                                                                                             
+                    Sort Method: quicksort  Memory: 25kB                                                                                          
+                    ->  Hash Join  (cost=53.30..67.07 rows=6 width=234) (actual time=0.024..0.024 rows=0 loops=1)                                 
+                          Hash Cond: (m.id = s.movie_id)                                                                                          
+                          ->  Seq Scan on movie m  (cost=0.00..12.70 rows=270 width=222) (actual time=0.002..0.002 rows=1 loops=1)                
+                          ->  Hash  (cost=53.22..53.22 rows=6 width=20) (actual time=0.012..0.012 rows=0 loops=1)                                 
+                                Buckets: 1024  Batches: 1  Memory Usage: 8kB                                                                      
+                                ->  Hash Join  (cost=28.05..53.22 rows=6 width=20) (actual time=0.012..0.012 rows=0 loops=1)                      
+                                      Hash Cond: (t.session_id = s.id)                                                                            
+                                      ->  Seq Scan on ticket t  (cost=0.00..22.00 rows=1200 width=20) (actual time=0.001..0.001 rows=1 loops=1)   
+                                      ->  Hash  (cost=28.00..28.00 rows=4 width=8) (actual time=0.004..0.004 rows=0 loops=1)                      
+                                            Buckets: 1024  Batches: 1  Memory Usage: 8kB                                                          
+                                            ->  Seq Scan on session s  (cost=0.00..28.00 rows=4 width=8) (actual time=0.004..0.004 rows=0 loops=1)
+                                                  Filter: ((start_time <= now()) AND (start_time >= (now() - '7 days'::interval)))                
+                                                  Rows Removed by Filter: 9                                                                       
+Planning Time: 0.085 ms                                                                                                                           
+Execution Time: 0.057 ms                                                                                                                          
+
+==== 5. Сформировать схему зала и показать на ней свободные и занятые места на конкретный сеанс ====
+План выполнения                                                                                               
+----------------------------------------------------------------------------------------------------------------------------
+Sort  (cost=53.58..53.59 rows=4 width=98) (actual time=0.021..0.022 rows=6 loops=1)                                         
+  Sort Key: s.row_number, s.seat_number                                                                                     
+  Sort Method: quicksort  Memory: 25kB                                                                                      
+  InitPlan 1                                                                                                                
+    ->  Index Scan using session_pkey on session  (cost=0.15..8.17 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1)
+          Index Cond: (id = 1)                                                                                              
+  ->  Nested Loop Left Join  (cost=0.00..45.38 rows=4 width=98) (actual time=0.009..0.015 rows=6 loops=1)                   
+        Join Filter: (s.id = t.seat_id)                                                                                     
+        Rows Removed by Join Filter: 20                                                                                     
+        ->  Seq Scan on seat s  (cost=0.00..20.00 rows=4 width=70) (actual time=0.005..0.007 rows=6 loops=1)                
+              Filter: (hall_id = (InitPlan 1).col1)                                                                         
+              Rows Removed by Filter: 36                                                                                    
+        ->  Materialize  (cost=0.00..25.03 rows=6 width=8) (actual time=0.000..0.001 rows=4 loops=6)                        
+              ->  Seq Scan on ticket t  (cost=0.00..25.00 rows=6 width=8) (actual time=0.001..0.002 rows=4 loops=1)         
+                    Filter: (session_id = 1)                                                                                
+                    Rows Removed by Filter: 32                                                                              
+Planning Time: 0.095 ms                                                                                                     
+Execution Time: 0.032 ms                                                                                                    
+
+==== 6. Вывести диапазон минимальной и максимальной цены за билет на конкретный сеанс ====
+План выполнения                                                                         
+------------------------------------------------------------------------------------------------------
+Aggregate  (cost=25.03..25.04 rows=1 width=64) (actual time=0.006..0.006 rows=1 loops=1)              
+  ->  Seq Scan on ticket  (cost=0.00..25.00 rows=6 width=16) (actual time=0.002..0.003 rows=4 loops=1)
+        Filter: (session_id = 1)                                                                      
+        Rows Removed by Filter: 32                                                                    
+Planning Time: 0.032 ms                                                                               
+Execution Time: 0.012 ms                                                                              
+
