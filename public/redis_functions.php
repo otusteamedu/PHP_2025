@@ -3,11 +3,15 @@
 require_once '../vendor/autoload.php';
 require_once 'autoload.php';
 
+use Predis\Client as PredisClient;
 
-$client = new MongoDB\Client("mongodb://mongodb:27017");
-
-$db = $client->demo;
-$collection = $db->events;
+$redisBD = new PredisClient([
+    'host' => 'redis',
+    'port' => 6379,
+    'connectTimeout' => 2.5,
+    'database' => 2,
+    'ssl' => ['verify_peer' => false],
+]);
 
 //ДОБАВЛЕНИЕ СПИСКА СОБЫТИЙ
 
@@ -45,45 +49,22 @@ $collection = $db->events;
 //
 //pr_debug($event1000);
 //
-//$arEventsForInserts = [
-//    [
-//        'value' => $event3000,
-//        'score' => 3000,
-//    ],
-//    [
-//        'value' => $event2000,
-//        'score' => 2000,
-//    ],
-//    [
-//        'value' => $event1000,
-//        'score' => 1000,
-//    ]
-//];
 //
-//$insertManyResult = $collection->insertMany($arEventsForInserts);
-
-//$collection = $client->demo->beers;
-//
-//$result = $collection->find( [ 'name' => 'Hinterland', 'brewery' => 'BrewDog' ] );
-//
-//foreach ($result as $entry) {
-//    echo $entry['_id'], ': ', $entry['name'], "\n";
-//}
+//$redisBD->zadd( 'events', [
+//    $event1000 => 1000,
+//    $event2000 => 2000,
+//    $event3000 => 3000,
+//]);
 
 
-
-
-//ВЫДАЧА НУЖНОГО СОБЫТИЯ
-//$arSavedEvents = [];
-//$savedEvents = $collection->find();
-//foreach ($savedEvents as $event) {
-//    $arSavedEvents[] = $event['value'];
-//};
-//
-//pr_debug($arSavedEvents);
-//
 //$searchParams = ['param2' => 2];
+//pr_debug($searchParams);
+//
+////ВЫДАЧА НУЖНОГО СОБЫТИЯ
+//$arSavedEvents = $redisBD->zrevrangebyscore('events', 5000, 1000);
+//
 //$arAppropriateEvents = geAppropriateEvents($arSavedEvents, $searchParams);
+//
 //pr_debug($arAppropriateEvents);
 //if (!empty($arAppropriateEvents)) {
 //    $bestEvent = reset($arAppropriateEvents);
@@ -107,8 +88,33 @@ $collection = $db->events;
 //    return $arAppropriateEvents;
 //}
 
+
+//echo '23432423432';
+
+
+//ПОЛУЧЕНИЕ СПИСКА СОБЫТИЙ ПО ПРИОРИТЕТУ
+//$arSavedEvents = $redisBD->zrevrangebyscore('events', 5000, 1000);
+//pr_debug($arSavedEvents);
+//echo '23432423432';
+
+
 //ОЧИСТКА ВСЕХ ДОСТУПНЫХ СОБЫТИЙ
-$collection->drop();
+//$arSavedEvents = $redisBD->zrevrangebyscore('events', 5000, 1000);
+//foreach ($arSavedEvents as $event) {
+//    //pr_debug($event);
+//    $redisBD->zrem('events', $event);
+//}
+
+
+//use classes\App;
+//try {
+//    $app = new App($commandsNameSpace, $argv);
+//    $app->run();
+//}
+//
+//catch (Exception $e) {
+//     print_r($e->getMessage());
+//}
 
 function pr_debug($var)
 {
