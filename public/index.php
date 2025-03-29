@@ -4,7 +4,9 @@ use App\App;
 
 require(__DIR__ . '/../vendor/autoload.php');
 
-$app = new App();
+$client = Elastic\Elasticsearch\ClientBuilder::create()->build();
+
+$app = new App($argv);
 $response = $app->run();
 
 echo $response;
