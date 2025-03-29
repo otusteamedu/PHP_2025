@@ -1,0 +1,48 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: balance/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - '.:/data/mysite.local'
+    networks:
+      - app-network
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: balance/php
+    container_name: app
+    volumes:
+      - '.:/data/mysite.local'
+      - './vendor:/data/vendor'
+      - './app:/data/app'
+    networks:
+      - app-network
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '${FORWARD_REDIS_PORT:-6379}:6379'
+    volumes:
+      - 'redis:/data'
+    networks:
+      - app-network
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      retries: 3
+      timeout: 5s
+
+volumes:
+  redis:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
