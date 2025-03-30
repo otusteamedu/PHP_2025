@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+//chmod +x bin/console
+
+require __DIR__ . '/../../vendor/autoload.php';
+
+use App\Command\BulkShopCommand;
+use App\Command\CreateIndexShopCommand;
+use App\Command\RemoveIndexShopCommand;
+use App\Command\SearchShopCommand;
+use App\Infrastructure\Elasticsearch\ElasticsearchService;
+use App\Infrastructure\Elasticsearch\ShopElasticsearch;
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+$esService = new ElasticsearchService();
+$esShop = new ShopElasticsearch($esService);
+
+$app->add(new CreateIndexShopCommand($esShop));
+$app->add(new RemoveIndexShopCommand($esShop));
+$app->add(new BulkShopCommand($esShop));
+$app->add(new SearchShopCommand($esShop));
+
+$app->run();
