@@ -29,16 +29,16 @@ $$
     DECLARE
         cinema_room      record;
         start_datetime   timestamp;
-        end_datetime     timestamp;
         current_datetime timestamp;
         rating           record;
         film             record;
         minutes          varchar;
+        count            int;
     BEGIN
         start_datetime := timestamp '2025-03-01 09:00:00';
-        end_datetime := start_datetime + INTERVAL '10 days';
+        count := 0;
         WHILE
-            end_datetime >= start_datetime
+            count <= 10000000
             LOOP
                 FOR cinema_room IN
                     SELECT *
@@ -62,9 +62,11 @@ $$
                             VALUES (gen_random_uuid(), current_datetime, current_datetime + minutes::interval, film.id,
                                     rating.id, cinema_room.id);
                             current_datetime := current_datetime + minutes::interval + interval '15 minutes';
+                            count := count + 1;
                             EXIT
                                 WHEN current_datetime >= start_datetime + INTERVAL '15 hours';
                         END LOOP;
+                        COMMIT;
                     END LOOP;
                 start_datetime := start_datetime + INTERVAL '1 day';
             END LOOP;
@@ -110,7 +112,10 @@ $$
     BEGIN
         FOR session IN
             SELECT *
-            FROM public.session
+            FROM public.session s
+            WHERE DATE(s.start_from) >= CURRENT_DATE - INTERVAL '30 days'
+              AND DATE(s.start_from)
+                < CURRENT_DATE + INTERVAL '7 days'
             LOOP
                 seat_count := random(10, 30);
                 SELECT price
@@ -135,6 +140,7 @@ $$
                         VALUES (gen_random_uuid(),
                                 round(film_price * session_rating * seat.rating * cinema_room_rating),
                                 seat.id, session.id);
+                        COMMIT;
                     END LOOP;
             END LOOP;
     END;

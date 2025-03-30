@@ -1,3 +1,4 @@
+-- таблица фильмов
 CREATE TABLE IF NOT EXISTS public.film
 (
     id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -16,6 +17,7 @@ COMMENT ON COLUMN public.film.price IS 'Базовая цена за просм�
 ALTER TABLE public.film
     OWNER TO test;
 
+-- таблица рейтинга сеансов
 CREATE TABLE IF NOT EXISTS public.session_rating
 (
     id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -30,6 +32,7 @@ COMMENT ON COLUMN public.session_rating.rating IS 'Рейтинг сеанса';
 ALTER TABLE public.session_rating
     OWNER TO test;
 
+-- таблица залов
 CREATE TABLE IF NOT EXISTS public.cinema_room
 (
     id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -46,6 +49,7 @@ COMMENT ON COLUMN public.cinema_room.rating IS 'Рейтинг, который �
 ALTER TABLE public.cinema_room
     OWNER TO test;
 
+-- таблица сеансов
 CREATE TABLE IF NOT EXISTS public.session
 (
     id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -71,6 +75,7 @@ COMMENT ON COLUMN public.session.end_to IS 'Дата завершения сеа
 ALTER TABLE public.session
     OWNER TO test;
 
+-- таблица мест
 CREATE TABLE IF NOT EXISTS public.cinema_room_seat
 (
     id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -95,6 +100,7 @@ COMMENT ON COLUMN public.cinema_room_seat.rating IS 'Рейтинг, котор�
 ALTER TABLE public.cinema_room_seat
     OWNER TO test;
 
+-- таблица билетов
 CREATE TABLE IF NOT EXISTS public.ticket
 (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
