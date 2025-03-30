@@ -1,11 +1,13 @@
 {
-    "name": "mdmitriev/hw5",
+    "name": "mdmitriev/hw10",
     "type": "project",
     "description": "Learn project",
     "proprietary": "MIT",
     "require": {
         "symfony/dotenv": "^7.2",
-        "symfony/http-foundation": "^7.2"
+        "symfony/http-foundation": "^7.2",
+        "elasticsearch/elasticsearch": "^8.17",
+        "symfony/console": "^7.2"
     },
     "autoload": {
         "psr-4": {
@@ -14,5 +16,10 @@
     },
     "require-dev": {
         "symfony/var-dumper": "^7.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

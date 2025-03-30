@@ -87,14 +87,14 @@ services:
       - app-network
 
   memcached:
-    image: memcached
+    image: memcached:1.6.38
     container_name: ${COMPOSE_PROJECT_NAME}_${MEMCACHED_CONTAINER_NAME}
     command: [ "memcached", "-m", "64", "-p", "${MEMCACHED_PORT}", "-l", "0.0.0.0" ]
     networks:
       - app-network
 
   postgres:
-    image: postgres:latest
+    image: postgres:17.4
     container_name: ${COMPOSE_PROJECT_NAME}_${POSTGRES_CONTAINER_NAME}
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -107,6 +107,31 @@ services:
     networks:
       - app-network
 
+  elasticsearch:
+    image: elasticsearch:8.17.4
+    container_name: ${COMPOSE_PROJECT_NAME}_${ELASTIC_CONTAINER_NAME}
+    environment:
+      - node.name=${COMPOSE_PROJECT_NAME}_es
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - discovery.type=single-node
+      - xpack.security.enabled=${ELASTIC_SECURITY}
+      # curl http://localhost:9200 при security=false
+      # curl -u elastic:${ELASTIC_PASSWORD} http://localhost:9200 при security=true
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:${ELASTIC_PORT}"
+#    expose:
+#      - "${ELASTIC_PORT}"
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
@@ -115,3 +140,4 @@ volumes:
   php_socket:
   redis_data:
   postgres_data:
+  es_data:
