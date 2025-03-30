@@ -1,0 +1,26 @@
+{
+    "name": "root/app",
+    "autoload": {
+        "psr-4": {
+            "Root\\App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "pavel"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "elasticsearch/elasticsearch": "dev-main",
+        "guzzlehttp/guzzle": "7.9.x-dev",
+        "phplucidframe/console-table": "dev-master",
+        "predis/predis": "^3.0@alpha",
+        "mongodb/mongodb": "v1.x-dev"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
