@@ -32,14 +32,19 @@ $redisBD = new PredisClient([
 //    'event' => '::event::'
 //];
 //
-//$arEvent3000 = [
-//    'priority' => 3000,
-//    'conditions' => [
-//        'param1' => 1,
-//        'param2' => 2,
-//    ],
-//    'event' => '::event::'
-//];
+$arEvent3000 = [
+   'priority' => 3000,
+   'conditions' => [
+       'param1' => 1,
+       'param2' => 2,
+   ],
+   'event' => '::event::'
+];
+
+
+
+
+
 //
 //pr_debug($arEvent1000);
 //

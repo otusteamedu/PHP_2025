@@ -27,9 +27,9 @@ class RedisDBService implements NoSqlDBInterface
 
     public function addEvent(array $arEvent)
     {
-        $eventJson = json_encode($arEvent);
+        $eventJson = json_encode($arEvent['conditions']);
         $this->redisBD->zadd( self::EVENTS_DB, [
-            $eventJson => $arEvent['score'],
+            $eventJson => $arEvent['priority'],
         ]);
     }
 
@@ -46,17 +46,17 @@ class RedisDBService implements NoSqlDBInterface
        if (!empty($arSavedEvents)) {
             foreach ($arSavedEvents as $event) {
                 $arEvent = json_decode($event, true);
-                $arEventValues = json_decode($arEvent['value'], true);
 
                 //событие считает подходящим, если подходит хотя бы одно условие
-                foreach ($arEventValues['conditions'] as $paramNum => $paramVal) {
+                foreach ($arEvent as $paramNum => $paramVal) {
                     if (isset($searchParams[$paramNum]) && $searchParams[$paramNum] == $paramVal) {
-                        $arAppropriateEvents[$arEventValues['priority']] = $arEventValues;
+                        $arAppropriateEvents[] = $arEvent;
                         break;
                     }
                 }
             }
        }
+       
 
        if (!empty($arAppropriateEvents)) {
             $result = reset($arAppropriateEvents);

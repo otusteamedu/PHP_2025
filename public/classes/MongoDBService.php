@@ -30,8 +30,9 @@ class MongoDBService implements NoSqlDBInterface
     {
         $arSavedEvents = [];
         $savedEvents = $this->db->events->find([], ['sort' => ['score' => -1]]);
+
         foreach ($savedEvents as $event) {
-            $arSavedEvents[] = $event['value'];
+            $arSavedEvents[] = $event['conditions'];
         };
 
         return $arSavedEvents;
@@ -43,25 +44,22 @@ class MongoDBService implements NoSqlDBInterface
 
         $arSavedEvents = $this->getAllEvents();
 
-        foreach ($arSavedEvents as $event) {
-            $arEvent = json_decode($event, true);
-     
+        foreach ($arSavedEvents as $arEvent) {
             //событие считает подходящим, если подходит хотя бы одно условие
-            foreach ($arEvent['conditions'] as $paramNum => $paramVal) {
+            foreach ($arEvent as $paramNum => $paramVal) {
                 if (isset($searchParams[$paramNum]) && $searchParams[$paramNum] == $paramVal) {
-                    $arAppropriateEvents[$arEvent['priority']] = $arEvent;
+                    $arAppropriateEvents[] = $arEvent;
                     break;
                 }
             }
         }
 
         if (!empty($arAppropriateEvents)) {
-            $result = reset($arAppropriateEvents);
+            $result = (array)reset($arAppropriateEvents);
         } else {
             $result = [];
         }   
      
         return $result;
     }
-
 }
