@@ -1,0 +1,46 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - './:/var/www/html'
+    networks:
+      - my-network
+  php:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    container_name: php
+    volumes:
+      - './:/var/www/html'
+    networks:
+      - my-network
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "3306:3306"
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-uroot", "-p${DB_PASSWORD}" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+networks:
+  my-network:
+    driver: bridge
+volumes:
+  mysql:
+    driver: local
