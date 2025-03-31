@@ -32,6 +32,7 @@ class Indexer {
                     ]
                 ],
                 'mappings' => [
+                    'dynamic' => 'true',
                     'properties' => [
                         'title' => ['type' => 'text'],
                         'category' => ['type' => 'text'],
