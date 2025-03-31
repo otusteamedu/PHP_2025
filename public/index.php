@@ -7,7 +7,7 @@ require_once 'autoload.php';
 use classes\App;
 try {
    $app = new App();
-   echo $app->run();
+   $app->run();
 }
 
 catch (Exception $e) {
