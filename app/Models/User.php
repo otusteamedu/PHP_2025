@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use InvalidArgumentException;
 use PDO;
 use Database\DatabaseConnection;
+use PDOException;
 
 class User
 {
@@ -28,7 +30,7 @@ class User
             }
 
             return $this->update();
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
             return false;
         }
@@ -57,19 +59,42 @@ class User
     private function update(): bool
     {
         $stmt = $this->db->prepare(
-            "UPDATE users SET 
-             username = :username, 
-             email = :email, 
-             is_active = :is_active 
-             WHERE id = :id"
+            "UPDATE users SET username = :username, email = :email, is_active = :is_active WHERE id = :id"
         );
 
-        return $stmt->execute([
-            ':username' => $this->username,
-            ':email' => $this->email,
-            ':is_active' => $this->isActive,
+        $currentUser = self::find($this->id);
+
+        $params = [
             ':id' => $this->id
-        ]);
+        ];
+
+        if ($this->username !== $currentUser->getUsername()) {
+            $params[':username'] = $this->username;
+        }
+
+        if ($this->email !== $currentUser->getEmail()) {
+            $params[':email'] = $this->email;
+        }
+
+        if ($this->isActive !== $currentUser->isActive()) {
+            $params[':is_active'] = $this->isActive;
+        }
+
+        $columnsToUpdate = [];
+        foreach ($params as $key => $value) {
+            if ($key !== ':id') {
+                $columnsToUpdate[] = "$key = $key";
+            }
+        }
+
+        if (empty($columnsToUpdate)) {
+            return false;
+        }
+
+        $sql = "UPDATE users SET " . implode(", ", $columnsToUpdate) . " WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute($params);
     }
 
     public static function all(): array
@@ -125,7 +150,7 @@ class User
     public function setEmail(string $email): self
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException("Invalid email format");
+            throw new InvalidArgumentException("Invalid email format");
         }
         $this->email = trim($email);
         return $this;
