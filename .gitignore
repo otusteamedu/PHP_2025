@@ -11,3 +11,5 @@
 ###< symfony/framework-bundle ###
 /cache/dump.rdb
 /.env
+/public/config.php
+/public/classes/DataMapper/Config.php

@@ -4,14 +4,15 @@ namespace classes\DataMapper;
 
 use PDO;
 use PDOStatement;
-
-use classes\DataMapper\Film;
+use \stdClass as stdClass;
 
 class FilmMapper
 {
     private PDO          $pdo;
 
     private PDOStatement $selectStatement;
+
+    private PDOStatement $selectManyStatement;
 
     private PDOStatement $insertStatement;
 
@@ -22,18 +23,11 @@ class FilmMapper
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
-        $this->selectStatement = $pdo->prepare(
-            'SELECT * FROM films WHERE id = ?'
-        );
-        $this->insertStatement = $pdo->prepare(
-            'INSERT INTO films (title, code, rating) VALUES (?, ?, ?)'
-        );
-        $this->updateStatement = $pdo->prepare(
-            'UPDATE films SET title = ?, code = ?, rating = ? WHERE id = ?'
-        );
-        $this->deleteStatement = $pdo->prepare(
-            'DELETE FROM films WHERE id = ?'
-        );
+        $this->selectStatement = $pdo->prepare('SELECT * FROM films LIMIT ?');
+        $this->selectManyStatement = $pdo->prepare('SELECT * FROM films LIMIT ?');
+        $this->insertStatement = $pdo->prepare('INSERT INTO films (title, code, rating) VALUES (?, ?, ?)');
+        $this->updateStatement = $pdo->prepare('UPDATE films SET title = ?, code = ?, rating = ? WHERE id = ?');
+        $this->deleteStatement = $pdo->prepare('DELETE FROM films WHERE id = ?');
     }
 
     public function findById(int $id): Film
@@ -49,6 +43,19 @@ class FilmMapper
             $result['code'],
             $result['rating'],
         );
+    }
+
+    public function getMany(int $limit):stdClass
+    {
+        $this->selectManyStatement->setFetchMode(PDO::FETCH_ASSOC);
+        $this->selectManyStatement->execute([$limit]);
+
+        $arFilms = [];
+        while ($row = $this->selectManyStatement->fetch()) {
+            $arFilms[] = $row;
+        }
+
+        return (object)$arFilms;
     }
 
     public function insert(array $rawUserData): Film
@@ -68,19 +75,18 @@ class FilmMapper
     }
 
 
-//
-//    public function update(User $user): bool
-//    {
-//        return $this->updateStatement->execute([
-//            $user->getFirstName(),
-//            $user->getLastName(),
-//            $user->getEmail(),
-//            $user->getId(),
-//        ]);
-//    }
-//
-//    public function delete(User $user): bool
-//    {
-//        return $this->deleteStatement->execute([$user->getId()]);
-//    }
+    public function update(Film $film): bool
+    {
+        return $this->updateStatement->execute([
+            $film->getTitle(),
+            $film->getCode(),
+            $film->getRating(),
+            $film->getId(),
+        ]);
+    }
+
+    public function delete(Film $film): bool
+    {
+        return $this->deleteStatement->execute([$film->getId()]);
+    }
 }
