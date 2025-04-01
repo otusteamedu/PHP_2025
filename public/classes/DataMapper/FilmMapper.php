@@ -5,6 +5,8 @@ namespace classes\DataMapper;
 use PDO;
 use PDOStatement;
 
+use classes\DataMapper\Film;
+
 class FilmMapper
 {
     private PDO          $pdo;
@@ -21,62 +23,64 @@ class FilmMapper
     {
         $this->pdo = $pdo;
         $this->selectStatement = $pdo->prepare(
-            'SELECT * FROM users WHERE id = ?'
+            'SELECT * FROM films WHERE id = ?'
         );
         $this->insertStatement = $pdo->prepare(
-            'INSERT INTO users (first_name, last_name, email) VALUES (?, ?, ?)'
+            'INSERT INTO films (title, code, rating) VALUES (?, ?, ?)'
         );
         $this->updateStatement = $pdo->prepare(
-            'UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE id = ?'
+            'UPDATE films SET title = ?, code = ?, rating = ? WHERE id = ?'
         );
         $this->deleteStatement = $pdo->prepare(
-            'DELETE FROM users WHERE id = ?'
+            'DELETE FROM films WHERE id = ?'
         );
     }
 
-    public function findById(int $id): User
+    public function findById(int $id): Film
     {
         $this->selectStatement->setFetchMode(PDO::FETCH_ASSOC);
         $this->selectStatement->execute([$id]);
 
         $result = $this->selectStatement->fetch();
 
-        return new User(
+        return new Film(
             $result['id'],
-            $result['first_name'],
-            $result['last_name'],
-            $result['email'],
+            $result['title'],
+            $result['code'],
+            $result['rating'],
         );
     }
 
-    public function insert(array $rawUserData): User
+    public function insert(array $rawUserData): Film
     {
         $this->insertStatement->execute([
-            $rawUserData['first_name'],
-            $rawUserData['last_name'],
-            $rawUserData['email'],
+            $rawUserData['title'],
+            $rawUserData['code'],
+            $rawUserData['rating'],
         ]);
 
-        return new User(
+        return new Film(
             (int)$this->pdo->lastInsertId(),
-            $rawUserData['first_name'],
-            $rawUserData['last_name'],
-            $rawUserData['email'],
+            $rawUserData['title'],
+            $rawUserData['code'],
+            $rawUserData['rating'],
         );
     }
 
-    public function update(User $user): bool
-    {
-        return $this->updateStatement->execute([
-            $user->getFirstName(),
-            $user->getLastName(),
-            $user->getEmail(),
-            $user->getId(),
-        ]);
-    }
 
-    public function delete(User $user): bool
-    {
-        return $this->deleteStatement->execute([$user->getId()]);
-    }
+//
+//    public function update(User $user): bool
+//    {
+//        return $this->updateStatement->execute([
+//            $user->getFirstName(),
+//            $user->getLastName(),
+//            $user->getEmail(),
+//            $user->getId(),
+//        ]);
+//    }
+//
+//    public function delete(User $user): bool
+//    {
+//        return $this->deleteStatement->execute([$user->getId()]);
+//    }
 }

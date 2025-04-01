@@ -4,25 +4,25 @@ namespace classes\DataMapper;
 
 class Film
 {
-    private int    $id;
+    private int $id;
 
-    private string $firstName;
+    private string $title;
 
-    private string $lastName;
+    private string $code;
 
-    private string $email;
+    private int $rating;
 
     public function __construct(
         int $id,
-        string $firstName,
-        string $lastName,
-        string $email
+        string $title,
+        string $code,
+        int $rating
     )
     {
         $this->id = $id;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->email = $email;
+        $this->title = $title;
+        $this->code = $code;
+        $this->rating = $rating;
     }
 
     public function getId(): int
@@ -37,39 +37,37 @@ class Film
         return $this;
     }
 
-    public function getFirstName(): string
+    public function getTitle(): string
     {
-        return $this->firstName;
+        return $this->title;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setTitle(string $title): self
     {
-        $this->firstName = $firstName;
+        $this->title = $title;
 
         return $this;
     }
 
-    public function getLastName(): string
+    public function getCode(): string
     {
-        return $this->lastName;
+        return $this->code;
     }
 
-    public function setLastName(string $lastName): self
+    public function setCode(string $code): self
     {
-        $this->lastName = $lastName;
-
+        $this->code = $code;
         return $this;
     }
 
-    public function getEmail(): string
+    public function getRating(): int
     {
-        return $this->email;
+        return $this->rating;
     }
 
-    public function setEmail(string $email): self
+    public function setRating(int $rating): self
     {
-        $this->email = $email;
-
+        $this->rating = $rating;
         return $this;
     }
 }

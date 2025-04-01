@@ -1,18 +1,11 @@
-FROM php:8.3-fpm
+FROM php:fpm
 
-RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    libpq-dev \
-    zlib1g-dev \
-    unzip
+RUN apt-get update && \
+    apt-get install -y libpq-dev && \
+    docker-php-ext-install pdo pdo_pgsql pgsql
 
-RUN docker-php-ext-install zip
-
-RUN pecl install mongodb && docker-php-ext-enable mongodb
-RUN echo "extension=mongodb.so" >> /usr/local/etc/php/php.ini
-
-RUN curl -sS https://getcomposer.org/installer | php && \
-  mv composer.phar /usr/local/bin/composer
+#RUN docker-php-ext-install zip
+#RUN docker-php-ext-enable php8.3-pdo_pgsql
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
