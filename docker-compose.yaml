@@ -1,0 +1,50 @@
+services:
+  nginx:
+    image: "nginx:latest"
+    container_name: ${NGINX_CONTAINER}
+    volumes:
+      - ./app:/var/www/app
+      - ./docker/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: otus-hw14/php
+    container_name: ${APP_CONTAINER}
+    restart: always
+    volumes:
+      - ./app:/var/www/app
+    networks:
+      - app-network
+    env_file: .env
+
+  redis:
+    image: redis:latest
+    container_name: ${REDIS_CONTAINER}
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    networks:
+      - app-network
+
+  elasticsearch:
+    image: elasticsearch:8.17.3
+    container_name: ${ELASTIC_CONTAINER}
+    ports:
+      - ${ELASTIC_PORT}:${ELASTIC_PORT}
+    environment:
+      - discovery.type=single-node
+    networks:
+      - app-network
+    env_file: .env
+
+networks:
+  app-network:
+    driver: bridge
