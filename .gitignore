@@ -1,5 +1,15 @@
-.idea/
+/.idea
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
 /vendor/
-.DS_Store
-.AppleDouble
-.LSOverride
+###< symfony/framework-bundle ###
+/cache/dump.rdb
+/.env
+/public/config.php
+/public/classes/DataMapper/Config.php
