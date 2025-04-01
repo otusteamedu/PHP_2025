@@ -16,7 +16,7 @@ class App
     public function __construct()
     {
          try {
-             $appConfig = Config::getPDOParams();
+            $appConfig = Config::getPDOParams();
 
             $host = $appConfig['HOST'];
             $db = $appConfig['DB'];
