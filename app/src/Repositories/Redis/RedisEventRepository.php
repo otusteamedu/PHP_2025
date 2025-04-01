@@ -64,10 +64,10 @@ class RedisEventRepository implements EventRepositoryInterface
      */
     public function search(EventSearch $eventSearch): ?Event
     {
-        $setNames = $this->getConditionsSetNames($eventSearch->getConditions());
-        $this->client->zInterStore('intersectSet', $setNames, null, 'max');
+        $namesOfSets = $this->getConditionsNamesOfSets($eventSearch->getConditions());
+        $this->client->zInterStore('intersectionSet', $namesOfSets, null, 'max');
 
-        $events = $this->client->zPopMax('intersectSet');
+        $events = $this->client->zPopMax('intersectionSet', 1);
         if (empty($events)) {
             return null;
         }
@@ -85,7 +85,7 @@ class RedisEventRepository implements EventRepositoryInterface
      * @param array $conditions
      * @return array
      */
-    private function getConditionsSetNames(array $conditions): array
+    private function getConditionsNamesOfSets(array $conditions): array
     {
         return array_map(
             function (Condition $condition) {
