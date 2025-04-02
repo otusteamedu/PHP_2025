@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
-use App\DataMappers\Proxy\TeamProxy;
+use App\Proxy\TeamProxy;
 
 /**
  * Class Player

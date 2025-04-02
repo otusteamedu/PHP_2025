@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DataMappers\Proxy;
+namespace App\Proxy;
 
 use App\Application;
 use App\DataMappers\PlayerMapper;
@@ -11,7 +11,7 @@ use App\Entities\Team;
 
 /**
  * Class PlayerProxy
- * @package App\DataMappers\Proxy
+ * @package App\Proxy
  */
 class PlayerProxy
 {
