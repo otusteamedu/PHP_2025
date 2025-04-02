@@ -20,9 +20,9 @@ class TeamProxy
      */
     private TeamMapper $mapper;
     /**
-     * @var Team|null
+     * @var Team|null|false
      */
-    private ?Team $team = null;
+    private Team|null|false $team = false;
 
     /**
      *
@@ -38,12 +38,10 @@ class TeamProxy
      */
     public function getTeam(Player $player): ?Team
     {
-        if (!$player->getTeamId()) {
-            return null;
-        }
+        $teamId = $player->getTeamId();
 
-        if ($this->team === null) {
-            $this->team = $this->mapper->findById($player->getTeamId());
+        if ($this->team === false) {
+            $this->team = $teamId ? $this->mapper->findById($teamId) : null;
         }
 
         return $this->team;
