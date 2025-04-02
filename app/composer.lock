@@ -1,0 +1,66 @@
+{
+  "_readme": [
+    "This file locks the dependencies of your project to a known state",
+    "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+    "This file is @generated automatically"
+  ],
+  "content-hash": "bf00e0675a29e25cace2a161667f6d67",
+  "packages": [
+    {
+      "name": "phplucidframe/console-table",
+      "version": "v1.3.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/phplucidframe/console-table.git",
+        "reference": "62e5e698a1804c6dbe66215601767e93564002e8"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/phplucidframe/console-table/zipball/62e5e698a1804c6dbe66215601767e93564002e8",
+        "reference": "62e5e698a1804c6dbe66215601767e93564002e8",
+        "shasum": ""
+      },
+      "require": {
+        "ext-mbstring": "*",
+        "php": ">=7.1"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "*"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-0": {
+          "LucidFrame\\": "src/",
+          "LucidFrameTest\\": "tests/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Sithu",
+          "email": "sithu@phplucidframe.com"
+        }
+      ],
+      "description": "Console Table",
+      "support": {
+        "issues": "https://github.com/phplucidframe/console-table/issues",
+        "source": "https://github.com/phplucidframe/console-table/tree/v1.3.1"
+      },
+      "time": "2025-03-04T14:26:32+00:00"
+    }
+  ],
+  "packages-dev": [],
+  "aliases": [],
+  "minimum-stability": "stable",
+  "stability-flags": {},
+  "prefer-stable": false,
+  "prefer-lowest": false,
+  "platform": {
+    "ext-pdo": "*"
+  },
+  "platform-dev": {},
+  "plugin-api-version": "2.6.0"
+}
