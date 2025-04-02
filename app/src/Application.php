@@ -79,7 +79,6 @@ class Application
                 $createdTeam = $this->teamService->create(Team::create($teamData));
                 $this->log("Команда {$createdTeam->getName()} успешно добавлена, ID = {$createdTeam->getId()}");
             }
-            $this->teamService->printAll();
 
             // Создание тестовых игроков
             $this->log(PHP_EOL . 'Создаем игроков...');
@@ -87,7 +86,9 @@ class Application
                 $createdPlayer = $this->playerService->create(Player::create($playerData));
                 $this->log("Игрок {$createdPlayer->getName()} успешно добавлен, ID = {$createdPlayer->getId()}");
             }
+
             $this->playerService->printAll();
+            $this->teamService->printAll();
 
             // Изменение команды            
             $updatedTeam = $this->teamService->findById(2);
