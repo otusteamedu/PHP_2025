@@ -1,21 +1,8 @@
 
 FROM php:8.1-fpm-bullseye
 
-RUN apt update && \
-    apt install --no-install-recommends -y \
-    zlib1g-dev \
-    libpng-dev \
-    libzip-dev \
-    libmemcached-dev \
-    git \
-    unzip
-
-RUN docker-php-ext-install \
-    mysqli \
-    zip
-
-RUN pecl install memcached redis && \ 
-    docker-php-ext-enable memcached redis 
+RUN pecl install redis && \ 
+    docker-php-ext-enable redis 
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 

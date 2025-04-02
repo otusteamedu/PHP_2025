@@ -7,30 +7,50 @@ Class MyApp {
     public $render = "";
 
     public function __construct() {
-
-        session_start();
         
         $renderHtml = new \MyTestApp\RenderHtml();
 
         $redis = (new \MyTestApp\RedisConnect)->redis_connect;
     
-        new \MyTestApp\MethodDispatcher($redis); 
+        $MethodDispatcher = new \MyTestApp\MethodDispatcher($redis); 
 
-        // Если нет данных с ключем сессии, то создаем запись с этим ключем
+        
 
-        if(!$redis->get(session_id()))
-            $redis->set(session_id(), "Запрос обработал контейнер: " . $_SERVER['HOSTNAME'].". Сессия записана в Redis. Ключ: ".session_id()."</br>");
-
-        // Выводим данные по ключу сессии (для кластера)
-
-        else 
-            $renderHtml->renderHtml($redis->get(session_id()));
+        $iterator = null;
+        while ($keys = $redis->scan($iterator)) {
+            foreach ($keys as $key) {
+                $renderHtml->renderHtml("<p><b>{$key}</b></p>");
+                $value = $redis->hgetall($key);
+                //unset($value["priority"]);
+                foreach($value AS $k=>$res)
+                    $renderHtml->renderHtml("<p>&nbsp;&nbsp;&nbsp;&nbsp;    $k: {$res}</p>");
+            }
+        }
 
         $renderHtml->renderHtml("<hr/>");
+
         $renderHtml->renderHtml("
         <form method='post'>
-            <input type='text' size='50' name='string' value='' placeholder='Введите строку для проверки' />
-            <input type='submit' value='Проверить'/>
+            <textarea name='add' style='width:600px; height:300px;' value='' placeholder='Введите json' ></textarea>
+            <p><input type='submit' value='Добавить'/></p>
+        </form>
+        ");
+
+        $search_form = "
+        <hr/>
+        <form method='post'>
+            <textarea name='search' style='width:600px; height:300px;' value='' placeholder='Введите json' ></textarea>
+            <p><input type='submit' value='Искать'/></p>
+        </form>
+        ";
+
+        $renderHtml->renderHtml($search_form);
+        $renderHtml->renderHtml("<hr>Ответ на поиск: {$MethodDispatcher->answer} </hr>");
+
+        $renderHtml->renderHtml("
+        <hr/>
+        <form method='post'>
+            <p><input type='submit' name='clear' value='Очистить базу'/></p>
         </form>
         ");
 

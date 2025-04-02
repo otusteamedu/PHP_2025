@@ -1,4 +1,4 @@
-name: php_nginx
+name: redis_app
 services:
   nginx_with_balancer:
     container_name: nginx_with_balancer_cont
@@ -19,45 +19,6 @@ services:
     working_dir: /var/www/html
     environment: 
       - REDIS_HOST=${REDIS_HOST} 
-      - MEMCACHED_HOST=${MEMCACHED_HOST}
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE} 
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    volumes:
-      - ./src:/var/www/html
-      - ./logs/php:/var/log
-    networks:
-      - inner_network
-
-  php_app_2:
-    container_name: php_app_2_cont
-    build: ./php
-    working_dir: /var/www/html
-    environment: 
-      - REDIS_HOST=${REDIS_HOST} 
-      - MEMCACHED_HOST=${MEMCACHED_HOST}
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE} 
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    volumes:
-      - ./src:/var/www/html
-      - ./logs/php:/var/log
-    networks:
-      - inner_network
-
-  php_app_3:
-    container_name: php_app_3_cont
-    build: ./php
-    working_dir: /var/www/html
-    environment: 
-      - REDIS_HOST=${REDIS_HOST} 
-      - MEMCACHED_HOST=${MEMCACHED_HOST}
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE} 
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - ./src:/var/www/html
       - ./logs/php:/var/log
@@ -69,23 +30,6 @@ services:
     image: redis:latest
     volumes:
       - ./db/redis:/data
-    networks:
-      - inner_network
-
-  memcached:
-    container_name: memcached_cache
-    image: memcached:latest
-    networks:
-      - inner_network
-  mysql:
-    container_name: mysql_base
-    image: mysql:9.1
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    volumes:
-      - ./db/mysql:/var/lib/mysql:rw
-    ports:
-      - 3306:3306
     networks:
       - inner_network
 
