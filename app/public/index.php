@@ -6,5 +6,6 @@ use App\App;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-$app = new App();
+$config = require(dirname(__DIR__) . '/config/config.php');
+$app = new App($config);
 echo $app->run();

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace App\Http;
+namespace App\Infrastructure\Http;
 
 class Request
 {
@@ -45,6 +45,11 @@ class Request
             };
             return;
         }
+    }
+
+    public function getUrl(): string
+    {
+        return $_SERVER['REQUEST_URI'];
     }
 
 }

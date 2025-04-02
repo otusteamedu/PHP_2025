@@ -3,44 +3,59 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Http\Request;
-use App\Http\Response;
-use App\Validation\Validation;
+use App\Infrastructure\Controller\DbDeleteAction;
+use App\Infrastructure\Controller\DbInitAction;
+use App\Infrastructure\Http\Request;
+use App\Infrastructure\Http\Response;
 use Exception;
 use Throwable;
 
 class App
 {
-    private Request $request;
-    private Response $response;
+    public static App $app;
 
-    public function __construct()
+    private array $config;
+
+    public function __construct(array $config)
     {
-        session_start();
-        $this->request = new Request();
-        $this->response = new Response();
+        $this->config = $config;
+        self::$app = $this;
     }
 
-    public function run(): Response
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    public function getConfigValue(string $key): mixed
+    {
+        return $this->config[$key] ?? null;
+    }
+
+    public function run()
     {
         try {
-            $postParam = 'string';
-            if (!$this->request->isPost()) {
-                throw new Exception('Request method must be POST.');
-            }
-            $paramToValidate = $this->request->post($postParam);
-            if (Validation::isEmptyString($paramToValidate)) {
-                throw new Exception('Empty string parameter.');
-            }
+            $result = $this->handleRequest(new Request());
 
-            if (Validation::isValidBrackets($paramToValidate)) {
-                throw new Exception(sprintf('Parameter "%s" is invalid.', $postParam));
-            }
-
-            return $this->response->send('String is valid.', 200);
+            return json_encode($result->asJson(),JSON_PRETTY_PRINT| JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
         } catch (Throwable $e) {
-            return $this->response->send($e->getMessage(), 400);
+            return json_encode(new Response('error', 400, null,$e->getMessage())->asJson(),JSON_PRETTY_PRINT| JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+
         }
+    }
+
+    private function handleRequest(Request $request): Response
+    {
+        $controllerName = match ($request->getUrl()) {
+            '/db/init' => DbInitAction::class,
+            '/db/delete' => DbDeleteAction::class,
+            default => throw new Exception("Invalid route."),
+        };
+        if (!class_exists($controllerName)) {
+            throw new Exception("Controller $controllerName not exist.");
+        }
+
+        return new $controllerName()($request);
     }
 
 }
