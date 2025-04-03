@@ -92,12 +92,16 @@ class TeamMapper extends AbstractMapper
     }
 
     /**
+     * @param int $limit
+     * @param int $offset
      * @return TeamsCollection
-     * @throws PDOException
      */
-    public function findAll(): TeamsCollection
+    public function findAll(int $limit = 100, int $offset = 0): TeamsCollection
     {
-        $this->findAllStatement->execute();
+        $this->findAllStatement->execute([
+            ':limit' => $limit,
+            ':offset' => $offset,
+        ]);
 
         $result = $this->findAllStatement->fetchAll();
         if ($result === false) {
@@ -151,6 +155,6 @@ class TeamMapper extends AbstractMapper
      */
     protected function getFindAllStatementQuery(): string
     {
-        return 'SELECT * FROM teams ORDER BY id';
+        return 'SELECT * FROM teams ORDER BY id LIMIT :limit OFFSET :offset';
     }
 }

@@ -119,12 +119,16 @@ class PlayerMapper extends AbstractMapper
     }
 
     /**
+     * @param int $limit
+     * @param int $offset
      * @return PlayersCollection
-     * @throws PDOException
      */
-    public function findAll(): PlayersCollection
+    public function findAll(int $limit = 100, int $offset = 0): PlayersCollection
     {
-        $this->findAllStatement->execute();
+        $this->findAllStatement->execute([
+            ':limit' => $limit,
+            ':offset' => $offset,
+        ]);
 
         $result = $this->findAllStatement->fetchAll();
         if ($result === false) {
@@ -220,7 +224,7 @@ class PlayerMapper extends AbstractMapper
      */
     protected function getFindAllStatementQuery(): string
     {
-        return 'SELECT * FROM players ORDER BY id';
+        return 'SELECT * FROM players ORDER BY id LIMIT :limit OFFSET :offset';
     }
 
     /**
