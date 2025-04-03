@@ -1,3 +1,11 @@
-# PHP_2025
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+## Консольное приложение для Elastic
+### Как пользоваться
+#### 1) Необходимо зайти в приложение контейнера
+#### 2) Команды запускаются с помощью файла cli:
+    php cli {команда} {--some-flag=test} {--another-flag}
+#### 3) Ниже представлены основные команды, названия которых можно увидеть в папке app/Commands в статическом свойстве $name:
+    shop:bulk   -  Заполнение данными индекса
+    shop:search -  Заполнение данными индекса
+    shop:create -  Создание индекса
+    shop:drop   -  Поиск по данным индекса
