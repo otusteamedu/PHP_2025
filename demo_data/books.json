@@ -1,0 +1,552 @@
+[
+  {
+    "_index": "book_store",
+    "_id": "1",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2024 1",
+      "price": 1378,
+      "category": "education",
+      "stocks": 13
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "2",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2020 2",
+      "price": 1639,
+      "category": "science",
+      "stocks": 11
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "3",
+    "_score": 1.0,
+    "_source": {
+      "title": "Роксана версия 2024 3",
+      "price": 2177,
+      "category": "historical",
+      "stocks": 23
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "4",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2024 4",
+      "price": 1856,
+      "category": "historical",
+      "stocks": 22
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "5",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыбак или рыцарь издание 2025 5",
+      "price": 2258,
+      "category": "science",
+      "stocks": 14
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "6",
+    "_score": 1.0,
+    "_source": {
+      "title": "Железный равин издание 2021 6",
+      "price": 1223,
+      "category": "fantasy",
+      "stocks": 23
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "7",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2024 7",
+      "price": 2357,
+      "category": "fantasy",
+      "stocks": 24
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "8",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыбак или рыцарь издание 2020 8",
+      "price": 2656,
+      "category": "science",
+      "stocks": 16
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "9",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2021 9",
+      "price": 1244,
+      "category": "science",
+      "stocks": 28
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "10",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыбак или рыцарь издание 2023 10",
+      "price": 1909,
+      "category": "fantasy",
+      "stocks": 12
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "11",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2025 11",
+      "price": 1086,
+      "category": "education",
+      "stocks": 18
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "12",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2023 12",
+      "price": 2092,
+      "category": "fantasy",
+      "stocks": 10
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "13",
+    "_score": 1.0,
+    "_source": {
+      "title": "Роксана версия 2023 13",
+      "price": 1189,
+      "category": "education",
+      "stocks": 22
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "14",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2024 14",
+      "price": 1785,
+      "category": "education",
+      "stocks": 21
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "15",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2023 15",
+      "price": 1702,
+      "category": "historical",
+      "stocks": 17
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "16",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыбак или рыцарь издание 2021 16",
+      "price": 1986,
+      "category": "science",
+      "stocks": 14
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "17",
+    "_score": 1.0,
+    "_source": {
+      "title": "Роксана версия 2020 17",
+      "price": 2792,
+      "category": "science",
+      "stocks": 10
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "18",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2024 18",
+      "price": 1436,
+      "category": "fantasy",
+      "stocks": 15
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "19",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2023 19",
+      "price": 2531,
+      "category": "education",
+      "stocks": 30
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "20",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2024 20",
+      "price": 1649,
+      "category": "science",
+      "stocks": 26
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "21",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2023 21",
+      "price": 2019,
+      "category": "historical",
+      "stocks": 21
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "22",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2021 22",
+      "price": 1650,
+      "category": "fantasy",
+      "stocks": 13
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "23",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2023 23",
+      "price": 1927,
+      "category": "education",
+      "stocks": 29
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "24",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2023 24",
+      "price": 1283,
+      "category": "education",
+      "stocks": 17
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "25",
+    "_score": 1.0,
+    "_source": {
+      "title": "Роксана версия 2020 25",
+      "price": 1012,
+      "category": "science",
+      "stocks": 17
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "26",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыбак или рыцарь издание 2020 26",
+      "price": 1170,
+      "category": "science",
+      "stocks": 10
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "27",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыбак или рыцарь издание 2023 27",
+      "price": 2739,
+      "category": "historical",
+      "stocks": 15
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "28",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2020 28",
+      "price": 2369,
+      "category": "fantasy",
+      "stocks": 17
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "29",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2020 29",
+      "price": 2805,
+      "category": "science",
+      "stocks": 19
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "30",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2023 30",
+      "price": 2446,
+      "category": "education",
+      "stocks": 17
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "31",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2020 31",
+      "price": 1219,
+      "category": "historical",
+      "stocks": 16
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "32",
+    "_score": 1.0,
+    "_source": {
+      "title": "Роксана версия 2021 32",
+      "price": 2385,
+      "category": "science",
+      "stocks": 27
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "33",
+    "_score": 1.0,
+    "_source": {
+      "title": "Роксана версия 2020 33",
+      "price": 1928,
+      "category": "education",
+      "stocks": 18
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "34",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2023 34",
+      "price": 1357,
+      "category": "education",
+      "stocks": 29
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "35",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2021 35",
+      "price": 1965,
+      "category": "fantasy",
+      "stocks": 10
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "36",
+    "_score": 1.0,
+    "_source": {
+      "title": "Роксана версия 2021 36",
+      "price": 2598,
+      "category": "historical",
+      "stocks": 13
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "37",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2024 37",
+      "price": 1612,
+      "category": "education",
+      "stocks": 15
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "38",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыбак или рыцарь издание 2025 38",
+      "price": 2341,
+      "category": "science",
+      "stocks": 22
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "39",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2023 39",
+      "price": 1260,
+      "category": "fantasy",
+      "stocks": 19
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "40",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2024 40",
+      "price": 2512,
+      "category": "fantasy",
+      "stocks": 20
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "41",
+    "_score": 1.0,
+    "_source": {
+      "title": "Железный равин издание 2025 41",
+      "price": 2557,
+      "category": "historical",
+      "stocks": 15
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "42",
+    "_score": 1.0,
+    "_source": {
+      "title": "Роксана версия 2024 42",
+      "price": 2929,
+      "category": "historical",
+      "stocks": 25
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "43",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыбак или рыцарь издание 2023 43",
+      "price": 2481,
+      "category": "science",
+      "stocks": 20
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "44",
+    "_score": 1.0,
+    "_source": {
+      "title": "Железный равин издание 2024 44",
+      "price": 2218,
+      "category": "education",
+      "stocks": 11
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "45",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2020 45",
+      "price": 2832,
+      "category": "education",
+      "stocks": 24
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "46",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцарство в наши века версия 2023 46",
+      "price": 2635,
+      "category": "science",
+      "stocks": 12
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "47",
+    "_score": 1.0,
+    "_source": {
+      "title": "Рыцари республики издание 2020 47",
+      "price": 1892,
+      "category": "science",
+      "stocks": 10
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "48",
+    "_score": 1.0,
+    "_source": {
+      "title": "Железный равин издание 2021 48",
+      "price": 2540,
+      "category": "historical",
+      "stocks": 23
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "49",
+    "_score": 1.0,
+    "_source": {
+      "title": "Железный равин издание 2025 49",
+      "price": 1513,
+      "category": "historical",
+      "stocks": 18
+    }
+  },
+  {
+    "_index": "book_store",
+    "_id": "50",
+    "_score": 1.0,
+    "_source": {
+      "title": "Железный равин издание 2024 50",
+      "price": 1969,
+      "category": "science",
+      "stocks": 30
+    }
+  }
+]
