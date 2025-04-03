@@ -1,0 +1,40 @@
+services:
+
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/var/www/html"
+    networks:
+      - projectNetwork
+
+  elasticsearch:
+    image: elasticsearch:8.12.2
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - "discovery.type=single-node"
+      - "ELASTIC_USERNAME=${ELASTIC_USER}"
+      - "ELASTIC_PASSWORD=${ELASTIC_PASS}"
+      - "ES_JAVA_OPTS=-Xms2G -Xmx2G"
+      - "bootstrap.memory_lock=true"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - projectNetwork
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+volumes:
+  esdata:
+    driver: local
+
+networks:
+  projectNetwork:
+    driver: bridge
