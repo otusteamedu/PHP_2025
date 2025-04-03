@@ -18,3 +18,5 @@ CREATE TABLE IF NOT EXISTS players
     weight  INT          NOT NULL,
     CONSTRAINT "fk-players-team_id" FOREIGN KEY (team_id) REFERENCES teams (id) ON DELETE SET NULL
 );
+
+CREATE INDEX IF NOT EXISTS "idx-players-team_id" ON players (team_id);
