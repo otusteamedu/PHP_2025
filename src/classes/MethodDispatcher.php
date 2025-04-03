@@ -78,4 +78,11 @@ Class MethodDispatcher {
 
     }
 
+
+    public function method($method) {
+        
+    }
+
+
+
 }
