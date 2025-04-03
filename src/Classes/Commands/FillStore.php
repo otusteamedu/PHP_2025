@@ -1,9 +1,9 @@
 <?php
 
-namespace classes\Commands;
+namespace Root\App\Classes\Commands;
 
-use classes\CommandInterface;
-use classes\BookStoreService;
+use Root\App\Classes\CommandInterface;
+use Root\App\Classes\BookStoreService;
 
 class FillStore implements CommandInterface
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace classes\Commands;
+namespace Root\App\Classes\Commands;
 
-use classes\CommandInterface;
-use classes\BookStoreService;
-use classes\Decorators\ConsoleTableDecorator;
+use Root\App\Classes\CommandInterface;
+use Root\App\Classes\Decorators\ConsoleTableDecorator;
+use Root\App\Classes\BookStoreService;
 
 class Search implements CommandInterface
 {

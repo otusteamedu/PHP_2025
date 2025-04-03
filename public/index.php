@@ -1,15 +1,12 @@
 <?php
 
 require_once '../vendor/autoload.php';
-require_once 'autoload.php';
 
-use classes\App;
-
-$commandsNameSpace = 'classes\\Commands\\';
+$commandsNameSpace = 'Root\\App\\Classes\\Commands\\';
 $argv = $_SERVER['argv'] ?? [];
 
 try {
-    $app = new App($commandsNameSpace, $argv);
+    $app = new \Root\App\Classes\App($commandsNameSpace, $argv);
     $app->run();
 }
 

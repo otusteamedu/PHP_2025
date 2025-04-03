@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace classes\Decorators;
+namespace Root\App\Classes\Decorators;
 
 interface SearchResultsDecoratorInterface
 {
