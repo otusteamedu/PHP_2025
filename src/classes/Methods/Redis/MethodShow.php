@@ -2,9 +2,9 @@
 
 namespace MyTestApp\Methods\Redis;
 
-Class MethodSearch extends Method {
+Class MethodShow extends Method {
 
-    public function search() {
+    public function show() {
 
         $array = json_decode($_POST["search"],true);
         $get_params_array = $array["params"];
