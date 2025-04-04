@@ -10,45 +10,61 @@ Class MyApp {
         
         $renderHtml = new \MyTestApp\RenderHtml();
 
-        $redis = (new \MyTestApp\RedisConnect)->redis_connect;
+        $redis = (new \MyTestApp\Methods\Redis\Method);
     
         $MethodDispatcher = new \MyTestApp\MethodDispatcher($redis); 
 
-        
+        $renderHtml->renderHtml("<hr/>");
 
-        $iterator = null;
-        while ($keys = $redis->scan($iterator)) {
-            foreach ($keys as $key) {
-                $renderHtml->renderHtml("<p><b>{$key}</b></p>");
-                $value = $redis->hgetall($key);
-                //unset($value["priority"]);
-                foreach($value AS $k=>$res)
-                    $renderHtml->renderHtml("<p>&nbsp;&nbsp;&nbsp;&nbsp;    $k: {$res}</p>");
-            }
-        }
+        $renderHtml->renderHtml($MethodDispatcher->answer);
 
         $renderHtml->renderHtml("<hr/>");
 
         $renderHtml->renderHtml("
+        <h2>Добавить в базу</h2>
         <form method='post'>
-            <textarea name='add' style='width:600px; height:300px;' value='' placeholder='Введите json' ></textarea>
+            <textarea name='add' style='width:600px; height:100px;' value='' placeholder='Введите json' ></textarea>
             <p><input type='submit' value='Добавить'/></p>
         </form>
+        <h3>Пример данных для отправки</h3>
+        <pre>
+        
+{
+    \"event\": \"event1\",
+    \"priority\": 1000,
+    \"conditions\": {
+        \"param1\": 1,
+        \"param2\": 2 
+    }
+}
+        
+        </pre>
         ");
 
-        $search_form = "
-        <hr/>
+        $renderHtml->renderHtml("<hr/>
+        <h2>Искать по базе</h2>
         <form method='post'>
-            <textarea name='search' style='width:600px; height:300px;' value='' placeholder='Введите json' ></textarea>
+            <textarea name='search' style='width:600px; height:100px;' value='' placeholder='Введите json' ></textarea>
             <p><input type='submit' value='Искать'/></p>
         </form>
-        ";
-
-        $renderHtml->renderHtml($search_form);
-        $renderHtml->renderHtml("<hr>Ответ на поиск: {$MethodDispatcher->answer} </hr>");
+        
+        <h3>Пример данных для отправки</h3>
+        <pre>
+        
+{
+    \"params\": {
+        \"param1\": 1,
+        \"param2\": 2 
+    }
+}
+        
+        </pre>
+        
+        ");
 
         $renderHtml->renderHtml("
         <hr/>
+        <h2>Очистить базу</h2>
         <form method='post'>
             <p><input type='submit' name='clear' value='Очистить базу'/></p>
         </form>

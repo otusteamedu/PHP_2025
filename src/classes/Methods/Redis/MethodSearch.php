@@ -4,9 +4,9 @@ namespace MyTestApp\Methods\Redis;
 
 Class MethodSearch extends Method {
 
-    public function search() {
+    public function search($json_string) {
 
-        $array = json_decode($_POST["search"],true);
+        $array = json_decode($json_string,true);
         $get_params_array = $array["params"];
 
 
@@ -34,13 +34,18 @@ Class MethodSearch extends Method {
 
         arsort($match_array);
 
+        $answer = "<h2>Поиск по базе</h2>";
+
         foreach($match_array AS $key=>$priority) {
-            $this->answer .= "Cобытие {$key}<br/>";
+            $answer .= "Cобытие {$key}<br/>";
             $value = $this->connect->hgetall($key);
             foreach($value AS $k=>$res)
-                $this->answer .= "<p>&nbsp;&nbsp;&nbsp;&nbsp;    $k: {$res}</p>";
+                $answer .= "<p>&nbsp;&nbsp;&nbsp;&nbsp;    $k: {$res}</p>";
             break;
             
         }
+
+        return $answer;
+
     }
 }
