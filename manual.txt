@@ -1,0 +1,16 @@
+Инструкция по применению:
+
+1) Запустить файл ddl.sql
+2) Запустить файл functions.sql
+3) Запустить файл database_filling/functions.sql
+
+4) В разделе sql_query/ с переодичностью заполняя БД выпполняем 6 разичных запросов и замеров
+
+5) Выполнить скрипт заполнения БД до 10000 строк, файл database_filling/fill_10000_rows.sql
+6) Выполнить скрипт заполнения БД до 10000000 строк, файл database_filling/fill_10000000_rows.sql
+7) Выполнить скрипт для индексирование данных working_with_index/create.sql
+
+8) В файле result_of_improvements.txt описано оптимизация с пояснениями 6 запросов
+
+9) Выполнить скрипт отсортированных списоков самых больших по размеру объектов БД sorted_query/frequently_or_rarely_used_indexes.sql
+10) Выполнить скрипт отсортированный списоков самых часто и редко используемых индексов sorted_query/frequently_or_rarely_used_indexes.sql
