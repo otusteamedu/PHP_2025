@@ -67,4 +67,11 @@ class BookRepository implements BookRepositoryInterface
         return $this->client->indices()->delete($data)->asBool();
     }
 
+    public function bulkInsert(string $itemsData, string $dbTitle): array
+    {
+        return $this->client->bulk([
+            'index' => $dbTitle,
+            'body' => $itemsData,
+        ])->asArray();
+    }
 }

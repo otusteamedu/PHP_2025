@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Infrastructure\Controller\BulkInsertAction;
 use App\Infrastructure\Controller\DbDeleteAction;
 use App\Infrastructure\Controller\DbInitAction;
 use App\Infrastructure\Http\Request;
@@ -48,6 +49,7 @@ class App
         $controllerName = match ($request->getRoute()) {
             'db/init' => DbInitAction::class,
             'db/delete' => DbDeleteAction::class,
+            'db/bulk-insert' => BulkInsertAction::class,
             default => throw new Exception("Invalid route."),
         };
         if (!class_exists($controllerName)) {

@@ -10,4 +10,7 @@ interface BookRepositoryInterface
 
     public function dbDelete(string $dbTitle): bool;
 
+    public function bulkInsert(string $itemsData, string $dbTitle): array;
+
+
 }
