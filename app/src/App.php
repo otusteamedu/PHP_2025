@@ -14,17 +14,16 @@ class App
 {
     public static App $app;
 
-    private array $config;
+    private array $config {
+        get {
+            return $this->config;
+        }
+    }
 
     public function __construct(array $config)
     {
         $this->config = $config;
         self::$app = $this;
-    }
-
-    public function getConfig(): array
-    {
-        return $this->config;
     }
 
     public function getConfigValue(string $key): mixed
@@ -46,9 +45,9 @@ class App
 
     private function handleRequest(Request $request): Response
     {
-        $controllerName = match ($request->getUrl()) {
-            '/db/init' => DbInitAction::class,
-            '/db/delete' => DbDeleteAction::class,
+        $controllerName = match ($request->getRoute()) {
+            'db/init' => DbInitAction::class,
+            'db/delete' => DbDeleteAction::class,
             default => throw new Exception("Invalid route."),
         };
         if (!class_exists($controllerName)) {

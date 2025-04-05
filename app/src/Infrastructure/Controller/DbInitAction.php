@@ -30,7 +30,7 @@ class DbInitAction extends BaseAction
      */
     public function __invoke(Request $request): Response
     {
-        $dbName = $request->post('index');
+        $dbName = $request->getParam('index');
         if (!$dbName) {
             throw new \Exception('db name is required');
         }

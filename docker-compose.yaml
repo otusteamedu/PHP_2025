@@ -1,11 +1,9 @@
 services:
 
-  manager_php-fpm:
+  manager_php-cli:
     build:
-      context: docker/php-fpm
+      context: docker/php-cli
       dockerfile: Dockerfile
-      args:
-        - INSTALL_XDEBUG=${INSTALL_XDEBUG}
     volumes:
       - ./app:/app:rw
     depends_on:
@@ -15,22 +13,7 @@ services:
     networks:
       - app-network
     env_file: .env
-
-
-  manager_nginx_main:
-    image: nginx:1.25.4
-    volumes:
-      - ./app:/app:rw
-      - ./docker/nginx_main/logs:/var/log/nginx:rw
-      - ./docker/nginx_main/hosts:/etc/nginx/conf.d
-    ports:
-      - '80:80'
-    networks:
-      - app-network
-    depends_on:
-      manager_php-fpm:
-        condition: service_started
-    env_file: .env
+    tty: true
 
   elasticsearch:
     container_name: ${ELASTIC_CONTAINER_NAME}

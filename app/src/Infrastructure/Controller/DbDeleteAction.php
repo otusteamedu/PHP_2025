@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller;
 
 use App\Domain\Repository\BookRepositoryInterface;
 use App\Infrastructure\Http\Request;
+use App\Infrastructure\Http\Response;
 use App\Infrastructure\Repository\BookRepository;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\MissingParameterException;
@@ -27,9 +28,9 @@ class DbDeleteAction extends BaseAction
      * @throws MissingParameterException
      * @throws \Exception
      */
-    public function __invoke(Request $request): \App\Infrastructure\Http\Response
+    public function __invoke(Request $request): Response
     {
-        $dbName = $request->post('index');
+        $dbName = $request->getParam('index');
         if (!$dbName) {
             throw new \Exception('db name is required');
         }
