@@ -18,8 +18,14 @@ Class MyApp {
             $dsn = "mysql:host=$host;dbname=$dbName;charset=utf8mb4";
             $pdo = new \PDO($dsn, $user, $pass);
 
-            //$user = (new \MyTestApp\DataMapper\UserMapper($pdo))->findById(1);
-            //$this->render .= "<p>{$user->getName()}</p>";
+
+            $collection = new \MyTestApp\DataMapper\UserMapper($pdo);
+            $collection->findById(1);
+            $collection->findById(3);
+            foreach($collection->identityMap AS $user) {
+                $this->render .= "<p>{$user->getId()} {$user->getName()} {$user->getEmail()}</p>";
+            }
+           // $this->render .= "<p>".print_r($collection->identityMap)."</p>";
             
             //$user_1 = new \MyTestApp\DataMapper\User(1,"Артем","artemsuchkov@ya.ru");
             //$user_update = (new \MyTestApp\DataMapper\UserMapper($pdo))->update($user_1);
@@ -30,7 +36,7 @@ Class MyApp {
             $users_array = (new \MyTestApp\DataMapper\UserMapper($pdo))->findAll();
             foreach($users_array AS $user) {
                 $this->render .= "<p>{$user->getId()} {$user->getName()} {$user->getEmail()}</p>";
-            }
+            } 
             
 
         } catch (\PDOException $e) {
