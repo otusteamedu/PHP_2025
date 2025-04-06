@@ -21,16 +21,19 @@ class UserMapper
     {
         $this->pdo = $pdo;
         $this->selectAllStatement = $pdo->prepare(
-            'SELECT * FROM users'
+            'SELECT * FROM users LIMIT :start, :limit '
         );
+       
         $this->selectStatement = $pdo->prepare(
             'SELECT * FROM users WHERE id = ?'
         );
     }
 
-    public function findAll(): array
+    public function findAll($start=0,$limit=2): array
     {
         $this->selectAllStatement->setFetchMode(PDO::FETCH_ASSOC);
+        $this->selectAllStatement->bindParam(':start', $start, PDO::PARAM_INT);
+        $this->selectAllStatement->bindParam(':limit', $limit, PDO::PARAM_INT);
         $this->selectAllStatement->execute();
 
         while ($result = $this->selectAllStatement->fetch()) {

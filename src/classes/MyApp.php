@@ -19,7 +19,7 @@ Class MyApp {
 
             new \MyTestApp\RenderHtml("views/page.php",[
                 "identityMap1"=>$collection->identityMap, // Выводим коллекцию
-                "identityMap2"=>$collection->findAll() // Получаем все данные с учетом существующих в коллекции
+                "identityMap2"=>$collection->findAll(0,1000) // Получаем все данные с учетом существующих в коллекции
             ]);
             
         } catch (\PDOException $e) {
