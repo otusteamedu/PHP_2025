@@ -1,8 +1,8 @@
 <?php
 
-namespace MyTestApp\Methods\Redis;
+namespace MyTestApp\Commands\Redis;
 
-Class MethodClear extends Method {
+Class CommandClear extends Connect {
 
     public function clear() {
         $this->connect->flushDB();

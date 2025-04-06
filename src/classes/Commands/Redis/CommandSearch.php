@@ -1,8 +1,8 @@
 <?php
 
-namespace MyTestApp\Methods\Redis;
+namespace MyTestApp\Commands\Redis;
 
-Class MethodSearch extends Method {
+Class CommandSearch extends Connect {
 
     public function search($json_string) {
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace MyTestApp\Methods\Redis;
+namespace MyTestApp\Commands\Redis;
 
-Class MethodShow extends Method {
+Class CommandShow extends Connect {
 
     public function show() {
 

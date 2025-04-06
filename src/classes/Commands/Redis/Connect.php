@@ -1,8 +1,8 @@
 <?php
 
-namespace MyTestApp\Methods\Redis;
+namespace MyTestApp\Commands\Redis;
 
-Class Method {
+Class Connect {
 
     public $connect;
     public $answer = "";

@@ -1,8 +1,8 @@
 <?php
 
-namespace MyTestApp\Methods\Redis;
+namespace MyTestApp\Commands\Redis;
 
-Class MethodAdd extends Method {
+Class CommandAdd extends Connect {
 
     public function add($json_string) {
 
