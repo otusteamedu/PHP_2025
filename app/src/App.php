@@ -6,6 +6,7 @@ namespace App;
 use App\Infrastructure\Controller\BulkInsertAction;
 use App\Infrastructure\Controller\DbDeleteAction;
 use App\Infrastructure\Controller\DbInitAction;
+use App\Infrastructure\Controller\SearchAction;
 use App\Infrastructure\Http\Request;
 use App\Infrastructure\Http\Response;
 use Exception;
@@ -36,11 +37,15 @@ class App
     {
         try {
             $result = $this->handleRequest(new Request());
+            if ($result->isSuccess()) {
+                $response = $result->data ?? $result->result;
+            } else {
+                $response = $result->message;
+            }
 
-            return json_encode($result->asJson(),JSON_PRETTY_PRINT| JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+            return $response;
         } catch (Throwable $e) {
-            return json_encode(new Response('error', 400, null,$e->getMessage())->asJson(),JSON_PRETTY_PRINT| JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
-
+            return $e->getMessage();
         }
     }
 
@@ -50,6 +55,7 @@ class App
             'db/init' => DbInitAction::class,
             'db/delete' => DbDeleteAction::class,
             'db/bulk-insert' => BulkInsertAction::class,
+            'db/search' => SearchAction::class,
             default => throw new Exception("Invalid route."),
         };
         if (!class_exists($controllerName)) {

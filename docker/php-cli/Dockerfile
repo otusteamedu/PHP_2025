@@ -4,7 +4,8 @@ FROM php:8.4-cli
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
 		git \
         curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install -j$(nproc) mbstring zip iconv
 
 COPY php.ini /usr/local/etc/php/php.ini
 

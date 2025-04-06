@@ -5,25 +5,25 @@ namespace App\Infrastructure\Http;
 
 class Response implements \JsonSerializable
 {
-    private int $code {
+    public int $code {
         get {
             return $this->code;
         }
     }
 
     public function __construct(
-        private string  $result {
+        public string  $result {
             get {
                 return $this->result;
             }
         },
         int             $code,
-        private mixed   $data {
+        public mixed   $data {
             get {
                 return $this->data;
             }
         },
-        private ?string $message = null {
+        public ?string $message = null {
             get {
                 return $this->message;
             }
@@ -55,4 +55,10 @@ class Response implements \JsonSerializable
         return $this;
 
     }
+
+    public function __toString(): string
+    {
+        return $this->result;
+    }
+
 }

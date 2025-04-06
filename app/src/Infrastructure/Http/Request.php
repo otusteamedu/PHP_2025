@@ -18,7 +18,7 @@ class Request
     private function parseParams(): void
     {
         foreach ($_SERVER['argv'] as $value) {
-            if (preg_match('/^--[a-z]+=.+$/', $value, $matches)) {
+            if (preg_match('/^--[a-zA-Z]+=.+$/', $value, $matches)) {
                 list($key, $value) = explode('=', substr($matches[0], strlen('--')));
                 $this->params[$key] = $value;
             }
