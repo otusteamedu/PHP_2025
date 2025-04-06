@@ -2,7 +2,13 @@
 
 namespace MyTestApp\Commands\Redis;
 
-Class CommandSearch extends Connect {
+Class CommandSearch {
+
+    public $connect;
+
+    public function __construct() {
+        $this->connect = (new \MyTestApp\Commands\Redis\Connect)->connect;
+    }
 
     public function search($json_string) {
 

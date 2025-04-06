@@ -2,7 +2,13 @@
 
 namespace MyTestApp\Commands\Redis;
 
-Class CommandClear extends Connect {
+Class CommandClear {
+
+    public $connect;
+
+    public function __construct() {
+        $this->connect = (new \MyTestApp\Commands\Redis\Connect)->connect;
+    }
 
     public function clear() {
         $this->connect->flushDB();

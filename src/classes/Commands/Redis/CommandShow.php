@@ -2,7 +2,13 @@
 
 namespace MyTestApp\Commands\Redis;
 
-Class CommandShow extends Connect {
+Class CommandShow {
+
+    public $connect;
+
+    public function __construct() {
+        $this->connect = (new \MyTestApp\Commands\Redis\Connect)->connect;
+    }
 
     public function show() {
 

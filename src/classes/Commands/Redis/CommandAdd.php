@@ -2,7 +2,13 @@
 
 namespace MyTestApp\Commands\Redis;
 
-Class CommandAdd extends Connect {
+Class CommandAdd {
+
+    public $connect;
+
+    public function __construct() {
+        $this->connect = (new \MyTestApp\Commands\Redis\Connect)->connect;
+    }
 
     public function add($json_string) {
 

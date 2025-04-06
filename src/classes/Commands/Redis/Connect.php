@@ -5,7 +5,6 @@ namespace MyTestApp\Commands\Redis;
 Class Connect {
 
     public $connect;
-    public $answer = "";
 
     public function __construct() {
         $redis = new \Redis();
