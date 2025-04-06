@@ -39,7 +39,7 @@ class UserMapper
                 $this->identityMap[$result['id']] = new User(
                     $result['id'],
                     $result['name'],
-                    $result['email'],
+                    $result['email']."(из базы)",
                 );
             }
             

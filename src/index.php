@@ -3,7 +3,12 @@
 require_once "vendor/autoload.php";
 
 try {
-    $myapp = new \MyTestApp\MyApp();
+    $myapp = new \MyTestApp\MyApp(
+        getenv('MYSQL_HOST'),
+        getenv('MYSQL_DATABASE'),
+        'root',
+        's123123'
+    );
     echo $myapp->render;
 }
 
