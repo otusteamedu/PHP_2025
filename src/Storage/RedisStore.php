@@ -2,6 +2,8 @@
 
 namespace App\Storage;
 
+use App\Exception\RedisConnectionException;
+
 class RedisStore implements KeyValueStoreInterface, RedisSpecificOperationsInterface
 {
     private \Redis $redis;
@@ -10,8 +12,17 @@ class RedisStore implements KeyValueStoreInterface, RedisSpecificOperationsInter
     {
         $this->redis = new \Redis();
 
-        if (!$this->redis->connect($_ENV['REDIS_HOST'], (int)$_ENV['REDIS_PORT'])) {
-            throw new \RuntimeException('Failed to connect to Redis');
+        try {
+            $connected = $this->redis->connect(
+                $_ENV['REDIS_HOST'],
+                (int)$_ENV['REDIS_PORT']
+            );
+
+            if (!$connected) {
+                throw new RedisConnectionException('Connection failed');
+            }
+        } catch (\RedisException $e) {
+            throw new RedisConnectionException('Redis error: ' . $e->getMessage(), 0, $e);
         }
     }
 
