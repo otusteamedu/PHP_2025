@@ -1,0 +1,40 @@
+services:
+
+  manager_php-cli:
+    build:
+      context: docker/php-cli
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app:rw
+    depends_on:
+      elasticsearch:
+        condition: service_started
+    working_dir: /app
+    networks:
+      - app-network
+    env_file: .env
+    tty: true
+
+  elasticsearch:
+    container_name: ${ELASTIC_CONTAINER_NAME}
+    image: elasticsearch:8.17.4
+    volumes:
+      - ./docker/elasticsearch/config.yaml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./docker/elasticsearch/data:/usr/share/elasticsearch/data
+    environment:
+      discovery.type: single-node
+    networks:
+      - app-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: 4GB
+    env_file: .env
+
+networks:
+  app-network:
+    driver: bridge
