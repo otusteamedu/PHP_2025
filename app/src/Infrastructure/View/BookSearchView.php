@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\View;
 
 use App\Domain\Repository\Pager;
-use App\Domain\Repository\PaginationResult;
 use Console_Table;
 
 class BookSearchView
@@ -17,10 +16,10 @@ class BookSearchView
         $this->table = new Console_Table();
     }
 
-    public function buildTable(PaginationResult $result, Pager $pager): string
+    public function buildTable(array $books, Pager $pager): string
     {
         $this->table->setHeaders(['#', 'Title', 'Sku', 'Price', 'Category', 'In stock']);
-        foreach ($result->items as $key => $book) {
+        foreach ($books as $key => $book) {
             $this->table->addRow([
                 ++$key, $book->getTitle(), $book->getSku(), $book->getPrice(), $book->getCategory(), $book->inStock()
             ]);

@@ -4,28 +4,21 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller;
 
-use App\Domain\Repository\BookRepositoryInterface;
+use App\Application\UseCase\Command\AddBooks\AddBooksCommand;
+use App\Application\UseCase\Command\AddBooks\AddBooksCommandHandler;
 use App\Infrastructure\Http\Request;
 use App\Infrastructure\Http\Response;
-use App\Infrastructure\Repository\BookRepository;
-use Elastic\Elasticsearch\Exception\ClientResponseException;
-use Elastic\Elasticsearch\Exception\MissingParameterException;
-use Elastic\Elasticsearch\Exception\ServerResponseException;
 
 class BulkInsertAction extends BaseAction
 {
-    private BookRepositoryInterface $bookRepository;
+    private AddBooksCommandHandler $commandHandler;
 
     public function __construct()
     {
-        $this->bookRepository = new BookRepository();
-
+        $this->commandHandler = new AddBooksCommandHandler();
     }
 
     /**
-     * @throws ClientResponseException
-     * @throws ServerResponseException
-     * @throws MissingParameterException
      * @throws \Exception
      */
     public function __invoke(Request $request): Response
@@ -38,24 +31,11 @@ class BulkInsertAction extends BaseAction
         if (!$filePath) {
             throw new \Exception('filepath is required');
         }
-        $itemsData = $this->getItems($filePath);
-
-        $result = $this->bookRepository->bulkInsert($itemsData, $dbName);
-
-        if ($result['errors']) {
-            return $this->responseError('insert failed');
-        }
+        $command = new AddBooksCommand($dbName, $filePath);
+        ($this->commandHandler)($command);
 
         return $this->responseSuccess('insert succeed');
     }
 
-    private function getItems(string $pathToFile): string
-    {
-        if (!file_exists($pathToFile)) {
-            throw new \Exception('file not found');
-        }
-
-        return file_get_contents($pathToFile);
-    }
 
 }
