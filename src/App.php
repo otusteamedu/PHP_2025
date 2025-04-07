@@ -2,121 +2,85 @@
 
 namespace App;
 
-use App\Service\BookSearchService;
-use App\Service\ElasticsearchService;
-use LucidFrame\Console\ConsoleTable;
+use App\Exception\HttpException;
+use App\Http\Request;
+use App\Http\Response;
+use App\Storage\KeyValueStoreInterface;
 
 class App
 {
-    private array $args;
-    private ElasticsearchService $elasticsearchService;
-    private BookSearchService $bookSearchService;
+    private Request $request;
+    private Response $response;
+    private KeyValueStoreInterface $storage;
 
-    public function __construct(array $args)
+    public function __construct(KeyValueStoreInterface $storage)
     {
-        $this->args = $this->parseArgs($args);
-        $this->elasticsearchService = new ElasticsearchService(['http://elasticsearch:9200']);
-        $this->bookSearchService = new BookSearchService($this->elasticsearchService);
+        $this->storage = $storage;
+        $this->request = new Request();
+        $this->response = new Response();
     }
 
-    public function run(): void
+    public function run(): Response
     {
-        if (isset($this->args['fill'])) {
-            $this->fillBooks();
-            return;
+        if ($this->request->isUrl('/search')) {
+            return $this->search();
         }
 
-        if (isset($this->args['delete'])) {
-            $this->deleteBooks();
-            return;
+        if ($this->request->isUrl('/add')) {
+            return $this->add();
         }
 
-        if (isset($this->args['search'])) {
-            $this->searchBooks();
-            return;
-        }
-
-        echo "Usage: php index.php --fill | --delete | --search --query=текст [--category='исторический роман'] [--pricefrom=1000] [--priceto=3000]\n";
+        return $this->response->send(200, []);
     }
 
-    private function fillBooks(): void
+    private function search(): Response
     {
-        if ($this->bookSearchService->checkIfIndexExists()) {
-            echo "⚠️ Индекс books уже добавлен в Elasticsearch\n";
-            return;
+        $requestParams = $this->request->getQueryParams();
+        $events = $this->storage->zRevRange('events', 0, -1);
+        $result = null;
+
+        foreach ($events as $event) {
+            $data = json_decode($event, true);
+
+            if ($data === null || !isset($data['conditions'])) {
+                continue;
+            }
+
+            if (empty(array_diff_assoc($requestParams, $data['conditions']))) {
+                $result = $data;
+                break;
+            }
         }
 
-        $this->bookSearchService->fill();
-        echo "✅ Книги загружены в Elasticsearch\n";
+        return $this->response->send(200, [
+            'result' => $result
+        ]);
     }
 
-    private function deleteBooks(): void
+    private function add(): Response
     {
-        if (!$this->bookSearchService->checkIfIndexExists()) {
-            echo "⚠️ Индекс books не создан в Elasticsearch\n";
-            return;
-        }
-
-        $this->bookSearchService->delete();
-        echo "❌ Индекс удален\n";
-    }
-
-    private function searchBooks(): void
-    {
-        if (!$this->bookSearchService->checkIfIndexExists()) {
-            echo "⚠️ Индекс books не создан в Elasticsearch\n";
-            return;
-        }
-
-        $query = $this->args['query'] ?? '';
-        $category = $this->args['category'] ?? null;
-        $priceFrom = isset($this->args['pricefrom']) ? (int)$this->args['pricefrom'] : null;
-        $priceTo = isset($this->args['priceto']) ? (int)$this->args['priceto'] : null;
-
-        if (empty($query)) {
-            echo "⚠️ Добавьте запрос --query\n";
-            return;
-        }
-
         try {
-            $data = $this->bookSearchService->search($query, $category, $priceFrom, $priceTo);
+            $data = $this->request->getJsonData();
 
-            if (empty($data['hits']['hits'])) {
-                echo "⚠️ Результатов не найдено.\n";
-                return;
+            if (!isset($data['priority']) || !is_numeric($data['priority'])) {
+                throw new HttpException('Invalid priority');
             }
 
-            $table = new ConsoleTable();
-            $table
-                ->addHeader('Название')
-                ->addHeader('Категория')
-                ->addHeader('Цена');
+            $encodedData = json_encode($data);
 
-            foreach ($data['hits']['hits'] as $book) {
-                $title = $book['_source']['title'];
-                $category = str_pad($book['_source']['category'], 30);
-                $price = (string)$book['_source']['price'];
-
-                $table->addRow()
-                    ->addColumn($title)
-                    ->addColumn($category)
-                    ->addColumn($price);
+            if ($encodedData === false) {
+                throw new HttpException('Invalid JSON data');
             }
 
-            $table->display();
+            $this->storage->zAdd('events', $data['priority'], $encodedData);
+
+            return $this->response->send(200, [
+                'event' => $data
+            ]);
+        } catch (HttpException $e) {
+            return $this->response->send(400, ['error' => $e->getMessage()]);
         } catch (\Exception $e) {
-            echo "❌ Ошибка при выполнении поиска: " . $e->getMessage() . "\n";
+            return $this->response->send(500, ['error' => $e->getMessage()]);
         }
-    }
-
-    private function parseArgs(array $argv): array
-    {
-        $args = [];
-        foreach ($argv as $arg) {
-            if (preg_match('/^--([^=]+)(?:=(.+))?$/', $arg, $matches)) {
-                $args[$matches[1]] = $matches[2] ?? true;
-            }
-        }
-        return $args;
     }
 }

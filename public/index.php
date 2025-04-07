@@ -1,12 +1,15 @@
 <?php declare(strict_types=1);
 
 use App\App;
+use App\Storage\RedisStore;
 
 require(__DIR__ . '/../vendor/autoload.php');
 
-$client = Elastic\Elasticsearch\ClientBuilder::create()->build();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
-$app = new App($argv);
+$redisStore = new RedisStore();
+$app = new App($redisStore);
 $response = $app->run();
 
 echo $response;
