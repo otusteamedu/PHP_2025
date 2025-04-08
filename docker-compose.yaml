@@ -1,0 +1,30 @@
+services:
+
+  manager_php-cli:
+    build:
+      context: docker/php-cli
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app:rw
+    depends_on:
+      manager_redis:
+        condition: service_started
+    working_dir: /app
+    networks:
+      - app-network
+    env_file: .env
+    tty: true
+
+  manager_redis:
+    container_name: ${REDIS_CONTAINER_NAME}
+    image: redis:8.0-M04
+    restart: always
+    volumes:
+      - ./docker/redis/data/:/data:rw
+      - ./docker/redis/logs:/var/log/redis:rw
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
