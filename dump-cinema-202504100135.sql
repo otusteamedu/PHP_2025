@@ -5,30 +5,7 @@
 -- Dumped from database version 12.22 (Ubuntu 12.22-0ubuntu0.20.04.2)
 -- Dumped by pg_dump version 17.0
 
--- Started on 2025-04-09 01:50:10
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-DROP DATABASE cinema;
---
--- TOC entry 2975 (class 1262 OID 49154)
--- Name: cinema; Type: DATABASE; Schema: -; Owner: -
---
-
-CREATE DATABASE cinema WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'C.UTF-8';
-
-
-\connect cinema
+-- Started on 2025-04-10 01:35:30
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -265,7 +242,8 @@ COMMENT ON COLUMN public.sessions.price_premium IS 'надбавка к цене
 CREATE TABLE public.tickets (
     id bigint NOT NULL,
     seat_id bigint NOT NULL,
-    session_id bigint NOT NULL
+    session_id bigint NOT NULL,
+    final_price real DEFAULT 0 NOT NULL
 );
 
 
@@ -279,7 +257,16 @@ COMMENT ON TABLE public.tickets IS 'билеты на конкретный се�
 
 
 --
--- TOC entry 2964 (class 0 OID 57353)
+-- TOC entry 2992 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: COLUMN tickets.final_price; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.tickets.final_price IS 'итоговая цена продажи билета с учётом всех надбавок и скидок';
+
+
+--
+-- TOC entry 2965 (class 0 OID 57353)
 -- Dependencies: 202
 -- Data for Name: films; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -297,7 +284,7 @@ INSERT INTO public.films VALUES (10, 'Темный рыцарь                 
 
 
 --
--- TOC entry 2965 (class 0 OID 57358)
+-- TOC entry 2966 (class 0 OID 57358)
 -- Dependencies: 203
 -- Data for Name: halls; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -315,7 +302,7 @@ INSERT INTO public.halls VALUES (10, 'Ретро Зал                         
 
 
 --
--- TOC entry 2966 (class 0 OID 57363)
+-- TOC entry 2967 (class 0 OID 57363)
 -- Dependencies: 204
 -- Data for Name: seats; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -333,7 +320,7 @@ INSERT INTO public.seats VALUES (10, 4, 1, 3, 2);
 
 
 --
--- TOC entry 2967 (class 0 OID 57368)
+-- TOC entry 2968 (class 0 OID 57368)
 -- Dependencies: 205
 -- Data for Name: seats_class; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -344,7 +331,7 @@ INSERT INTO public.seats_class VALUES (3, 'VIP                                  
 
 
 --
--- TOC entry 2968 (class 0 OID 57373)
+-- TOC entry 2969 (class 0 OID 57373)
 -- Dependencies: 206
 -- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -362,25 +349,25 @@ INSERT INTO public.sessions VALUES (10, 10, 8, 1, '2025-04-11 22:00:00', '2025-0
 
 
 --
--- TOC entry 2969 (class 0 OID 57378)
+-- TOC entry 2970 (class 0 OID 57378)
 -- Dependencies: 207
 -- Data for Name: tickets; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.tickets VALUES (1, 1, 1);
-INSERT INTO public.tickets VALUES (2, 2, 1);
-INSERT INTO public.tickets VALUES (3, 3, 2);
-INSERT INTO public.tickets VALUES (4, 4, 2);
-INSERT INTO public.tickets VALUES (5, 5, 3);
-INSERT INTO public.tickets VALUES (6, 6, 4);
-INSERT INTO public.tickets VALUES (7, 7, 5);
-INSERT INTO public.tickets VALUES (8, 8, 6);
-INSERT INTO public.tickets VALUES (9, 9, 7);
-INSERT INTO public.tickets VALUES (10, 10, 8);
+INSERT INTO public.tickets VALUES (1, 1, 1, 150);
+INSERT INTO public.tickets VALUES (2, 2, 1, 150);
+INSERT INTO public.tickets VALUES (3, 3, 2, 237.60002);
+INSERT INTO public.tickets VALUES (4, 4, 2, 237.60002);
+INSERT INTO public.tickets VALUES (5, 5, 3, 375);
+INSERT INTO public.tickets VALUES (6, 6, 4, 594);
+INSERT INTO public.tickets VALUES (7, 7, 5, 302.5);
+INSERT INTO public.tickets VALUES (8, 8, 6, 162);
+INSERT INTO public.tickets VALUES (9, 9, 7, 134.4);
+INSERT INTO public.tickets VALUES (10, 10, 8, 144);
 
 
 --
--- TOC entry 2821 (class 2606 OID 57357)
+-- TOC entry 2822 (class 2606 OID 57357)
 -- Name: films films_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -389,7 +376,7 @@ ALTER TABLE ONLY public.films
 
 
 --
--- TOC entry 2823 (class 2606 OID 57362)
+-- TOC entry 2824 (class 2606 OID 57362)
 -- Name: halls halls_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -398,7 +385,7 @@ ALTER TABLE ONLY public.halls
 
 
 --
--- TOC entry 2827 (class 2606 OID 57372)
+-- TOC entry 2828 (class 2606 OID 57372)
 -- Name: seats_class seats_class_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -407,7 +394,7 @@ ALTER TABLE ONLY public.seats_class
 
 
 --
--- TOC entry 2825 (class 2606 OID 57367)
+-- TOC entry 2826 (class 2606 OID 57367)
 -- Name: seats seats_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -416,7 +403,7 @@ ALTER TABLE ONLY public.seats
 
 
 --
--- TOC entry 2829 (class 2606 OID 57377)
+-- TOC entry 2830 (class 2606 OID 57377)
 -- Name: sessions sessions_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -425,7 +412,7 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- TOC entry 2831 (class 2606 OID 57382)
+-- TOC entry 2832 (class 2606 OID 57382)
 -- Name: tickets tickets_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -434,7 +421,7 @@ ALTER TABLE ONLY public.tickets
 
 
 --
--- TOC entry 2832 (class 2606 OID 57405)
+-- TOC entry 2833 (class 2606 OID 57405)
 -- Name: seats seats_halls_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -443,7 +430,7 @@ ALTER TABLE ONLY public.seats
 
 
 --
--- TOC entry 2833 (class 2606 OID 57410)
+-- TOC entry 2834 (class 2606 OID 57410)
 -- Name: seats seats_seats_class_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -452,7 +439,7 @@ ALTER TABLE ONLY public.seats
 
 
 --
--- TOC entry 2834 (class 2606 OID 57395)
+-- TOC entry 2835 (class 2606 OID 57395)
 -- Name: sessions sessions_films_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -461,7 +448,7 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- TOC entry 2835 (class 2606 OID 57400)
+-- TOC entry 2836 (class 2606 OID 57400)
 -- Name: sessions sessions_halls_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -470,7 +457,7 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- TOC entry 2836 (class 2606 OID 57420)
+-- TOC entry 2837 (class 2606 OID 57420)
 -- Name: tickets tickets_seats_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -479,7 +466,7 @@ ALTER TABLE ONLY public.tickets
 
 
 --
--- TOC entry 2837 (class 2606 OID 57415)
+-- TOC entry 2838 (class 2606 OID 57415)
 -- Name: tickets tickets_sessions_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -487,7 +474,7 @@ ALTER TABLE ONLY public.tickets
     ADD CONSTRAINT tickets_sessions_fk FOREIGN KEY (session_id) REFERENCES public.sessions(id);
 
 
--- Completed on 2025-04-09 01:50:10
+-- Completed on 2025-04-10 01:35:30
 
 --
 -- PostgreSQL database dump complete
