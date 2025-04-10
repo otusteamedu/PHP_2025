@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Infrastructure\Console;
+namespace App\Infrastructure\Http;
 
 class Response implements \JsonSerializable
 {

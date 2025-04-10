@@ -1,8 +1,21 @@
 services:
 
-  manager_php-cli:
+  manager_nginx_main:
+    image: nginx:1.25.4
+    container_name: nginx_main
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx/logs:/var/log/nginx:rw
+      - ./docker/nginx/hosts:/etc/nginx/conf.d
+    ports:
+      - '80:80'
+    networks:
+      - app-network
+
+  manager_php-fpm:
+    container_name: app_php-fpm
     build:
-      context: docker/php-cli
+      context: docker/php-fpm
       dockerfile: Dockerfile
     volumes:
       - ./app:/app:rw
@@ -10,10 +23,9 @@ services:
       manager_redis:
         condition: service_started
     working_dir: /app
+    env_file: .env
     networks:
       - app-network
-    env_file: .env
-    tty: true
 
   manager_redis:
     container_name: ${REDIS_CONTAINER_NAME}

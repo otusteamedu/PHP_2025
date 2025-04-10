@@ -8,7 +8,7 @@ class HealthCheckAction extends BaseAction
 {
     public function __invoke()
     {
-        return $this->responseSuccess('ok');
+        return $this->responseSuccess('ok')->asJson();
     }
 
 }

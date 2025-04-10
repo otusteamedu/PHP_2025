@@ -8,22 +8,25 @@ use App\Domain\Service\UuidService;
 
 class Event
 {
-    private array $conditions;
+    private array $conditions = [];
     private string $id;
 
     public function __construct(
         private readonly int    $priority,
         private readonly string $name,
-        Condition               ...$conditions
     )
     {
         $this->id = UuidService::generate();
-        $this->conditions = $conditions;
     }
 
     public function getConditions(): array
     {
         return $this->conditions;
+    }
+
+    public function addCondition(string $param, int|string $value): void
+    {
+        $this->conditions[$param] = $value;
     }
 
     public function getId(): string

@@ -25,7 +25,6 @@ class EventRepository implements EventRepositoryInterface
 
     public function add(Event $event): void
     {
-        $this->client->info();
         var_dump($this->client->info());
         die;
         $this->client->executeCommand([]);

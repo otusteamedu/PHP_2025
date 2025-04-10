@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller;
 
-use App\Infrastructure\Console\Response;
+use App\Infrastructure\Http\Response;
 
 class BaseAction
 {
