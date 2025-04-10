@@ -3,3 +3,5 @@
 /docker/redis/data/
 /app/vendor/
 .env
+/docker/nginx/logs/
+/docker/redis/logs/
