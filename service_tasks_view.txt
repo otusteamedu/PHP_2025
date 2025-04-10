@@ -1,0 +1,16 @@
+CREATE VIEW service_tasks_view AS
+SELECT
+    m.id AS movie_id,
+    m.title AS movie_title,
+    a.name AS task_name,
+    av.value_date AS due_date,
+    CASE
+        WHEN av.value_date = CURRENT_DATE THEN 'Актуально сегодня'
+        WHEN av.value_date = CURRENT_DATE + INTERVAL '20 days' THEN 'Актуально через 20 дней'
+        ELSE NULL
+        END AS актуальность
+FROM movies m
+         JOIN attribute_values av ON m.id = av.movie_id
+         JOIN attributes a ON av.attribute_id = a.id
+WHERE a.name IN ('Дата запуска рекламы на ТВ', 'Дата начала продаж билетов')
+  AND (av.value_date = CURRENT_DATE OR av.value_date = CURRENT_DATE + INTERVAL '20 days');
