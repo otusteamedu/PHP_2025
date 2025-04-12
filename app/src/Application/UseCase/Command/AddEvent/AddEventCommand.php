@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace App\Application\UseCase\Command;
+namespace App\Application\UseCase\Command\AddEvent;
 
 use App\Application\Command\CommandInterface;
 

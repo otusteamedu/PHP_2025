@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace App\Application\UseCase\Command;
+namespace App\Application\UseCase\Command\AddEvent;
 
 use App\Application\Command\CommandHandlerInterface;
 use App\Domain\Factory\EventFactory;
@@ -20,13 +20,15 @@ class AddEventCommandHandler implements CommandHandlerInterface
         $this->eventFactory = new EventFactory();
     }
 
-    public function __invoke(AddEventCommand $command): void
+    /**
+     * @throws \Exception
+     */
+    public function __invoke(AddEventCommand $command): string
     {
         $event = $this->eventFactory->create($command->priority, $command->name, $command->conditions);
-        $result = $this->eventRepository->add($event);
-        if ($result['errors']) {
-            throw new \Exception('insert failed');
-        }
+        $this->eventRepository->add($event);
+
+        return $event->getId();
     }
 
 }

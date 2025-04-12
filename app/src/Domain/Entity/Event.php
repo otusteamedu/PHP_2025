@@ -6,7 +6,7 @@ namespace App\Domain\Entity;
 
 use App\Domain\Service\UuidService;
 
-class Event
+class Event implements \JsonSerializable
 {
     private array $conditions = [];
     private string $id;
@@ -14,9 +14,14 @@ class Event
     public function __construct(
         private readonly int    $priority,
         private readonly string $name,
+        ?string                 $id = null,
     )
     {
-        $this->id = UuidService::generate();
+        if (!$id) {
+            $this->id = UuidService::generate();
+        } else {
+            $this->id = $id;
+        }
     }
 
     public function getConditions(): array
@@ -44,4 +49,9 @@ class Event
         return $this->name;
     }
 
+
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
+    }
 }

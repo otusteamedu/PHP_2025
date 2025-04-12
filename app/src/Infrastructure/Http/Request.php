@@ -13,6 +13,7 @@ class Request
     public function __construct()
     {
         $this->buildPost();
+        $this->buildGet();
     }
 
     public function isPost(): bool
@@ -28,6 +29,16 @@ class Request
     public function postAll(): array
     {
         return $this->post;
+    }
+
+    public function get(string $key): ?string
+    {
+        return $this->get[$key] ?? null;
+    }
+
+    public function getAll(): array
+    {
+        return $this->get;
     }
 
     private function buildPost(): void
@@ -47,9 +58,15 @@ class Request
         }
     }
 
+    private function buildGet(): void
+    {
+        $this->get = $_GET;
+    }
+
     public function getUrl(): string
     {
-        return $_SERVER['REQUEST_URI'];
+        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     }
+
 
 }

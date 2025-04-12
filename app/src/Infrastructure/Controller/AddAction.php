@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use App\Application\Command\CommandHandlerInterface;
-use App\Application\UseCase\Command\AddEventCommand;
-use App\Application\UseCase\Command\AddEventCommandHandler;
+use App\Application\UseCase\Command\AddEvent\AddEventCommand;
+use App\Application\UseCase\Command\AddEvent\AddEventCommandHandler;
 use App\Infrastructure\Http\Request;
+use App\Infrastructure\Http\Response;
 
 class AddAction extends BaseAction
 {
@@ -21,7 +22,7 @@ class AddAction extends BaseAction
     /**
      * @throws \Exception
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Response
     {
         extract($request->postAll());
 
@@ -36,9 +37,9 @@ class AddAction extends BaseAction
         }
 
         $command = new AddEventCommand($priority, $name, $conditions);
-        ($this->commandHandler)($command);
+        $result = ($this->commandHandler)($command);
 
-        return $this->responseSuccess($data);
+        return $this->responseSuccess($result)->asJson();
     }
 
 }
