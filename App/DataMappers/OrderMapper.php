@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\DataMappers;
 
+use App\DB;
 use App\Entities\Order;
+use App\Entities\User;
+use App\GlobalIdentityMap;
 use \PDO;
 use \PDOStatement;
 
 class OrderMapper
 {
+    private static OrderMapper $instance;
+
     private PDO $pdo;
 
     private PDOStatement $selectStatement;
@@ -42,45 +47,72 @@ class OrderMapper
         );
     }
 
-    public function findById(int $id): Order
+    public static function getInstance()
     {
+        if (!self::$instance) {
+            self::$instance = new self(DB::getPdo());
+        }
+
+        return self::$instance;
+    }
+
+    public function findById(int $id): null|Order
+    {
+        $result = GlobalIdentityMap::exists(Order::class, $id);
+
+        if ($result !== null) {
+            return $result;
+        }
+
         $this->selectStatement->setFetchMode(PDO::FETCH_ASSOC);
         $this->selectStatement->execute([$id]);
 
         $result = $this->selectStatement->fetch();
 
-        return new Order(
+        if ($result === false) {
+            return null;
+        }
+
+        $order = new Order(
             $result['id'],
             $result['user_id']
         );
+
+        GlobalIdentityMap::add($order);
+
+        return $order;
     }
 
-    public function findByUser(int $UserId): array
+    public function fetchByUser(int $userId): array
     {
         $this->selectStatementByUser->setFetchMode(PDO::FETCH_ASSOC);
-        $this->selectStatementByUser->execute([$UserId]);
+        $this->selectStatementByUser->execute([$userId]);
 
         $result = $this->selectStatementByUser->fetchAll();
 
         return \array_map(function ($item) {
-            return new Order(
+            $order = new Order(
                 $item['id'],
                 $item['user_id']
             );
+
+            GlobalIdentityMap::add($order);
+
+            return $order;
         },
             $result
         );
     }
 
-    public function insert(array $rawUserData): Order
+    public function insert(User $user): Order
     {
         $this->insertStatement->execute([
-            $rawUserData['user_id']
+            $user->getId()
         ]);
 
         return new Order(
             (int)$this->pdo->lastInsertId(),
-            (int)$rawUserData['user_id']
+            $user->getId()
         );
     }
 

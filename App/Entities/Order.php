@@ -10,7 +10,7 @@ class Order
     public function __construct(int $id, int $userId)
     {
         $this->id = $id;
-        $this->setUserId($userId);
+        $this->userId = $userId;
     }
 
     public function getId(): int
@@ -18,20 +18,8 @@ class Order
         return $this->id;
     }
 
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
     public function getUserId(): int
     {
         return $this->userId;
-    }
-
-    public function setUserId(int $userId): void
-    {
-        $this->userId = $userId;
     }
 }

@@ -3,26 +3,42 @@
 namespace App\Proxy;
 
 use App\DataMappers\OrderMapper;
-use App\DB;
 
 class OrderProxy
 {
-
+    private int $id;
+    private int $userId;
+    private OrderMapper $order;
     private array|null $orders = null;
 
-    public function getOrdersByUser(int $userId): array|null
+    public function __construct(?int $id, ?int $userId)
     {
-        if ($this->orders == null) {
-            $this->orders = $this->directLoadOrders($userId);
+        $this->id = $id;
+        $this->userId = $userId;
+        $this->order = OrderMapper::getInstance();
+    }
+
+    public function getOrdersByUser(): array|null
+    {
+        if ($this->orders === null) {
+            $this->orders = $this->directLoadOrders();
         }
 
         return $this->orders;
     }
 
-    private function directLoadOrders(int $userId): array
+    private function directLoadOrders(): array
     {
-        $order = new OrderMapper(DB::getPdo());
+        return $this->order->fetchByUser($this->getUserId());
+    }
 
-        return $order->findByUser($userId);
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->userId;
     }
 }
