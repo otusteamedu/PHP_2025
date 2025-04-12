@@ -90,7 +90,7 @@ class EventRepository implements EventRepositoryInterface
                     $result = $this->client->hgetall(self::EVENT_PREFIX . current(array_keys($inter)));
                 }
             }
-            if (count($zKeys) === count($exist)) {
+            if (count($zKeys) === 1 && count($conditions) === 1) {
                 ksort($exist);
                 $result = $this->client->hgetall(self::EVENT_PREFIX . current(array_keys($exist)));
             }
