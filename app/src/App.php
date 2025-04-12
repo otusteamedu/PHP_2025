@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace App;
 
 use App\Infrastructure\Controller\DeleteAction;
-use App\Infrastructure\Controller\FindAction;
+use App\Infrastructure\Controller\FindOneAction;
+use App\Infrastructure\Controller\FindOneByConditionAction;
 use App\Infrastructure\Http\Request;
 use App\Infrastructure\Http\Response;
 use App\Infrastructure\Controller\AddAction;
@@ -50,9 +51,9 @@ class App
         $controllerName = match ($request->getUrl()) {
             '/health-check' => HealthCheckAction::class,
             '/add-event' => AddAction::class,
-            '/get-event' => FindAction::class,
+            '/get-event' => FindOneAction::class,
             '/remove-event' => DeleteAction::class,
-
+            '/get-event-by-condition' => FindOneByConditionAction::class,
             default => throw new Exception('invalid route'),
         };
         if (!class_exists($controllerName)) {

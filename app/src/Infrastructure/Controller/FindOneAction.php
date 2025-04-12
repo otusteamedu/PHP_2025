@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use App\Application\Query\QueryHandlerInterface;
-use App\Application\UseCase\Query\FindEvent\FindEventQuery;
-use App\Application\UseCase\Query\FindEvent\FindEventQueryHandler;
+use App\Application\UseCase\Query\FindOne\FindOneQuery;
+use App\Application\UseCase\Query\FindOne\FindOneQueryHandler;
 use App\Infrastructure\Http\Request;
 use App\Infrastructure\Http\Response;
 
-class FindAction extends BaseAction
+class FindOneAction extends BaseAction
 {
     private QueryHandlerInterface $queryHandler;
 
     public function __construct()
     {
-        $this->queryHandler = new FindEventQueryHandler();
+        $this->queryHandler = new FindOneQueryHandler();
     }
 
     /**
@@ -28,7 +28,7 @@ class FindAction extends BaseAction
         if (is_null($id)) {
             throw new \InvalidArgumentException('Id parameter is required');
         }
-        $query = new FindEventQuery($id);
+        $query = new FindOneQuery($id);
         $result = ($this->queryHandler)($query);
 
         return $this->responseSuccess($result)->asJson();

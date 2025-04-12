@@ -13,6 +13,7 @@ use Predis\Client;
 class EventRepository implements EventRepositoryInterface
 {
     private const string EVENT_PREFIX = 'event:';
+    private const string CONDITION_PREFIX = 'condition:';
     private Client $client;
     private EventMapper $eventMapper;
 
@@ -30,12 +31,10 @@ class EventRepository implements EventRepositoryInterface
     public function add(Event $event): void
     {
         $this->client->multi();
-//        foreach ($event->getConditions() as $param => $condition) {
-//            var_dump($param, $condition);
-//            die;
-//        }
+        foreach ($event->getConditions() as $param => $condition) {
+            $this->client->zadd(self::CONDITION_PREFIX . $param . ':' . $condition, [$event->getId() => $event->getPriority()]);
+        }
         $key = self::EVENT_PREFIX . $event->getId();
-
         foreach ($event->jsonSerialize() as $name => $value) {
             if ($name === 'conditions') {
                 $this->client->hset($key, $name, json_encode($value));
@@ -66,5 +65,40 @@ class EventRepository implements EventRepositoryInterface
     public function remove(Event $event): void
     {
         $this->client->hdel(self::EVENT_PREFIX . $event->getId(), array_keys($event->jsonSerialize()));
+    }
+
+    public function findByCondition(array $conditions): ?Event
+    {
+        $zKeys = [];
+        $event = null;
+        $exist = [];
+
+        foreach ($conditions as $param => $condition) {
+            $key = self::CONDITION_PREFIX . $param . ':' . $condition;
+            foreach ($this->client->zrange($key, 0, -1, ["WITHSCORES" => true]) as $eventId => $priority) {
+                $exist[$eventId] = $priority;
+            }
+            if (!empty($exist)) {
+                $zKeys[] = $key;
+            }
+        }
+        if (!empty($zKeys)) {
+            if (count($zKeys) > 1) {
+                $inter = $this->client->zinter($zKeys, [], 'max', true);
+                ksort($inter);
+                if (!empty($inter)) {
+                    $result = $this->client->hgetall(self::EVENT_PREFIX . current(array_keys($inter)));
+                }
+            }
+            if (count($zKeys) === count($exist)) {
+                ksort($exist);
+                $result = $this->client->hgetall(self::EVENT_PREFIX . current(array_keys($exist)));
+            }
+            if (isset($result)) {
+                $event = $this->eventMapper->map($result);
+            }
+        }
+
+        return $event;
     }
 }

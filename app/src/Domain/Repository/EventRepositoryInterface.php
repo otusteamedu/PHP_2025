@@ -14,4 +14,6 @@ interface EventRepositoryInterface
 
     public function remove(Event $event): void;
 
+    public function findByCondition(array $conditions): ?Event;
+
 }

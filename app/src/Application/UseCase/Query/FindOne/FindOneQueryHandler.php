@@ -2,14 +2,14 @@
 declare(strict_types=1);
 
 
-namespace App\Application\UseCase\Query\FindEvent;
+namespace App\Application\UseCase\Query\FindOne;
 
 use App\Application\DTO\EventDTOTransformer;
 use App\Application\Query\QueryHandlerInterface;
 use App\Domain\Repository\EventRepositoryInterface;
 use App\Infrastructure\Repository\EventRepository;
 
-class FindEventQueryHandler implements QueryHandlerInterface
+class FindOneQueryHandler implements QueryHandlerInterface
 {
     private EventRepositoryInterface $eventRepository;
     private EventDTOTransformer $eventDTOTransformer;
@@ -23,15 +23,15 @@ class FindEventQueryHandler implements QueryHandlerInterface
     /**
      * @throws \Exception
      */
-    public function __invoke(FindEventQuery $query): FindEventQueryResult
+    public function __invoke(FindOneQuery $query): FindOneQueryResult
     {
         $result = $this->eventRepository->findById($query->eventId);
         if (!$result) {
-            return new FindEventQueryResult(null);
+            return new FindOneQueryResult(null);
         }
         $eventDto = $this->eventDTOTransformer->fromEntity($result);
 
-        return new FindEventQueryResult($eventDto);
+        return new FindOneQueryResult($eventDto);
     }
 
 }

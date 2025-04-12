@@ -21,7 +21,7 @@ class Request
         return $_SERVER['REQUEST_METHOD'] === static::METHOD_POST;
     }
 
-    public function post(string $key): ?string
+    public function post(string $key): mixed
     {
         return $this->post[$key] ?? null;
     }
