@@ -46,7 +46,9 @@ class EventRepository implements EventRepositoryInterface
         if (!is_array($result)) {
             throw new \Exception('Db record failure.');
         }
-        if (count(array_unique($result)) > 1) {
+
+
+        if (count(array_unique($result)) > 1 && current(array_unique($result)) === 0) {
             throw new \Exception('Db record failure.');
 
         }
@@ -82,16 +84,17 @@ class EventRepository implements EventRepositoryInterface
                 $zKeys[] = $key;
             }
         }
+
         if (!empty($zKeys)) {
             if (count($zKeys) > 1) {
                 $inter = $this->client->zinter($zKeys, [], 'max', true);
-                ksort($inter);
+                arsort($inter);
                 if (!empty($inter)) {
                     $result = $this->client->hgetall(self::EVENT_PREFIX . current(array_keys($inter)));
                 }
             }
             if (count($zKeys) === 1 && count($conditions) === 1) {
-                ksort($exist);
+                arsort($exist);
                 $result = $this->client->hgetall(self::EVENT_PREFIX . current(array_keys($exist)));
             }
             if (isset($result)) {
