@@ -4,17 +4,28 @@ namespace App\Entities;
 
 class User extends Entity
 {
-    /** @var int|null */
-    public ?int $id;
+    private ?int $id;
 
-    /** @var string */
-    public string $name;
+    private string $name;
 
-    /**
-     * @param array|null $data
-     */
-    public function __construct(?array $data = []) {
-        $this->id = $data['id'] ?? null;
-        $this->name = $data['name'];
+    public function __construct(?int $id, string $name) {
+        $this->id = $id;
+        $this->name = $name;
+    }
+
+    public function getId(): ?int {
+        return $this->id;
+    }
+
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function setId(int $id) {
+        $this->id = $id;
+    }
+
+    public function setName(string $name) {
+        $this->name = $name;
     }
 }

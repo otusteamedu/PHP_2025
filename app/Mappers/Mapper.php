@@ -2,55 +2,43 @@
 
 namespace App\Mappers;
 
-use App\Entities\Entity;
 use App\Service\DB;
+use Exception;
 
 class Mapper
 {
-    /** @var DB */
     protected DB $db;
 
-    /** @var string */
     protected string $table;
 
-    /** @var array */
     private static array $identityMap = [];
 
-    /**
-     * @param string $className
-     * @param $id
-     * @return mixed|null
-     */
-    protected static function getRecord(string $className, $id) {
-        $record = static::$identityMap[self::getRecordKey($className, $id)] ?? null;
-
-        if (empty($record) === false) {
-            $record = new $className($record);
-        }
-
-        return $record;
+    protected static function getRecord(string $className, $id): ?array {
+        return static::$identityMap[self::getRecordKey($className, $id)] ?? null;
     }
 
     /**
-     * @param Entity $entity
-     * @param $id
-     * @return void
+     * @throws Exception
      */
-    protected static function addRecord(Entity $entity, $id): void {
-        $className = get_class($entity);
+    protected static function addRecord(string $className, ?array $data): void {
+        if (empty($data['id'])) {
+            throw new Exception("id должно быть заполненым");
+        }
+
+        $id = $data['id'];
+
         $record = static::getRecord($className, $id);
 
         if (empty($record)) {
-            static::$identityMap[self::getRecordKey($className, $id)] = $entity->toArray();
+            static::$identityMap[self::getRecordKey($className, $id)] = $data;
         }
     }
 
-    /**
-     * @param string $className
-     * @param $id
-     * @return string
-     */
     private static function getRecordKey(string $className, $id): string {
         return "$className.$id";
+    }
+
+    public function getDB(): DB {
+        return $this->db;
     }
 }

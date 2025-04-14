@@ -6,7 +6,6 @@ use PDO;
 
 class DBMysql extends DB
 {
-    /** @var PDO */
     public PDO $pdo;
 
     public function __construct() {
@@ -18,20 +17,19 @@ class DBMysql extends DB
         $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->user, $this->password);
     }
 
-    /**
-     * @return mixed
-     */
     public function first() {
         $statement = $this->pdo->prepare("SELECT * FROM $this->table LIMIT 1");
         $statement->execute();
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * @param $id
-     * @return array|null
-     */
-    public function find($id): ?array {
+    public function get(): ?array {
+        $statement = $this->pdo->prepare("SELECT * FROM $this->table");
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function find(int $id): ?array {
         $statement = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = :id");
         $statement->bindParam(':id', $id);
         $statement->execute();
@@ -72,18 +70,17 @@ class DBMysql extends DB
         return $result ?? false;
     }
 
-    /**
-     * @param $id
-     * @param array $data
-     * @return bool
-     */
-    public function update($id, array $data): bool {
+    public function update(array $data): bool {
         $columns = array_keys($data);
 
         $sql = "UPDATE $this->table SET ";
         $strColumns = "";
 
         foreach ($columns as $column) {
+            if ($column === 'id') {
+                continue;
+            }
+
             $strColumns .= "$column = :$column, ";
         }
 
@@ -95,16 +92,12 @@ class DBMysql extends DB
         foreach ($data as $col => $value) {
             $statement->bindParam(":$col", $value);
         }
-        $statement->bindParam(":id", $id);
+        $statement->bindParam(":id", $data['id']);
 
         return $statement->execute();
     }
 
-    /**
-     * @param $id
-     * @return bool
-     */
-    public function delete($id): bool {
+    public function delete(int $id): bool {
         $statement = $this->pdo->prepare("DELETE FROM users WHERE id = :id");
         $statement->bindParam(':id', $id);
         return $statement->execute();

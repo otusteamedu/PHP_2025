@@ -3,42 +3,32 @@
 namespace App\Tests;
 
 use App\Entities\User;
-use App\Mappers\UserMysqlMapper;
+use App\Mappers\UserMapper;
 use App\Service\DBMysql;
 use Dotenv\Dotenv;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
-class UserMysqlTest extends TestCase
+class UserPDOTest extends TestCase
 {
-    /** @var UserMysqlMapper */
-    protected UserMysqlMapper $mapper;
+    protected UserMapper $mapper;
 
-    /**
-     * @return void
-     */
     protected function setUp(): void {
         parent::setUp();
 
         Dotenv::createUnsafeImmutable(__DIR__ . '/../../')->load();
         $db = (new DBMysql())->table("users");
         $db->createTableForTest();
-        $this->mapper = new UserMysqlMapper($db);
+        $this->mapper = new UserMapper($db);
     }
 
     public function testCreate() {
-        $user = new User([
-            'name' => base64_encode(random_bytes(10))
-        ]);
+        $user = new User(
+            null,
+            base64_encode(random_bytes(10))
+        );
 
         $user = $this->mapper->create($user);
-
-        $this->assertInstanceOf(User::class, $user);
-    }
-
-    public function testFind() {
-        $user = $this->mapper->first();
-        $user = $this->mapper->findById($user->id);
 
         $this->assertInstanceOf(User::class, $user);
     }
@@ -46,14 +36,31 @@ class UserMysqlTest extends TestCase
     /**
      * @throws Exception
      */
+    public function testFind() {
+        $user = $this->mapper->first();
+        $user = $this->mapper->findById($user->getId());
+
+        $this->assertInstanceOf(User::class, $user);
+    }
+
+    public function testGetAll() {
+        $users = $this->mapper->getAll();
+
+        $this->assertIsArray($users);
+        $this->assertInstanceOf(User::class, $users[0]);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testUpdate() {
         $user = $this->mapper->first();
-        $user = new User([
-            'id' => $user->id,
-            'name' => base64_encode(random_bytes(10))
-        ]);
+        $user = new User(
+            $user->getId(),
+            base64_encode(random_bytes(10))
+        );
 
-        $result = $this->mapper->update($user->id, $user);
+        $result = $this->mapper->update($user);
 
         $this->assertTrue($result);
     }
@@ -63,7 +70,7 @@ class UserMysqlTest extends TestCase
      */
     public function testDelete() {
         $user = $this->mapper->first();
-        $result = $this->mapper->delete($user->id);
+        $result = $this->mapper->delete($user->getId());
 
         $this->assertTrue($result);
     }
