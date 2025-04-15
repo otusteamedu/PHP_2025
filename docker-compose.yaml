@@ -1,0 +1,38 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: balance/nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/var/www/html
+    networks:
+      - app-network
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ./html:/var/www/html
+    restart: always
+    environment:
+      - REDIS_HOST
+      - REDIS_HOST_PORT
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
