@@ -5,3 +5,4 @@
 .LSOverride
 .env
 composer.lock
+/docker/mysql/data

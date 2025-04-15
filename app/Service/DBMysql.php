@@ -17,19 +17,19 @@ class DBMysql extends DB
         $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->user, $this->password);
     }
 
-    public function first() {
+    public function fetchFirst() {
         $statement = $this->pdo->prepare("SELECT * FROM $this->table LIMIT 1");
         $statement->execute();
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function get(): ?array {
+    public function fetchAll(): ?array {
         $statement = $this->pdo->prepare("SELECT * FROM $this->table");
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function find(int $id): ?array {
+    public function fetch(int $id): ?array {
         $statement = $this->pdo->prepare("SELECT * FROM $this->table WHERE id = :id");
         $statement->bindParam(':id', $id);
         $statement->execute();
@@ -86,7 +86,7 @@ class DBMysql extends DB
 
         $strColumns = substr($strColumns, 0, -2);
         $sql .= "$strColumns WHERE id = :id";
-        var_dump($sql, 0000, 4);
+
         $statement = $this->pdo->prepare($sql);
 
         foreach ($data as $col => $value) {

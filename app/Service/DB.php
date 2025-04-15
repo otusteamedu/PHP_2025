@@ -15,7 +15,9 @@ abstract class DB
         return $this;
     }
 
-    public abstract function find(int $id): ?array;
+    public abstract function fetch(int $id): ?array;
+
+    public abstract function fetchAll(): ?array;
 
     public abstract function create(array $data);
 

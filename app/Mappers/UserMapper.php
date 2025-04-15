@@ -17,6 +17,7 @@ class UserMapper extends Mapper
     /**
      * @param User $user
      * @return User|bool
+     * @throws Exception
      */
     public function create(User $user): User {
         $result = $this->db->create([
@@ -24,7 +25,8 @@ class UserMapper extends Mapper
         ]);
 
         if ($result) {
-            $user->setId($result);
+            $user = new User($result, $user->getName());
+            self::addRecord($user);
         } else {
             $user = $result;
         }
@@ -40,17 +42,14 @@ class UserMapper extends Mapper
         $user = self::getRecord($className, $id);
 
         if (empty($user)) {
-            $result = $this->db->find($id);
+            $result = $this->db->fetch($id);
 
             if (empty($result) === false) {
                 $user = new User($result['id'], $result['name']);
-                self::addRecord($className, [
-                    'id' => $user->getId(),
-                    'name' => $user->getName(),
-                ]);
+                self::addRecord($user);
             }
         } else {
-            $user = new User($user['id'], $user['name']);
+            $user = new User($user->getId(), $user->getName());
         }
 
         return $user;
@@ -62,36 +61,53 @@ class UserMapper extends Mapper
     public function getAll(): array {
         $users = [];
 
-        foreach ($this->db->get() as $user) {
+        foreach ($this->db->fetchAll() as $user) {
             $users[] = new User($user['id'], $user['name']);
         }
 
         return $users;
     }
 
+    /**
+     * @throws Exception
+     */
     public function update(User $user): bool {
-        return $this->db->update([
+        $result = $this->db->update([
             'id' => $user->getId(),
             'name' => $user->getName(),
         ]);
-    }
 
-    public function delete(int $id): bool {
-        return $this->db->delete($id);
+        if ($result) {
+            self::updateRecord($user);
+        }
+
+        return $result;
     }
 
     /**
      * @throws Exception
      */
+    public function delete(int $id): bool {
+        $result = $this->db->delete($id);
+
+        if ($result) {
+            self::deleteRecord(User::class, $id);
+        }
+
+        return $result;
+    }
+
+    /**
+     * В данный момент нужен для тестов
+     *
+     * @throws Exception
+     */
     public function first(): ?User {
-        $user = $this->db->first();
+        $user = $this->db->fetchFirst();
 
         if (empty($user) === false) {
             $user = new User($user['id'], $user['name']);
-            self::addRecord(User::class, [
-                'id' => $user->getId(),
-                'name' => $user->getName(),
-            ]);
+            self::addRecord($user);
         }
 
         return $user ?? null;
