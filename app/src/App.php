@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Infrastructure\Controller\AddUserAction;
 use App\Infrastructure\Controller\MigrationAction;
 use App\Infrastructure\Http\Request;
 use App\Infrastructure\Http\Response;
@@ -48,6 +49,8 @@ class App
         $controllerName = match ($request->getUrl()) {
             '/health-check' => HealthCheckAction::class,
             '/migrate' => MigrationAction::class,
+            '/user/add' => AddUserAction::class,
+
             default => throw new Exception('invalid route'),
         };
         if (!class_exists($controllerName)) {
