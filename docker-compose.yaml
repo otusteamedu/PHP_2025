@@ -1,0 +1,46 @@
+services:
+
+  manager_nginx_main:
+    image: nginx:1.25.4
+    container_name: nginx_main
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx/logs:/var/log/nginx:rw
+      - ./docker/nginx/hosts:/etc/nginx/conf.d
+    ports:
+      - '80:80'
+    networks:
+      - app-network
+
+  manager_php-fpm:
+    container_name: app_php-fpm
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app:rw
+    depends_on:
+      manager_redis:
+        condition: service_started
+    working_dir: /app
+    env_file: .env
+    networks:
+      - app-network
+
+  manager_redis:
+    container_name: ${REDIS_CONTAINER_NAME}
+    image: redis:8.0-M04
+    restart: always
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./docker/redis/data/:/data:rw
+      - ./docker/redis/logs:/var/log/redis:rw
+      - ./docker/redis/config/redis.conf:/usr/local/etc/redis/redis.conf:rw
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
