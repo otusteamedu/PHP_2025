@@ -7,7 +7,7 @@ class User extends Entity
     private string $name;
 
     public function __construct(?int $id, string $name) {
-        $this->id = $id;
+        parent::__construct($id);
         $this->name = $name;
     }
 

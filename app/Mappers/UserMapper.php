@@ -38,8 +38,7 @@ class UserMapper extends Mapper
      * @throws Exception
      */
     public function findById(int $id): ?User {
-        $className = User::class;
-        $user = self::getRecord($className, $id);
+        $user = self::getRecord($id);
 
         if (empty($user)) {
             $result = $this->db->fetch($id);
@@ -91,7 +90,7 @@ class UserMapper extends Mapper
         $result = $this->db->delete($id);
 
         if ($result) {
-            self::deleteRecord(User::class, $id);
+            self::deleteRecord($id);
         }
 
         return $result;

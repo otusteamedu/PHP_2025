@@ -22,6 +22,9 @@ class UserPDOTest extends TestCase
         $this->mapper = new UserMapper($db);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCreate() {
         $user = new User(
             null,
