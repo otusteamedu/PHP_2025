@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Http\News\Controller;
 
 use App\Domain\Entity\News;
+use App\Infrastructure\Services\NewsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,6 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 #[Route('/api', name: 'api_')]
 class NewsController extends AbstractController
 {
+    public function __construct(
+        protected NewsService $newsService
+    ){}
+
     #[Route('/news', name: 'news_index', methods:['get'] )]
     public function index(EntityManagerInterface $entityManager): JsonResponse
     {
@@ -36,6 +41,14 @@ class NewsController extends AbstractController
 
     public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
+
+
+        $url = 'http://meteo.infospace.ru/';
+        $this->newsService->saveDownloadNewsAsHtml($url);
+
+
+        exit();
+
         $project = new News();
         $project->setTitle($request->request->get('title'));
         $project->setUrl($request->request->get('url'));
