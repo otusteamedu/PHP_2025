@@ -9,7 +9,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class NewsController
+#[Route('/api', name: 'api_')]
+class NewsController extends AbstractController
 {
     #[Route('/news', name: 'news_index', methods:['get'] )]
     public function index(EntityManagerInterface $entityManager): JsonResponse
@@ -32,13 +33,15 @@ class NewsController
         return $this->json($data);
     }
 
-    #[Route('/create_news', name: 'news_create', methods:['post'] )]
+
     public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $project = new News();
         $project->setTitle($request->request->get('title'));
         $project->setUrl($request->request->get('url'));
-        //$project->setCreateDate();
+
+        $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
+        $project->setCreateDate($createDate);
 
         $entityManager->persist($project);
         $entityManager->flush();
