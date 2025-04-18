@@ -1,0 +1,64 @@
+version: '1.0.2'
+
+name: 'PHP 2025 homework'
+
+services:
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: app/nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - './public:/var/www/mysite/public'
+      - './app:/var/www/mysite/app'
+      - './composer/vendor:/var/www/mysite/composer/vendor'
+    depends_on:
+      - php_fpm
+    networks:
+      - app-network
+
+  php_fpm:
+    build:
+      context: docker/fpm
+      dockerfile: Dockerfile
+    image: app/php_fpm
+    container_name: php_fpm
+    restart: always
+    depends_on:
+      - elasticsearch
+    volumes:
+      - './public:/var/www/mysite/public'
+      - './app:/var/www/mysite/app'
+      - './composer/vendor:/var/www/mysite/composer/vendor'
+    networks:
+      - app-network
+
+  elasticsearch:
+    image: elasticsearch:8.17.3
+    container_name: app_elasticsearch
+    ports:
+      - 9200:9200
+    networks:
+      - app-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: 4GB
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - ELASTIC_PASSWORD=changeme
+      - xpack.security.enabled=true
+
+networks:
+  app-network:
+    driver: bridge
