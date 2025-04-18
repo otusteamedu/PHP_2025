@@ -6,18 +6,21 @@ use App\Domain\Entity\News;
 use App\Infrastructure\Services\NewsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-#[Route('/api', name: 'api_')]
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
+
 class NewsController extends AbstractController
 {
     public function __construct(
         protected NewsService $newsService
     ){}
 
-    #[Route('/news', name: 'news_index', methods:['get'] )]
     public function index(EntityManagerInterface $entityManager): JsonResponse
     {
         $news = $entityManager
@@ -25,7 +28,6 @@ class NewsController extends AbstractController
             ->findAll();
 
         $data = [];
-
         foreach ($news as $el) {
             $data[] = [
                 'id' => $el->getId(),
@@ -38,90 +40,91 @@ class NewsController extends AbstractController
         return $this->json($data);
     }
 
-
     public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
+        $url = $request->request->get('url');
+        $arNewsTitles = $this->newsService->getHtmlByUrl($url, 'title');
+
+        //TODO исключением!
+        if (is_array($arNewsTitles) && !empty($arNewsTitles)) {
+            $mainTitle = reset($arNewsTitles);
+
+            $project = new News();
+            $project->setTitle($mainTitle);
+            $project->setUrl($request->request->get('url'));
+            $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
+            $project->setCreateDate($createDate);
+
+            $entityManager->persist($project);
+            $entityManager->flush();
+
+            $data =  [
+                'id' => $project->getId(),
+                'title' => $project->getTitle(),
+                'url' => $project->getUrl(),
+            ];
+        }
 
 
-        $url = 'http://meteo.infospace.ru/';
-        $this->newsService->saveDownloadNewsAsHtml($url);
-
-
-        exit();
-
-        $project = new News();
-        $project->setTitle($request->request->get('title'));
-        $project->setUrl($request->request->get('url'));
-
-        $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
-        $project->setCreateDate($createDate);
-
-        $entityManager->persist($project);
-        $entityManager->flush();
-
-        $data =  [
-            'id' => $project->getId(),
-            'title' => $project->getTitle(),
-            'url' => $project->getUrl(),
-        ];
 
         return $this->json($data);
     }
 
-
-    #[Route('/news/{id}', name: 'news_show', methods:['get'] )]
-    public function show(EntityManagerInterface $entityManager, int $id): JsonResponse
+    public function generateReport(EntityManagerInterface $entityManager, Request $request, KernelInterface $kernel): JsonResponse
     {
-        $project = $entityManager->getRepository(News::class)->find($id);
 
-        if (!$project) {
-            return $this->json('No news found for id ' . $id, 404);
+
+
+
+        $arRequest = $request->toArray();
+        if (is_array($arRequest['news']) && !empty($arRequest['news'])) {
+            $arNews = $entityManager->getRepository(News::class)->findBy(['id' => $arRequest['news']]);
+
+            $htmlReport = '<ul>';
+            foreach ($arNews as $news) {
+                $url = $news->getUrl();
+                $title = $news->getTitle();
+
+                $htmlReport .= '<li><a href="'.$url.'">'.$title.'</a><li>';
+            }
+            $htmlReport .= '</ul>';
+
+            dd($htmlReport);
         }
 
-        $data =  [
-            'id' => $project->getId(),
-            'title' => $project->getTitle(),
-            'url' => $project->getUrl(),
-            'date' => $project->getCreateDate(),
-        ];
+        //TODO использовать try/catch
 
-        return $this->json($data);
-    }
 
-    #[Route('/update_news/{id}', name: 'news_update', methods:['put', 'patch'] )]
-    public function update(EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
-    {
-        $project = $entityManager->getRepository(News::class)->find($id);
+        //TODO вынести в сервис
+        $filesystem = new Filesystem();
 
-        if (!$project) {
-            return $this->json('No news found for id ' . $id, 404);
+
+        $projectDirectory = $kernel->getProjectDir();
+        $filesystem->dumpFile($projectDirectory.'/src/include/reports/report.txt', 'Hello World');
+
+        try {
+            $filesystem->mkdir(
+                Path::normalize(sys_get_temp_dir().'/'.random_int(0, 1000)),
+            );
+
+
+        } catch (IOExceptionInterface $exception) {
+            echo "An error occurred while creating your directory at ".$exception->getPath();
         }
 
-        $project->setTitle($request->request->get('title'));
-        $project->setUrl($request->request->get('url'));
-        $entityManager->flush();
 
-        $data =  [
-            'id' => $project->getId(),
-            'title' => $project->getTitle(),
-            'url' => $project->getUrl(),
-        ];
 
-        return $this->json($data);
+//        $data = [];
+//        foreach ($news as $el) {
+//            $data[] = [
+//                'id' => $el->getId(),
+//                'title' => $el->getTitle(),
+//                'url' => $el->getUrl(),
+//                'create_date' => $el->getCreateDate(),
+//            ];
+//        }
+//
+//        return $this->json($data);
     }
 
-    #[Route('/news/{id}', name: 'news_delete', methods:['delete'] )]
-    public function delete(EntityManagerInterface $entityManager, int $id): JsonResponse
-    {
-        $project = $entityManager->getRepository(News::class)->find($id);
-
-        if (!$project) {
-            return $this->json('No news found for id ' . $id, 404);
-        }
-
-        $entityManager->remove($project);
-        $entityManager->flush();
-
-        return $this->json('Deleted a news successfully with id ' . $id);
-    }
 }
