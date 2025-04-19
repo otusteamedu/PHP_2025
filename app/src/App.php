@@ -5,6 +5,7 @@ namespace App;
 
 use App\Infrastructure\Controller\AddPostToUserAction;
 use App\Infrastructure\Controller\AddUserAction;
+use App\Infrastructure\Controller\GetPagedUsersAction;
 use App\Infrastructure\Controller\MigrationAction;
 use App\Infrastructure\Http\Request;
 use App\Infrastructure\Http\Response;
@@ -52,6 +53,7 @@ class App
             '/migrate' => MigrationAction::class,
             '/user/add' => AddUserAction::class,
             '/post/add' => AddPostToUserAction::class,
+            '/user/list' => GetPagedUsersAction::class,
 
             default => throw new Exception('invalid route'),
         };

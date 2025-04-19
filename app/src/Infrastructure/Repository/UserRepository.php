@@ -6,9 +6,13 @@ namespace App\Infrastructure\Repository;
 
 use App\Domain\Aggregate\User\User;
 use App\Domain\Aggregate\User\UserPost;
+use App\Domain\Repository\Pager;
+use App\Domain\Repository\PaginationResult;
+use App\Domain\Repository\UserFilter;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Infrastructure\Database\Db;
 use App\Infrastructure\Mapper\UserMapper;
+use PDO;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -37,7 +41,6 @@ class UserRepository implements UserRepositoryInterface
             $statement->bindValue(':id', $user->id);
             $statement->bindValue(':email', $user->email);
             $statement->bindValue(':name', $user->name);
-
             if (!$statement->execute()) {
                 throw new \Exception('User could not be added into database');
             };
@@ -70,8 +73,7 @@ class UserRepository implements UserRepositoryInterface
         $statement = $this->db->connection->prepare($sql);
         $statement->bindValue(':id', $userId);
         $statement->execute();
-
-        $result = $statement->fetch();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
         if (!$result) {
             return null;
         };
@@ -85,7 +87,7 @@ class UserRepository implements UserRepositoryInterface
         $statement = $this->db->connection->prepare($sql);
         $statement->bindValue(':id', $userId);
         $statement->execute();
-        $result = $statement->fetch();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $result !== false;
     }
@@ -97,7 +99,36 @@ class UserRepository implements UserRepositoryInterface
         $statement->bindValue(':id', $userId);
         $statement->execute();
 
-        return $statement->fetchAll();
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
+    public function getByFilter(UserFilter $filter): ?PaginationResult
+    {
+        $pager = $filter->pager;
+        if (!$pager) {
+            $pager = Pager::fromPage(null, null);
+        }
+        $sql = "SELECT * FROM $this->userTable LIMIT :limit OFFSET :offset;";
+        $statement = $this->db->connection->prepare($sql);
+        $statement->bindValue(':limit', $pager->getLimit());
+        $statement->bindValue(':offset', $pager->getOffset());
+        $statement->execute();
+        $users = [];
+        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $user) {
+            $users[] = $this->userMapper->userMap($user);
+        };
+        $count = $this->getCount("SELECT count(*) FROM $this->userTable;");
+
+        return new PaginationResult($users, $count);
+    }
+
+    private function getCount(string $sql): int
+    {
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute();
+
+        return $statement->fetchColumn();
 
     }
 }
