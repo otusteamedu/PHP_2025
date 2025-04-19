@@ -15,9 +15,9 @@ class UserPost
     }
 
     public function __construct(
-        private string $title,
-        private string $content,
-        private User   $owner,
+        private string        $title,
+        private string        $content,
+        private readonly User $owner,
     )
     {
         $this->id = UuidService::generate();

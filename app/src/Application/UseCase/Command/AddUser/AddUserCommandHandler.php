@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace App\Application\UseCase\Command;
+namespace App\Application\UseCase\Command\AddUser;
 
 use App\Application\Command\CommandHandlerInterface;
 use App\Domain\Factory\UserFactory;

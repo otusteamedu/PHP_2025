@@ -41,19 +41,20 @@ class User
         $this->id = UuidService::generate();
     }
 
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
     public function getPosts(): ?array
     {
         return $this->posts;
+    }
+
+    public function addPost(UserPost $post): void
+    {
+        if (!$this->posts) {
+            $this->posts = [];
+        }
+        if (in_array($post, $this->posts, true)) {
+            return;
+        }
+        $this->posts[] = $post;
     }
 
 }

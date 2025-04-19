@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Infrastructure\Controller\AddPostToUserAction;
 use App\Infrastructure\Controller\AddUserAction;
 use App\Infrastructure\Controller\MigrationAction;
 use App\Infrastructure\Http\Request;
@@ -50,6 +51,7 @@ class App
             '/health-check' => HealthCheckAction::class,
             '/migrate' => MigrationAction::class,
             '/user/add' => AddUserAction::class,
+            '/post/add' => AddPostToUserAction::class,
 
             default => throw new Exception('invalid route'),
         };

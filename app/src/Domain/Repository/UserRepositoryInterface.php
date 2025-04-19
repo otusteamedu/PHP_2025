@@ -10,4 +10,6 @@ interface UserRepositoryInterface
 {
     public function add(User $user): void;
 
+    public function get(string $userId): ?User;
+
 }

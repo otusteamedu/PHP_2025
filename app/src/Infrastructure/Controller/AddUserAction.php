@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use App\Application\Command\CommandHandlerInterface;
-use App\Application\UseCase\Command\AddUserCommand;
-use App\Application\UseCase\Command\AddUserCommandHandler;
+use App\Application\UseCase\Command\AddUser\AddUserCommand;
+use App\Application\UseCase\Command\AddUser\AddUserCommandHandler;
 use App\Domain\Service\AssertService;
 use App\Infrastructure\Http\Request;
 
