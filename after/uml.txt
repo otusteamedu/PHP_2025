@@ -1,0 +1,60 @@
+@startuml
+interface FileServiceInterface {
+  +getList(): array
+  +getFile(id: int): FileModel
+  +addNewFile(name: string, tmp: string): bool
+  +addDirectory(directoryName: string): bool
+  +getDirectoryInfo(id: int): array
+}
+
+interface FileRepositoryInterface {
+  +getFilesList(): array
+  +getFileById(id: int): FileModel
+  +saveFile(fileName: string): bool
+}
+
+class BaseController {
+  +getJsonRequestData(): array
+  +getUploadedFile(): array
+  +jsonResponse(data: mixed, statusCode: int): void
+}
+
+class FileController {
+  -fileService: FileServiceInterface
+  +listFiles(): void
+  +fileInfo(id: int): void
+  +addFile(): void
+}
+
+class FileService {
+  -fileRepository: FileRepositoryInterface
+  -directoryRepository: DirectoryRepositoryInterface
+  __construct(fileRepository, directoryRepository)
+  +getList(): array
+  +getFile(id: int): FileModel
+  +addNewFile(name: string, tmp: string): bool
+}
+
+class FileRepository {
+  -pdo: PDO
+  +getFilesList(): array
+  +getFileById(id: int): FileModel
+  +saveFile(fileName: string): bool
+}
+
+class FileModel {
+  -id: int
+  -fileName: string
+  +create(fileName: string): FileModel
+  +setId(id: int): self
+  +getFileName(): string
+  +toArray(): array
+}
+
+BaseController <|-- FileController
+FileController --> FileServiceInterface
+FileService ..|> FileServiceInterface
+FileService --> FileRepositoryInterface
+FileRepository ..|> FileRepositoryInterface
+FileRepository --> FileModel
+@enduml
