@@ -9,9 +9,9 @@ use App\Domain\Service\UuidService;
 
 class User
 {
+    private ?array $posts = null;
     private \Closure $postRef;
 
-    private ?array $posts = null;
     public string $id {
         get {
             return $this->id;
@@ -42,10 +42,10 @@ class User
         $this->id = UuidService::generate();
     }
 
-    public function getPosts(): ?array
+    public function getPosts(): array
     {
         if (!isset($this->posts)) {
-            $this->posts = ($this->postRef)($this);
+            $this->posts = isset($this->postRef) ? ($this->postRef)($this) : [];
         }
         return $this->posts;
     }

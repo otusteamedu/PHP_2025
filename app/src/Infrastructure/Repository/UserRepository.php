@@ -67,7 +67,6 @@ class UserRepository implements UserRepositoryInterface
             $this->db->connection->rollBack();
             throw $exception;
         }
-
     }
 
     public function get(string $userId): ?User
@@ -81,7 +80,7 @@ class UserRepository implements UserRepositoryInterface
             return null;
         };
         $user = $this->userMapper->userMap($result);
-        $this->setPostReference($user);
+        $user->setRepoRef($this->getPostReference());
 
         return $user;
     }
@@ -107,6 +106,23 @@ class UserRepository implements UserRepositoryInterface
         $count = $this->getCount("SELECT count(*) FROM $this->userTable;");
 
         return new PaginationResult($users, $count);
+    }
+
+    public function getPostReference(): \Closure
+    {
+        return function (User $user) {
+            $sql = "SELECT * FROM $this->postTable WHERE owner_id = :id;";
+            $statement = $this->db->connection->prepare($sql);
+            $statement->bindValue(':id', $user->id);
+            $statement->execute();
+
+            $posts = [];
+            foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $post) {
+                $posts[] = $this->userPostMapper->userPostMap($user, $post);
+            }
+
+            return $posts;
+        };
     }
 
     private function checkUserExists(string $userId): bool
@@ -137,22 +153,5 @@ class UserRepository implements UserRepositoryInterface
         $statement->execute();
 
         return $statement->fetchColumn();
-    }
-
-    private function getPostReference(): \Closure
-    {
-        return function (User $user) {
-            $sql = "SELECT * FROM $this->postTable WHERE owner_id = :id;";
-            $statement = $this->db->connection->prepare($sql);
-            $statement->bindValue(':id', $user->id);
-            $statement->execute();
-
-            $posts = [];
-            foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $post) {
-                $posts[] = $this->userPostMapper->userPostMap($user, $post);
-            }
-
-            return $posts;
-        };
     }
 }
