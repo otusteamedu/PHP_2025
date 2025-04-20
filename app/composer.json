@@ -1,0 +1,19 @@
+{
+    "name": "nikolay_vanzhin/app",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nikolay vanzhin",
+            "email": "nikolay.vanzhin@yandex.ru"
+        }
+    ],
+    "require": {
+      "ext-pdo": "*",
+        "ramsey/uuid": "^4.7",
+        "webmozart/assert": "^1.11"
+    }
+}

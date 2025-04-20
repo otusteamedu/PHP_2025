@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+
+namespace App\Application\DTO\User;
+
+class UserDTO
+{
+    public ?string $id;
+    public ?string $name;
+    public ?string $email;
+    public ?array $posts;
+}

@@ -1,0 +1,56 @@
+services:
+
+  manager_nginx:
+    image: nginx:1.25.4
+    container_name: manager_nginx
+    volumes:
+      - ./app:/app:rw
+      - ./docker/nginx/logs:/var/log/nginx:rw
+      - ./docker/nginx/hosts:/etc/nginx/conf.d
+    ports:
+      - '80:80'
+    networks:
+      - app-network
+    depends_on:
+      - manager_php-fpm
+
+  manager_php-fpm:
+    container_name: manager_php-fpm
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app:rw
+    depends_on:
+      manager_db:
+        condition: service_healthy
+    working_dir: /app
+    env_file: .env
+    networks:
+      - app-network
+
+  manager_db:
+    container_name: ${DB_CONTAINER_NAME}
+    image: postgres:17.4
+    shm_size: 128mb
+    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_NAME}", "-U", "${DB_USER}" ]
+      timeout: 30s
+      interval: 10s
+      retries: 10
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    networks:
+      - app-network
+    volumes:
+      - ./docker/db/data:/var/lib/postgresql/data
+    ports:
+      - ${DB_EXTERNAL_PORT}:${DB_PORT}
+    command: [ "postgres", "-c", "logging_collector=on", "-c", "log_directory=/var/lib/postgresql/data/pg_log", "-c", "log_filename=postgresql.log", "-c", "log_statement=all" ]
+
+networks:
+  app-network:
+    driver: bridge
