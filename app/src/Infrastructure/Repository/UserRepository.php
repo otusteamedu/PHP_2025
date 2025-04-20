@@ -12,6 +12,7 @@ use App\Domain\Repository\UserFilter;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Infrastructure\Database\Db;
 use App\Infrastructure\Mapper\UserMapper;
+use App\Infrastructure\Mapper\UserPostMapper;
 use PDO;
 
 class UserRepository implements UserRepositoryInterface
@@ -20,11 +21,13 @@ class UserRepository implements UserRepositoryInterface
     private string $userTable = 'user_user';
     private string $postTable = 'user_post';
     private UserMapper $userMapper;
+    private UserPostMapper $userPostMapper;
 
     public function __construct()
     {
         $this->db = new Db();
         $this->userMapper = new UserMapper();
+        $this->userPostMapper = new UserPostMapper();
     }
 
     public function add(User $user): void
@@ -77,8 +80,33 @@ class UserRepository implements UserRepositoryInterface
         if (!$result) {
             return null;
         };
+        $user = $this->userMapper->userMap($result);
+        $this->setPostReference($user);
 
-        return $this->userMapper->userMap($result);
+        return $user;
+    }
+
+    public function getByFilter(UserFilter $filter): ?PaginationResult
+    {
+        $pager = $filter->pager;
+        if (!$pager) {
+            $pager = Pager::fromPage(null, null);
+        }
+        $sql = "SELECT * FROM $this->userTable LIMIT :limit OFFSET :offset;";
+        $statement = $this->db->connection->prepare($sql);
+        $statement->bindValue(':limit', $pager->getLimit());
+        $statement->bindValue(':offset', $pager->getOffset());
+        $statement->execute();
+        $users = [];
+        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $user = $this->userMapper->userMap($row);
+            $user->setRepoRef($this->getPostReference());
+            $users[] = $user;
+
+        };
+        $count = $this->getCount("SELECT count(*) FROM $this->userTable;");
+
+        return new PaginationResult($users, $count);
     }
 
     private function checkUserExists(string $userId): bool
@@ -103,32 +131,28 @@ class UserRepository implements UserRepositoryInterface
 
     }
 
-    public function getByFilter(UserFilter $filter): ?PaginationResult
-    {
-        $pager = $filter->pager;
-        if (!$pager) {
-            $pager = Pager::fromPage(null, null);
-        }
-        $sql = "SELECT * FROM $this->userTable LIMIT :limit OFFSET :offset;";
-        $statement = $this->db->connection->prepare($sql);
-        $statement->bindValue(':limit', $pager->getLimit());
-        $statement->bindValue(':offset', $pager->getOffset());
-        $statement->execute();
-        $users = [];
-        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $user) {
-            $users[] = $this->userMapper->userMap($user);
-        };
-        $count = $this->getCount("SELECT count(*) FROM $this->userTable;");
-
-        return new PaginationResult($users, $count);
-    }
-
     private function getCount(string $sql): int
     {
         $statement = $this->db->connection->prepare($sql);
         $statement->execute();
 
         return $statement->fetchColumn();
+    }
 
+    private function getPostReference(): \Closure
+    {
+        return function (User $user) {
+            $sql = "SELECT * FROM $this->postTable WHERE owner_id = :id;";
+            $statement = $this->db->connection->prepare($sql);
+            $statement->bindValue(':id', $user->id);
+            $statement->execute();
+
+            $posts = [];
+            foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $post) {
+                $posts[] = $this->userPostMapper->userPostMap($user, $post);
+            }
+
+            return $posts;
+        };
     }
 }

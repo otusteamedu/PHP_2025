@@ -21,7 +21,6 @@ class UserMapper
         $user = $this->factory->create($row['email'], $row['name']);
         $reflection = new \ReflectionClass($user);
         $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
         $property->setValue($user, $row['id']);
 
         return $user;

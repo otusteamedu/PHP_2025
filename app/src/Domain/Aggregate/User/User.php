@@ -9,6 +9,7 @@ use App\Domain\Service\UuidService;
 
 class User
 {
+    private \Closure $postRef;
 
     private ?array $posts = null;
     public string $id {
@@ -43,6 +44,9 @@ class User
 
     public function getPosts(): ?array
     {
+        if (!isset($this->posts)) {
+            $this->posts = ($this->postRef)($this);
+        }
         return $this->posts;
     }
 
@@ -55,6 +59,11 @@ class User
             return;
         }
         $this->posts[] = $post;
+    }
+
+    public function setRepoRef(\Closure $postRef): void
+    {
+        $this->postRef = $postRef;
     }
 
 }

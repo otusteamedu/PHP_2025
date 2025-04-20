@@ -4,21 +4,28 @@ declare(strict_types=1);
 
 namespace App\Application\DTO\User;
 
-
+use App\Application\DTO\UserPost\UserPostDTOTransformer;
 use App\Domain\Aggregate\User\User;
 
 class UserDTOTransformer
 {
+    private UserPostDTOTransformer $userPostDTOTransformer;
+
+    public function __construct()
+    {
+        $this->userPostDTOTransformer = new UserPostDTOTransformer();
+    }
+
     public function fromEntity(User $user): UserDTO
     {
         $userDTO = new UserDTO();
         $userDTO->id = $user->id;
         $userDTO->name = $user->name;
         $userDTO->email = $user->email;
-//        foreach ($user->getPosts() as $post) {
-//            var_dump($post);
-//            die;
-//        }
+        $userDTO->posts = [];
+        foreach ($user->getPosts() ?? [] as $post) {
+            $userDTO->posts[] = $this->userPostDTOTransformer->fromEntity($post);
+        }
 
         return $userDTO;
     }
