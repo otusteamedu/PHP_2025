@@ -1,0 +1,20 @@
+{
+    "name": "zibrov/otus-php-2025",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Zibrov Oleg",
+            "email": "zibroff@inbox.ru"
+        }
+    ],
+    "require":  {
+        "php": ">=7.1",
+        "predis/predis": "^2.3",
+        "ext-intl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zibrov\\OtusPhp2025\\": "../app"
+        }
+    }
+}
