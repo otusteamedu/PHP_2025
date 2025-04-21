@@ -11,3 +11,4 @@
 ###< symfony/framework-bundle ###
 /cache/dump.rdb
 /.env
+/public/uploads/

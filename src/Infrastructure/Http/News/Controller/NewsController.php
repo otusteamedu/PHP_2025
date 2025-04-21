@@ -70,47 +70,63 @@ class NewsController extends AbstractController
         return $this->json($data);
     }
 
-    public function generateReport(EntityManagerInterface $entityManager, Request $request, KernelInterface $kernel): JsonResponse
+    public function generateReport(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-
-
-
-
         $arRequest = $request->toArray();
         if (is_array($arRequest['news']) && !empty($arRequest['news'])) {
             $arNews = $entityManager->getRepository(News::class)->findBy(['id' => $arRequest['news']]);
 
-            $htmlReport = '<ul>';
-            foreach ($arNews as $news) {
-                $url = $news->getUrl();
-                $title = $news->getTitle();
 
-                $htmlReport .= '<li><a href="'.$url.'">'.$title.'</a><li>';
+            if (!empty($arNews)) {
+                $fileName = 'report_of_ids';
+                $htmlReport = '<ul>';
+                foreach ($arNews as $news) {
+                    $url = $news->getUrl();
+                    $title = $news->getTitle();
+                    $fileName .= '_'.$news->getId();
+                    $htmlReport .= '<li><a href="'.$url.'">'.$title.'</a><li>';
+                }
+                $htmlReport .= '</ul>';
+
+//            dd($fileName);
+//            dump($htmlReport);
+
+                $filePath = $this->getParameter('kernel.project_dir').'/public/uploads/'.$fileName.'.html';
+
+                //TODO использовать try/catch
+                //TODO вынести в сервис
+                $filesystem = new Filesystem();
+                $filesystem->dumpFile($filePath, $htmlReport);
+
+                $arResult = [
+                    'message' => 'Order successfully generated',
+                    'generated_order' => $filePath,
+                ];
+            } else {
+                $arResult = [
+                    'message' => 'There no news with such IDs',
+                ];
             }
-            $htmlReport .= '</ul>';
 
-            dd($htmlReport);
+            return $this->json($arResult);
         }
 
-        //TODO использовать try/catch
 
 
-        //TODO вынести в сервис
-        $filesystem = new Filesystem();
-
-
-        $projectDirectory = $kernel->getProjectDir();
-        $filesystem->dumpFile($projectDirectory.'/src/include/reports/report.txt', 'Hello World');
-
-        try {
-            $filesystem->mkdir(
-                Path::normalize(sys_get_temp_dir().'/'.random_int(0, 1000)),
-            );
-
-
-        } catch (IOExceptionInterface $exception) {
-            echo "An error occurred while creating your directory at ".$exception->getPath();
-        }
+//
+//
+//        $projectDirectory = $kernel->getProjectDir();
+//        $filesystem->dumpFile($projectDirectory.'/src/include/reports/report.txt', 'Hello World');
+//
+//        try {
+//            $filesystem->mkdir(
+//                Path::normalize(sys_get_temp_dir().'/'.random_int(0, 1000)),
+//            );
+//
+//
+//        } catch (IOExceptionInterface $exception) {
+//            echo "An error occurred while creating your directory at ".$exception->getPath();
+//        }
 
 
 
