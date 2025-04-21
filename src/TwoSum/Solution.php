@@ -14,7 +14,6 @@ class Solution
      */
     function twoSum(array $nums, int $target): array
     {
-        $answer = [];
         $hash = [];
         foreach ($nums as $key => $num) {
             $difference = $target - $num;
@@ -25,6 +24,6 @@ class Solution
             }
         }
 
-        return $answer;
+        return [];
     }
 }
