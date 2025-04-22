@@ -15,13 +15,15 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 
-class NewsController extends AbstractController
+//TODO в Application используем интерфейсы для коммуникации с сервисами
+
+final class NewsController extends AbstractController
 {
     public function __construct(
         protected NewsService $newsService
     ){}
 
-    public function index(EntityManagerInterface $entityManager): JsonResponse
+    final public function index(EntityManagerInterface $entityManager): JsonResponse
     {
         $news = $entityManager
             ->getRepository(News::class)
@@ -40,7 +42,7 @@ class NewsController extends AbstractController
         return $this->json($data);
     }
 
-    public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    final public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $url = $request->request->get('url');
         $arNewsTitles = $this->newsService->getHtmlByUrl($url, 'title');
@@ -70,7 +72,7 @@ class NewsController extends AbstractController
         return $this->json($data);
     }
 
-    public function generateReport(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    final public function generateReport(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $arRequest = $request->toArray();
         if (is_array($arRequest['news']) && !empty($arRequest['news'])) {

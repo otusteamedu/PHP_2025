@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Services;
 
-class NewsService
+final class NewsService
 {
     public function getHtmlByUrl(string $url, string $tag = '')
     {
