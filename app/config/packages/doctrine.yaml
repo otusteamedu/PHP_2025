@@ -11,6 +11,10 @@ doctrine:
         use_savepoints: true
         profiling_collect_backtrace: '%kernel.debug%'
     default_connection: default
+    types:
+      link: App\News\Infrastructure\Database\Type\LinkType
+      title: App\News\Infrastructure\Database\Type\TitleType
+
   orm:
     auto_generate_proxy_classes: true
     enable_lazy_ghost_objects: true

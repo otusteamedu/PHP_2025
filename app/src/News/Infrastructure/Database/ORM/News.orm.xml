@@ -6,8 +6,8 @@
         <id name="id" type="string" length="36">
             <generator strategy="NONE"/>
         </id>
-        <field name="title" length="255"/>
-        <field name="link" length="500"/>
+        <field name="title" type="title" length="255"/>
+        <field name="link" type="link" length="500"/>
         <field name="createdAt" type="datetime_immutable"/>
     </entity>
 </doctrine-mapping>

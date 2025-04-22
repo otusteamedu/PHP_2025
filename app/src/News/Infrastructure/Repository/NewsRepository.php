@@ -9,6 +9,7 @@ use App\News\Domain\Repository\NewsFilter;
 use App\News\Domain\Repository\NewsRepositoryInterface;
 use App\Shared\Domain\Repository\PaginationResult;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 class NewsRepository extends ServiceEntityRepository implements NewsRepositoryInterface
@@ -31,6 +32,18 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
 
     public function findByFilter(NewsFilter $filter): PaginationResult
     {
-        // TODO: Implement findAll() method.
+        $qb = $this->createQueryBuilder('n');
+        if ($filter->search) {
+            $qb->andWhere('n.title LIKE :search')
+                ->setParameter('search', '%' . $filter->search . '%');
+        }
+
+        if ($filter->pager) {
+            $qb->setMaxResults($filter->pager->getLimit());
+            $qb->setFirstResult($filter->pager->getOffset());
+        }
+        $paginator = new Paginator($qb->getQuery());
+
+        return new PaginationResult(iterator_to_array($paginator->getIterator()), $paginator->count());
     }
 }
