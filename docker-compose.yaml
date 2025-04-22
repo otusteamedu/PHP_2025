@@ -25,6 +25,7 @@ services:
     depends_on:
       - redis
       - elasticsearch
+      - postgres
     networks:
       - app_network
 
@@ -51,8 +52,28 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
 
+  postgres:
+    image: postgres:latest
+    container_name: ${CONTAINER_POSTGRES}
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      POSTGRES_DB: ${DB_NAME:-app_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   php_socket:
+  postgres_data:
   esdata:
     driver: local
 

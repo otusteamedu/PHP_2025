@@ -10,9 +10,10 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libssl-dev\
     libmcrypt-dev \
+    libpq-dev \
     && pecl install redis memcached \
-    && docker-php-ext-install -j$(nproc) iconv mbstring mysqli pdo pdo_mysql zip \
-    && docker-php-ext-enable pdo_mysql redis memcached
+    && docker-php-ext-install -j$(nproc) iconv mbstring mysqli pdo pdo_mysql zip pdo_pgsql pgsql \
+    && docker-php-ext-enable pdo_mysql redis memcached pdo_pgsql pgsql
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
