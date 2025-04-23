@@ -28,7 +28,7 @@ class MakeNewsAction extends AbstractController
         if($link === null) {
             throw new InvalidArgumentException('Link is not provided.');
         }
-        $request = new MakeNewsRequest($data['link']);
+        $request = new MakeNewsRequest($link);
         $id = ($this->makeNewsUseCase)($request)->news_id;
 
         return new JsonResponse(compact('id'));

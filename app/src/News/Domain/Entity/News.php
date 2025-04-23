@@ -6,7 +6,7 @@ namespace App\News\Domain\Entity;
 
 use App\News\Domain\Entity\ValueObject\NewsLink;
 use App\News\Domain\Entity\ValueObject\NewsTitle;
-use Ramsey\Uuid\Uuid;
+use Symfony\Component\Uid\Uuid;
 
 class News
 {
@@ -18,7 +18,7 @@ class News
         private readonly NewsLink  $link,
     )
     {
-        $this->id = Uuid::uuid4()->toString();
+        $this->id = Uuid::v4()->toRfc4122();
         $this->createdAt = new \DateTimeImmutable();
     }
 

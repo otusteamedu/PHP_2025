@@ -21,7 +21,7 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
 
     public function findById(string $id): ?News
     {
-        // TODO: Implement findById() method.
+        return $this->findOneBy(['id' => $id]);
     }
 
     public function add(News $news): void
@@ -36,6 +36,10 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
         if ($filter->search) {
             $qb->andWhere('n.title LIKE :search')
                 ->setParameter('search', '%' . $filter->search . '%');
+        }
+        if ($filter->getNewsIds()) {
+            $qb->andWhere('n.id IN (:ids)')
+                ->setParameter('ids', $filter->getNewsIds());
         }
 
         if ($filter->pager) {
