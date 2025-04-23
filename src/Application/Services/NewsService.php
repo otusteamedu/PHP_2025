@@ -6,15 +6,21 @@ use App\Application\Assembler\NewsAssembler;
 use App\Application\DTO\NewsDTO;
 use App\Domain\Entity\News;
 use App\Domain\Repository\NewsRepository;
+use http\Exception\RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 final class NewsService
 {
 
     public function __construct(
-        private NewsAssembler $newsAssembler,
+        private KernelInterface  $kernel,
+        private NewsAssembler  $newsAssembler,
         private NewsRepository $newsRepository
-    ){}
-
+    )
+    {
+    }
 
     public function getHtmlByUrl(string $url, string $tag = '')
     {
@@ -40,7 +46,7 @@ final class NewsService
         }
     }
 
-    public function createNews(string $url):array
+    public function createNews(string $url): array
     {
         $arNewsTitles = $this->getHtmlByUrl($url, 'title');
         if (is_array($arNewsTitles) && !empty($arNewsTitles)) {
@@ -63,9 +69,44 @@ final class NewsService
         }
     }
 
-    public function getNews():array
+    public function getNews(): array
     {
         $arNewsList = $this->newsRepository->getList();
         return $arNewsList;
+    }
+
+    public function generateHtmlReport(array $arNewsIds):array
+    {
+        $arNews = $this->newsRepository->getByIds($arNewsIds);
+
+        if (empty($arNews)) {
+            throw new \RuntimeException('News not found');
+        }
+
+        $fileName = 'report_of_ids';
+        $htmlReport = '<ul>';
+        foreach ($arNews as $news) {
+            $url = $news->getUrl();
+            $title = $news->getTitle();
+            $fileName .= '_' . $news->getId();
+            $htmlReport .= '<li><a href="' . $url . '">' . $title . '</a><li>';
+        }
+        $htmlReport .= '</ul>';
+
+        $filePath = $this->dumpReport($htmlReport, $fileName);
+
+        return [
+            'message' => 'Order successfully generated',
+            'generated_order' => $filePath,
+        ];
+
+    }
+
+    private function dumpReport(string $htmlReport, string $fileName):string
+    {
+        $filePath = $this->kernel->getProjectDir() . '/public/uploads/' . $fileName . '.html';
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($filePath, $htmlReport);
+        return $filePath;
     }
 }

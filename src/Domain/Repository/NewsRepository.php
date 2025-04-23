@@ -45,4 +45,9 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
 
         return $data;
     }
+
+    public function getByIds(array $arNewsIds):array
+    {
+        return $this->entityManager->getRepository(News::class)->findBy(['id' => $arNewsIds]);
+    }
 }
