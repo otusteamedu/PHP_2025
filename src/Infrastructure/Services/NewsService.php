@@ -1,14 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace App\Application\Services;
+namespace App\Infrastructure\Services;
 
 use App\Application\Assembler\NewsAssembler;
 use App\Application\DTO\NewsDTO;
-use App\Domain\Entity\News;
 use App\Domain\Repository\NewsRepository;
-use http\Exception\RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 final class NewsService

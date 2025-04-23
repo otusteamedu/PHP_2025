@@ -2,7 +2,7 @@
 
 namespace App\Application\Command;
 
-use App\Application\Services\NewsService;
+use App\Infrastructure\Services\NewsService;
 
 class CreateNewsCommand
 {
