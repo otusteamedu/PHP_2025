@@ -4,7 +4,7 @@ namespace App\Application\Command;
 
 use App\Application\Services\NewsService;
 
-class CreateNewsCommand
+class GetNewsList
 {
     public string $url;
 
@@ -12,8 +12,8 @@ class CreateNewsCommand
         private NewsService $newsService
     ){}
 
-    public function execute(string $url)
+    public function execute()
     {
-        return $this->newsService->createNews($url);
+        return $this->newsService->getNews();
     }
 }

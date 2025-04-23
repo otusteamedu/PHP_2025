@@ -20,7 +20,7 @@ final class Url
 
     private function assertUrlIsValid(string $value):void
     {
-        if (!preg_match('/^(https?:\/\/)? ([\w-]{1,32}\.[\w-]{1,32}) [^\s@]*$/', $value)) {
+        if (!$value) {
             throw new \InvalidArgumentException('Url is invalid');
         }
     }

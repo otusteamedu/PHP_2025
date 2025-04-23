@@ -2,10 +2,16 @@
 
 namespace App\Application\DTO;
 
-class NewsDTO
+final class NewsDTO
 {
-    public int $id;
-    public string $title;
-    public string $url;
-    public \DateTimeInterface $createDate;
+    public readonly string $title;
+    public readonly string $url;
+    public readonly \DateTimeInterface $createDate;
+
+    public function __construct(string $title, string $url, \DateTimeInterface $createDate)
+    {
+        $this->title = $title;
+        $this->url = $url;
+        $this->createDate = $createDate;
+    }
 }

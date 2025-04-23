@@ -2,74 +2,35 @@
 
 namespace App\Infrastructure\Http\News\Controller;
 
+use App\Application\Command\CreateNewsCommand;
+use App\Application\Command\GetNewsList;
 use App\Domain\Entity\News;
-use App\Infrastructure\Services\NewsService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Path;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 //TODO в Application используем интерфейсы для коммуникации с сервисами
 
 final class NewsController extends AbstractController
 {
     public function __construct(
-        protected NewsService $newsService
+        protected CreateNewsCommand $createNewsCommand,
+        protected GetNewsList $getNewsList,
     ){}
 
-    final public function index(EntityManagerInterface $entityManager): JsonResponse
+    final public function index(): JsonResponse
     {
-        $news = $entityManager
-            ->getRepository(News::class)
-            ->findAll();
-
-        $data = [];
-        foreach ($news as $el) {
-            $data[] = [
-                'id' => $el->getId(),
-                'title' => $el->getTitle(),
-                'url' => $el->getUrl(),
-                'create_date' => $el->getCreateDate(),
-            ];
-        }
-
-        return $this->json($data);
+        $arNews = $this->getNewsList->execute();
+        return $this->json($arNews);
     }
 
-    final public function create(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    final public function create(Request $request): JsonResponse
     {
         $url = $request->request->get('url');
-        $arNewsTitles = $this->newsService->getHtmlByUrl($url, 'title');
-
-        //TODO исключением!
-        if (is_array($arNewsTitles) && !empty($arNewsTitles)) {
-            $mainTitle = reset($arNewsTitles);
-
-            $project = new News();
-            $project->setTitle($mainTitle);
-            $project->setUrl($request->request->get('url'));
-            $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
-            $project->setCreateDate($createDate);
-
-            $entityManager->persist($project);
-            $entityManager->flush();
-
-            $data =  [
-                'id' => $project->getId(),
-                'title' => $project->getTitle(),
-                'url' => $project->getUrl(),
-            ];
-        }
-
-
-
-        return $this->json($data);
+        $createdNews = $this->createNewsCommand->execute($url);
+        return $this->json($createdNews);
     }
 
     final public function generateReport(EntityManagerInterface $entityManager, Request $request): JsonResponse
