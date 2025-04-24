@@ -12,23 +12,21 @@ class Solution
      * @return Integer[]
      */
     function smallerNumbersThanCurrent(array $nums): array
-    {//brute force
-        $answer = [];
-        $hash = [];
-        foreach ($nums as $key => $num) {
-            $count = 0;
-            foreach ($nums as $key1 => $num1) {
-                if ($key1 === $key) {
-                    continue;
-                }
-                if ($num > $num1) {
-                    $count++;
-                }
-            }
-            $answer[] = $count;
+    {
+        $map = [];
+        $ans =[];
+        $copy = $nums;
+        sort($copy);
 
+        foreach ($copy as $key => $value) {
+            if (!isset($map[$value])) {
+                $map[$value] = $key;
+            }
+        }
+        foreach ($nums as $key => $value) {
+            $ans[]= $map[$value];
         }
 
-        return $answer;
+        return $ans;
     }
 }
