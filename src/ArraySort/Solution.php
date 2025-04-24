@@ -13,24 +13,20 @@ class Solution
      */
     function frequencySort(array $nums): array
     {
-        $hash = [];
-        $answer = [];
+        $freq = [];
         foreach ($nums as $num) {
-            if (!isset($hash[$num])) {
-                $hash[$num] = 0;
+            if (!isset($freq[$num])) {
+                $freq[$num] = 0;
             }
-            $hash[$num]++;
+            $freq[$num]++;
         }
-$answer = [];
-        foreach ($hash as $num => $count) {
-            $answer[$count][] = $num;
-        }
-        for($i = 1; $i < count($answer); $i++){
-            var_dump($answer[$i]);
-            die;
-        }
+        usort($nums, function ($a, $b) use ($freq) {
+            if ($freq[$a] == $freq[$b]) {
+                return $a < $b;
+            }
+            return ($freq[$a] < $freq[$b]) ? -1 : 1;
+        });
 
-        return $answer;
-
+        return $nums;
     }
 }
