@@ -10,3 +10,5 @@
 ###< symfony/framework-bundle ###
 /.env
 /.env.dev
+/tools/
+/.php-cs-fixer.cache

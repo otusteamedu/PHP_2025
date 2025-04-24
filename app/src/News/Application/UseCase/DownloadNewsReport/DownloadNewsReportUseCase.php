@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Application\UseCase\DownloadNewsReport;
 
@@ -11,8 +11,7 @@ readonly class DownloadNewsReportUseCase
 {
     public function __construct(
         private FileHelper $reportFileHelper
-    )
-    {
+    ) {
     }
 
     /**

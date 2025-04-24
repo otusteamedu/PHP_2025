@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Application\UseCase\GenerateNewsReport;
 
@@ -10,8 +10,7 @@ readonly class GenerateNewsReportUseCase
 {
     public function __construct(
         private NewsReportInterface $newsReport,
-    )
-    {
+    ) {
     }
 
     public function __invoke(GenerateNewsReportRequest $request): GenerateNewsReportResponse

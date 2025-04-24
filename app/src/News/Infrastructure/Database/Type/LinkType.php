@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Infrastructure\Database\Type;
 
@@ -11,7 +11,7 @@ use Doctrine\DBAL\Types\StringType;
 
 class LinkType extends StringType
 {
-    const TYPE = 'link';
+    public const TYPE = 'link';
 
     public function getName(): string
     {

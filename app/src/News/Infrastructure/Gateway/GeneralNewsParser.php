@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Infrastructure\Gateway;
 
@@ -9,12 +9,11 @@ use DOMDocument;
 
 class GeneralNewsParser implements NewsParserInterface
 {
-
     public function getTitle(string $url): string
     {
         $dom = new DOMDocument();
         $dom->formatOutput = true;
-        $content = file_get_contents($url, FALSE, NULL);
+        $content = file_get_contents($url, false, null);
         $content = mb_convert_encoding($content, 'HTML-ENTITIES', $this->getEncoding($content));
         @$dom->loadHTML($content);
 

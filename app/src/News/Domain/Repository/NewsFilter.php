@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Domain\Repository;
 
@@ -13,8 +13,7 @@ class NewsFilter
     public function __construct(
         public ?Pager  $pager = null,
         public ?string $search = null,
-    )
-    {
+    ) {
     }
 
     public function getNewsIds(): array

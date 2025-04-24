@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Infrastructure\Controller;
 
@@ -18,8 +18,7 @@ class GenerateNewsReportAction extends AbstractController
 {
     public function __construct(
         private readonly GenerateNewsReportUseCase $generateNewsReportUseCase,
-    )
-    {
+    ) {
     }
 
     public function __invoke(Request $request): JsonResponse

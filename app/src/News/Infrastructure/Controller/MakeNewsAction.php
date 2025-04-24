@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Infrastructure\Controller;
 
@@ -17,15 +17,14 @@ class MakeNewsAction extends AbstractController
 {
     public function __construct(
         private readonly MakeNewsUseCase $makeNewsUseCase,
-    )
-    {
+    ) {
     }
 
     public function __invoke(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $link = $data['link'] ?? null;
-        if($link === null) {
+        if ($link === null) {
             throw new InvalidArgumentException('Link is not provided.');
         }
         $request = new MakeNewsRequest($link);

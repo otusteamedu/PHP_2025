@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Infrastructure\Controller;
 
@@ -19,8 +19,7 @@ class NewsListAction extends AbstractController
 {
     public function __construct(
         private readonly GetPaginatedNewsUseCase $getPaginatedNewsUseCase,
-    )
-    {
+    ) {
     }
 
     public function __invoke(Request $request): JsonResponse

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Application\UseCase\GetPaginatedNews;
 
@@ -13,8 +13,7 @@ readonly class GetPaginatedNewsUseCase
     public function __construct(
         private NewsDTOTransformer      $newsDTOTransformer,
         private NewsRepositoryInterface $newsRepository,
-    )
-    {
+    ) {
     }
 
     public function __invoke(GetPaginatedNewsRequest $request): GetPaginatedNewsResponse

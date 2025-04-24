@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Domain\Service;
 
@@ -18,8 +18,7 @@ class HtmlNewsReportGenerator implements NewsReportInterface
     public function __construct(
         private readonly NewsRepositoryInterface $newsRepository,
         private readonly FileHelper              $reportFileHelper,
-    )
-    {
+    ) {
     }
 
     public function generate(string ...$newsId): string

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Domain\Entity\ValueObject;
 
@@ -24,7 +24,7 @@ class NewsLink implements \Stringable
     private function assertValidName(string $value): void
     {
         if (!filter_var($value, FILTER_VALIDATE_URL)) {
-           throw new InvalidArgumentException('News link is not a valid URL.');
+            throw new InvalidArgumentException('News link is not a valid URL.');
         }
     }
 

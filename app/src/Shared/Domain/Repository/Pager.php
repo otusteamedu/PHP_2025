@@ -17,8 +17,7 @@ class Pager
         public int  $page,
         int         $per_page,
         public ?int $total_items = null
-    )
-    {
+    ) {
         $this->setLimit($per_page);
         $this->setTotalPages();
     }

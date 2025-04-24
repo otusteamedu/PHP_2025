@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Domain\Entity;
 
@@ -16,8 +16,7 @@ class News
     public function __construct(
         private readonly NewsTitle $title,
         private readonly NewsLink  $link,
-    )
-    {
+    ) {
         $this->id = Uuid::v4()->toRfc4122();
         $this->createdAt = new \DateTimeImmutable();
     }

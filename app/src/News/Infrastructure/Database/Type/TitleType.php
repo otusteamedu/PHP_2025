@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Infrastructure\Database\Type;
 
@@ -11,7 +11,7 @@ use Doctrine\DBAL\Types\StringType;
 
 class TitleType extends StringType
 {
-    const TYPE = 'title';
+    public const TYPE = 'title';
 
     public function getName(): string
     {

@@ -9,8 +9,7 @@ readonly class FileHelper
 {
     public function __construct(
         private Filesystem $fileSystem
-    )
-    {
+    ) {
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Infrastructure\Controller;
 
@@ -17,8 +17,7 @@ class DownloadNewsReportAction extends AbstractController
 {
     public function __construct(
         private readonly DownloadNewsReportUseCase $downloadNewsReportUseCase,
-    )
-    {
+    ) {
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\News\Infrastructure\Factory;
 
@@ -11,7 +11,6 @@ use App\News\Domain\Factory\NewsFactoryInterface;
 
 class NewsFactory implements NewsFactoryInterface
 {
-
     public function create(string $title, string $link): News
     {
         return new News(
