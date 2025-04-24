@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\News\Application\Service;
+namespace App\News\Domain\Service;
 
 interface NewsReportInterface
 {

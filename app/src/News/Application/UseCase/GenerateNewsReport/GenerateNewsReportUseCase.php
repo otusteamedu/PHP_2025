@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\News\Application\UseCase\GenerateNewsReport;
 
-use App\News\Application\Service\NewsReportInterface;
+use App\News\Domain\Service\NewsReportInterface;
 
 readonly class GenerateNewsReportUseCase
 {

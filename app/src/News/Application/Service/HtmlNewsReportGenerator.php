@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\News\Domain\Service;
+namespace App\News\Application\Service;
 
-use App\News\Application\Service\NewsReportInterface;
 use App\News\Domain\Entity\News;
 use App\News\Domain\Repository\NewsFilter;
 use App\News\Domain\Repository\NewsRepositoryInterface;
+use App\News\Domain\Service\NewsReportInterface;
 use App\Shared\Domain\Service\FileHelper;
 use Symfony\Component\Uid\Uuid;
 
