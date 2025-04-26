@@ -14,18 +14,11 @@ class Solution
      */
     function intersection(array $nums1, array $nums2): array
     {
-        $hash = [];
         $result = [];
-
-        foreach($nums1 as $num) {
-            $hash[$num] = 1;
-        }
-
-        foreach($nums2 as $num) {
-            if ($hash[$num] === 1) {
+        $hash = array_flip($nums1);
+        foreach ($hash as $num => $value) {
+            if (in_array($num, $nums2))
                 $result[] = $num;
-                $hash[$num] = 0;
-            }
         }
 
         return $result;
