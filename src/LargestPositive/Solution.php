@@ -13,16 +13,13 @@ class Solution
      */
     function findMaxK(array $nums): int
     {
-        $negative = [];
+        $hash = array_flip($nums);
         $ans = -1;
-        foreach ($nums as $num) {
-            if ($num < 0) {
-                $negative[$num] = $num;
-            }
-        }
-        foreach ($nums as $num) {
-            if ($num > $ans && isset($negative[-$num])) {
-                $ans = $num;
+
+        foreach ($hash as $key => $value) {
+            if ($key > 0 && isset($hash[-$key])) {
+                if ($ans < $key)
+                    $ans = $key;
             }
         }
 
