@@ -1,0 +1,10 @@
+{
+    "name": "hafiz/php_2025",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Hafiz\\Php2025\\": "src/"
+        }
+    },
+    "require": {}
+}
