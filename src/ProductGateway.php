@@ -12,22 +12,33 @@ class ProductGateway {
         $this->identityMap = new IdentityMap();
     }
 
-    public function findAll(): array {
-        $stmt = $this->pdo->query("SELECT * FROM oc_product");
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    public function findAll(int $batchSize = 1000): \Generator {
+        $offset = 0;
 
-        $products = [];
-        foreach ($stmt as $row) {
-            $id = $row['product_id'];
+        do {
+            $stmt = $this->pdo->prepare("SELECT * FROM oc_product LIMIT :limit OFFSET :offset");
+            $stmt->bindValue(':limit', $batchSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-            if ($cached = $this->identityMap->get($id)) {
-                $products[] = $cached;
-            } else {
-                $product = new Product($id, $row['model'], $row['price']);
-                $this->identityMap->add($id, $product);
-                $products[] = $product;
+            $rowsFetched = 0;
+
+            while ($row = $stmt->fetch()) {
+                $id = $row['product_id'];
+
+                if ($cached = $this->identityMap->get($id)) {
+                    yield $cached;
+                } else {
+                    $product = new Product($id, $row['model'], $row['price']);
+                    $this->identityMap->add($id, $product);
+                    yield $product;
+                }
+
+                $rowsFetched++;
             }
-        }
-        return $products;
+
+            $offset += $batchSize;
+        } while ($rowsFetched > 0);
     }
 }
