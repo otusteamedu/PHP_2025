@@ -4,8 +4,8 @@ services:
     container_name: nginx_with_balancer_cont
     build: ./nginx
     ports:
-      - "81:80"
-      - "444:443"
+      - "8080:80"
+      - "4430:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./src:/var/www/html
