@@ -13,7 +13,82 @@ http://www.codingforums.com/showthread.php?t=71882
 
 $storgeDirectory = $_SERVER['DOCUMENT_ROOT'].'/storage/';
 
-getDirectory($storgeDirectory);
+
+interface FileComponent {
+    public function display($indent = 0);
+}
+
+class File implements FileComponent {
+    private $name;
+
+    public function __construct($name) {
+        $this->name = $name;
+    }
+
+    public function display($indent = 0) {
+        $spaces = str_repeat( '&nbsp;', ( $indent * 4 ) );
+        echo $spaces. "- " . $this->name . '<br />';
+    }
+}
+
+class Folder implements FileComponent {
+    private $name;
+    private $children = [];
+
+    public function __construct($name) {
+        $this->name = $name;
+    }
+
+    public function add(FileComponent $component) {
+        $this->children[] = $component;
+    }
+
+    public function display($indent = 0) {
+        $spaces = str_repeat( '&nbsp;', ( $indent * 4 ) );
+
+        echo $spaces . "<strong>" . $this->name . '</strong><br />';
+        foreach ($this->children as $child) {
+            $child->display($indent + 2);
+        }
+    }
+}
+
+function buildTree($path) {
+    $directory = new Folder(basename($path));
+
+    foreach (scandir($path) as $item) {
+        if ($item === '.' || $item === '..') continue;
+
+        $fullPath = $path . DIRECTORY_SEPARATOR . $item;
+        if (is_dir($fullPath)) {
+            $directory->add(buildTree($fullPath));
+        } else {
+            $directory->add(new File($item));
+        }
+    }
+
+    return $directory;
+}
+
+$rootPath = $storgeDirectory;
+$tree = buildTree($rootPath);
+$tree->display();
+
+
+
+
+
+
+//$file = "/var/www/app/public/storage//games/strategy/land_lords.txt";
+//$file = "/var/www/app/public/storage/games/strategy/start_wars.html";
+//$preview = getFilePreview($file, 50);
+//vardump($preview);
+//getDirectory($storgeDirectory);
+
+exit();
+
+
+
 
 
 function getDirectory( $path = '.', $level = 0 ) {
@@ -43,6 +118,10 @@ function getDirectory( $path = '.', $level = 0 ) {
                 // Re-call this same function but on a new directory.
                 // this is what makes function recursive.
             } else {
+
+                vardump("$path/$file");
+                break;
+
                 echo "$spaces $file<br />";
                 // Just print out the filename
             }
@@ -54,6 +133,28 @@ function getDirectory( $path = '.', $level = 0 ) {
     closedir( $dh );
     // Close the directory handle
 
+}
+
+function getFilePreview(string $file, int $length)
+{
+    if (!file_exists($file)) {
+        throw new RuntimeException('File not found');
+    }
+    $content = file_get_contents($file);
+
+    $fileExtension = getFileExtension($file);
+
+    if ($fileExtension == 'html') {
+        $content = strip_tags($content);
+    }
+
+    return substr($content, 0, $length);
+}
+
+function getFileExtension(string $file):string
+{
+    $arFile = explode(".", $file);
+    return array_pop($arFile);
 }
 
 
