@@ -16,14 +16,14 @@ $storgeDirectory = $_SERVER['DOCUMENT_ROOT'].'/storage/';
 
 interface FileComponent {
     public function display($indent = 0);
+    public function getSize():int;
 }
 
-interface FileHandler {
+interface FileAdapter {
     public function getFilePreview():string;
 }
 
-
-class TxtFile implements FileComponent, FileHandler {
+class File implements FileComponent {
     private $name;
     private $filePath;
 
@@ -37,59 +37,132 @@ class TxtFile implements FileComponent, FileHandler {
         echo $spaces. "- " . $this->name . '<br />';
     }
 
-    public function getFilePreview():string
+    public function getSize():int
     {
-        if (!file_exists($this->filePath)) {
-            throw new RuntimeException('File not found');
-        }
-        $content = file_get_contents($this->filePath);
-        return substr($content, 0, 50);
+        return filesize($this->filePath);
+    }
+
+    public function getFileExtension():string
+    {
+        $arFile = explode(".", $this->name);
+        return array_pop($arFile);
+    }
+
+
+    public function getFilePath():string
+    {
+        return $this->filePath;
     }
 }
 
-
-//class HtmlFile implements FileComponent {
-//    private $name;
-//
-//    public function __construct($name) {
-//        $this->name = $name;
-//    }
-//
-//    public function display($indent = 0) {
-//        $spaces = str_repeat( '&nbsp;', ( $indent * 4 ) );
-//        echo $spaces. "- " . $this->name . '<br />';
-//    }
-//}
-
 class Folder implements FileComponent {
     private $name;
+    private $fullPath;
     private $children = [];
 
-    public function __construct($name) {
+    public function __construct(string $name, string $fullPath) {
         $this->name = $name;
+        $this->fullPath = $fullPath;
     }
 
     public function add(FileComponent $component) {
         $this->children[] = $component;
     }
 
+    public function getSize():int
+    {
+        $path = rtrim($this->fullPath, '/');
+        $size = 0;
+        $dir = opendir($path);
+        if (!$dir) {
+            return 0;
+        }
+
+        while (false !== ($file = readdir($dir))) {
+            if ($file == '.' || $file == '..') {
+                continue;
+            } elseif (is_dir($path . $file)) {
+                $size += dir_size($path . DIRECTORY_SEPARATOR . $file);
+            } else {
+                $size += filesize($path . DIRECTORY_SEPARATOR . $file);
+            }
+        }
+        closedir($dir);
+        return $size;
+    }
+
     public function display($indent = 0) {
         $spaces = str_repeat( '&nbsp;', ( $indent * 4 ) );
 
-        echo $spaces . "<strong>" . $this->name . '</strong><br />';
+        echo $spaces . "<strong>" . $this->name . '</strong> ';
+        $directorySizeInBytes = $this->getSize();
+        echo ' ('.$directorySizeInBytes.' bytes)'.'<br />';
+
+
         foreach ($this->children as $child) {
+            $sizeInBytes = $child->getSize();
             $child->display($indent + 2);
-            if ($child instanceof FileHandler) {
-                echo $spaces;
-                echo $child->getFilePreview();
+            if ($child instanceof File) {
+                $fileExtension = $child->getFileExtension();
+                if ($fileExtension == 'txt') {
+                    $fileAdapter = new TxtAdapter($child);
+                } elseif ($fileExtension == 'html') {
+                    $fileAdapter = new HtmlAdapter($child);
+                }
+
+                $preview = $fileAdapter->getFilePreview();
+
+                echo $spaces. $spaces. ' ('.$sizeInBytes.' bytes)'.'<br />';
+                echo $spaces. $spaces. $preview .' '.$sizeInBytes.' bytes';
                 echo '<br />';
             }
         }
     }
 }
 
+
+class TxtAdapter implements FileAdapter {
+    private File $file;
+
+    public function __construct(File $file) {
+        $this->file = $file;
+    }
+
+    public function getFilePreview():string
+    {
+        $filePath = $this->file->getFilePath();
+        if (!file_exists($filePath)) {
+            throw new RuntimeException('File not found');
+        }
+        $content = file_get_contents($filePath);
+        return substr($content, 0, 50);
+    }
+}
+
+
+class HtmlAdapter implements FileAdapter {
+    private File $file;
+
+    public function __construct(File $file) {
+        $this->file = $file;
+    }
+
+    public function getFilePreview():string
+    {
+        $filePath = $this->file->getFilePath();
+        if (!file_exists($filePath)) {
+            throw new RuntimeException('File not found');
+        }
+        $content = file_get_contents($filePath);
+        $content = strip_tags($content);
+
+        return substr($content, 0, 50);
+    }
+}
+
 function buildTree($path) {
-    $directory = new Folder(basename($path));
+    $directoryName = basename($path);
+    $directory = new Folder($directoryName, $path);
 
     foreach (scandir($path) as $item) {
         if ($item === '.' || $item === '..') continue;
@@ -99,7 +172,7 @@ function buildTree($path) {
             $directory->add(buildTree($fullPath));
         } else {
             //TODO сюда подключить адаптер и создавать экземляр нужного типа файла
-            $directory->add(new TxtFile($item, $fullPath));
+            $directory->add(new File($item, $fullPath));
         }
     }
 
@@ -122,57 +195,6 @@ $tree->display();
 //getDirectory($storgeDirectory);
 
 exit();
-
-
-
-//interface FileHandlerInterface
-//{
-//    public function getFilePreview(): string;
-//}
-//
-//class FileHandler implements FileHandlerInterface
-//{
-//    private string $file;
-//    private int $length;
-//
-//    public function __construct(string $file, int $length)
-//    {
-//        $this->file = $file;
-//        $this->length = $length;
-//    }
-//
-//    public function getFilePreview():string
-//    {
-//        if (!file_exists($this->file)) {
-//            throw new RuntimeException('File not found');
-//        }
-//        $content = file_get_contents($this->file);
-//        return substr($content, 0, $this->length);
-//    }
-//}
-
-function getFilePreview(string $file, int $length)
-{
-    if (!file_exists($file)) {
-        throw new RuntimeException('File not found');
-    }
-    $content = file_get_contents($file);
-
-    $fileExtension = getFileExtension($file);
-
-//    if ($fileExtension == 'html') {
-//        $content = strip_tags($content);
-//    }
-
-    return substr($content, 0, $length);
-}
-
-function getFileExtension(string $file):string
-{
-    $arFile = explode(".", $file);
-    return array_pop($arFile);
-}
-
 
 function pr_debug($var)
 {
