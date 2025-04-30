@@ -18,18 +18,48 @@ interface FileComponent {
     public function display($indent = 0);
 }
 
-class File implements FileComponent {
-    private $name;
+interface FileHandler {
+    public function getFilePreview():string;
+}
 
-    public function __construct($name) {
+
+class TxtFile implements FileComponent, FileHandler {
+    private $name;
+    private $filePath;
+
+    public function __construct(string $name, string $filePath) {
         $this->name = $name;
+        $this->filePath = $filePath;
     }
 
     public function display($indent = 0) {
         $spaces = str_repeat( '&nbsp;', ( $indent * 4 ) );
         echo $spaces. "- " . $this->name . '<br />';
     }
+
+    public function getFilePreview():string
+    {
+        if (!file_exists($this->filePath)) {
+            throw new RuntimeException('File not found');
+        }
+        $content = file_get_contents($this->filePath);
+        return substr($content, 0, 50);
+    }
 }
+
+
+//class HtmlFile implements FileComponent {
+//    private $name;
+//
+//    public function __construct($name) {
+//        $this->name = $name;
+//    }
+//
+//    public function display($indent = 0) {
+//        $spaces = str_repeat( '&nbsp;', ( $indent * 4 ) );
+//        echo $spaces. "- " . $this->name . '<br />';
+//    }
+//}
 
 class Folder implements FileComponent {
     private $name;
@@ -49,6 +79,11 @@ class Folder implements FileComponent {
         echo $spaces . "<strong>" . $this->name . '</strong><br />';
         foreach ($this->children as $child) {
             $child->display($indent + 2);
+            if ($child instanceof FileHandler) {
+                echo $spaces;
+                echo $child->getFilePreview();
+                echo '<br />';
+            }
         }
     }
 }
@@ -63,7 +98,8 @@ function buildTree($path) {
         if (is_dir($fullPath)) {
             $directory->add(buildTree($fullPath));
         } else {
-            $directory->add(new File($item));
+            //TODO сюда подключить адаптер и создавать экземляр нужного типа файла
+            $directory->add(new TxtFile($item, $fullPath));
         }
     }
 
@@ -89,51 +125,31 @@ exit();
 
 
 
-
-
-function getDirectory( $path = '.', $level = 0 ) {
-
-    $ignore = array( 'cgi-bin', '.', '..' );
-    // Directories to ignore when listing output. Many hosts
-    // will deny PHP access to the cgi-bin.
-
-    $dh = @opendir( $path );
-    // Open the directory to the handle $dh
-
-    while( false !== ( $file = readdir( $dh ) ) ){
-        // Loop through the directory
-
-        if( !in_array( $file, $ignore ) ){
-            // Check that this file is not to be ignored
-
-            $spaces = str_repeat( '&nbsp;', ( $level * 4 ) );
-            // Just to add spacing to the list, to better
-            // show the directory tree.
-
-            if( is_dir( "$path/$file" ) ){
-                // Its a directory, so we need to keep reading down...
-
-                echo "<strong>$spaces $file</strong><br />";
-                getDirectory( "$path/$file", ($level+1) );
-                // Re-call this same function but on a new directory.
-                // this is what makes function recursive.
-            } else {
-
-                vardump("$path/$file");
-                break;
-
-                echo "$spaces $file<br />";
-                // Just print out the filename
-            }
-
-        }
-
-    }
-
-    closedir( $dh );
-    // Close the directory handle
-
-}
+//interface FileHandlerInterface
+//{
+//    public function getFilePreview(): string;
+//}
+//
+//class FileHandler implements FileHandlerInterface
+//{
+//    private string $file;
+//    private int $length;
+//
+//    public function __construct(string $file, int $length)
+//    {
+//        $this->file = $file;
+//        $this->length = $length;
+//    }
+//
+//    public function getFilePreview():string
+//    {
+//        if (!file_exists($this->file)) {
+//            throw new RuntimeException('File not found');
+//        }
+//        $content = file_get_contents($this->file);
+//        return substr($content, 0, $this->length);
+//    }
+//}
 
 function getFilePreview(string $file, int $length)
 {
@@ -144,9 +160,9 @@ function getFilePreview(string $file, int $length)
 
     $fileExtension = getFileExtension($file);
 
-    if ($fileExtension == 'html') {
-        $content = strip_tags($content);
-    }
+//    if ($fileExtension == 'html') {
+//        $content = strip_tags($content);
+//    }
 
     return substr($content, 0, $length);
 }
@@ -158,10 +174,30 @@ function getFileExtension(string $file):string
 }
 
 
-function vardump($var) {
-    echo '<pre>';
-    var_dump($var);
-    echo '</pre>';
+function pr_debug($var)
+{
+    //if ($_REQUEST['deb'] == 'Y') {
+    $bt = debug_backtrace();
+    $bt = $bt[0];
+    ?>
+    <div style='font-size:9pt; color:#000; background:#fff; border:1px dashed #000;'>
+        <div style='padding:3px 5px; background:#99CCFF; font-weight:bold;'>File: <?= $bt["file"] ?>
+            [<?= $bt["line"] ?>]
+        </div>
+        <?
+        if ($var === 0) {
+            echo '<pre>пусто</pre>';
+            var_dump($var);
+        } else {
+            echo '<pre>';
+            print_r($var);
+            echo '</pre>';
+        }
+        ?>
+    </div>
+    <?
+    //exit();
+    //}
 }
 
 
