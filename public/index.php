@@ -1,61 +1,55 @@
 <?php
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Adapter/FileAdapter.php');
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Adapter/TxtAdapter.php');
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Adapter/HtmlAdapter.php');
 
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/FileComponent.php');
+require_once '../vendor/autoload.php';
 
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/FileAbstractFactory.php');
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/Abstract/AbstractFile.php');
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/Abstract/AbstractFolder.php');
+use App\Classes\App;
 
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/BaseTree/BaseTreeFile.php');
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/BaseTree/BaseTreeFolder.php');
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/BaseTree/BaseTreeFactory.php');
+$commandsNameSpace = 'App\\Classes\\Commands\\';
+$argv = $_SERVER['argv'] ?? [];
 
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/PreviewTree/PreviewTreeFile.php');
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/PreviewTree/PreviewTreeFolder.php');
-require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/PreviewTree/PreviewTreeFactory.php');
-
-
-$storgeDirectory = $_SERVER['DOCUMENT_ROOT'].'/storage/';
-
-
-//TODO добавить в класс APP
-function buildTree($path, $mode = 'base') {
-    $directoryName = basename($path);
-
-    if ($mode == 'base') {
-        $treeFactory = new BaseTreeFactory();
-        $directory = $treeFactory->createTreeFolder($directoryName);
-    } else if ($mode == 'preview') {
-        $treeFactory = new PreviewTreeFactory();
-        $directory = $treeFactory->createTreeFolder($directoryName, $path);
-    }
-
-    foreach (scandir($path) as $item) {
-        if ($item === '.' || $item === '..') continue;
-
-        $fullPath = $path . DIRECTORY_SEPARATOR . $item;
-        if (is_dir($fullPath)) {
-            $directory->add(buildTree($fullPath, $mode));
-        } else {
-            //TODO сюда подключить адаптер и создавать экземляр нужного типа файла
-            //$directory->add(new File($item, $fullPath));
-            $file = $treeFactory->createTreeFile($item, $fullPath);
-            $directory->add($file);
-        }
-    }
-
-    return $directory;
+try {
+    $app = new App($commandsNameSpace, $argv);
+    $app->run();
 }
 
-$rootPath = $storgeDirectory;
-$tree = buildTree($rootPath, 'preview');
-$tree->display();
+catch (Exception $e) {
+    print_r($e->getMessage());
+}
 
-exit();
 
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Adapter/FileAdapter.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Adapter/TxtAdapter.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Adapter/HtmlAdapter.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/FileComponent.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/FileAbstractFactory.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/Abstract/AbstractFile.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/Abstract/AbstractFolder.php');
+//
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/BaseTree/BaseTreeFile.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/BaseTree/BaseTreeFolder.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/BaseTree/BaseTreeFactory.php');
+//
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/PreviewTree/PreviewTreeFile.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/PreviewTree/PreviewTreeFolder.php');
+//require_once($_SERVER["DOCUMENT_ROOT"] . '/classes/Factory/Component/PreviewTree/PreviewTreeFactory.php');
+//
+//
+//$storgeDirectory = $_SERVER['DOCUMENT_ROOT'].'/storage/';
+//
+//
+////TODO добавить в класс APP
+
+
+
+
+//$rootPath = $storgeDirectory;
+//$tree = buildTree($rootPath, 'preview');
+//$tree->display();
+
+
+//
+//exit();
+//
 function pr_debug($var)
 {
     //if ($_REQUEST['deb'] == 'Y') {

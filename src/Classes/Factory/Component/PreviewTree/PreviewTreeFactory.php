@@ -1,5 +1,10 @@
 <?php
 
+namespace App\Classes\Factory\Component\PreviewTree;
+
+use App\Classes\Factory\Component\Abstract\AbstractFile;
+use App\Classes\Factory\Component\Abstract\AbstractFolder;
+
 class PreviewTreeFactory
 {
     public function createTreeFolder(string $name, string $fullPath): AbstractFolder
