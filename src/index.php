@@ -16,9 +16,6 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 //echo($time);
 //die;
 
-
-
-
 //$solution = new Solution();
 //$nums1 = [1, 2, 2, 1];
 //$nums2 = [2, 2];
@@ -40,12 +37,12 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 //echo($time);
 //die;
 
-//$solution = new Solution();
-//$nums = [8,1,2,2,3];
-//
-//$start = microtime(true);
-//var_dump($solution->smallerNumbersThanCurrent($nums));
-//$end = microtime(true);
-//$time = $end - $start;
-//echo($time);
-//die;
+$solution = new Solution();
+$nums = [6,3,7,6,9];
+
+$start = microtime(true);
+var_dump($solution->smallerNumbersThanCurrent($nums));
+$end = microtime(true);
+$time = $end - $start;
+echo($time);
+die;

@@ -14,7 +14,6 @@ class Solution
     function smallerNumbersThanCurrent(array $nums): array
     {
         $map = [];
-        $ans =[];
         $copy = $nums;
         sort($copy);
 
@@ -23,10 +22,11 @@ class Solution
                 $map[$value] = $key;
             }
         }
-        foreach ($nums as $key => $value) {
-            $ans[]= $map[$value];
-        }
 
-        return $ans;
+        array_walk($nums, function (&$value) use (&$map) {
+            $value = $map[$value];
+        });
+
+        return $nums;
     }
 }
