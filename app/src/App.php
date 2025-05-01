@@ -3,13 +3,9 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Infrastructure\Controller\AddPostToUserAction;
-use App\Infrastructure\Controller\AddUserAction;
-use App\Infrastructure\Controller\GetPagedUsersAction;
-use App\Infrastructure\Controller\MigrationAction;
-use App\Infrastructure\Http\Request;
-use App\Infrastructure\Http\Response;
-use App\Infrastructure\Controller\HealthCheckAction;
+use App\Shared\Infrastructure\Controller\HealthCheckAction;
+use App\Shared\Infrastructure\Http\Request;
+use App\Shared\Infrastructure\Http\Response;
 use Exception;
 use Throwable;
 
