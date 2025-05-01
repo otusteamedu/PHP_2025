@@ -18,6 +18,7 @@ final class CreateDate
         return $this->date;
     }
 
+    //TODO date time inmutable вместо DateTimeInterface
     private function assertDateIsValid(\DateTimeInterface $value):void
     {
         if (!$value) {

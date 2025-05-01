@@ -2,6 +2,7 @@
 
 namespace App\Application\Command;
 
+//TODO слой NewsServiceintrface на этом слое, а сервис остается на инфраструктуре
 use App\Infrastructure\Services\NewsService;
 
 class CreateNewsCommand
@@ -12,8 +13,8 @@ class CreateNewsCommand
         private NewsService $newsService
     ){}
 
-    public function execute(string $url)
+    public function execute(string $url):responseNewsDTO
     {
-        return $this->newsService->createNews($url);
+        return $this->newsService->createNews(createNewsDTO);
     }
 }

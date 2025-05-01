@@ -8,6 +8,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use App\Application\Port\NewsRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+//TODO сам репозиторий в инфраструктуру, а на слое домена только РепозиторийИнтерфейса
+
+
 /**
  * @extends ServiceEntityRepository<News>
  */

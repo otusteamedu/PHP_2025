@@ -4,6 +4,10 @@ namespace App\Application\DTO;
 
 final class NewsDTO
 {
+
+    //TODO взять его за основу 
+
+
     public readonly string $title;
     public readonly string $url;
     public readonly \DateTimeInterface $createDate;

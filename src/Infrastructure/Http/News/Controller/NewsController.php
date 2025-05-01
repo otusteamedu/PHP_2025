@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+//TODO контроллер на каждое дейстие
+
 final class NewsController extends AbstractController
 {
     public function __construct(

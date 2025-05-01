@@ -15,7 +15,7 @@ final class Title
 
     public function getTitle():string
     {
-        return "$this->title";
+        return $this->title;
     }
 
     private function assertTitleIsValid(string $value):void

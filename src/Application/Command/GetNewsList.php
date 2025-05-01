@@ -2,6 +2,7 @@
 
 namespace App\Application\Command;
 
+//TODO слой NewsServiceintrface на этом слое, а сервис остается на инфраструктуре
 use App\Infrastructure\Services\NewsService;
 
 class GetNewsList
@@ -12,7 +13,7 @@ class GetNewsList
         private NewsService $newsService
     ){}
 
-    public function execute()
+    public function execute():массив DTO (массив новостей)
     {
         return $this->newsService->getNews();
     }

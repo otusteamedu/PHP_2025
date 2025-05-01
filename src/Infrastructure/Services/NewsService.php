@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 final class NewsService
 {
 
+    //TODO разбить на сервис новостей и сервис генерации отчета
     public function __construct(
         private KernelInterface  $kernel,
         private NewsAssembler  $newsAssembler,
@@ -55,6 +56,7 @@ final class NewsService
 
             $this->newsRepository->save($newsEntity);
 
+            //TODO принимать и возвращать DTO (на входе и на выходе)
             return [
                 'id' => $newsEntity->getId(),
                 'title' => $newsEntity->getTitle(),
