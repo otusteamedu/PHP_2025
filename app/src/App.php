@@ -50,10 +50,6 @@ class App
     {
         $controllerName = match ($request->getUrl()) {
             '/health-check' => HealthCheckAction::class,
-            '/migrate' => MigrationAction::class,
-            '/user/add' => AddUserAction::class,
-            '/post/add' => AddPostToUserAction::class,
-            '/user/list' => GetPagedUsersAction::class,
 
             default => throw new Exception('invalid route'),
         };
