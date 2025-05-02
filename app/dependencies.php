@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 use App\Application\Gateway\InternetGatewayInterface;
+use App\Application\Gateway\ReportGatewayInterface;
 use App\Application\Settings\SettingsInterface;
 use App\Domain\Factory\NewsFactoryInterface;
 use App\Infrastructure\Factory\NewsFactory;
 use App\Infrastructure\Gateway\InternetGateway;
+use App\Infrastructure\Gateway\ReportGateway;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -37,6 +39,9 @@ return function (ContainerBuilder $containerBuilder) {
         },
         InternetGatewayInterface::class => function () {
             return new InternetGateway();
+        },
+        ReportGatewayInterface::class => function () {
+            return new ReportGateway();
         },
         NewsFactoryInterface::class => function () {
             return new NewsFactory();

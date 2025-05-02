@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Application\Actions\AddUrl\AddUrlAction;
 use App\Application\Actions\News\ListNewsAction;
+use App\Application\Actions\News\ReportNewsAction;
 use App\Application\Actions\News\ViewNewsAction;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
@@ -25,11 +26,13 @@ return function (App $app) {
 
     $app->group('/users', function (Group $group) {
         $group->get('', ListUsersAction::class);
-        $group->get('/{id}', ViewUserAction::class);
+        $group->get('/{id:[0-9]+}', ViewUserAction::class);
     });
     $app->group('/news', function (Group $group) {
         $group->get('', ListNewsAction::class);
-        $group->get('/{id}', ViewNewsAction::class);
+        $group->get('/report/{ids:.*}', ReportNewsAction::class);
+        $group->post('/report', ReportNewsAction::class);
+        $group->get('/{id:[0-9]+}', ViewNewsAction::class);
         $group->post('/add', AddUrlAction::class);
     });
 };

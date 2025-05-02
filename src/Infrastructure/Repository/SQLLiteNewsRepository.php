@@ -57,10 +57,13 @@ SQL
         $query = $this->db->prepare("SELECT news.*, ROWID FROM news WHERE ROWID=:id");
         $query->bindValue(":id", $id, SQLITE3_INTEGER);
         $oneNews = $query->execute();
-        if($oneNews===false || $oneNews->numColumns()===0) {
+        if($oneNews===false) {
             return null;
         }
         $oneNews = $oneNews->fetchArray(SQLITE3_ASSOC);
+        if($oneNews===false) {
+            return null;
+        }
         return $this->newsFactory->createFromDb($oneNews);
     }
 
@@ -99,7 +102,7 @@ SQL
         $query->execute();
     }
 
-    private function findByUrl(string $url): ?News
+    public function findByUrl(string $url): ?News
     {
         $query = $this->db->prepare("SELECT news.*, ROWID FROM news WHERE url=:url");
         $query->bindValue(":url", $url);
@@ -113,5 +116,29 @@ SQL
         }
 
         return $this->newsFactory->createFromDb($oneNews);
+    }
+
+    public function findByIds(array $ids): iterable
+    {
+        $query = "SELECT *, ROWID FROM news WHERE ROWID IN (".implode(',', array_fill(0, count($ids), '?')).")";
+
+        $returnArray = [];
+        $newsList = $this->db->prepare($query);
+        $i=0;
+        foreach ($ids as $id) {
+            $newsList->bindValue(++$i, $id,SQLITE3_INTEGER);
+        }
+        $newsList = $newsList->execute();
+
+        if(!$newsList) {
+            return [];
+        }
+        while ($oneNews = $newsList?->fetchArray(SQLITE3_ASSOC)) {
+
+            $returnArray[] = $this->newsFactory->createFromDb($oneNews);
+        }
+        return $returnArray;
+
+
     }
 }
