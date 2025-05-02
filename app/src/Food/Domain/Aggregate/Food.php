@@ -7,7 +7,7 @@ namespace App\Food\Domain\Aggregate;
 use App\Food\Domain\Aggregate\VO\FoodTitle;
 use Ramsey\Uuid\Uuid;
 
-abstract class Food
+abstract class Food implements FoodInterface
 {
     private readonly string $id;
     private array $ingredients = [];

@@ -10,7 +10,7 @@ use App\Food\Domain\Aggregate\VO\FoodTitle;
 
 class HotDogFactory implements FoodFactoryInterface
 {
-    public function make(string $title): Food
+    public function build(string $title): Food
     {
         return new HotDog(new FoodTitle($title));
     }
