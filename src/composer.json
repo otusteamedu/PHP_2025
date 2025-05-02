@@ -1,7 +1,5 @@
 {
     "autoload": {
-        "psr-4": {
-            "MyTestApp\\": "classes/"
-        }
+        "classmap": ["Application","Domain","Infrastructure"]
     }
 }

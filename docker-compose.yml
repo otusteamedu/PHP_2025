@@ -1,4 +1,4 @@
-name: redis_app
+name: test_api_app
 services:
   nginx_with_balancer:
     container_name: nginx_with_balancer_cont
