@@ -55,7 +55,6 @@ echo "</pre>"; */
 // Работает
 
 use Application\UseCase\AddNews\SubmitNewsUseCase;
-use Application\UseCase\AddNews\SubmitNewsRequest;
 use Infrastructure\Factory\CommonNewsFactory;
 use Infrastructure\Repository\FileNewsRepository;
 
