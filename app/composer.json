@@ -2,7 +2,6 @@
   "name": "nikolay_vanzhin/restaurant",
   "type": "project",
   "license": "proprietary",
-  "minimum-stability": "stable",
   "prefer-stable": true,
   "autoload": {
     "psr-4": {
@@ -17,6 +16,7 @@
   ],
   "require": {
     "webmozart/assert": "^1.11",
-    "ramsey/uuid": "^4.7"
+    "ramsey/uuid": "^4.7",
+    "php-di/php-di": "^7.0"
   }
 }

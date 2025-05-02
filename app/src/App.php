@@ -3,23 +3,26 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Food\Infrastructure\Controller\MakeBurgerAction;
 use App\Shared\Infrastructure\Controller\HealthCheckAction;
 use App\Shared\Infrastructure\Http\Request;
 use App\Shared\Infrastructure\Http\Response;
+use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Exception;
 use Throwable;
 
 class App
 {
     public static App $app;
-
     private array $config {
         get {
             return $this->config;
         }
     }
 
-    public function __construct(array $config)
+    public function __construct(array $config, private readonly Container $container)
     {
         $this->config = $config;
         self::$app = $this;
@@ -42,10 +45,15 @@ class App
         }
     }
 
+    /**
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
     private function handleRequest(Request $request): Response
     {
         $controllerName = match ($request->getUrl()) {
             '/health-check' => HealthCheckAction::class,
+            '/make-burger' => MakeBurgerAction::class,
 
             default => throw new Exception('invalid route'),
         };
@@ -53,7 +61,9 @@ class App
             throw new Exception("Controller $controllerName not exist.");
         }
 
-        return new $controllerName()($request);
+        $controller = $this->container->get($controllerName);
+
+        return $controller($request);
     }
 
 }
