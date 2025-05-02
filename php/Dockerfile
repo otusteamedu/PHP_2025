@@ -10,7 +10,7 @@ RUN apk add --no-cache pcre-dev $PHPIZE_DEPS
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
     && pecl install redis memcached memcache \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install zip pgsql pdo pdo_pgsql ldap \
+    && docker-php-ext-install zip pgsql pdo pdo_pgsql ldap sockets \
     && docker-php-ext-enable redis.so memcached.so memcache.so \
     && docker-php-source delete
 RUN apk clean cache \
@@ -20,6 +20,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 
 COPY /conf/php.ini /usr/local/etc/php/php.ini
 COPY /conf/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY /conf/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 
 WORKDIR /data/app
 
