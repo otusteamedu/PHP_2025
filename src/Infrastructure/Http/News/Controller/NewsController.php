@@ -2,9 +2,10 @@
 
 namespace App\Infrastructure\Http\News\Controller;
 
-use App\Application\Command\CreateNewsCommand;
-use App\Application\Command\GenerateNewsReport;
-use App\Application\Command\GetNewsList;
+use App\Application\DTO\CreateNewsDTO;
+use App\Application\UseCase\CreateNewsUseCase;
+use App\Application\UseCase\GenerateNewsReport;
+use App\Application\UseCase\GetNewsList;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class NewsController extends AbstractController
 {
     public function __construct(
-        protected CreateNewsCommand $createNewsCommand,
+        protected CreateNewsUseCase $createNewsUseCase,
         protected GenerateNewsReport $generateNewsReport,
         protected GetNewsList $getNewsList,
     ){}
@@ -36,7 +37,9 @@ final class NewsController extends AbstractController
     {
         try {
             $url = $request->request->get('url');
-            $createdNews = $this->createNewsCommand->execute($url);
+            $createdNewsDTO = new createNewsDTO($url);
+            $createdNews = $this->createNewsUseCase->execute($createdNewsDTO);
+
             return $this->json(['STATUS' => 'OK', 'CREATED_NEWS' => $createdNews]);
         } catch(\Exception $exception) {
             return $this->json([

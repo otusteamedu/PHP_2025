@@ -3,12 +3,15 @@
 namespace App\Infrastructure\Services;
 
 use App\Application\Assembler\NewsAssembler;
+use App\Application\DTO\CreateNewsDTO;
 use App\Application\DTO\NewsDTO;
+use App\Application\DTO\ResponseNewsDTO;
 use App\Domain\Repository\NewsRepository;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
+use App\Application\Port\NewsServiceInterface;
 
-final class NewsService
+final class NewsService implements NewsServiceInterface
 {
 
     //TODO разбить на сервис новостей и сервис генерации отчета
@@ -18,6 +21,39 @@ final class NewsService
         private NewsRepository $newsRepository
     )
     {
+    }
+
+
+    public function createNews(CreateNewsDTO $createNewsDTO): ResponseNewsDTO
+    {
+        $url = $createNewsDTO->url;
+        $arNewsTitles = $this->getHtmlByUrl($url, 'title');
+        if (is_array($arNewsTitles) && !empty($arNewsTitles)) {
+            $mainTitle = reset($arNewsTitles);
+            $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
+
+            $newsDTO = new NewsDTO($mainTitle, $url, $createDate);
+            $newsEntity = $this->newsAssembler->toEntity($newsDTO);
+
+            $this->newsRepository->save($newsEntity);
+
+            //TODO принимать и возвращать DTO (на входе и на выходе) +
+            return new ResponseNewsDTO(
+                $newsEntity->getId(),
+                $newsEntity->getTitle(),
+                $newsEntity->getUrl()
+            );
+
+        } else {
+            throw new \RuntimeException('This new hasn`t a title');
+        }
+    }
+
+    public function getNews(): array
+    {
+        //TODO массив DTO новостей!
+        $arNewsList = $this->newsRepository->getList();
+        return $arNewsList;
     }
 
     public function getHtmlByUrl(string $url, string $tag = '')
@@ -42,70 +78,5 @@ final class NewsService
         } else {
             return $doc->saveHTML();
         }
-    }
-
-    public function createNews(string $url): array
-    {
-        $arNewsTitles = $this->getHtmlByUrl($url, 'title');
-        if (is_array($arNewsTitles) && !empty($arNewsTitles)) {
-            $mainTitle = reset($arNewsTitles);
-            $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
-
-            $newsDTO = new NewsDTO($mainTitle, $url, $createDate);
-            $newsEntity = $this->newsAssembler->toEntity($newsDTO);
-
-            $this->newsRepository->save($newsEntity);
-
-            //TODO принимать и возвращать DTO (на входе и на выходе)
-            return [
-                'id' => $newsEntity->getId(),
-                'title' => $newsEntity->getTitle(),
-                'url' => $newsEntity->getUrl(),
-            ];
-
-        } else {
-            throw new \RuntimeException('This new hasn`t a title');
-        }
-    }
-
-    public function getNews(): array
-    {
-        $arNewsList = $this->newsRepository->getList();
-        return $arNewsList;
-    }
-
-    public function generateHtmlReport(array $arNewsIds):array
-    {
-        $arNews = $this->newsRepository->getByIds($arNewsIds);
-
-        if (empty($arNews)) {
-            throw new \RuntimeException('News not found');
-        }
-
-        $fileName = 'report_of_ids';
-        $htmlReport = '<ul>';
-        foreach ($arNews as $news) {
-            $url = $news->getUrl();
-            $title = $news->getTitle();
-            $fileName .= '_' . $news->getId();
-            $htmlReport .= '<li><a href="' . $url . '">' . $title . '</a><li>';
-        }
-        $htmlReport .= '</ul>';
-
-        $filePath = $this->dumpReport($htmlReport, $fileName);
-
-        return [
-            'message' => 'Order successfully generated',
-            'generated_order' => $filePath,
-        ];
-
-    }
-
-    private function dumpReport(string $htmlReport, string $fileName):string
-    {
-        $filePath = $this->kernel->getProjectDir() . '/public/uploads/' . $fileName . '.html';
-        $filesystem = new Filesystem();
-        $filesystem->dumpFile($filePath, $htmlReport);
-        return $filePath;
     }
 }

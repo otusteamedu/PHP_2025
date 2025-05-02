@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Command;
+namespace App\Application\UseCase;
 
 use App\Infrastructure\Services\NewsService;
 
