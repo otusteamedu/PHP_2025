@@ -1,0 +1,59 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "34dd47c654f0ec5bdf83140dc8e20f28",
+    "packages": [
+        {
+            "name": "pavelklimenko/otus-test-package",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Pavel-Klimenko/otus-test-package.git",
+                "reference": "3120c964802018120b3b240afa2b1f578c37e107"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Pavel-Klimenko/otus-test-package/zipball/3120c964802018120b3b240afa2b1f578c37e107",
+                "reference": "3120c964802018120b3b240afa2b1f578c37e107",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pavelklimenko\\OtusTestPackage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Pavel Klimenko",
+                    "email": "pavel.klimenko.1989@gmail.com"
+                }
+            ],
+            "description": "OTUS TEST HW PACKAGE",
+            "support": {
+                "issues": "https://github.com/Pavel-Klimenko/otus-test-package/issues",
+                "source": "https://github.com/Pavel-Klimenko/otus-test-package/tree/master"
+            },
+            "time": "2025-02-16T17:01:24+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "pavelklimenko/otus-test-package": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
