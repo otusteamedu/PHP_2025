@@ -25,7 +25,7 @@ class FileNewsRepository implements NewsRepositoryInterface
         // Имитация сохранения в БД с присваиванием ID
         $reflectionProperty = new \ReflectionProperty(News::class, 'id');
         $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($News, 1);
+        $reflectionProperty->setValue($News, 2);
     }
 
     public function delete(News $News): void

@@ -26,15 +26,15 @@ echo "<pre>";
 var_dump($mynew);
 echo "</pre>"; */
 
-/* $req = new Application\UseCase\AddNews\SubmitNewsRequest("https1://ya.ru");
+/* $req = new Application\UseCase\AddNews\SubmitNewsRequest("https://ya.ru");
  
 
 $response = 
 (
     (New Infrastructure\Http\SubmitNewsController(
         (new Application\UseCase\AddNews\SubmitNewsUseCase(
-            new Infrastructure\Factory\CommonNewsFactory($req),
-            new Infrastructure\Repository\FileNewsRepository($req)
+            new Infrastructure\Factory\CommonNewsFactory,
+            new Infrastructure\Repository\FileNewsRepository
         ))
     ))($req)
 );
@@ -43,38 +43,34 @@ echo "<pre>";
 var_dump($response);
 echo "</pre>"; */
 
+
+ 
+
+ 
+
+
+ 
+
+ 
+// Работает
+
 use Application\UseCase\AddNews\SubmitNewsUseCase;
 use Application\UseCase\AddNews\SubmitNewsRequest;
+use Infrastructure\Factory\CommonNewsFactory;
+use Infrastructure\Repository\FileNewsRepository;
 
-class SubmitLeadCommand 
-{
-    public function __construct(
-        private SubmitNewsUseCase $useCase,
+(
+    new Infrastructure\Http\SubmitNewsController(
+        (
+            new SubmitNewsUseCase(
+                new CommonNewsFactory,
+                new FileNewsRepository
+            )
+        )
     )
-    {
+)("https://ya.ru");
 
-    }
 
-    public function show($url): void
-    {
-        try {
-            $submitLeadRequest = new SubmitNewsRequest($url);
-            $submitLeadResponse = ($this->useCase)($submitLeadRequest);
-            echo 'Lead ID: ' . $submitLeadResponse->id;
-        } catch (\Throwable $e) {
-            echo $e->getMessage();
-        }
-    }
-}
-
-$res = new SubmitLeadCommand((new Application\UseCase\AddNews\SubmitNewsUseCase(
-    new Infrastructure\Factory\CommonNewsFactory,
-    new Infrastructure\Repository\FileNewsRepository
-)));
-
-$res->show("https://ya.ru");
-
-//phpinfo();
 
 
 

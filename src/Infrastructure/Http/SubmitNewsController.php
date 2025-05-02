@@ -11,16 +11,20 @@ class SubmitNewsController
         private SubmitNewsUseCase $useCase,
     )
     {
+
     }
 
-    public function __invoke(SubmitNewsRequest $request)
+    public function __invoke($url): void
     {
         try {
-            $response = ($this->useCase)($request);
-            $answewr = "Ok- ".$response." -";
+            $SubmitNewsRequest = new SubmitNewsRequest($url);
+            $submitNewsResponse = ($this->useCase)($SubmitNewsRequest);
+            echo 'News ID: ' . $submitNewsResponse->id;
+            echo "<pre>";
+            var_dump($submitNewsResponse);
+            echo "</pre>";
         } catch (\Throwable $e) {
-            $answewr = "Ошибка ";
+            echo $e->getMessage();
         }
-        return $answewr;
     }
 }
