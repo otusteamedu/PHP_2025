@@ -2,53 +2,19 @@
 
 namespace App\Infrastructure\Elasticsearch;
 
-class ElasticsearchIndexEvent
+class ElasticsearchIndexEvent extends ElasticsearchManager
 {
     private const INDEX_NAME = 'otus-event';
 
-    private ElasticsearchBase $client;
-
     public function __construct()
     {
-        $this->client = new ElasticsearchBase();
+        parent::__construct(self::INDEX_NAME);
     }
 
     /**
-     * Создает индекс otus-event
+     * Настройки для индекса
      */
-    public function createIndex(array $settings = []): bool
-    {
-        return $this->client->createIndex(
-            self::INDEX_NAME,
-            $this->getDefaultSettings()
-        );
-    }
-
-    /**
-     * Проверяет существование индекса otus-event
-     */
-    public function hasIndex(): bool
-    {
-        return $this->client->hasIndex(self::INDEX_NAME);
-    }
-
-    /**
-     * Удаляет индекс otus-event
-     */
-    public function deleteIndex(): bool
-    {
-        return $this->client->deleteIndex(self::INDEX_NAME);
-    }
-
-    public function clearIndex(): bool
-    {
-        return $this->client->clearIndex(self::INDEX_NAME);
-    }
-
-    /**
-     * Настройки по умолчанию для индекса
-     */
-    protected function getDefaultSettings(): array
+    protected function getSettings(): array
     {
         return [
             'settings' => [
@@ -102,14 +68,13 @@ class ElasticsearchIndexEvent
      *
      * @return bool
      */
-    public function addEvent(array $eventData, ?int $id = null): bool
+    public function add(array $eventData, ?int $id = null): bool
     {
         $id = $id ?? \time();
 
         $document = $this->transformArrayEventDataToEsDocument($eventData);
 
-        return $this->client->addDocument(
-            self::INDEX_NAME,
+        return $this->addDocument(
             (string)$id,
             $document
         );
@@ -137,12 +102,9 @@ class ElasticsearchIndexEvent
      * @param int $id
      * @return array
      */
-    public function getEventById(int $id): array
+    public function findById(int $id): array
     {
-        return $this->client->getDocument(
-            self::INDEX_NAME,
-            (string)$id
-        );
+        return $this->getDocument((string)$id);
     }
 
     /**
@@ -152,10 +114,9 @@ class ElasticsearchIndexEvent
      * @param array $updates Данные для обновления (например, ['priority' => 200])
      * @return array
      */
-    public function updateEvent(int $id, array $updates): array
+    public function update(int $id, array $updates): array
     {
-        return $this->client->updateDocument(
-            self::INDEX_NAME,
+        return $this->updateDocument(
             (string)$id,
             $updates
         );
@@ -167,12 +128,9 @@ class ElasticsearchIndexEvent
      * @param int $id
      * @return bool
      */
-    public function deleteEvent(int $id): bool
+    public function delete(int $id): bool
     {
-        return $this->client->deleteDocument(
-            self::INDEX_NAME,
-            (string)$id
-        );
+        return $this->deleteDocument((string)$id);
     }
 
     /** поиск
@@ -182,11 +140,7 @@ class ElasticsearchIndexEvent
      */
     public function search(array $query, array $options = []): array
     {
-        $resul = $this->client->search(
-            self::INDEX_NAME,
-            $query,
-            $options
-        );
+        $resul = $this->searchDocument($query, $options);
 
         if (isset($resul['hits']['total']['value']) && $resul['hits']['total']['value'] > 0) {
             return $this->transformEsDocumentEventDataToArray($resul['hits']['hits'][0]['_source']);
@@ -214,14 +168,5 @@ class ElasticsearchIndexEvent
         }
 
         return $newData;
-    }
-
-    /** Выполняет пакетные операции
-     * @param string $events
-     * @return array
-     */
-    public function bulkProducts(string $events): array
-    {
-        return $this->client->bulk($events);
     }
 }

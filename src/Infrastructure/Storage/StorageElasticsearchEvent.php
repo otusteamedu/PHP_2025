@@ -12,6 +12,7 @@ use Exception;
 class StorageElasticsearchEvent implements StorageEventDBInterface
 {
     private ElasticsearchIndexEvent $client;
+
     public function __construct()
     {
         $this->client = new ElasticsearchIndexEvent();
@@ -19,7 +20,7 @@ class StorageElasticsearchEvent implements StorageEventDBInterface
 
     public function saveEvent(Event $event): void
     {
-        $this->client->addEvent(EventMapper::toArray($event), $event->getId());
+        $this->client->add(EventMapper::toArray($event), $event->getId());
     }
 
     /**
@@ -59,7 +60,9 @@ class StorageElasticsearchEvent implements StorageEventDBInterface
             ];
         }
 
-        return EventMapper::createFromArray($this->client->search($query, ['size' => 1]));
+        $result = $this->client->search($query);
+
+        return EventMapper::createFromArray($result);
     }
 
     public function clearEvents(): void
