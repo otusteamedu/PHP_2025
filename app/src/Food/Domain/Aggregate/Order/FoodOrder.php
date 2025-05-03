@@ -21,7 +21,7 @@ class FoodOrder
         $this->id = UuidService::generate();
         $this->statusCreatedAt = $this->statusUpdatedAt = new DateTimeImmutable();
         $this->foodItems = $food;
-        $this->status = FoodOrderStatusType::CREATED;
+        $this->setStatus(FoodOrderStatusType::CREATED);
     }
 
     public function getId(): string

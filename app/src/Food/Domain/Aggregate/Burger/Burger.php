@@ -6,15 +6,16 @@ namespace App\Food\Domain\Aggregate\Burger;
 
 use App\Food\Domain\Aggregate\Food;
 use App\Food\Domain\Aggregate\VO\FoodTitle;
+use App\Shared\Application\Publisher\PublisherInterface;
 
 class Burger extends Food
 {
-    public function __construct(string $orderId, ?FoodTitle $title = null)
+    public function __construct(string $orderId, private readonly PublisherInterface $publisher, ?FoodTitle $title = null)
     {
         if (!$title) {
             $title = new FoodTitle('burger');
         }
-        parent::__construct($title, $orderId);
+        parent::__construct($title, $orderId, $this->publisher);
         $this->add();
     }
 

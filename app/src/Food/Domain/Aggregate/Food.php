@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Food\Domain\Aggregate;
 
 use App\Food\Domain\Aggregate\VO\FoodTitle;
+use App\Food\Domain\Event\FoodCookingStatusUpdated;
+use App\Shared\Application\Publisher\PublisherInterface;
 use App\Shared\Domain\Service\UuidService;
 
 abstract class Food implements FoodInterface
@@ -17,14 +19,14 @@ abstract class Food implements FoodInterface
     private string $orderId;
 
     public function __construct(
-        protected FoodTitle $title,
-        string              $orderId,
+        protected FoodTitle                 $title,
+        string                              $orderId,
+        private readonly PublisherInterface $publisher
     )
     {
         $this->id = UuidService::generate();
-        $this->cookingStatus = FoodCookingStatusType::IN_QUEUE;
+        $this->setCookingStatus(FoodCookingStatusType::IN_QUEUE);
         $this->statusCreatedAt = new \DateTimeImmutable();
-        $this->statusUpdatedAt = new \DateTimeImmutable();
         $this->orderId = $orderId;
 
     }
@@ -65,6 +67,7 @@ abstract class Food implements FoodInterface
     {
         $this->cookingStatus = $cookingStatus;
         $this->statusUpdatedAt = new \DateTimeImmutable();
+        $this->publisher->notify(new FoodCookingStatusUpdated($this->id, $cookingStatus));
     }
 
     public function getStatusCreatedAt(): \DateTimeImmutable
