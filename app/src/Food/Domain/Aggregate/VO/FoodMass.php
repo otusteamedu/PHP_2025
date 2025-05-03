@@ -6,7 +6,7 @@ namespace App\Food\Domain\Aggregate\VO;
 
 use Webmozart\Assert\Assert;
 
-class FoodMass
+class FoodMass implements \JsonSerializable
 {
     private int $value;
 
@@ -31,4 +31,8 @@ class FoodMass
         return (string)$this->value;
     }
 
+    public function jsonSerialize(): int
+    {
+       return $this->value;
+    }
 }

@@ -6,6 +6,7 @@ namespace App\Food\Infrastructure\Repository;
 
 use App\Food\Domain\Aggregate\Order\FoodOrder;
 use App\Food\Domain\Repository\FoodOrderRepositoryInterface;
+use App\Food\Infrastructure\Mapper\OrderMapper;
 use App\Shared\Infrastructure\Database\Db;
 use PDO;
 
@@ -13,7 +14,10 @@ class FoodOrderRepository implements FoodOrderRepositoryInterface
 {
     private string $table = 'food_food_order';
 
-    public function __construct(private readonly Db $db)
+    public function __construct(
+        private readonly Db          $db,
+        private readonly OrderMapper $orderMapper,
+    )
     {
     }
 
@@ -21,7 +25,7 @@ class FoodOrderRepository implements FoodOrderRepositoryInterface
     {
         try {
             $this->db->connection->beginTransaction();
-            $exist = $this->checkUserExists($order->getId());
+            $exist = $this->findById($order->getId());
             if ($exist) {
                 $sql = "UPDATE $this->table SET status = :status, status_created_at = :status_created_at, 
                  status_updated_at = :status_updated_at  WHERE id = :id;";
@@ -46,7 +50,16 @@ class FoodOrderRepository implements FoodOrderRepositoryInterface
 
     public function findById(string $orderId): ?FoodOrder
     {
-        // TODO: Implement findById() method.
+        $sql = "SELECT * FROM $this->table WHERE id = :id;";
+        $statement = $this->db->connection->prepare($sql);
+        $statement->bindValue(':id', $orderId);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        if (!$result) {
+            return null;
+        };
+
+        return $this->orderMapper->orderMap($result);
     }
 
     private function checkUserExists(string $orderId): bool

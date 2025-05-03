@@ -8,5 +8,5 @@ use App\Food\Domain\Aggregate\Food;
 
 interface FoodFactoryInterface
 {
-    public function build(string $title): Food;
+    public function build(string $orderId, string $title): Food;
 }

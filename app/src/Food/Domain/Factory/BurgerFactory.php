@@ -10,11 +10,11 @@ use App\Food\Domain\Aggregate\VO\FoodTitle;
 
 readonly class BurgerFactory implements FoodFactoryInterface
 {
-    public function build(?string $title): Food
+    public function build(string $orderId, ?string $title): Food
     {
         if ($title === null) {
-            return new Burger();
+            return new Burger($orderId);
         }
-        return new Burger(new FoodTitle($title));
+        return new Burger($orderId, new FoodTitle($title));
     }
 }

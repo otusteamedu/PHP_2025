@@ -10,6 +10,10 @@ interface FoodInterface
 {
     public function getId(): string;
 
+    public function getOrderId(): string;
+
+    public function getCookingStatus(): FoodCookingStatusType;
+
     public function getTitle(): FoodTitle;
 
     public function getIngredients(): array;

@@ -6,7 +6,7 @@ namespace App\Food\Domain\Aggregate\VO;
 
 use Webmozart\Assert\Assert;
 
-class FoodTitle
+class FoodTitle implements \JsonSerializable
 {
     private string $value;
     private const int MIN_LENGTH = 3;
@@ -37,4 +37,8 @@ class FoodTitle
         return $this->value;
     }
 
+    public function jsonSerialize(): string
+    {
+        return $this->value;
+    }
 }

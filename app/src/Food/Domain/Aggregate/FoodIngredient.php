@@ -8,7 +8,7 @@ use App\Food\Domain\Aggregate\VO\FoodCalorie;
 use App\Food\Domain\Aggregate\VO\FoodTitle;
 use App\Food\Domain\Aggregate\VO\FoodMass;
 
-abstract class FoodIngredient
+abstract class FoodIngredient implements \JsonSerializable
 {
     public function __construct(
         protected readonly FoodTitle   $title,
@@ -31,6 +31,11 @@ abstract class FoodIngredient
     public function getMass(): FoodMass
     {
         return $this->mass;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
     }
 
 }

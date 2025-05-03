@@ -9,12 +9,12 @@ use App\Food\Domain\Aggregate\VO\FoodTitle;
 
 class Burger extends Food
 {
-    public function __construct(?FoodTitle $title = null)
+    public function __construct(string $orderId, ?FoodTitle $title = null)
     {
         if (!$title) {
             $title = new FoodTitle('burger');
         }
-        parent::__construct($title);
+        parent::__construct($title, $orderId);
         $this->add();
     }
 

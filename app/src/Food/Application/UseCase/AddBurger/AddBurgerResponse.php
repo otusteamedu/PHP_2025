@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 
-namespace App\Food\Application\UseCase\MakeBurger;
+namespace App\Food\Application\UseCase\AddBurger;
 
-class MakeBurgerResponse
+class AddBurgerResponse
 {
     public function __construct(public string $burger_id)
     {
