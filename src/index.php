@@ -26,29 +26,6 @@ switch (Common::get_method()) {
 }
 
 
-$SubmitNews = new Infrastructure\Rest\Post\SubmitNews;
-
-
-
-/*  
-// Работает
-
-use Application\UseCase\AddNews\SubmitNewsUseCase;
-use Infrastructure\Factory\CommonNewsFactory;
-use Infrastructure\Repository\FileNewsRepository;
-
-(
-    new Infrastructure\Http\SubmitNewsController(
-        (
-            new SubmitNewsUseCase(
-                new CommonNewsFactory,
-                new FileNewsRepository
-            )
-        )
-    )
-)("https://ria.ru/20250503/griby-2014723317.html"); */
-
-
 
 
  
