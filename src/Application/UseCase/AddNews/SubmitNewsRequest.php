@@ -2,10 +2,12 @@
 
 namespace Application\UseCase\AddNews;
 
+// данные в виде DTO 
+
 class SubmitNewsRequest
 {  
     public function __construct(  
-        public readonly string $url
+        public readonly string $url // То что будем отправлять в базу 
     )  
     {  
     }  

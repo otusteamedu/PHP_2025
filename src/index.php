@@ -3,6 +3,8 @@
 //require_once "vendor/autoload.php";
 spl_autoload_register();
 
+session_start();
+
 /* try {
     $name = new Domain\ValueObject\Url("https://ya.ru");
     echo $name->getValue();
@@ -67,10 +69,54 @@ use Infrastructure\Repository\FileNewsRepository;
             )
         )
     )
-)("https://ya.ru");
+)("https://ria.ru/20250503/griby-2014723317.html");
 
 
 
+
+
+$redis = new \Redis();
+$redis->connect(getenv('REDIS_HOST'), 6379);
+//$redis->flushDB(); exit();
+
+/* $keys = $redis->keys('*');
+$count = count($keys);
+// Сохраняем запись в Redis
+
+$data = [
+    "url"=>"www".$count,
+    "title"=>"Заголовок",
+    "date"=>"01.01.2025"
+];
+
+$redis->set($count++, json_encode($data));
+
+print_r($keys);
+
+echo "<br/>"; */
+
+
+//echo $redis->get(session_id());
+
+$allRecords = [];
+
+$keys = $redis->keys('*');
+
+print_r($keys);
+
+foreach ($keys as $key) {
+    $allRecords[$key] = $redis->get($key); // В зависимости от типа данных используйте соответствующие методы
+}
+
+ksort($allRecords);
+
+// Выводим все записи
+foreach ($allRecords as $key => $value) {
+    echo "<p>Ключ: $key, Значение: $value</p>";
+} 
+/* echo "<hr/>";
+echo $redis->get(0); */
+ 
 
 
 

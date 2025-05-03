@@ -22,10 +22,31 @@ class FileNewsRepository implements NewsRepositoryInterface
 
     public function save(News $News): void
     {
-        // Имитация сохранения в БД с присваиванием ID
+        
+        $redis = new \Redis();
+        $redis->connect(getenv('REDIS_HOST'), 6379);
+
+        $keys = $redis->keys('*');
+        $count = count($keys);
+
+        $id = $count++;
+        $url = ($News->getUrl())->getValue();
+        $title = $News->getTitle();
+        $date = $News->getDate();
+
+        $data = [
+            "id"=>$id,
+            "url"=>$url,
+            "title"=>$title,
+            "date"=>$date
+        ];
+
+        $redis->set($id, json_encode($data,JSON_UNESCAPED_UNICODE));
+
         $reflectionProperty = new \ReflectionProperty(News::class, 'id');
         $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($News, 2);
+        $reflectionProperty->setValue($News, $id);
+
     }
 
     public function delete(News $News): void

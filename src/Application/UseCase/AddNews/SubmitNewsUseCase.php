@@ -16,10 +16,10 @@ class SubmitNewsUseCase
 
     public function __invoke(SubmitNewsRequest $request): SubmitNewsResponse
     {
-        // Создать лид
+        // Создать новость
         $url = $this->newsFactory->create($request->url);
 
-        // Сохранить лид в базу
+        // Сохранить новость в базу
         $this->newsRepository->save($url);
 
         // Вернуть результат

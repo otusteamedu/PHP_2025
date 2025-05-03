@@ -20,9 +20,6 @@ class SubmitNewsController
             $SubmitNewsRequest = new SubmitNewsRequest($url);
             $submitNewsResponse = ($this->useCase)($SubmitNewsRequest);
             echo 'News ID: ' . $submitNewsResponse->id;
-            echo "<pre>";
-            var_dump($submitNewsResponse);
-            echo "</pre>";
         } catch (\Throwable $e) {
             echo $e->getMessage();
         }
