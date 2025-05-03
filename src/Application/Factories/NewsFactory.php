@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Application\Assembler;
+namespace App\Application\Factories;
 
-use App\Application\DTO\NewsDTO;
+use App\Application\DTO\News\NewsDTO;
 use App\Domain\Entity\News;
+use App\Domain\ValueObject\News\CreateDate;
 use App\Domain\ValueObject\News\Title;
 use App\Domain\ValueObject\News\Url;
-use App\Domain\ValueObject\News\CreateDate;
 
-class NewsAssembler
+class NewsFactory
 {
     public function toEntity(NewsDTO $dto): News
     {
@@ -25,7 +25,6 @@ class NewsAssembler
         $news->setTitle($title)
             ->setUrl($url)
             ->setCreateDate($createDate);
-
         return $news;
     }
 }

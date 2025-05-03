@@ -2,8 +2,8 @@
 
 namespace App\Application\Port;
 
-use App\Application\DTO\CreateNewsDTO;
-use App\Application\DTO\ResponseNewsDTO;
+use App\Application\DTO\News\CreateNewsDTO;
+use App\Application\DTO\News\ResponseNewsDTO;
 
 interface NewsServiceInterface
 {

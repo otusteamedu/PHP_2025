@@ -2,27 +2,23 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Application\Assembler\NewsAssembler;
-use App\Application\DTO\CreateNewsDTO;
-use App\Application\DTO\NewsDTO;
-use App\Application\DTO\ResponseNewsDTO;
-use App\Domain\Repository\NewsRepository;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\KernelInterface;
+use App\Application\Factories\NewsFactory;
+use App\Application\DTO\News\CreateNewsDTO;
+use App\Application\DTO\News\NewsDTO;
+use App\Application\DTO\News\ResponseNewsDTO;
 use App\Application\Port\NewsServiceInterface;
+use App\Domain\Repository\NewsRepositoryInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 final class NewsService implements NewsServiceInterface
 {
-
     //TODO разбить на сервис новостей и сервис генерации отчета
     public function __construct(
         private KernelInterface  $kernel,
-        private NewsAssembler  $newsAssembler,
-        private NewsRepository $newsRepository
+        private NewsFactory  $newsFactory,
+        private NewsRepositoryInterface $newsRepository
     )
-    {
-    }
-
+    {}
 
     public function createNews(CreateNewsDTO $createNewsDTO): ResponseNewsDTO
     {
@@ -33,7 +29,7 @@ final class NewsService implements NewsServiceInterface
             $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
 
             $newsDTO = new NewsDTO($mainTitle, $url, $createDate);
-            $newsEntity = $this->newsAssembler->toEntity($newsDTO);
+            $newsEntity = $this->newsFactory->toEntity($newsDTO);
 
             $this->newsRepository->save($newsEntity);
 
@@ -41,7 +37,8 @@ final class NewsService implements NewsServiceInterface
             return new ResponseNewsDTO(
                 $newsEntity->getId(),
                 $newsEntity->getTitle(),
-                $newsEntity->getUrl()
+                $newsEntity->getUrl(),
+                $createDate
             );
 
         } else {
@@ -51,9 +48,7 @@ final class NewsService implements NewsServiceInterface
 
     public function getNews(): array
     {
-        //TODO массив DTO новостей!
-        $arNewsList = $this->newsRepository->getList();
-        return $arNewsList;
+        return $this->newsRepository->getList();
     }
 
     public function getHtmlByUrl(string $url, string $tag = '')

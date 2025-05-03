@@ -2,23 +2,15 @@
 
 namespace App\Application\UseCase;
 
-//TODO слой NewsServiceintrface на этом слое, а сервис остается на инфраструктуре
-use App\Infrastructure\Services\NewsService;
+use App\Application\Port\NewsServiceInterface;
 
 class GetNewsList
 {
-    public string $url;
-
     public function __construct(
-        private NewsService $newsService
+        private NewsServiceInterface $newsService
     ){}
 
-//    public function execute():массив DTO (массив новостей)
-//    {
-//        return $this->newsService->getNews();
-//    }
-
-    public function execute()
+    public function execute():array
     {
         return $this->newsService->getNews();
     }

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Application\Port;
+namespace App\Domain\Repository;
 
 use App\Domain\Entity\News;
-
-//TODO перенести в Домен, реализация на слое инфраструктуры
 
 interface NewsRepositoryInterface
 {
     public function save(News $news): void;
     public function getList(): array;
+    public function getByIds(array $arNewsIds):array;
 }

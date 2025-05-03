@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Application\DTO;
+namespace App\Application\DTO\News;
 
 final class CreateNewsDTO
 {

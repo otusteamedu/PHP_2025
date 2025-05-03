@@ -2,24 +2,25 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Application\Assembler\NewsAssembler;
-use App\Domain\Repository\NewsRepository;
+use App\Application\DTO\Report\RequestReportDTO;
+use App\Application\DTO\Report\ResponseReportDTO;
+use App\Application\Port\ReportServiceInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
+use App\Domain\Repository\NewsRepositoryInterface;
 
-final class ReportService
+final class ReportService implements ReportServiceInterface
 {
     public function __construct(
         private KernelInterface  $kernel,
-        private NewsAssembler  $newsAssembler,
-        private NewsRepository $newsRepository
+        private NewsRepositoryInterface $newsRepository
     )
     {
     }
 
-    public function generateHtmlReport(array $arNewsIds):array
+    public function generateHtmlReport(RequestReportDTO $requestReportDTO):ResponseReportDTO
     {
-        $arNews = $this->newsRepository->getByIds($arNewsIds);
+        $arNews = $this->newsRepository->getByIds($requestReportDTO->arNewsIds);
 
         if (empty($arNews)) {
             throw new \RuntimeException('News not found');
@@ -36,14 +37,10 @@ final class ReportService
         $htmlReport .= '</ul>';
 
         $filePath = $this->dumpReport($htmlReport, $fileName);
-
-        return [
-            'message' => 'Order successfully generated',
-            'generated_order' => $filePath,
-        ];
-
+        return new ResponseReportDTO($filePath);
     }
-    private function dumpReport(string $htmlReport, string $fileName):string
+
+    public function dumpReport(string $htmlReport, string $fileName):string
     {
         $filePath = $this->kernel->getProjectDir() . '/public/uploads/' . $fileName . '.html';
         $filesystem = new Filesystem();

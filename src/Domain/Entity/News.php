@@ -2,11 +2,12 @@
 
 namespace App\Domain\Entity;
 
-use App\Domain\Repository\NewsRepository;
+use App\Domain\Repository\NewsRepositoryInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: NewsRepository::class)]
+//TODO связать репу и реп. интерфейсом
+#[ORM\Entity(repositoryClass: NewsRepositoryInterface::class)]
 class News
 {
     #[ORM\Id]
@@ -21,7 +22,7 @@ class News
     private ?string $url = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
-    private ?\DateTimeInterface $create_date = null;
+    private ?\DateTimeImmutable $create_date = null;
 
     public function getId(): ?int
     {
@@ -52,12 +53,12 @@ class News
         return $this;
     }
 
-    public function getCreateDate(): ?\DateTimeInterface
+    public function getCreateDate(): ?\DateTimeImmutable
     {
         return $this->create_date;
     }
 
-    public function setCreateDate(\DateTimeInterface $create_date): static
+    public function setCreateDate(\DateTimeImmutable $create_date): static
     {
         $this->create_date = $create_date;
 

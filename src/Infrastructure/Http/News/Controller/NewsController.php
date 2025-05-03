@@ -2,9 +2,10 @@
 
 namespace App\Infrastructure\Http\News\Controller;
 
-use App\Application\DTO\CreateNewsDTO;
+use App\Application\DTO\News\CreateNewsDTO;
+use App\Application\DTO\Report\RequestReportDTO;
 use App\Application\UseCase\CreateNewsUseCase;
-use App\Application\UseCase\GenerateNewsReport;
+use App\Application\UseCase\GenerateReportUseCase;
 use App\Application\UseCase\GetNewsList;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,16 +16,16 @@ use Symfony\Component\HttpFoundation\Request;
 final class NewsController extends AbstractController
 {
     public function __construct(
-        protected CreateNewsUseCase $createNewsUseCase,
-        protected GenerateNewsReport $generateNewsReport,
-        protected GetNewsList $getNewsList,
+        protected CreateNewsUseCase     $createNewsUseCase,
+        protected GenerateReportUseCase $generateReportUseCase,
+        protected GetNewsList           $getNewsList,
     ){}
 
     final public function index(): JsonResponse
     {
         try {
-            $arNews = $this->getNewsList->execute();
-            return $this->json(['STATUS' => 'OK', 'NEWS' => $arNews]);
+            $arDtoNews = $this->getNewsList->execute();
+            return $this->json(['STATUS' => 'OK', 'NEWS' => $arDtoNews]);
         } catch(\Exception $exception) {
             return $this->json([
                 'STATUS' => 'ERR',
@@ -56,7 +57,10 @@ final class NewsController extends AbstractController
             if (!is_array($arRequest['news']) or empty($arRequest['news'])) {
                 throw new \RuntimeException('There no news with such IDs');
             }
-            $arResult = $this->generateNewsReport->execute($arRequest['news']);
+
+            $requestReportDTO = new RequestReportDTO($arRequest['news']);
+            $arResult = $this->generateReportUseCase->execute($requestReportDTO);
+
             return $this->json(['STATUS' => 'OK', 'RESULT' => $arResult]);
         } catch(\Exception $exception) {
             return $this->json([

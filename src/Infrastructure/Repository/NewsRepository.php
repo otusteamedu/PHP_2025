@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Domain\Repository;
+namespace App\Infrastructure\Repository;
 
+use App\Application\DTO\News\ResponseNewsDTO;
 use App\Domain\Entity\News;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Application\Port\NewsRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Domain\Repository\NewsRepositoryInterface;
 
 //TODO сам репозиторий в инфраструктуру, а на слое домена только РепозиторийИнтерфейса
-
 
 /**
  * @extends ServiceEntityRepository<News>
@@ -38,12 +38,12 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
 
         $data = [];
         foreach ($news as $el) {
-            $data[] = [
-                'id' => $el->getId(),
-                'title' => $el->getTitle(),
-                'url' => $el->getUrl(),
-                'create_date' => $el->getCreateDate(),
-            ];
+            $data[] = new ResponseNewsDTO(
+                $el->getId(),
+                $el->getTitle(),
+                $el->getUrl(),
+                $el->getCreateDate(),
+            );
         }
 
         return $data;
