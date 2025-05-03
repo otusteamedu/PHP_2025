@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 
-namespace App\Food\Application\UseCase\MakeOrder;
+namespace App\Food\Application\UseCase\PlaceOrder;
 
-class MakeOrderResponse
+class PlaceOrderResponse
 {
     public function __construct(public string $order_id)
     {

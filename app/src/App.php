@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App;
 
 use App\Food\Infrastructure\Controller\MakeBurgerAction;
+use App\Food\Infrastructure\Controller\PlaceOrderAction;
 use App\Shared\Infrastructure\Controller\HealthCheckAction;
+use App\Shared\Infrastructure\Controller\MigrationAction;
 use App\Shared\Infrastructure\Http\Request;
 use App\Shared\Infrastructure\Http\Response;
 use DI\Container;
@@ -53,7 +55,10 @@ class App
     {
         $controllerName = match ($request->getUrl()) {
             '/health-check' => HealthCheckAction::class,
+            '/migrate' => MigrationAction::class,
             '/make-burger' => MakeBurgerAction::class,
+            '/place-order' => PlaceOrderAction::class,
+
 
             default => throw new Exception('invalid route'),
         };

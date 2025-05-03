@@ -6,10 +6,10 @@ namespace App\User\Infrastructure\Repository;
 
 use App\Shared\Domain\Repository\Pager;
 use App\Shared\Domain\Repository\PaginationResult;
+use App\Shared\Infrastructure\Database\Db;
 use App\User\Domain\Aggregate\User\User;
 use App\User\Domain\Repository\UserFilter;
 use App\User\Domain\Repository\UserRepositoryInterface;
-use App\User\Infrastructure\Database\Db;
 use App\User\Infrastructure\Mapper\UserMapper;
 use PDO;
 

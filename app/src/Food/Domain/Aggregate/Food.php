@@ -5,18 +5,28 @@ declare(strict_types=1);
 namespace App\Food\Domain\Aggregate;
 
 use App\Food\Domain\Aggregate\VO\FoodTitle;
-use Ramsey\Uuid\Uuid;
+use App\Shared\Domain\Service\UuidService;
 
 abstract class Food implements FoodInterface
 {
     private readonly string $id;
     private array $ingredients = [];
+    private FoodCookingStatusType $cookingStatus;
+    private \DateTimeImmutable $statusCreatedAt;
+    private \DateTimeImmutable $statusUpdatedAt;
+    private string $orderId;
 
     public function __construct(
         protected FoodTitle $title,
+        string              $orderId,
     )
     {
-        $this->id = Uuid::uuid4()->toString();
+        $this->id = UuidService::generate();
+        $this->cookingStatus = FoodCookingStatusType::IN_QUEUE;
+        $this->statusCreatedAt = new \DateTimeImmutable();
+        $this->statusUpdatedAt = new \DateTimeImmutable();
+        $this->orderId = $orderId;
+
     }
 
     public function getId(): string
@@ -45,4 +55,31 @@ abstract class Food implements FoodInterface
             unset($this->ingredients[array_search($ingredient, $this->ingredients)]);
         }
     }
+
+    public function getCookingStatus(): FoodCookingStatusType
+    {
+        return $this->cookingStatus;
+    }
+
+    public function setCookingStatus(FoodCookingStatusType $cookingStatus): void
+    {
+        $this->cookingStatus = $cookingStatus;
+        $this->statusUpdatedAt = new \DateTimeImmutable();
+    }
+
+    public function getStatusCreatedAt(): \DateTimeImmutable
+    {
+        return $this->statusCreatedAt;
+    }
+
+    public function getStatusUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->statusUpdatedAt;
+    }
+
+    public function getOrderId(): string
+    {
+        return $this->orderId;
+    }
+
 }
