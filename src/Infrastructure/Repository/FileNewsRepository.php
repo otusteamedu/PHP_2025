@@ -10,14 +10,30 @@ class FileNewsRepository implements NewsRepositoryInterface
 
     public function findAll(): iterable
     {
-        // TODO: Implement findAll() method.
-        return [];
+
+        $redis = new \Redis();
+        $redis->connect(getenv('REDIS_HOST'), 6379);
+
+        $keys = $redis->keys('*');
+        $allRecords = [];
+        foreach ($keys as $key) {
+            $allRecords[$key] = json_decode($redis->get($key),true);
+        }
+        return $allRecords;
+
     }
 
-    public function findById(int $id): ?News
+    public function findById(array $id_array): iterable
     {
-        // TODO: Implement findById() method.
-        return null;
+
+        $redis = new \Redis();
+        $redis->connect(getenv('REDIS_HOST'), 6379);
+        $allRecords = [];
+        foreach ($id_array as $key) {
+            $allRecords[$key] = json_decode($redis->get($key),true);
+        }
+        return $allRecords;
+
     }
 
     public function save(News $News): void

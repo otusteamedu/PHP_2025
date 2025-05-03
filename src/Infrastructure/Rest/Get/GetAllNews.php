@@ -1,33 +1,34 @@
 <?php
 
-namespace Infrastructure\Rest\Post;
+namespace Infrastructure\Rest\Get;
+
 use Infrastructure\Rest\Common;
-use Application\UseCase\AddNews\SubmitNewsUseCase;
+use Application\UseCase\GetAllNews\GetAllNewsUseCase;
 use Infrastructure\Factory\CommonNewsFactory;
 use Infrastructure\Repository\FileNewsRepository;
-use Infrastructure\Http\SubmitNewsController;
+use Infrastructure\Http\GetAllNewsController;
 
 
-class SubmitNews {
+class GetAllNews {
 
     public function return_answer($endpoint,$data) {
 
         $answer = (
-            new SubmitNewsController(
+            new GetAllNewsController(
                 (
-                    new SubmitNewsUseCase(
+                    new GetAllNewsUseCase(
                         new CommonNewsFactory,
                         new FileNewsRepository
                     )
                 )
             )
-        )($data["url"]);
+        )(); 
 
-        if(is_numeric($answer))
+        if(is_array($answer))
 
             return Common::send_response([
                 'status' => 'success',
-                'message' => "News id: ".$answer,
+                'message' => $answer
             ], 200);
 
         Common::send_response([

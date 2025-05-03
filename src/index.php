@@ -11,6 +11,11 @@ switch (Common::get_method()) {
         $api = new Infrastructure\Rest\Post\MethodPost(Common::get_endpoint(),Common::get_request_data());
 		$api->endpoint();
         break;
+    
+    case "GET":
+        $api = new Infrastructure\Rest\Get\MethodGet(Common::get_endpoint(),Common::get_request_data());
+        $api->endpoint();
+        break;
 
 	default:
 		Common::send_response(array(

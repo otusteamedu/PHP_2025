@@ -1,33 +1,42 @@
 <?php
 
-namespace Infrastructure\Rest\Post;
+namespace Infrastructure\Rest\Get;
+
 use Infrastructure\Rest\Common;
-use Application\UseCase\AddNews\SubmitNewsUseCase;
+use Application\UseCase\GetNews\GetNewsUseCase;
 use Infrastructure\Factory\CommonNewsFactory;
 use Infrastructure\Repository\FileNewsRepository;
-use Infrastructure\Http\SubmitNewsController;
+use Infrastructure\Http\GetNewsController;
 
 
-class SubmitNews {
+class GetNews {
 
     public function return_answer($endpoint,$data) {
 
+        if(empty($endpoint[1]))
+            Common::send_response([
+                'status' => 'failed',
+                'message' => "Id is empty",
+            ], 400);
+
+        $id_array = preg_split('/\,/', $endpoint[1], -1, PREG_SPLIT_NO_EMPTY);
+
         $answer = (
-            new SubmitNewsController(
+            new GetNewsController(
                 (
-                    new SubmitNewsUseCase(
+                    new GetNewsUseCase(
                         new CommonNewsFactory,
                         new FileNewsRepository
                     )
                 )
             )
-        )($data["url"]);
+        )($id_array); 
 
-        if(is_numeric($answer))
+        if(is_array($answer))
 
             return Common::send_response([
                 'status' => 'success',
-                'message' => "News id: ".$answer,
+                'message' => $answer
             ], 200);
 
         Common::send_response([
