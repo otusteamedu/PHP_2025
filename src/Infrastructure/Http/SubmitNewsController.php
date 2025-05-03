@@ -14,14 +14,14 @@ class SubmitNewsController
 
     }
 
-    public function __invoke($url): void
+    public function __invoke($url):string
     {
         try {
             $SubmitNewsRequest = new SubmitNewsRequest($url);
             $submitNewsResponse = ($this->useCase)($SubmitNewsRequest);
-            echo 'News ID: ' . $submitNewsResponse->id;
+            return $submitNewsResponse->id;
         } catch (\Throwable $e) {
-            echo $e->getMessage();
+            return $e->getMessage();
         }
     }
 }
