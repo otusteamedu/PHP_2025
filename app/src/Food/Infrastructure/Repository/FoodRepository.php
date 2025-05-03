@@ -20,11 +20,13 @@ class FoodRepository implements FoodRepositoryInterface
     {
         try {
             $this->db->connection->beginTransaction();
-            $sql = "INSERT INTO $this->table (id, status, order_id, ingredients, status_created_at, status_updated_at) 
-                            VALUES (:id, :status, :order_id, :ingredients,:status_created_at, :status_updated_at);";
+            $sql = "INSERT INTO $this->table (id, status, title, order_id, ingredients, status_created_at, status_updated_at) 
+                            VALUES (:id, :status, :title, :order_id, :ingredients,:status_created_at, :status_updated_at);";
             $statement = $this->db->connection->prepare($sql);
             $statement->bindValue(':id', $food->getId());
             $statement->bindValue(':status', $food->getCookingStatus()->value);
+            $statement->bindValue(':title', $food->getTitle()->getValue());
+            $statement->bindValue(':order_id', $food->getOrderId());
             $statement->bindValue(':order_id', $food->getOrderId());
             $statement->bindValue(':ingredients', json_encode($food->getIngredients()));
             $statement->bindValue(':status_created_at', $food->getStatusCreatedAt()->format(DATE_ATOM));
