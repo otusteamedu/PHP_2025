@@ -1,0 +1,25 @@
+{
+  "name": "dbykov/otus-app",
+  "version": "1.0.0",
+  "description": "Otus homework 1-1",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "Dmitrii Bykov",
+      "homepage": "https://github.com/DmitryBykov",
+      "email": "mail@dbykov.ru"
+    }
+  ],
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist"
+  },
+  "require": {
+    "php": "8.4.6",
+    "ext-pdo_pgsql": "*",
+    "ext-pgsql": "*",
+    "ext-redis": "*",
+    "ext-memcached": "*",
+    "ext-pdo": "*"
+  }
+}

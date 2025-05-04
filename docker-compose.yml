@@ -1,0 +1,67 @@
+services:
+  nginx:
+    container_name: otus_nginx
+    image: nginx:1.28-alpine
+    depends_on:
+      - php
+    ports:
+      - ${APP_PORT}:80
+    volumes:
+      - ./app:/app
+      - ./.docker-data/nginx/log:/var/log/nginx
+      - ./.infrastructure/nginx/configs:/etc/nginx/conf.d
+      - php-socket:/var/run/php
+    networks:
+      - app_network
+
+  php:
+    container_name: otus_php
+    build:
+      context: ./.infrastructure/php
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - memcached
+      - postgres
+    volumes:
+      - ./app:/app
+      - ./.docker-data/php/logs:/var/log/php
+      - ./.infrastructure/php/configs/php.ini:/usr/local/etc/php/php.ini
+      - ./.infrastructure/php/configs/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+      - ./.infrastructure/php/configs/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - php-socket:/var/run/php
+    env_file: .env
+    networks:
+      - app_network
+
+  redis:
+    container_name: otus_redis
+    image: redis:7.4.3-alpine
+    networks:
+      - app_network
+
+  memcached:
+    container_name: otus_memcached
+    image: memcached:1.6.38-alpine
+    networks:
+      - app_network
+
+  postgres:
+    container_name: otus_postgres
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+      - TZ=Europe/Moscow
+    volumes:
+      - ./.docker-data/postgres:/var/lib/postgresql
+    networks:
+      - app_network
+
+volumes:
+  php-socket:
+
+networks:
+  app_network:
+    driver: bridge
