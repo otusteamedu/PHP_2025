@@ -1,8 +1,5 @@
 FROM php:8.2-fpm-alpine
 
-# Копируем custom конфиг для php-fpm
-COPY php-fpm.conf /usr/local/etc/php-fpm.d/zz-docker.conf
-
 # Install dependencies
 RUN apk add --no-cache \
     autoconf \
