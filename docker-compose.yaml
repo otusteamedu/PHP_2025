@@ -30,8 +30,6 @@ services:
       dockerfile: Dockerfile
     image: redis
     container_name: redis
-    ports:
-      - "6379:6379"
     volumes:
       - ./code:/data/mysite.local
 
@@ -42,8 +40,6 @@ services:
       dockerfile: Dockerfile
     image: memcached
     container_name: memcached
-    ports:
-      - "11211:11211"
 
   #Контейнер с postgres
   postgres:
@@ -52,5 +48,3 @@ services:
       dockerfile: Dockerfile
     image: postgres
     container_name: postgres
-    ports:
-      - "8080:8080"
