@@ -1,0 +1,72 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: ${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME}
+    ports:
+      - "${NGINX_PORT}:80"
+    volumes:
+      - ./code:/data/mysite.local
+      - ./php_socket:/var/run/php
+    depends_on:
+      - app
+      - postgres
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: ./php-fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: ${COMPOSE_PROJECT_NAME}_app
+    volumes:
+      - ./code:/data/mysite.local
+      - ./php_socket:/var/run/php
+    env_file:
+      - ${ENV_FILE}
+    networks:
+      - app-network
+
+  redis:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: myapp/redis
+    container_name: ${COMPOSE_PROJECT_NAME}_${REDIS_CONTAINER_NAME}
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  memcached:
+    image: memcached
+    container_name: ${COMPOSE_PROJECT_NAME}_${MEMCACHED_CONTAINER_NAME}
+    command: [ "memcached", "-m", "64", "-p", "${MEMCACHED_PORT}", "-l", "0.0.0.0" ]
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:latest
+    container_name: ${COMPOSE_PROJECT_NAME}_${POSTGRES_CONTAINER_NAME}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  php_socket:
+  redis_data:
+  postgres_data:
