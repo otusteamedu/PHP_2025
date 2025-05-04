@@ -1,45 +1,26 @@
 services:
     redis1:
         build: project/redis
-        image: 'redis:alpine'
-        volumes:
-            - ./project/redis/redis.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf
         networks:
             - otus_php
     redis2:
-        image: 'redis:alpine'
-        volumes:
-            - ./project/redis/redis.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf
+        build: project/redis
         networks:
             - otus_php
     redis3:
-        image: 'redis:alpine'
-        volumes:
-            - ./project/redis/redis.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf
+        build: project/redis
         networks:
             - otus_php
     redis4:
-        image: 'redis:alpine'
-        volumes:
-            - ./project/redis/redis.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf
+        build: project/redis
         networks:
             - otus_php
     redis5:
-        image: 'redis:alpine'
-        volumes:
-            - ./project/redis/redis.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf
+        build: project/redis
         networks:
             - otus_php
     redis6:
-        image: 'redis:alpine'
-        volumes:
-            - ./project/redis/redis.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf
+        build: project/redis
         networks:
             - otus_php
     redis-cluster-starter:

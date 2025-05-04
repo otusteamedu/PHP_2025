@@ -3,18 +3,26 @@ echo "Hello by ATelepchenkov<br/>";
 echo "PHP Server: " . getenv('SERVER') . "<br/>";
 echo "NGinx Server " . $_SERVER['NGINX_SERVER'] . "<br/>";
 echo "SESSION status:" . session_status() . "<br/>";
-if(session_status() == PHP_SESSION_NONE) {
-    session_start();
+
+try {
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+} catch (Exception $e) {
+    echo 'Session error: ' . $e->getMessage() . '<br/>';
 }
 echo "SESSION status:" . session_status() . "<br/>";
 echo "SESSION id: " . session_id() . "<br/>";
+if(!isset($_SESSION['view']['from'][$_SERVER['SERVER']]))
+    $_SESSION['view']['from'][$_SERVER['SERVER']]=0;
+
+$_SESSION['view']['from'][$_SERVER['SERVER']]++;
 
 $date = date('Y-m-d H:i:s');
 
 
 try
 {
-    $redisServer = 'redis1';
     if(!$_SESSION['test1']) {
         $_SESSION['test1'] = 'set from ' . $_SERVER['SERVER'];
     }
@@ -30,7 +38,8 @@ try
     $rdata = $redis->keys('*');
     echo '<pre>';
     print_r($rdata);
-    print_r($redis->get($rdata[0]));
+    if(isset($rdata[0]))
+        print_r($redis->get($rdata[0]));
     echo '</pre>';
     echo "Redis connected successfully<br/>";
 
