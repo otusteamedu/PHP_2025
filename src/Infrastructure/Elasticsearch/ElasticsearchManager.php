@@ -109,7 +109,7 @@ class ElasticsearchManager
      * @param array $document
      * @return bool
      */
-    protected function addDocument(string $id, array $document): bool
+    public function addDocument(string $id, array $document): bool
     {
         try {
             return $this->client->index([
@@ -126,7 +126,7 @@ class ElasticsearchManager
      * @param string $id
      * @return string[]
      */
-    protected function getDocument(string $id): array
+    public function getDocument(string $id): array
     {
         try {
             return $this->client->get([
@@ -143,7 +143,7 @@ class ElasticsearchManager
      * @param array $newData
      * @return array
      */
-    protected function updateDocument(string $id, array $newData): array
+    public function updateDocument(string $id, array $newData): array
     {
         try {
             return $this->client->update([
@@ -162,7 +162,7 @@ class ElasticsearchManager
      * @param string $id
      * @return bool
      */
-    protected function deleteDocument(string $id): bool
+    public function deleteDocument(string $id): bool
     {
         try {
             return $this->client->delete([
@@ -182,7 +182,7 @@ class ElasticsearchManager
      *
      * @return array Результаты поиска
      */
-    protected function searchDocument(array $query, array $options = []): array
+    public function searchDocument(array $query, array $options = []): array
     {
         $params = [
             'index' => $this->index,

@@ -4,7 +4,9 @@ namespace App\Infrastructure\Storage;
 
 use App\Domain\Entity\Condition;
 use App\Domain\Entity\Event;
-use App\Infrastructure\Elasticsearch\ElasticsearchIndexEvent;
+use App\Infrastructure\Elasticsearch\ElasticsearchEvent\ElasticsearchAddedEvent;
+use App\Infrastructure\Elasticsearch\ElasticsearchEvent\ElasticsearchIndexEvent;
+use App\Infrastructure\Elasticsearch\ElasticsearchEvent\ElasticsearchSearchEvent;
 use App\Infrastructure\Mapper\ConditionMapper;
 use App\Infrastructure\Mapper\EventMapper;
 use Exception;
@@ -20,7 +22,7 @@ class StorageElasticsearchEvent implements StorageEventDBInterface
 
     public function saveEvent(Event $event): void
     {
-        $this->client->add(EventMapper::toArray($event), $event->getId());
+        (new ElasticsearchAddedEvent($this->client))->add(EventMapper::toArray($event), $event->getId());
     }
 
     /**
@@ -60,7 +62,7 @@ class StorageElasticsearchEvent implements StorageEventDBInterface
             ];
         }
 
-        $result = $this->client->search($query);
+        $result = (new ElasticsearchSearchEvent($this->client))->search($query);
 
         return EventMapper::createFromArray($result);
     }
