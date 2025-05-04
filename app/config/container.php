@@ -1,5 +1,7 @@
 <?php
 
+use App\Food\Domain\Builder\FoodOrderBuilder;
+use App\Food\Domain\Builder\FoodOrderBuilderInterface;
 use App\Food\Domain\Repository\FoodOrderRepositoryInterface;
 use App\Food\Domain\Repository\FoodRepositoryInterface;
 use App\Food\Infrastructure\Repository\FoodOrderRepository;
@@ -18,6 +20,7 @@ $builder->addDefinitions(
         FoodOrderRepositoryInterface::class => DI\get(FoodOrderRepository::class),
         UserRepositoryInterface::class => DI\get(UserRepository::class),
         FoodRepositoryInterface::class => DI\get(FoodRepository::class),
+        FoodOrderBuilderInterface::class => DI\get(FoodOrderBuilder::class),
         PublisherInterface::class => $publisher,
     ]
 );

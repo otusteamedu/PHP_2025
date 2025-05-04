@@ -5,18 +5,21 @@ declare(strict_types=1);
 namespace App\Food\Application\UseCase\PlaceOrder;
 
 use App\Food\Domain\Aggregate\Order\FoodOrder;
+use App\Food\Domain\Builder\FoodOrderBuilderInterface;
 use App\Food\Domain\Repository\FoodOrderRepositoryInterface;
 
-class PlaceOrderUseCase
+readonly class PlaceOrderUseCase
 {
     public function __construct(
         private FoodOrderRepositoryInterface $foodOrderRepository,
+        private FoodOrderBuilderInterface    $foodOrderBuilder,
     )
     {
     }
 
     public function __invoke(PlaceOrderRequest $makeBurgerRequest): PlaceOrderResponse
     {
+        $order = $this->foodOrderBuilder->getOrder();
         $order = new FoodOrder();
         $this->foodOrderRepository->add($order);
 
