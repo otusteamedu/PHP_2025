@@ -1,0 +1,43 @@
+name: test_api_app
+services:
+  nginx_with_balancer:
+    container_name: nginx_with_balancer_cont
+    build: ./nginx
+    ports:
+      - "8080:80"
+      - "4430:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - inner_network
+
+  php_app_1:
+    container_name: php_app_1_cont
+    build: ./php
+    working_dir: /var/www/html
+    environment: 
+      - REDIS_HOST=${REDIS_HOST} 
+    volumes:
+      - ./src:/var/www/html
+      - ./logs/php:/var/log
+    networks:
+      - inner_network
+
+  redis:
+    container_name: redis_base
+    image: redis:latest
+    volumes:
+      - ./db/redis:/data
+    networks:
+      - inner_network
+
+volumes:
+  src:
+  logs:
+  db:
+
+networks:
+  inner_network:
+    driver: bridge
