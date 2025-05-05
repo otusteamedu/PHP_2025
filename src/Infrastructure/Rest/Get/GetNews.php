@@ -32,7 +32,20 @@ class GetNews {
             )
         )($id_array); 
 
-        if(is_array($answer))
+        if(is_array($answer)) {
+
+            if($file_url = Common::save_html($answer,"/storage/")) 
+                return Common::send_response([
+                    'status' => 'success',
+                    'message' => "File is save http://{$_SERVER['HTTP_HOST']}{$file_url}"
+                ], 200);
+            else 
+                return Common::send_response([
+                    'status' => 'failed',
+                    'message' => "File saving error",
+                ], 400);
+
+        }
 
             return Common::send_response([
                 'status' => 'success',

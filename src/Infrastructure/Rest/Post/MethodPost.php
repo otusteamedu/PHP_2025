@@ -14,8 +14,8 @@ class MethodPost {
     }
 
     public function endpoint() {
-        
-        $class_name = '\\Infrastructure\\Rest\\Post\\'.$this->endpoint[0];
+
+        $class_name = (isset($this->endpoint[0])) ? '\\Infrastructure\\Rest\\Post\\'.$this->endpoint[0] : "";
 
         if (class_exists($class_name)) {
 
@@ -34,7 +34,7 @@ class MethodPost {
         else {
             Common::send_response([
 				'status' => 'failed',
-				'message' => 'No method allow',
+				'message' => 'Method Not Allowed',
 			], 400);
         }
 
