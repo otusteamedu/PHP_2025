@@ -6,4 +6,5 @@ composer.lock
 .LSOverride
 db/
 logs/
+storage/
 .env
