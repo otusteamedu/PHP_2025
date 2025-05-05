@@ -47,11 +47,6 @@ class GetNews {
 
         }
 
-            return Common::send_response([
-                'status' => 'success',
-                'message' => $answer
-            ], 200);
-
         Common::send_response([
             'status' => 'failed',
             'message' => $answer,
