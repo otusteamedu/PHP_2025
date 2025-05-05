@@ -1,15 +1,15 @@
 <?php
 
-use App\Infrastructure\Http\News\Controller\NewsController;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-use Symfony\Component\Routing\Requirement\Requirement;
 
 return function (RoutingConfigurator $routes): void {
-    $routes->add('news_index', '/api/index')->controller([NewsController::class, 'index'])
+    $routes->add('news_index', '/api/index')
+        ->controller([\App\Infrastructure\Http\News\Controller\NewsIndexController::class, 'index'])
         ->methods(['GET']);
-    $routes->add('generate_report', '/api/generate_report')->controller([NewsController::class, 'generateReport'])
+    $routes->add('generate_report', '/api/generate_report')
+        ->controller([\App\Infrastructure\Http\News\Controller\GenerateNewsController::class, 'generateReport'])
         ->methods(['POST']);
     $routes->add('news_create', '/api/create_news')
-        ->controller([NewsController::class, 'create'])
+        ->controller([\App\Infrastructure\Http\News\Controller\NewsCreateController::class, 'create'])
         ->methods(['POST']);
 };

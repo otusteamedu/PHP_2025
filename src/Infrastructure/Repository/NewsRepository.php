@@ -9,9 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Domain\Repository\NewsRepositoryInterface;
 
-//TODO сам репозиторий в инфраструктуру, а на слое домена только РепозиторийИнтерфейса
 
-/**
+/**@template T
+ * @implements NewsRepositoryInterface<T>
  * @extends ServiceEntityRepository<News>
  */
 class NewsRepository extends ServiceEntityRepository implements NewsRepositoryInterface

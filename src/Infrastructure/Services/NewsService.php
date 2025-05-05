@@ -12,13 +12,13 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 final class NewsService implements NewsServiceInterface
 {
-    //TODO разбить на сервис новостей и сервис генерации отчета
     public function __construct(
         private KernelInterface  $kernel,
         private NewsFactory  $newsFactory,
-        private NewsRepositoryInterface $newsRepository
+        private NewsRepositoryInterface $newsRepository,
     )
-    {}
+    {
+    }
 
     public function createNews(CreateNewsDTO $createNewsDTO): ResponseNewsDTO
     {
@@ -26,14 +26,13 @@ final class NewsService implements NewsServiceInterface
         $arNewsTitles = $this->getHtmlByUrl($url, 'title');
         if (is_array($arNewsTitles) && !empty($arNewsTitles)) {
             $mainTitle = reset($arNewsTitles);
-            $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
 
+            $createDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
             $newsDTO = new NewsDTO($mainTitle, $url, $createDate);
             $newsEntity = $this->newsFactory->toEntity($newsDTO);
 
             $this->newsRepository->save($newsEntity);
 
-            //TODO принимать и возвращать DTO (на входе и на выходе) +
             return new ResponseNewsDTO(
                 $newsEntity->getId(),
                 $newsEntity->getTitle(),

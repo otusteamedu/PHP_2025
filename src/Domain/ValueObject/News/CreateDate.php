@@ -7,19 +7,18 @@ namespace App\Domain\ValueObject\News;
 final class CreateDate
 {
     public function __construct(
-        private \DateTimeImmutable $date,
+        private \DateTimeInterface $date,
     )
     {
         $this->assertDateIsValid($date);
     }
 
-    public function getDate():\DateTimeImmutable
+    public function getDate():\DateTimeInterface
     {
         return $this->date;
     }
 
-    //TODO date time inmutable вместо DateTimeInterface
-    private function assertDateIsValid(\DateTimeImmutable $value):void
+    private function assertDateIsValid(\DateTimeInterface $value):void
     {
         if (!$value) {
             throw new \InvalidArgumentException('Date is invalid');
