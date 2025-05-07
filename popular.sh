@@ -1,0 +1,1 @@
+awk '{print $3}' data.txt | sort | uniq -ci | sort -nr | head -n 3
