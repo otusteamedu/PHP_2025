@@ -63,14 +63,21 @@ if(isset($_GET["my_products"])) {
 
 if(isset($_GET["order_status"])) {
 
-    $order = new Order(
-        new User(1),
-        new Product(["Бургер","Хотдог"])
-    );
+    $product[] = (
+        new MakeProductUseCase(
+            new ProductExt(
+                new BurgerProduct("Добавьте огурчиков и лука побольше")
+            )
+        )
+    )();
+
  
     $order_data = (
         new MakeOrderUseCase(
-            $order
+            $order = new Order(
+                new User(1),
+                new Product($product)
+            )
         )
     )();
 
