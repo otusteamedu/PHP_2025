@@ -6,7 +6,7 @@ use \Domain\Entity\News;
 
 interface NewsRepositoryInterface  
 {  
-    public function findAll(): iterable;
+    /* public function findAll(): iterable;
 
     public function findById(array $id): iterable;
 
@@ -14,5 +14,5 @@ interface NewsRepositoryInterface
 
     public function delete(News $url): void;
 
-    public function report(): void;
+    public function report(): void; */
 }

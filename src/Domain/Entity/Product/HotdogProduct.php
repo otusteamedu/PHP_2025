@@ -3,7 +3,6 @@
 namespace Domain\Entity\Product;
 
 use Domain\Factory\Product\ProductFactoryInterface;
-use Domain\Decorator\Product\ProductDecoratorInterface;
 
 class HotdogProduct implements ProductFactoryInterface  
 {  

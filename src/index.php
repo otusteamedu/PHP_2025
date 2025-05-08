@@ -1,13 +1,20 @@
 <?php
 
 spl_autoload_register();
+session_start();
 
 use Application\UseCase\MakeProduct\MakeProductUseCase;
+use Application\UseCase\MakeOrder\MakeOrderUseCase;
 use Domain\Entity\Product\BurgerProduct;
 use Domain\Entity\Product\BurgerProductExt;
 use Domain\Entity\Product\HotdogProduct;
 use Domain\Entity\Product\HotdogProductExt;
 use Domain\Entity\Product\ProductExt;
+
+
+use Domain\Entity\Order\Order;
+use Domain\ValueObject\User;
+use Domain\ValueObject\Product;
 
 
 if(isset($_GET["my_products"])) {
@@ -55,5 +62,42 @@ if(isset($_GET["my_products"])) {
 }
 
 if(isset($_GET["order_status"])) {
-    echo "Заказ ";
+
+    $order = new Order(
+        new User(1),
+        new Product(["Бургер","Хотдог"])
+    );
+ 
+    $order_data = (
+        new MakeOrderUseCase(
+            $order
+        )
+    )();
+
+    print_r($order_data);
+
+    echo "<hr/>";
+
+    $order->setStatus("Awaiting... 2 minute");
+
+    $order_data = (
+        new MakeOrderUseCase(
+            $order
+        )
+    )();
+
+    print_r($order_data);
+
+    echo "<hr/>";
+
+    $order->setStatus("Awaiting... 1 minute");
+
+    $order_data = (
+        new MakeOrderUseCase(
+            $order
+        )
+    )();
+
+    print_r($order_data);
+
 }

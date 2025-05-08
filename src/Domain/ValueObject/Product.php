@@ -4,23 +4,23 @@ namespace Domain\ValueObject;
 
 class Product
 {
-    private string $value;
+    private array $value;
 
-    public function __construct(string $value)
+    public function __construct(array $value)
     {
         $this->assertValidName($value);
         $this->value = $value;
     }
 
-    public function getValue(): string
+    public function getValue(): array
     {
         return $this->value;
     }
 
-    private function assertValidName(string $value): void
+    private function assertValidName(array $value): void
     {
-        if($value){
-            throw new \InvalidArgumentException("Пользователь {$value} не сущесвует!");
+        if(!$value){
+            throw new \InvalidArgumentException("Заказ не сущесвует!");
         }
     }
 }

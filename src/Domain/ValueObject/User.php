@@ -19,7 +19,7 @@ class User
 
     private function assertValidName(string $value): void
     {
-        if($value){
+        if(!is_numeric($value)){
             throw new \InvalidArgumentException("Пользователь {$value} не сущесвует!");
         }
     }
