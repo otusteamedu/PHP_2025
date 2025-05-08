@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
 namespace App\Shared\Domain\Publisher;
 
 use App\Shared\Application\Publisher\PublisherInterface;
@@ -25,7 +24,7 @@ class Publisher implements PublisherInterface
         // TODO: Implement unsubscribe() method.
     }
 
-    public function notify(EventInterface $event): void
+    public function handle(EventInterface $event): void
     {
         /** @var SubscriberInterface $subscriber */
         foreach ($this->subscribers as $subscriber) {

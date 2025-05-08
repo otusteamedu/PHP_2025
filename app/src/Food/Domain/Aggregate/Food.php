@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
 namespace App\Food\Domain\Aggregate;
 
 use App\Food\Domain\Aggregate\VO\FoodTitle;
@@ -67,7 +66,7 @@ abstract class Food implements FoodInterface
     {
         $this->cookingStatus = $cookingStatus;
         $this->statusUpdatedAt = new \DateTimeImmutable();
-        $this->publisher->notify(new FoodCookingStatusUpdated($this->id, $cookingStatus));
+        $this->publisher->handle(new FoodCookingStatusUpdated($this->id, $cookingStatus));
     }
 
     public function getStatusCreatedAt(): \DateTimeImmutable

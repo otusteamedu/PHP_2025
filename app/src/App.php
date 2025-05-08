@@ -5,6 +5,7 @@ namespace App;
 
 use App\Food\Infrastructure\Controller\AddBurgerAction;
 use App\Food\Infrastructure\Controller\PlaceOrderAction;
+use App\Food\Infrastructure\Controller\UpdateFoodOrderStatusAction;
 use App\Shared\Infrastructure\Controller\HealthCheckAction;
 use App\Shared\Infrastructure\Controller\MigrationAction;
 use App\Shared\Infrastructure\Http\Request;
@@ -59,8 +60,7 @@ class App
             '/make-burger' => AddBurgerAction::class,
             '/place-order' => PlaceOrderAction::class,
             '/order/add-burger' => AddBurgerAction::class,
-
-
+            '/order/update-status' => UpdateFoodOrderStatusAction::class,
 
             default => throw new Exception('invalid route'),
         };
