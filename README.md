@@ -19,12 +19,12 @@ ElasticSearch
 - Выделен слой кода, отвечающий за работу с хранилищем.
 
 
-Примеры команд
-php shop.php index                                  //индексация из файла dist/books.json
-php shop.php index books.json                       //индексация из произвольного bulk-файла
-php shop.php search 'рыцОри'                        //поиск по заголовку
-php shop.php search "под" 2000                      //поиск по заголовку с фильтром по цене
-php shop.php search "под" 2000 "Исторический роман" //поиск по заголовку с фильтром по цене и по категории  
+Примеры команд:
+php shop.php index                                     //индексация из файла dist/books.json
+php shop.php index books.json                          //индексация из произвольного bulk-файла
+php shop.php search 'рыцОри'                           //поиск по заголовку
+php shop.php search 'рыцОри' 2000                      //поиск по заголовку с фильтром по цене
+php shop.php search 'рыцОри' 2000 "Исторический роман" //поиск по заголовку с фильтром по цене и по категории  
 
 
 Структура проекта:
@@ -36,7 +36,7 @@ src/
     App.php                                // координатор приложения
     Config.php                             // конфигурация приложения
     Loader/BookLoader.php                  // загружает книги из JSON файла
-    Elasticsearch/ElasticsearchClient.php  // клиент для работы с ElasticSearch ("elasticsearch/elasticsearch": "^8.18")
+    Elasticsearch/ElasticsearchClient.php  // клиент для работы с ElasticSearch
     Repository/BookRepository.php          // репозиторий для работы с книгами (индексирование, поиск)
     Command/IndexBooksCommand.php          // команда: загрузка книг в Elastic
     Command/SearchBooksCommand.php         // команда: поиск книг и вывод в консоль

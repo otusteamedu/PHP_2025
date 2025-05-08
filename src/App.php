@@ -56,6 +56,6 @@ class App
     {
         echo "Usage:\n";
         echo "  php shop.php index <books.json>\n";
-        echo "  php shop.php search <query>\n";
+        echo "  php shop.php search <query> <price> <category>\n";
     }
 }
