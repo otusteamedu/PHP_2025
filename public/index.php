@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 require_once '../vendor/autoload.php';
 require_once '../config/main.php';
@@ -11,5 +11,7 @@ use app\engine\App;
 try {
     App::call()->run($config);
 } catch (Exception $e) {
-    var_dump($e);
+    echo '<pre>';
+    print_r($e);
+    echo '</pre>';
 }

@@ -12,11 +12,11 @@ return [
     'components' => [
         'db' => [
             'class' => Db::class,
-            'driver' => 'mysql',
+            'driver' => 'PDO_PGSQL',
             'host' => 'localhost',
-            'login' => 'root',
-            'password' => '',
-            'database' => 'inshop',
+            'login' => 'db_user',
+            'password' => 'test',
+            'database' => 'db_php',
             'charset' => 'utf8'
         ],
         'request' => [

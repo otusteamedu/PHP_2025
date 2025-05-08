@@ -39,7 +39,7 @@ abstract class Controller
         if ($this->useLayout) {
             return $this->renderTemplate("layouts/{$this->layout}",[
                 'content' => $this->renderTemplate($template, $params),
-                'menu' => [(new CartRepository())->getGoodsQuantity(), $allow, $user]
+//                'menu' => [(new CartRepository())->getGoodsQuantity(), $allow, $user]
             ]);
         } else {
             return $this->renderTemplate($template, $params);

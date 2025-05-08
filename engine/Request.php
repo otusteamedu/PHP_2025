@@ -28,7 +28,7 @@ class Request
         $url = explode('/', $this->requestString);
 //        var_dump($_REQUEST['REQUEST_URI'],$url);
         $this->controllerName = $url[1];
-        $this->actionName = $url[2];
+        $this->actionName = $url[2]??'';
         $this->params = $_REQUEST;
 //        var_dump('REQUESTCLASS',$_REQUEST);
     }

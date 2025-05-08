@@ -3,6 +3,7 @@
 namespace app\engine;
 
 use app\traits\Tsingletone;
+use PDO;
 
 class Db
 {
@@ -23,12 +24,12 @@ class Db
 
     private function getConnection() {
         if (is_null($this->connection)) {
-            $this->connection = new \PDO($this->prepareDsnString(),
+            $this->connection = new PDO($this->prepareDsnString(),
                 $this->config['login'],
                 $this->config['password']
                 );
         }
-        $this->connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+        $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         return $this->connection;
     }
 
@@ -51,7 +52,7 @@ class Db
 
     public function queryObject($sql, $params, $class) {
         $stmt = $this->query($sql, $params);
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, $class);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $class);
         return $stmt->fetch();
     }
 

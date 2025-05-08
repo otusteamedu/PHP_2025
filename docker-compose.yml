@@ -1,0 +1,51 @@
+﻿version: "3.7"
+services:
+    gateway:
+        build:
+            context: docker/gateway
+            dockerfile: development/nginx/Dockerfile
+        ports:
+            - "8086:8086"
+    db:
+        image: postgres:15
+        ports:
+            - 15432:5432
+        container_name: 'postgresql'
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: 'db_php'
+            POSTGRES_USER: 'db_user'
+            POSTGRES_PASSWORD: 'test'
+        volumes:
+            - ./data/db/psql:/var/lib/postgresql/data
+    srv-proxy:
+        container_name: 'srv-php-proxy'
+        build:
+            context: docker/srv-api/development
+            dockerfile: nginx/Dockerfile
+        volumes:
+            - ./public:/app/public
+    srv-fpm:
+        build:
+            context: docker/srv-api/development
+            dockerfile: php-fpm/Dockerfile
+        environment:
+            PHP_IDE_CONFIG: serverName=SRVAPI
+            DB_HOST: db
+            DB_USER: db_user
+            DB_PASS: test
+            DB_NAME: db_php
+        volumes:
+            - ./:/app
+    srv-cli:
+        container_name: 'srv-php-cli'
+        build:
+            context: docker/srv-api/development
+            dockerfile: php-cli/Dockerfile
+        environment:
+            DB_HOST: db
+            DB_USER: db_user
+            DB_PASS: test
+            DB_NAME: db_php
+        volumes:
+            - ./:/app
