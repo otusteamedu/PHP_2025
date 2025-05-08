@@ -4,23 +4,56 @@ spl_autoload_register();
 
 use Application\UseCase\MakeProduct\MakeProductUseCase;
 use Domain\Entity\Product\BurgerProduct;
+use Domain\Entity\Product\BurgerProductExt;
 use Domain\Entity\Product\HotdogProduct;
-
-$product = (
-    new MakeProductUseCase(new BurgerProduct("Стандартный рецепт"))
-)();
-
-echo $product."</br>";
-
-$product = (
-    new MakeProductUseCase(new BurgerProduct("Улучшенный рецепт"))
-)();
-
-echo $product."</br>";
+use Domain\Entity\Product\HotdogProductExt;
+use Domain\Entity\Product\ProductExt;
 
 
-$product = (
-    new MakeProductUseCase(new HotdogProduct("Особый рецепт"))
-)();
+if(isset($_GET["my_products"])) {
 
-echo $product."</br>";
+
+    // Сделаем особый заказ
+    $product[] = (
+        new MakeProductUseCase(
+            new ProductExt(
+                new BurgerProduct("Добавьте огурчиков и лука побольше")
+            )
+        )
+    )();
+
+    // Сделаем обычный заказ
+    $product[] = (
+        new MakeProductUseCase(
+            new BurgerProduct("")
+        )
+    )();
+
+    // Сделаем обычный заказ
+    $product[] = (
+        new MakeProductUseCase(
+            new HotdogProduct("")
+        )
+    )();
+
+    // Сделаем особый заказ
+    $product[] = (
+        new MakeProductUseCase(
+            new ProductExt(
+                new HotdogProduct("Добавьте две сосиски")
+            )
+        )
+    )();
+    
+
+    foreach($product AS $id=>$res) {
+        echo "<p>{$id}: {$res}</p>";
+    }
+
+
+
+}
+
+if(isset($_GET["order_status"])) {
+    echo "Заказ ";
+}

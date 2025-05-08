@@ -2,12 +2,12 @@
 
 namespace Application\UseCase\MakeProduct;
 
-use Domain\Factory\Product\ProductFactoryInterface;
+use Domain\Decorator\Product\ProductDecoratorInterface;
 
 class MakeProductUseCase
 {
     public function __construct(
-        private readonly ProductFactoryInterface $product,
+        private $product,
     )
     {
     }

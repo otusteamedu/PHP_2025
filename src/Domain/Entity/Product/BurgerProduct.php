@@ -3,9 +3,8 @@
 namespace Domain\Entity\Product;
 
 use Domain\Factory\Product\ProductFactoryInterface;
-use Domain\Decorator\Product\ProductDecoratorInterface;
 
-class BurgerProduct implements ProductFactoryInterface, ProductDecoratorInterface  
+class BurgerProduct implements ProductFactoryInterface  
 {  
 
     public function __construct(  
@@ -16,7 +15,7 @@ class BurgerProduct implements ProductFactoryInterface, ProductDecoratorInterfac
   
     public function makeProduct(string $title)
     {  
-        return "{$title} Бургер. {$this->recipe}";    
+        return ($this->recipe) ? "{$title} Бургер. {$this->recipe}" : "{$title} Бургер. Стандартный рецепт";    
     }  
 
 }  
