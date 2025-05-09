@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Application\Service\FoodOrderStatusHandler;
@@ -8,14 +9,14 @@ use App\Food\Domain\Aggregate\Order\FoodOrder;
 abstract class FoodOrderStatusHandler implements FoodOrderStatusHandlerInterface
 {
     public function __construct(
-        private ?FoodOrderStatusHandlerInterface $nextHandler = null
-    )
-    {
+        private ?FoodOrderStatusHandlerInterface $nextHandler = null,
+    ) {
     }
 
     public function setNext(FoodOrderStatusHandlerInterface $nextHandler): FoodOrderStatusHandlerInterface
     {
         $this->nextHandler = $nextHandler;
+
         return $nextHandler;
     }
 
@@ -23,5 +24,4 @@ abstract class FoodOrderStatusHandler implements FoodOrderStatusHandlerInterface
     {
         $this->nextHandler?->handle($order);
     }
-
 }

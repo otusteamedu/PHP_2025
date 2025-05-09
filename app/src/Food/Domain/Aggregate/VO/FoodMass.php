@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Domain\Aggregate\VO;
 
@@ -28,11 +28,11 @@ class FoodMass implements \JsonSerializable
 
     public function __toString(): string
     {
-        return (string)$this->value;
+        return (string) $this->value;
     }
 
     public function jsonSerialize(): int
     {
-       return $this->value;
+        return $this->value;
     }
 }

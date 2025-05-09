@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Application\UseCase\PlaceOrder;
 
@@ -9,5 +9,4 @@ class PlaceOrderRequest
     public function __construct()
     {
     }
-
 }

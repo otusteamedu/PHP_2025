@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Application\DTO;
 
@@ -15,7 +15,6 @@ class FoodIngredientDTOTransformer
         $dto->mass = $ingredient->getMass()->getValue();
         $dto->calorie = $ingredient->getCalorie()->getValue();
 
-
         return $dto;
     }
 
@@ -28,5 +27,4 @@ class FoodIngredientDTOTransformer
 
         return $ingredientDTOs;
     }
-
 }

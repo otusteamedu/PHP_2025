@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Application\Service\FoodOrderStatusHandler;
@@ -14,14 +15,13 @@ class CompletedFoodOrderStatusHandler extends FoodOrderStatusHandler
      */
     public function handle(FoodOrder $order): void
     {
-        if ($order->getStatus() === FoodOrderStatusType::COOKING_COMPLETED) {
+        if (FoodOrderStatusType::COOKING_COMPLETED === $order->getStatus()) {
             foreach ($order->getFoodItems() as $foodItem) {
-                if ($foodItem->getCookingStatus() !== FoodCookingStatusType::FINISHED) {
+                if (FoodCookingStatusType::FINISHED !== $foodItem->getCookingStatus()) {
                     throw new \Exception(sprintf('Food "%s" is not ready yet', $foodItem->getTitle()));
                 }
             }
         }
         parent::handle($order);
     }
-
 }

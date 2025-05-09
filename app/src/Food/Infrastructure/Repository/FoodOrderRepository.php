@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Repository;
 
@@ -8,17 +8,15 @@ use App\Food\Domain\Aggregate\Order\FoodOrder;
 use App\Food\Domain\Repository\FoodOrderRepositoryInterface;
 use App\Food\Infrastructure\Mapper\OrderMapper;
 use App\Shared\Infrastructure\Database\Db;
-use PDO;
 
 class FoodOrderRepository implements FoodOrderRepositoryInterface
 {
     private string $table = 'food_food_order';
 
     public function __construct(
-        private readonly Db          $db,
+        private readonly Db $db,
         private readonly OrderMapper $orderMapper,
-    )
-    {
+    ) {
     }
 
     public function add(FoodOrder $order): void
@@ -40,7 +38,7 @@ class FoodOrderRepository implements FoodOrderRepositoryInterface
             $statement->bindValue(':status_updated_at', $order->getStatusUpdatedAt()->format(DATE_ATOM));
             if (!$statement->execute()) {
                 throw new \Exception('Order could not be added into database');
-            };
+            }
             $this->db->connection->commit();
         } catch (\Throwable $exception) {
             $this->db->connection->rollBack();
@@ -54,10 +52,10 @@ class FoodOrderRepository implements FoodOrderRepositoryInterface
         $statement = $this->db->connection->prepare($sql);
         $statement->bindValue(':id', $orderId);
         $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
         if (!$result) {
             return null;
-        };
+        }
 
         return $this->orderMapper->orderMap($result);
     }
@@ -68,8 +66,8 @@ class FoodOrderRepository implements FoodOrderRepositoryInterface
         $statement = $this->db->connection->prepare($sql);
         $statement->bindValue(':id', $orderId);
         $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
 
-        return $result !== false;
+        return false !== $result;
     }
 }

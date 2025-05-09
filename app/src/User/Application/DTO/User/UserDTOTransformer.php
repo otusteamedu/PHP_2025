@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\User\Application\DTO\User;
 
@@ -8,7 +8,6 @@ use App\User\Domain\Aggregate\User\User;
 
 class UserDTOTransformer
 {
-
     public function fromEntity(User $user): UserDTO
     {
         $userDTO = new UserDTO();
@@ -33,5 +32,4 @@ class UserDTOTransformer
 
         return $userDTOs;
     }
-
 }

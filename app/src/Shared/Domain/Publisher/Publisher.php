@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\Publisher;
@@ -31,5 +32,4 @@ class Publisher implements PublisherInterface
             $subscriber($event);
         }
     }
-
 }

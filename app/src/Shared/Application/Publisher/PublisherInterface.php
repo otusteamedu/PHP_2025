@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Application\Publisher;
@@ -13,5 +14,4 @@ interface PublisherInterface
     public function unsubscribe(SubscriberInterface $subscriber): void;
 
     public function handle(EventInterface $event): void;
-
 }

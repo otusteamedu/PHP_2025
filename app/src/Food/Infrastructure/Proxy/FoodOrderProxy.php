@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Proxy;
@@ -13,19 +14,17 @@ class FoodOrderProxy extends FoodOrder
 
     public function __construct(
         private readonly FoodRepository $foodRepository,
-        Food                            ...$food
-    )
-    {
+        Food ...$food,
+    ) {
         parent::__construct(...$food);
     }
 
     public function getFoodItems(): array
     {
-        if ($this->foodItems === null) {
+        if (null === $this->foodItems) {
             return $this->foodRepository->getByOrderId($this->getId());
         }
 
         return $this->foodItems;
     }
-
 }

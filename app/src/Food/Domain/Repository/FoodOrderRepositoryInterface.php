@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Domain\Repository;
 
@@ -11,6 +11,4 @@ interface FoodOrderRepositoryInterface
     public function add(FoodOrder $order): void;
 
     public function findById(string $orderId): ?FoodOrder;
-
-
 }

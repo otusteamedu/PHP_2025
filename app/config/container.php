@@ -10,9 +10,9 @@ use App\Shared\Application\Publisher\PublisherInterface;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\User\Infrastructure\Repository\UserRepository;
 
-$publisher = require(dirname(__DIR__) . '/config/publisher.php');
+$publisher = require dirname(__DIR__).'/config/publisher.php';
 
-$builder = new \DI\ContainerBuilder();
+$builder = new DI\ContainerBuilder();
 $builder->useAutowiring(true);
 $builder->useAttributes(true);
 $builder->addDefinitions(

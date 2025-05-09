@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Domain\Event;
 
@@ -12,5 +12,4 @@ class FoodCookingStatusUpdated implements EventInterface
     public function __construct(public string $foodId, public FoodCookingStatusType $currentStatus)
     {
     }
-
 }

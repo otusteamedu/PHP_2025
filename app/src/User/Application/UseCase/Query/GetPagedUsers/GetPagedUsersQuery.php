@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\User\Application\UseCase\Query\GetPagedUsers;
 
@@ -12,5 +12,4 @@ class GetPagedUsersQuery implements QueryInterface
     public function __construct(public UserFilter $filter)
     {
     }
-
 }

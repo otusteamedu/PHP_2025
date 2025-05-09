@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Domain\Aggregate\Burger;
 
@@ -15,5 +15,4 @@ class BurgerPuttyIngredient extends FoodIngredient
     {
         parent::__construct(new FoodTitle('patty'), new FoodMass(200), new FoodCalorie(150));
     }
-
 }

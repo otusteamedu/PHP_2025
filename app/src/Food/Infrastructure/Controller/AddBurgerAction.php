@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Controller;
 
@@ -25,5 +25,4 @@ class AddBurgerAction extends BaseAction
 
         return $this->responseSuccess($result)->asJson();
     }
-
 }

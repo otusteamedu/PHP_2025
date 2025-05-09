@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Mapper;
@@ -14,18 +15,16 @@ use App\Food\Domain\Factory\BurgerFactory;
 
 readonly class FoodMapper
 {
-
     public function __construct(
         private BurgerFactory $factory,
-    )
-    {
+    ) {
     }
 
     public function foodMap(array $row): Food
     {
         $food = match ($row['type']) {
             FoodType::BURGER->value => $this->mapBurger($row),
-            //todo для остальных типов написать.
+            // todo для остальных типов написать.
         };
         //    private array $foodItems = [];
         $reflection = new \ReflectionClass(get_parent_class($food));
@@ -56,5 +55,4 @@ readonly class FoodMapper
 
         return $burger;
     }
-
 }

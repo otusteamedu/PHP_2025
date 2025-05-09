@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Application\UseCase\AddBurger;
 
@@ -13,12 +13,11 @@ use Webmozart\Assert\Assert;
 readonly class AddBurgerUseCase
 {
     public function __construct(
-        private BurgerFactory                $factory,
-        private FoodOrganizer                $organizer,
-        private FoodRepositoryInterface      $repository,
+        private BurgerFactory $factory,
+        private FoodOrganizer $organizer,
+        private FoodRepositoryInterface $repository,
         private FoodOrderRepositoryInterface $orderRepository,
-    )
-    {
+    ) {
     }
 
     public function __invoke(AddBurgerRequest $request): AddBurgerResponse
@@ -31,5 +30,4 @@ readonly class AddBurgerUseCase
 
         return new AddBurgerResponse($burger->getId());
     }
-
 }

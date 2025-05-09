@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Domain\Aggregate\Burger;
@@ -25,5 +26,4 @@ class Burger extends Food
         $this->addIngredient(new BurgerBunIngredient());
         $this->addIngredient(new BurgerPuttyIngredient());
     }
-
 }

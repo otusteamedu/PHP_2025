@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Domain\Factory;
 
@@ -17,9 +17,10 @@ readonly class BurgerFactory implements FoodFactoryInterface
 
     public function build(string $orderId, ?string $title): Food
     {
-        if ($title === null) {
+        if (null === $title) {
             return new Burger($orderId, $this->publisher);
         }
+
         return new Burger($orderId, $this->publisher, new FoodTitle($title));
     }
 }

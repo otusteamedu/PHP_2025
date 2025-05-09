@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\User\Domain\Factory;
 
@@ -12,5 +12,4 @@ class UserFactory
     {
         return new User($email, $name);
     }
-
 }

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Controller;
 
@@ -10,5 +10,4 @@ class HealthCheckAction extends BaseAction
     {
         return $this->responseSuccess('ok')->asJson();
     }
-
 }

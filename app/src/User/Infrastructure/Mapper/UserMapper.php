@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\User\Infrastructure\Mapper;
 
@@ -24,7 +24,5 @@ class UserMapper
         $property->setValue($user, $row['id']);
 
         return $user;
-
     }
-
 }

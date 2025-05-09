@@ -11,7 +11,6 @@ readonly class GetPagedUsersQueryResult
 {
     /**
      * @param UserDTO[] $users
-     * @param Pager $pager
      */
     public function __construct(public array $users, public Pager $pager)
     {

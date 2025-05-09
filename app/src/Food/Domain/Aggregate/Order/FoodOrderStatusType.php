@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Domain\Aggregate\Order;
@@ -10,5 +11,4 @@ enum FoodOrderStatusType: string
     case COOKING_COMPLETED = 'cooking_completed';
     case CANCELLED = 'cancelled';
     case READY = 'ready';
-
 }

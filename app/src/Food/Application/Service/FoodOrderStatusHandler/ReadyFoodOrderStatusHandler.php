@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Application\Service\FoodOrderStatusHandler;
@@ -14,14 +15,13 @@ class ReadyFoodOrderStatusHandler extends FoodOrderStatusHandler
      */
     public function handle(FoodOrder $order): void
     {
-        if ($order->getStatus() === FoodOrderStatusType::READY) {
+        if (FoodOrderStatusType::READY === $order->getStatus()) {
             foreach ($order->getFoodItems() as $foodItem) {
-                if ($foodItem->getCookingStatus() !== FoodCookingStatusType::PACKED) {
+                if (FoodCookingStatusType::PACKED !== $foodItem->getCookingStatus()) {
                     throw new \Exception(sprintf('Food "%s" is not packed yet', $foodItem->getTitle()));
                 }
             }
         }
         parent::handle($order);
     }
-
 }

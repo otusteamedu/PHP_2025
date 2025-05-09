@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Controller;
 
@@ -11,7 +11,7 @@ use App\Shared\Infrastructure\Http\Request;
 
 class PlaceOrderAction extends BaseAction
 {
-    public function __construct(private readonly  PlaceOrderUseCase $placeOrderUseCase)
+    public function __construct(private readonly PlaceOrderUseCase $placeOrderUseCase)
     {
     }
 
@@ -22,5 +22,4 @@ class PlaceOrderAction extends BaseAction
 
         return $this->responseSuccess($result)->asJson();
     }
-
 }

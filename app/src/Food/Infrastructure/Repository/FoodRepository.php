@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Repository;
@@ -7,7 +8,6 @@ use App\Food\Domain\Aggregate\FoodInterface;
 use App\Food\Domain\Repository\FoodRepositoryInterface;
 use App\Food\Infrastructure\Mapper\FoodMapper;
 use App\Shared\Infrastructure\Database\Db;
-use PDO;
 
 class FoodRepository implements FoodRepositoryInterface
 {
@@ -35,14 +35,13 @@ class FoodRepository implements FoodRepositoryInterface
             $statement->bindValue(':status_updated_at', $food->getStatusUpdatedAt()->format(DATE_ATOM));
             if (!$statement->execute()) {
                 throw new \Exception('Food could not be added into database');
-            };
+            }
             $this->db->connection->commit();
         } catch (\Throwable $exception) {
             $this->db->connection->rollBack();
             throw $exception;
         }
     }
-
 
     public function findById(string $foodId): ?FoodInterface
     {
@@ -57,7 +56,7 @@ class FoodRepository implements FoodRepositoryInterface
         $statement->bindValue(':order_id', $orderId);
         $statement->execute();
 
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($result as $row) {
             $foodItems[] = $this->foodMapper->foodMap($row);
         }

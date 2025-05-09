@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Domain\Service\FoodOrganizer;
 
@@ -14,7 +14,6 @@ use App\Food\Domain\Service\SaladCombiner;
 
 class FoodOrganizer
 {
-
     public function make(Food $food, IngredientType ...$ingredients): Food
     {
         $combiner = new Combiner(new BaseFoodCombiner());
@@ -28,7 +27,5 @@ class FoodOrganizer
         }
 
         return $food;
-
     }
-
 }

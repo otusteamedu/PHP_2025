@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Subscriber;
 
@@ -10,14 +10,12 @@ use App\Shared\Domain\Event\EventInterface;
 
 class FoodCookingStatusSubscriber implements SubscriberInterface
 {
-
     public function __invoke(EventInterface $event): void
     {
         if ($this->supportsEvent($event)) {
-            //todo например, сделать так чтобы он менял статус заказа, если вся еда готова
-           sleep(1);
+            // todo например, сделать так чтобы он менял статус заказа, если вся еда готова
+            sleep(1);
         }
-
     }
 
     public function supportsEvent(EventInterface $event): bool

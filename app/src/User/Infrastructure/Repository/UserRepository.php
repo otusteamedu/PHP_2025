@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\User\Infrastructure\Repository;
 
@@ -11,7 +11,6 @@ use App\User\Domain\Aggregate\User\User;
 use App\User\Domain\Repository\UserFilter;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\User\Infrastructure\Mapper\UserMapper;
-use PDO;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -42,7 +41,7 @@ class UserRepository implements UserRepositoryInterface
             $statement->bindValue(':name', $user->name);
             if (!$statement->execute()) {
                 throw new \Exception('User could not be added into database');
-            };
+            }
             $this->db->connection->commit();
         } catch (\Throwable $exception) {
             $this->db->connection->rollBack();
@@ -56,10 +55,10 @@ class UserRepository implements UserRepositoryInterface
         $statement = $this->db->connection->prepare($sql);
         $statement->bindValue(':id', $userId);
         $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
         if (!$result) {
             return null;
-        };
+        }
         $user = $this->userMapper->userMap($result);
 
         return $user;
@@ -89,9 +88,9 @@ class UserRepository implements UserRepositoryInterface
         $statement = $this->db->connection->prepare($sql);
         $statement->bindValue(':id', $userId);
         $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
 
-        return $result !== false;
+        return false !== $result;
     }
 
     private function getCount(string $sql): int

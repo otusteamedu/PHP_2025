@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Domain\Aggregate\VO;
 
@@ -28,7 +28,7 @@ class FoodCalorie implements \JsonSerializable
 
     public function __toString(): string
     {
-        return (string)$this->value;
+        return (string) $this->value;
     }
 
     public function jsonSerialize(): int

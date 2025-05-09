@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Controller;
@@ -23,5 +24,4 @@ class UpdateFoodOrderStatusAction extends BaseAction
 
         return $this->responseSuccess($result)->asJson();
     }
-
 }

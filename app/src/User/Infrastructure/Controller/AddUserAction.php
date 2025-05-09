@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\User\Infrastructure\Controller;
 
@@ -31,5 +31,4 @@ class AddUserAction extends BaseAction
 
         return $this->responseSuccess($result)->asJson();
     }
-
 }

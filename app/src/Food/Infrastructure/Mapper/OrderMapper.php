@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Infrastructure\Mapper;
@@ -11,8 +12,7 @@ class OrderMapper
 {
     public function __construct(
         private FoodRepository $foodRepository,
-    )
-    {
+    ) {
     }
 
     public function orderMap(array $row): FoodOrderProxy
@@ -34,5 +34,4 @@ class OrderMapper
 
         return $order;
     }
-
 }

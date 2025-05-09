@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Domain\Aggregate\Ingredient;
 
@@ -15,5 +15,4 @@ class OnionIngredient extends FoodIngredient
     {
         parent::__construct(new FoodTitle('onion'), new FoodMass(15), new FoodCalorie(0));
     }
-
 }

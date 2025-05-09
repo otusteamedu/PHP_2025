@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Domain\Aggregate;
@@ -19,12 +20,11 @@ abstract class Food implements FoodInterface
     private string $orderId;
 
     public function __construct(
-        protected FoodTitle                 $title,
-        string                              $orderId,
-        FoodType                            $type,
-        private readonly PublisherInterface $publisher
-    )
-    {
+        protected FoodTitle $title,
+        string $orderId,
+        FoodType $type,
+        private readonly PublisherInterface $publisher,
+    ) {
         $this->id = UuidService::generate();
         $this->setCookingStatus(FoodCookingStatusType::IN_QUEUE);
         $this->statusCreatedAt = new \DateTimeImmutable();
@@ -90,5 +90,4 @@ abstract class Food implements FoodInterface
     {
         return $this->type;
     }
-
 }

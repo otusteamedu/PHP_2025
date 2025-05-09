@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Food\Application\UseCase\PlaceOrder;
 
@@ -12,9 +12,8 @@ readonly class PlaceOrderUseCase
 {
     public function __construct(
         private FoodOrderRepositoryInterface $foodOrderRepository,
-        private FoodOrderBuilderInterface    $foodOrderBuilder,
-    )
-    {
+        private FoodOrderBuilderInterface $foodOrderBuilder,
+    ) {
     }
 
     public function __invoke(PlaceOrderRequest $makeBurgerRequest): PlaceOrderResponse

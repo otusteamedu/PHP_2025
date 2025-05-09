@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Application\UseCase\UpdateOrderStatus;
@@ -19,8 +20,7 @@ readonly class UpdateOrderStatusUseCase
 
     public function __construct(
         private FoodOrderRepositoryInterface $foodOrderRepository,
-    )
-    {
+    ) {
         $this->foodOrderStatusHandler = new EmptyFoodOrderHandler();
         $this->foodOrderStatusHandler
             ->setNext(new CancelFoodOrderStatusHandler())

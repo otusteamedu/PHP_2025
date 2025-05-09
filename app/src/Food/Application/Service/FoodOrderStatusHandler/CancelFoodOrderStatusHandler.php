@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Application\Service\FoodOrderStatusHandler;
@@ -14,17 +15,13 @@ class CancelFoodOrderStatusHandler extends FoodOrderStatusHandler
      */
     public function handle(FoodOrder $order): void
     {
-        if ($order->getStatus() === FoodOrderStatusType::CANCELLED) {
+        if (FoodOrderStatusType::CANCELLED === $order->getStatus()) {
             foreach ($order->getFoodItems() as $foodItem) {
-                if ($foodItem->getCookingStatus() !== FoodCookingStatusType::IN_QUEUE) {
-                    throw new \Exception(
-                        sprintf('Order cannot be cancelled because of "%s" started cooking already',
-                            $foodItem->getTitle())
-                    );
+                if (FoodCookingStatusType::IN_QUEUE !== $foodItem->getCookingStatus()) {
+                    throw new \Exception(sprintf('Order cannot be cancelled because of "%s" started cooking already', $foodItem->getTitle()));
                 }
             }
         }
         parent::handle($order);
     }
-
 }

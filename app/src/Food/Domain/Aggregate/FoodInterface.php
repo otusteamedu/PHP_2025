@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Food\Domain\Aggregate;
@@ -22,5 +23,4 @@ interface FoodInterface
     public function removeIngredient(FoodIngredient $ingredient): void;
 
     public function getType(): FoodType;
-
 }
