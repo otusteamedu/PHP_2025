@@ -7,25 +7,10 @@ session_start();
     
 
 class OrderBuilder  
-{  
-    private array $product;  
-    private string $order; 
-    
-    public function set_product($product) 
-    {  
-        if(is_array($product)) {
-            $this->product = $product;
-            return $this;
-        } 
-
-        throw new \Exception("Ошибка продукта");
-        
-    }  
-
-    public function get_product() 
-    {  
-        return $this->product;
-    }  
+{   
+    private string $order; // Данные заказа
+    private string $payway; // Способ оплаты
+    private string $getway; // Способ получения
 
     public function set_order($order) 
     {  
@@ -38,6 +23,28 @@ class OrderBuilder
         return $this->order;
     } 
 
+    public function set_payway($payway) 
+    {  
+        $this->payway = $payway;
+        return $this;
+    }  
+
+    public function get_payway() 
+    {  
+        return $this->payway;
+    } 
+
+    public function set_getway($getway) 
+    {  
+        $this->getway = $getway;
+        return $this;
+    }  
+
+    public function get_getway() 
+    {  
+        return $this->getway;
+    } 
+
     public function build(): Order  
     {  
         return new Order($this);  
@@ -46,13 +53,15 @@ class OrderBuilder
 
 class Order  
 {  
-    private array $product;  
-    private string $order; 
+    private string $order; // Данные заказа
+    private string $payway; // Способ оплаты
+    private string $getway; // Способ получения
 
     public function __construct(OrderBuilder $builder)  
     {  
-        $this->product = $builder->get_product();  
         $this->order = $builder->get_order();  
+        $this->payway = $builder->get_payway(); 
+        $this->getway = $builder->get_getway(); 
     }  
 
     public function get_order() 
@@ -60,18 +69,23 @@ class Order
         return $this->order;
     } 
 
-    public function get_product() 
+    public function get_payway() 
     {  
-        return $this->product;
+        return $this->payway;
+    }  
+
+    public function get_getway() 
+    {  
+        return $this->getway;
     }  
      
 }
 
 try {
-    $builder = (new OrderBuilder())->set_product(['Бургер'])->set_order('111'); 
-    $person = $builder->build();
+    $builder = (new OrderBuilder())->set_order('Бургер')->set_payway('Картой')->set_getway('На кассе'); 
+    $order_build = $builder->build();
     echo "<pre>";
-    var_dump($person->get_product());
+    var_dump($order_build);
     echo "</pre>";
 }
 

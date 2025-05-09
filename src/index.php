@@ -5,6 +5,7 @@ session_start();
 
 use Application\UseCase\MakeProduct\MakeProductUseCase;
 use Application\UseCase\MakeOrder\MakeOrderUseCase;
+use Application\UseCase\MakeOrderCheckout\MakeOrderCheckoutUseCase;
 use Domain\Entity\Product\BurgerProduct;
 use Domain\Entity\Product\BurgerProductExt;
 use Domain\Entity\Product\HotdogProduct;
@@ -71,6 +72,8 @@ if(isset($_GET["order_status"])) {
         )
     )();
 
+
+
  
     $order_data = (
         new MakeOrderUseCase(
@@ -106,5 +109,36 @@ if(isset($_GET["order_status"])) {
     )();
 
     print_r($order_data);
+
+}
+
+
+if(isset($_GET["order_checkout"])) {
+
+    $product_array[] = (
+        new MakeProductUseCase(
+            new ProductExt(
+                new BurgerProduct("Добавьте огурчиков и лука побольше")
+            )
+        )
+    )();
+
+    $product_array[] = (
+        new MakeProductUseCase(
+            new BurgerProduct("")
+        )
+    )();
+
+    $product = new Product($product_array); // Заполняем продукт
+    $user = new User(1); // Авторизуем пользователя
+    $order = new Order($user, $product); // Размещаем заказ
+    $payway = "Картой"; // Способ оплаты
+    $getway = "На кассе"; // Способ получения
+
+    $res = (new MakeOrderCheckoutUseCase($order,$payway,$getway))(); // Формируем заказ
+
+    echo "<pre>";
+    print_r($res);
+    echo "</pre>";
 
 }
