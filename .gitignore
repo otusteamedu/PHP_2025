@@ -6,3 +6,4 @@
 /docker/nginx/logs/
 /docker/db/data/
 /.env
+/app/.php-cs-fixer.cache
