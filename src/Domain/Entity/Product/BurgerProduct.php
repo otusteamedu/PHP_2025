@@ -8,7 +8,7 @@ class BurgerProduct implements ProductFactoryInterface
 {  
 
     public function __construct(  
-        private readonly string $recipe,  
+        private readonly ?string $recipe=null,  
     )  
     {  
     }  
