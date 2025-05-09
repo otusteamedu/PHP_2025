@@ -37,6 +37,7 @@ readonly class UpdateOrderStatusUseCase
         AssertService::notNull($newStatus, message: "Status {$updateOrderStatusRequest->newStatus} cannot be created.");
 
         $order->setStatus($newStatus);
+
         $validator = new FoodOrderStatusValidator($this->foodOrderStatusHandler);
         $validator->validate($order);
         $this->foodOrderRepository->add($order);

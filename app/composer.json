@@ -17,6 +17,7 @@
   "require": {
     "webmozart/assert": "^1.11",
     "ramsey/uuid": "^4.7",
-    "php-di/php-di": "^7.0"
+    "php-di/php-di": "^7.0",
+    "ext-pdo": "*"
   }
 }

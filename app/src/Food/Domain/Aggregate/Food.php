@@ -10,16 +10,18 @@ use App\Shared\Domain\Service\UuidService;
 
 abstract class Food implements FoodInterface
 {
-    private readonly string $id;
+    private string $id;
     private array $ingredients = [];
     private FoodCookingStatusType $cookingStatus;
     private \DateTimeImmutable $statusCreatedAt;
     private \DateTimeImmutable $statusUpdatedAt;
+    private FoodType $type;
     private string $orderId;
 
     public function __construct(
         protected FoodTitle                 $title,
         string                              $orderId,
+        FoodType                            $type,
         private readonly PublisherInterface $publisher
     )
     {
@@ -27,7 +29,7 @@ abstract class Food implements FoodInterface
         $this->setCookingStatus(FoodCookingStatusType::IN_QUEUE);
         $this->statusCreatedAt = new \DateTimeImmutable();
         $this->orderId = $orderId;
-
+        $this->type = $type;
     }
 
     public function getId(): string
@@ -82,6 +84,11 @@ abstract class Food implements FoodInterface
     public function getOrderId(): string
     {
         return $this->orderId;
+    }
+
+    public function getType(): FoodType
+    {
+        return $this->type;
     }
 
 }

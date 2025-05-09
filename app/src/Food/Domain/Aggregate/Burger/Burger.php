@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-
 namespace App\Food\Domain\Aggregate\Burger;
 
 use App\Food\Domain\Aggregate\Food;
+use App\Food\Domain\Aggregate\FoodType;
 use App\Food\Domain\Aggregate\VO\FoodTitle;
 use App\Shared\Application\Publisher\PublisherInterface;
 
@@ -15,7 +15,8 @@ class Burger extends Food
         if (!$title) {
             $title = new FoodTitle('burger');
         }
-        parent::__construct($title, $orderId, $this->publisher);
+
+        parent::__construct($title, $orderId, FoodType::BURGER, $this->publisher);
         $this->add();
     }
 
@@ -24,4 +25,5 @@ class Burger extends Food
         $this->addIngredient(new BurgerBunIngredient());
         $this->addIngredient(new BurgerPuttyIngredient());
     }
+
 }

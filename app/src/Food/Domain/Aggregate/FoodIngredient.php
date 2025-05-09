@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-
 namespace App\Food\Domain\Aggregate;
 
 use App\Food\Domain\Aggregate\VO\FoodCalorie;
 use App\Food\Domain\Aggregate\VO\FoodTitle;
 use App\Food\Domain\Aggregate\VO\FoodMass;
 
-abstract class FoodIngredient implements \JsonSerializable
+class FoodIngredient implements \JsonSerializable
 {
     public function __construct(
         protected readonly FoodTitle   $title,
