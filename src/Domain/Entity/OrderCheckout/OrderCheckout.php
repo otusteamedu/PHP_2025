@@ -15,6 +15,9 @@ class OrderCheckout implements OrderCheckoutBuilderInterface
 
     public function set_order($order) 
     {  
+        if(!$order)
+            throw new \Exception("Ошибка массива");
+
         $this->order = $order;
         return $this;
     }  
@@ -26,6 +29,9 @@ class OrderCheckout implements OrderCheckoutBuilderInterface
 
     public function set_payway($payway) 
     {  
+        if(!$payway)
+            throw new \Exception("Ошибка способа оплаты");
+
         $this->payway = $payway;
         return $this;
     }  
@@ -37,6 +43,9 @@ class OrderCheckout implements OrderCheckoutBuilderInterface
 
     public function set_getway($getway) 
     {  
+        if(!$getway)
+            throw new \Exception("Ошибка способа доставки");
+
         $this->getway = $getway;
         return $this;
     }  

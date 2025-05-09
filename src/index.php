@@ -11,7 +11,10 @@ use Domain\Entity\Product\BurgerProductExt;
 use Domain\Entity\Product\HotdogProduct;
 use Domain\Entity\Product\HotdogProductExt;
 use Domain\Entity\Product\ProductExt;
-
+use Domain\Entity\PayWay\CardPayWay;
+use Domain\Entity\PayWay\CashPayWay;
+use Domain\Entity\GetWay\DescGetWay;
+use Domain\Entity\GetWay\HomeGetWay;
 
 use Domain\Entity\Order\Order;
 use Domain\ValueObject\User;
@@ -115,30 +118,47 @@ if(isset($_GET["order_status"])) {
 
 if(isset($_GET["order_checkout"])) {
 
-    $product_array[] = (
-        new MakeProductUseCase(
-            new ProductExt(
-                new BurgerProduct("Добавьте огурчиков и лука побольше")
+   
+
+    try {
+
+        $product_array[] = (
+            new MakeProductUseCase(
+                new ProductExt(
+                    new BurgerProduct("Добавьте огурчиков и лука побольше")
+                )
             )
-        )
-    )();
+        )();
+    
+        $product_array[] = (
+            new MakeProductUseCase(
+                new BurgerProduct("")
+            )
+        )();
+    
+        $product = new Product($product_array); // Заполняем продукт
+        $user = new User(1); // Авторизуем пользователя
+        $order = new Order($user, $product); // Размещаем заказ
+        
+        $payway = (new CardPayWay)->getPayWay(); // Выбираем способ оплаты
+        $getway = (new DescGetWay)->getGetWay(); // Выбираем способ оплаты
 
-    $product_array[] = (
-        new MakeProductUseCase(
-            new BurgerProduct("")
-        )
-    )();
+        $res = (new MakeOrderCheckoutUseCase($order,$payway,$getway))(); // Формируем заказ
+        echo "<pre>";
+        print_r($res->get_order());
+        print_r($res->get_payway());
+        print_r($res->get_getway());
+        echo "</pre>";
 
-    $product = new Product($product_array); // Заполняем продукт
-    $user = new User(1); // Авторизуем пользователя
-    $order = new Order($user, $product); // Размещаем заказ
-    $payway = "Картой"; // Способ оплаты
-    $getway = "На кассе"; // Способ получения
+        $order->setStatus("Awaiting... 1 minute"); // Готовим заказ
+        $order->setStatus("Is ready"); // Оповещаем, что готов
 
-    $res = (new MakeOrderCheckoutUseCase($order,$payway,$getway))(); // Формируем заказ
+    }
 
-    echo "<pre>";
-    print_r($res);
-    echo "</pre>";
+    catch (\Exception $e) {
+        echo $e->getMessage();
+    }
+    
+    
 
 }
