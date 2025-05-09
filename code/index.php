@@ -1,6 +1,4 @@
 <?php
-//echo "Привет, Otus!<br>".date("Y-m-d H:i:s") ."<br><br>";
-
 
 // Настройки подключения к базе данных
 $servername = "db"; // Имя сервиса из docker-compose
