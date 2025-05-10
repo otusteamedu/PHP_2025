@@ -15,7 +15,7 @@ final class Url
 
     public function getUrl():string
     {
-        return "$this->url";
+        return $this->url;
     }
 
     private function assertUrlIsValid(string $value):void

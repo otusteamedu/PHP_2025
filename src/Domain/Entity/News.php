@@ -20,8 +20,8 @@ class News
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
-    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
-    private ?\DateTimeInterface $create_date = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $create_date = null;
 
     public function getId(): ?int
     {
@@ -52,12 +52,12 @@ class News
         return $this;
     }
 
-    public function getCreateDate(): ?\DateTimeInterface
+    public function getCreateDate(): ?\DateTimeImmutable
     {
         return $this->create_date;
     }
 
-    public function setCreateDate(\DateTimeInterface $create_date): static
+    public function setCreateDate(\DateTimeImmutable $create_date): static
     {
         $this->create_date = $create_date;
 

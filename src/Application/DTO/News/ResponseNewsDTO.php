@@ -7,9 +7,9 @@ final class ResponseNewsDTO
     public readonly int $id;
     public readonly string $title;
     public readonly string $url;
-    public readonly \DateTimeInterface|false $date;
+    public readonly \DateTimeImmutable|NULL $date;
 
-    public function __construct(int $id, string $title, string $url, \DateTimeInterface|false $date = false)
+    public function __construct(int $id, string $title, string $url, \DateTimeImmutable|NULL $date = NULL)
     {
         $this->id = $id;
         $this->title = $title;

@@ -3,9 +3,7 @@
 namespace App\Infrastructure\Http\News\Controller;
 
 use App\Application\DTO\Report\RequestReportDTO;
-use App\Application\UseCase\CreateNewsUseCase;
-use App\Application\UseCase\GenerateReportUseCase;
-use App\Application\UseCase\GetNewsList;
+use App\Infrastructure\UseCase\GenerateReportUseCase;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,9 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class GenerateNewsController extends AbstractController
 {
     public function __construct(
-        protected CreateNewsUseCase     $createNewsUseCase,
         protected GenerateReportUseCase $generateReportUseCase,
-        protected GetNewsList           $getNewsList,
     ){}
 
     final public function generateReport(Request $request): JsonResponse

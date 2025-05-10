@@ -6,9 +6,9 @@ final class NewsDTO
 {
     public readonly string $title;
     public readonly string $url;
-    public readonly \DateTimeInterface $createDate;
+    public readonly \DateTimeImmutable $createDate;
 
-    public function __construct(string $title, string $url, \DateTimeInterface $createDate)
+    public function __construct(string $title, string $url, \DateTimeImmutable $createDate)
     {
         $this->title = $title;
         $this->url = $url;

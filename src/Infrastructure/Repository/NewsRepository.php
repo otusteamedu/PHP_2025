@@ -5,6 +5,7 @@ namespace App\Infrastructure\Repository;
 use App\Application\DTO\News\ResponseNewsDTO;
 use App\Domain\Entity\News;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Domain\Repository\NewsRepositoryInterface;
@@ -14,7 +15,7 @@ use App\Domain\Repository\NewsRepositoryInterface;
  * @implements NewsRepositoryInterface<T>
  * @extends ServiceEntityRepository<News>
  */
-class NewsRepository extends ServiceEntityRepository implements NewsRepositoryInterface
+class NewsRepository extends ServiceEntityRepository implements NewsRepositoryInterface, ServiceEntityRepositoryInterface
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
