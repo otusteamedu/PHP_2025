@@ -15,6 +15,5 @@ class AddBurgerRequest
         foreach ($ingredients as $ingredient) {
             $this->ingredients[] = IngredientType::from($ingredient);
         }
-        $this->ingredients = $ingredients;
     }
 }

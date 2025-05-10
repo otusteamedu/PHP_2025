@@ -25,7 +25,7 @@ readonly class AddBurgerUseCase
         $order = $this->orderRepository->findById($request->orderId);
         Assert::notNull($order, 'Order not found.');
         $burger = $this->factory->build($request->orderId, $request->title);
-        $burger = $this->organizer->make($burger);
+        $burger = $this->organizer->make($burger, ...$request->ingredients);
         $this->repository->add($burger);
 
         return new AddBurgerResponse($burger->getId());

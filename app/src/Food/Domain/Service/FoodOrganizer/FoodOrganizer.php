@@ -5,25 +5,24 @@ declare(strict_types=1);
 namespace App\Food\Domain\Service\FoodOrganizer;
 
 use App\Food\Domain\Aggregate\Food;
+use App\Food\Domain\Aggregate\FoodInterface;
 use App\Food\Domain\Aggregate\Ingredient\IngredientType;
-use App\Food\Domain\Service\BaseFoodCombiner;
-use App\Food\Domain\Service\Combiner;
-use App\Food\Domain\Service\OnionCombiner;
-use App\Food\Domain\Service\PepperCombiner;
-use App\Food\Domain\Service\SaladCombiner;
+use App\Food\Domain\Service\FoodFiller\BaseFoodFiller;
+use App\Food\Domain\Service\FoodFiller\OnionFoodFiller;
+use App\Food\Domain\Service\FoodFiller\PepperFoodFiller;
+use App\Food\Domain\Service\FoodFiller\SaladFoodFiller;
 
 class FoodOrganizer
 {
-    public function make(Food $food, IngredientType ...$ingredients): Food
+    public function make(Food $food, IngredientType ...$ingredients): FoodInterface
     {
-        $combiner = new Combiner(new BaseFoodCombiner());
+        $food = new BaseFoodFiller($food);
         foreach ($ingredients as $ingredient) {
             match ($ingredient) {
-                IngredientType::ONION => $add = new OnionCombiner($combiner),
-                IngredientType::PEPPER => $add = new PepperCombiner($combiner),
-                IngredientType::SALAD => $add = new SaladCombiner($combiner),
+                IngredientType::ONION => $food = new OnionFoodFiller($food),
+                IngredientType::PEPPER => $food = new PepperFoodFiller($food),
+                IngredientType::SALAD => $food = new SaladFoodFiller($food),
             };
-            $add->addIngredient($food);
         }
 
         return $food;

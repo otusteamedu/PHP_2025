@@ -23,4 +23,10 @@ interface FoodInterface
     public function removeIngredient(FoodIngredient $ingredient): void;
 
     public function getType(): FoodType;
+
+    public function setCookingStatus(FoodCookingStatusType $cookingStatus): void;
+
+    public function getStatusCreatedAt(): \DateTimeImmutable;
+
+    public function getStatusUpdatedAt(): \DateTimeImmutable;
 }
