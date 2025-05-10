@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление событиями</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .block { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        label { display: inline-block; width: 120px; }
+    </style>
+</head>
+<body>
+    <h1>Добавить событие</h1>
+    <form method="POST" action="index.php">
+        <input type="hidden" name="action" value="add">
+        <label>Priority:</label><input type="number" name="priority"><br>
+        
+        
+        <h3>Conditions</h3>
+        <div id="conditions">
+            <div>
+                <label>Param Name:</label><input type="text" name="paramName[]">
+                <label>Param Value:</label><input type="number" name="paramValue[]">
+                <button type="button" onclick="removeCondition(this)">Удалить</button>
+            </div>
+        </div>
+        <button type="button" onclick="addCondition()">Добавить условие</button><br><br>
+
+        <label>Event:</label><input type="text" name="event"><br>
+        
+        <button type="submit">Добавить событие</button>
+    </form>
+
+    <h1>Поиск события</h1>
+    <form method="POST" action="index.php">
+        <input type="hidden" name="action" value="search">
+        
+        <h3>Conditions</h3>
+        <div id="search_conditions">
+            <div>
+                <label>Param Name:</label><input type="text" name="searchParamName[]">
+                <label>Param Value:</label><input type="number" name="searchParamValue[]">
+                <button type="button" onclick="removeCondition(this)">Удалить</button>
+            </div>
+        </div>
+        <button type="button" onclick="addSearchCondition()">Добавить условие</button><br><br>
+        
+        <button type="submit">Найти событие</button>
+    </form>
+
+    <h1>Очистить события</h1>
+    <form method="POST" action="index.php">
+        <input type="hidden" name="action" value="clear">
+        <button type="submit">Очистить все события</button>
+    </form>
+
+    <script>
+        function addCondition() {
+            const div = document.createElement('div');
+            div.innerHTML = '<label>Param Name:</label><input type="text" name="paramName[]"> <label>Param Value:</label><input type="number" name="paramValue[]"> <button type="button" onclick="removeCondition(this)">Удалить</button>';
+            document.getElementById('conditions').appendChild(div);
+        }
+
+        function addSearchCondition() {
+            const div = document.createElement('div');
+            div.innerHTML = '<label>Param Name:</label><input type="text" name="searchParamName[]"> <label>Param Value:</label><input type="number" name="searchParamValue[]"> <button type="button" onclick="removeCondition(this)">Удалить</button>';
+            document.getElementById('search_conditions').appendChild(div);
+        }
+
+        function removeCondition(button) {
+            button.parentElement.remove();
+        }
+    </script>
+</body>
+</html>
