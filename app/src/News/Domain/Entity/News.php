@@ -10,18 +10,18 @@ use Symfony\Component\Uid\Uuid;
 
 class News
 {
-    private string $id;
     private \DateTimeImmutable $createdAt;
 
     public function __construct(
+        private readonly Uuid      $id,
         private readonly NewsTitle $title,
         private readonly NewsLink  $link,
-    ) {
-        $this->id = Uuid::v4()->toRfc4122();
+    )
+    {
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function getId(): string
+    public function getId(): Uuid
     {
         return $this->id;
     }

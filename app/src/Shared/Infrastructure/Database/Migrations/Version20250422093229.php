@@ -19,9 +19,8 @@ final class Version20250422093229 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE TABLE news_news (id VARCHAR(36) NOT NULL, title VARCHAR(255) NOT NULL, link VARCHAR(500) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))
+            CREATE TABLE news_news (id UUID NOT NULL, title VARCHAR(255) NOT NULL, link VARCHAR(500) NOT NULL, created_at TIMESTAMP(0) NOT NULL, PRIMARY KEY(id))
         SQL);
         $this->addSql(<<<'SQL'
             COMMENT ON COLUMN news_news.created_at IS '(DC2Type:datetime_immutable)'

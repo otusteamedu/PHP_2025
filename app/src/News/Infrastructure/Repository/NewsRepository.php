@@ -24,7 +24,7 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
         return $this->findOneBy(['id' => $id]);
     }
 
-    public function add(News $news): void
+    public function save(News $news): void
     {
         $this->getEntityManager()->persist($news);
         $this->getEntityManager()->flush();

@@ -11,7 +11,7 @@ interface NewsRepositoryInterface
 {
     public function findById(string $id): ?News;
 
-    public function add(News $news): void;
+    public function save(News $news): void;
 
     public function findByFilter(NewsFilter $filter): PaginationResult;
 

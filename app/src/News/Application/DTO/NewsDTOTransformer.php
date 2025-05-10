@@ -11,7 +11,7 @@ class NewsDTOTransformer
     public function fromEntity(News $news): NewsDTO
     {
         $newsDTO = new NewsDTO();
-        $newsDTO->id = $news->getId();
+        $newsDTO->id = $news->getId()->toString();
         $newsDTO->title = $news->getTitle()->getValue();
         $newsDTO->link = $news->getLink()->getValue();
         $newsDTO->created_at = $news->getCreatedAt()->format(DATE_ATOM);

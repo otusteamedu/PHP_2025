@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\News\Application\UseCase\DownloadNewsReport;
 
-use App\Shared\Domain\Service\FileHelper;
+use App\Shared\Infrastructure\Service\FileHelper;
 use League\Flysystem\FilesystemException;
 
 readonly class DownloadNewsReportUseCase

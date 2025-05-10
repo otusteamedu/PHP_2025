@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Domain\Service;
+namespace App\Shared\Infrastructure\Service;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;

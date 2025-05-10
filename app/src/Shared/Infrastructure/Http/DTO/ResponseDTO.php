@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Application\DTO;
+namespace App\Shared\Infrastructure\Http\DTO;
 
 readonly class ResponseDTO implements \JsonSerializable
 {

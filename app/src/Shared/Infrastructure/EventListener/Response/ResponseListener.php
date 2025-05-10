@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\EventListener\Response;
 
-use App\Shared\Application\DTO\ResponseDTOTransformer;
+use App\Shared\Infrastructure\Http\DTO\ResponseDTOTransformer;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;

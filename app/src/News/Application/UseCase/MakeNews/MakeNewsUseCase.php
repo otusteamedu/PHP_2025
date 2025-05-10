@@ -14,16 +14,17 @@ readonly class MakeNewsUseCase
         private NewsRepositoryInterface $repository,
         private NewsFactoryInterface    $newsFactory,
         private NewsParserInterface     $newsParser,
-    ) {
+    )
+    {
     }
 
     public function __invoke(MakeNewsRequest $request): MakeNewsResponse
     {
         $title = $this->newsParser->getTitle($request->link);
         $news = $this->newsFactory->create($title, $request->link);
-        $this->repository->add($news);
+        $this->repository->save($news);
 
-        return new MakeNewsResponse($news->getId());
+        return new MakeNewsResponse($news->getId()->toString());
     }
 
 }
