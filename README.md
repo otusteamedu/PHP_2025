@@ -1,3 +1,12 @@
-# PHP_2025
+### Использование
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Не проходит:
+```
+curl -X POST -d 'string=(()()()()))((((()()()))(()()()(((()))))))' http://mysite.local
+```
+Проходит:
+```
+curl -X POST -d 'string=(()())' http://mysite.local
+```
+
+или через форму http://mysite.local/
