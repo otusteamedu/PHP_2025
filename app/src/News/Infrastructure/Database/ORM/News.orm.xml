@@ -8,6 +8,6 @@
         </id>
         <embedded name="title" class="App\News\Domain\Entity\ValueObject\NewsTitle" use-column-prefix="false"/>
         <embedded name="link" class="App\News\Domain\Entity\ValueObject\NewsLink" use-column-prefix="false"/>
-        <field name="createdAt" type="datetime_immutable"/>
+        <field name="createdAt" type="datetimetz_immutable"/>
     </entity>
 </doctrine-mapping>

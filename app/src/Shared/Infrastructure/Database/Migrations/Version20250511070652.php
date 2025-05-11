@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250511054934 extends AbstractMigration
+final class Version20250511070652 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -24,21 +24,31 @@ final class Version20250511054934 extends AbstractMigration
             ALTER TABLE news_news ALTER id TYPE UUID
         SQL);
         $this->addSql(<<<'SQL'
+            ALTER TABLE news_news ALTER created_at TYPE TIMESTAMP(0) WITH TIME ZONE
+        SQL);
+        $this->addSql(<<<'SQL'
             COMMENT ON COLUMN news_news.id IS '(DC2Type:uuid)'
+        SQL);
+        $this->addSql(<<<'SQL'
+            COMMENT ON COLUMN news_news.created_at IS '(DC2Type:datetimetz_immutable)'
         SQL);
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            CREATE SCHEMA public
-        SQL);
+
         $this->addSql(<<<'SQL'
             ALTER TABLE news_news ALTER id TYPE UUID
         SQL);
         $this->addSql(<<<'SQL'
+            ALTER TABLE news_news ALTER created_at TYPE TIMESTAMP(0) WITHOUT TIME ZONE
+        SQL);
+        $this->addSql(<<<'SQL'
             COMMENT ON COLUMN news_news.id IS NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            COMMENT ON COLUMN news_news.created_at IS '(DC2Type:datetime_immutable)'
         SQL);
     }
 }
