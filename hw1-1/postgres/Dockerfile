@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Копируем пользовательские конфигурационные файлы
-COPY ./postgres.conf /etc/postgresql/postgresql.conf
+COPY postgres.conf /etc/postgresql/postgresql.conf
 
 # Установка переменных окружения, необходимых для работы Postgres
 ENV POSTGRES_DB=my_database
