@@ -6,6 +6,5 @@ namespace App\News\Domain\Service;
 
 interface NewsReportInterface
 {
-    public function generate(string ...$newsId): string;
-
+    public function generate(array $newsDTOs): string;
 }

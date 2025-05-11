@@ -19,6 +19,7 @@ class NewsDTOTransformer
         return $newsDTO;
     }
 
+    // todo ...$news переделать на массив, но тогда, как контролировать, что в нем дто?
     public function fromEntityList(News ...$news): array
     {
         $newsDTOs = [];

@@ -16,7 +16,7 @@ class Pager
     public function __construct(
         public int  $page,
         int         $per_page,
-        public ?int $total_items = null
+        public ?int $total_items = null,
     ) {
         $this->setLimit($per_page);
         $this->setTotalPages();
@@ -51,7 +51,7 @@ class Pager
         if (!$this->total_items) {
             $this->total_pages = 0;
         } else {
-            $this->total_pages = (int) ceil($this->total_items / $this->per_page);
+            $this->total_pages = (int)ceil($this->total_items / $this->per_page);
         }
     }
 

@@ -4,44 +4,37 @@ declare(strict_types=1);
 
 namespace App\News\Application\Service;
 
-use App\News\Domain\Entity\News;
-use App\News\Domain\Repository\NewsFilter;
-use App\News\Domain\Repository\NewsRepositoryInterface;
+use App\News\Application\DTO\NewsDTO;
 use App\News\Domain\Service\NewsReportInterface;
-use App\Shared\Domain\Service\FileHelper;
+use App\Shared\Infrastructure\Service\FileHelper;
 use Symfony\Component\Uid\Uuid;
 
 class HtmlNewsReportGenerator implements NewsReportInterface
 {
     private string $template = '<ul>{{CONTENT}}</ul>';
 
-    public function __construct(
-        private readonly NewsRepositoryInterface $newsRepository,
-        private readonly FileHelper              $reportFileHelper,
-    ) {
+    public function __construct(private readonly FileHelper $reportFileHelper)
+    {
     }
 
-    public function generate(string ...$newsId): string
+    public function generate(array $newsDTOs): string
     {
-        $filter = new NewsFilter();
-        $filter->setNewsIds(...$newsId);
-        $news = $this->newsRepository->findByFilter($filter);
-        if (!$news->total) {
-            throw new \Exception('News not found');
-        }
-        $fileName = Uuid::v4()->toRfc4122() . '.html';
-        $content = $this->parseReportContent(...$news->items);
+        $fileName = Uuid::v4()->toString().'.html';
+        $content = $this->parseReportContent($newsDTOs);
         $this->reportFileHelper->save($content, $fileName);
 
         return $fileName;
     }
 
-    private function parseReportContent(News ...$news): string
+    private function parseReportContent(array $newsDTOs): string
     {
         $content = '';
-        foreach ($news as $newsItem) {
-            $content .= sprintf('<li><a href="%s">%s</a><li>', $newsItem->getLink(), $newsItem->getTitle());
+
+        /** @var NewsDTO $dto */
+        foreach ($newsDTOs as $dto) {
+            $content .= sprintf('<li><a href="%s">%s</a><li>', $dto->link, $dto->title);
         }
+
         return str_replace('{{CONTENT}}', $content, $this->template);
     }
 }
