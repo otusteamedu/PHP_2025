@@ -46,5 +46,4 @@ class NewsListAction extends AbstractController
 
         return new JsonResponse($result);
     }
-
 }

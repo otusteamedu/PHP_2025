@@ -10,7 +10,7 @@ use League\Flysystem\FilesystemException;
 readonly class DownloadNewsReportUseCase
 {
     public function __construct(
-        private FileHelper $reportFileHelper
+        private FileHelper $reportFileHelper,
     ) {
     }
 
@@ -24,5 +24,4 @@ readonly class DownloadNewsReportUseCase
 
         return new DownloadNewsReportResponse($stream, $mimeType);
     }
-
 }

@@ -11,7 +11,7 @@ class NewsFilter
     private array $newsIds = [];
 
     public function __construct(
-        public ?Pager  $pager = null,
+        public ?Pager $pager = null,
         public ?string $search = null,
     ) {
     }
@@ -25,5 +25,4 @@ class NewsFilter
     {
         $this->newsIds = $newsIds;
     }
-
 }

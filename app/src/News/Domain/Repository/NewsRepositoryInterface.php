@@ -14,5 +14,4 @@ interface NewsRepositoryInterface
     public function save(News $news): void;
 
     public function findByFilter(NewsFilter $filter): PaginationResult;
-
 }

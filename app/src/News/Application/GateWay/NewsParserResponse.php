@@ -9,5 +9,4 @@ class NewsParserResponse
     public function __construct(public string $title)
     {
     }
-
 }

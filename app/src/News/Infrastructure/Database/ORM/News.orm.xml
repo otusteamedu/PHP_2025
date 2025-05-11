@@ -6,8 +6,8 @@
         <id name="id" type="uuid">
             <generator strategy="NONE"/>
         </id>
-        <field name="title" type="title" length="255"/>
-        <field name="link" type="link" length="500"/>
+        <embedded name="title" class="App\News\Domain\Entity\ValueObject\NewsTitle" use-column-prefix="false"/>
+        <embedded name="link" class="App\News\Domain\Entity\ValueObject\NewsLink" use-column-prefix="false"/>
         <field name="createdAt" type="datetime_immutable"/>
     </entity>
 </doctrine-mapping>

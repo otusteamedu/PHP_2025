@@ -12,5 +12,4 @@ class GenerateNewsReportRequest
     {
         $this->newsIds = $newsId;
     }
-
 }

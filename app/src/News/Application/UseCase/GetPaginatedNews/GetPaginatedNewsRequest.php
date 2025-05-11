@@ -11,5 +11,4 @@ class GetPaginatedNewsRequest
     public function __construct(public NewsFilter $filter)
     {
     }
-
 }

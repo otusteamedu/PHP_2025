@@ -9,5 +9,4 @@ class MakeNewsRequest
     public function __construct(public string $link)
     {
     }
-
 }

@@ -9,5 +9,4 @@ class NewsParserRequest
     public function __construct(public string $url)
     {
     }
-
 }

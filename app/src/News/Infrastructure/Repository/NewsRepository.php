@@ -35,7 +35,7 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
         $qb = $this->createQueryBuilder('n');
         if ($filter->search) {
             $qb->andWhere('n.title LIKE :search')
-                ->setParameter('search', '%' . $filter->search . '%');
+                ->setParameter('search', '%'.$filter->search.'%');
         }
         if ($filter->getNewsIds()) {
             $qb->andWhere('n.id IN (:ids)')

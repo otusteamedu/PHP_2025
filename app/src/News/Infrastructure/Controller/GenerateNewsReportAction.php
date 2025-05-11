@@ -25,7 +25,7 @@ class GenerateNewsReportAction extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $newsIds = $data['news_ids'] ?? null;
-        if ($newsIds === null) {
+        if (null === $newsIds) {
             throw new InvalidArgumentException('NewsIds is null');
         }
         $request = new GenerateNewsReportRequest(...$newsIds);
@@ -35,5 +35,4 @@ class GenerateNewsReportAction extends AbstractController
 
         return new JsonResponse(compact('link'));
     }
-
 }

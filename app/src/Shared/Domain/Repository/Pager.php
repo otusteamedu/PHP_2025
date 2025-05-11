@@ -51,7 +51,7 @@ class Pager
         if (!$this->total_items) {
             $this->total_pages = 0;
         } else {
-            $this->total_pages = (int)ceil($this->total_items / $this->per_page);
+            $this->total_pages = (int) ceil($this->total_items / $this->per_page);
         }
     }
 

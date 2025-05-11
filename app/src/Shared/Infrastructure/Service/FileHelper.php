@@ -8,7 +8,7 @@ use League\Flysystem\FilesystemException;
 readonly class FileHelper
 {
     public function __construct(
-        private Filesystem $fileSystem
+        private Filesystem $fileSystem,
     ) {
     }
 
@@ -18,9 +18,10 @@ readonly class FileHelper
     public function readStream(string $fileName)
     {
         $resource = $this->fileSystem->readStream($fileName);
-        if ($resource === false) {
+        if (false === $resource) {
             throw new \Exception(sprintf('Не удалось открыть поток "%s"', $fileName));
         }
+
         return $resource;
     }
 
@@ -37,7 +38,6 @@ readonly class FileHelper
         $result = $this->fileSystem->write($fileName, $content);
         if ($result) {
             throw new \Exception("Не удалось загрузить файл: $fileName");
-
         }
     }
 
@@ -48,6 +48,4 @@ readonly class FileHelper
     {
         return $this->fileSystem->mimeType($filename);
     }
-
-
 }

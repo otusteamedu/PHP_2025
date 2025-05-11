@@ -24,7 +24,7 @@ class MakeNewsAction extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $link = $data['link'] ?? null;
-        if ($link === null) {
+        if (null === $link) {
             throw new InvalidArgumentException('Link is not provided.');
         }
         $request = new MakeNewsRequest($link);
@@ -32,5 +32,4 @@ class MakeNewsAction extends AbstractController
 
         return new JsonResponse(compact('id'));
     }
-
 }

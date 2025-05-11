@@ -11,7 +11,7 @@ use App\Shared\Domain\Repository\Pager;
 readonly class GetPaginatedNewsUseCase
 {
     public function __construct(
-        private NewsDTOTransformer      $newsDTOTransformer,
+        private NewsDTOTransformer $newsDTOTransformer,
         private NewsRepositoryInterface $newsRepository,
     ) {
     }
@@ -29,5 +29,4 @@ readonly class GetPaginatedNewsUseCase
 
         return new GetPaginatedNewsResponse($news, $pager);
     }
-
 }

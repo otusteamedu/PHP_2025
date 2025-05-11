@@ -9,5 +9,4 @@ class GenerateNewsReportResponse
     public function __construct(public string $pathToFile)
     {
     }
-
 }

@@ -43,5 +43,4 @@ class DownloadNewsReportAction extends AbstractController
 
         return $response;
     }
-
 }

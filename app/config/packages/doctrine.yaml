@@ -11,9 +11,6 @@ doctrine:
         use_savepoints: true
         profiling_collect_backtrace: '%kernel.debug%'
     default_connection: default
-    types:
-      link: App\News\Infrastructure\Database\Type\LinkType
-      title: App\News\Infrastructure\Database\Type\TitleType
 
   orm:
     auto_generate_proxy_classes: true
@@ -27,6 +24,12 @@ doctrine:
         dir: '%kernel.project_dir%/src/News/Infrastructure/Database/ORM'
         prefix: 'App\News\Domain\Entity'
         alias: News
+      ValueObject:
+        is_bundle: false
+        type: xml
+        dir: '%kernel.project_dir%/src/News/Infrastructure/Database/ORM/ValueObject'
+        prefix: 'App\News\Domain\Entity\ValueObject'
+        alias: ValueObject
 
 #when@test:
 #  doctrine:

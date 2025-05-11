@@ -9,5 +9,4 @@ class DownloadNewsReportRequest
     public function __construct(public string $fileName)
     {
     }
-
 }

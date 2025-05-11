@@ -13,11 +13,10 @@ class News
     private \DateTimeImmutable $createdAt;
 
     public function __construct(
-        private readonly Uuid      $id,
+        private readonly Uuid $id,
         private readonly NewsTitle $title,
-        private readonly NewsLink  $link,
-    )
-    {
+        private readonly NewsLink $link,
+    ) {
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -40,5 +39,4 @@ class News
     {
         return $this->link;
     }
-
 }

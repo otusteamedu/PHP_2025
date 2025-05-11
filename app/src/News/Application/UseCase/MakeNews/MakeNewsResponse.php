@@ -9,5 +9,4 @@ class MakeNewsResponse
     public function __construct(public string $news_id)
     {
     }
-
 }

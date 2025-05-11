@@ -11,5 +11,4 @@ class GetPaginatedNewsResponse
     public function __construct(public array $news, public Pager $pager)
     {
     }
-
 }

@@ -12,10 +12,9 @@ readonly class MakeNewsUseCase
 {
     public function __construct(
         private NewsRepositoryInterface $repository,
-        private NewsFactoryInterface    $newsFactory,
-        private NewsParserInterface     $newsParser,
-    )
-    {
+        private NewsFactoryInterface $newsFactory,
+        private NewsParserInterface $newsParser,
+    ) {
     }
 
     public function __invoke(MakeNewsRequest $request): MakeNewsResponse
@@ -26,5 +25,4 @@ readonly class MakeNewsUseCase
 
         return new MakeNewsResponse($news->getId()->toString());
     }
-
 }

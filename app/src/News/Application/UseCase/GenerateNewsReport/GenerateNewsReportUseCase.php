@@ -19,5 +19,4 @@ readonly class GenerateNewsReportUseCase
 
         return new GenerateNewsReportResponse($fileName);
     }
-
 }

@@ -9,5 +9,4 @@ class DownloadNewsReportResponse
     public function __construct(public $stream, public string $mimeType)
     {
     }
-
 }
