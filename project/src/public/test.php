@@ -23,7 +23,7 @@ $date = date('Y-m-d H:i:s');
 
 try
 {
-    if(!$_SESSION['test1']) {
+    if(!($_SESSION['test1']??false)) {
         $_SESSION['test1'] = 'set from ' . $_SERVER['SERVER'];
     }
     $redis = new RedisCluster(null, [
