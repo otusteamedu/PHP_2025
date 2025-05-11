@@ -9,6 +9,14 @@ use Aovchinnikova\Hw15\Model\ValidationResult;
 class EmailValidationService
 {
 
+    // Нарушение: Валидаторы жестко закодированы (нарушение Open/Closed principle).
+    // Решение: Использовать стратегии через интерфейс.
+    // Правильный код:
+    // private array $validators;
+    // public function __construct(array $validators) {
+    //     $this->validators = $validators;
+    // }
+    
     /**
      * @param string $email
      * @return ValidationResult

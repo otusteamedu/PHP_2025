@@ -1,4 +1,13 @@
 services:
+  # Нарушение: Неиспользуемые сервисы (Redis, Memcached, PostgreSQL) - нарушение YAGNI.
+  # Решение: Удалить или добавить их использование в коде.
+  
+  # Отсутствует настройка для окружений (dev/prod).
+  # Правильный код:
+  # php-fpm:
+  #   environment:
+  #     - APP_ENV=dev
+  
   nginx:
     build:
       context: ./nginx
