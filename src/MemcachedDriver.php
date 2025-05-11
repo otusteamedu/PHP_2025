@@ -1,0 +1,21 @@
+<?php
+
+namespace App;
+
+class MemcachedDriver
+{
+    private readonly \Memcached $memcachedHandler;
+
+    public function __construct()
+    {
+        $this->memcachedHandler = new \Memcached();
+        if (!$this->memcachedHandler->addServer('memcached', 11211)) {
+            throw new \RuntimeException('Connection failed');
+        }
+    }
+
+    public function getVersion()
+    {
+        return $this->memcachedHandler->getVersion()['memcached:11211'];
+    }
+}
