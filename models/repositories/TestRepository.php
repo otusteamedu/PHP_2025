@@ -7,18 +7,18 @@ use app\models\Repository;
 use app\models\entities\DataEntity;
 use app\models\entities\Carts;
 
-class CartRepository extends Repository
+class TestRepository extends Repository
 {
 
     public function getTableName()
     {
-        return 'carts';
+        return 'test';
     }
 
     public function getAll(){
 
-        $sql = "SELECT id_cart,p.id_product,name_product,price,img,description, category, name_unit, type, quantity FROM carts as c, products as p, units as u, product_category as ctg,product_types as t WHERE id_session = :id_session AND c.id_product=p.id_product AND ctg.id_product_category=p.id_product_category AND u.id_unit=p.id_unit AND t.id_product_type=p.id_product_type";
-        $params = [':id_session' => session_id()];
+        $sql = "SELECT name FROM test";
+        $params = [];
 //      var_dump($sql,$params);
         return $this->db->queryAll($sql, $params);
     }
@@ -59,7 +59,6 @@ class CartRepository extends Repository
         return $res;
     }
     public function getGoodsQuantity(){
-
         $tableName = $this->getTableName();
         $id_session = session_id();
         $sql = "SELECT count(*) as count FROM {$tableName} WHERE id_session = :id_session";

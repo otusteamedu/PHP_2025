@@ -30,7 +30,7 @@
                 <a href="/order/view" class="btn btn-light navbar-btn">Заказы</a>
                 <?=$menu[2]?> <a href="/login/logout/?logout=true">[Выход]</a>
             <?endif;?>
-            <a href="/cart/view" id="cart" class="btn btn-light navbar-btn">Корзина (<span id="cart_quantity"><?=$menu[0]['count']?></span>)</a>
+            <a href="/cart/view" id="cart" class="btn btn-light navbar-btn">Корзина (<span id="cart_quantity"></span>)</a>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>

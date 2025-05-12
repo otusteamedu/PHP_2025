@@ -3,7 +3,7 @@
 //define("DIR_ROOT", $_SERVER['DOCUMENT_ROOT']);
 //define("DS", DIRECTORY_SEPARATOR);
 use app\engine\{Request,Db};
-use app\models\repositories\{CartRepository,ProductsRepository,UsersRepository,OrderRepository};
+use app\models\repositories\{CartRepository, ProductsRepository, TestRepository, UsersRepository, OrderRepository};
 
 return [
     'root_dir' => __DIR__ . "/../",
@@ -12,8 +12,8 @@ return [
     'components' => [
         'db' => [
             'class' => Db::class,
-            'driver' => 'PDO_PGSQL',
-            'host' => 'localhost',
+            'driver' => 'pgsql',
+            'host' => 'db',
             'login' => 'db_user',
             'password' => 'test',
             'database' => 'db_php',
@@ -24,18 +24,20 @@ return [
         ],
         //По хорошему сделать для репозиториев отедьное простое хранилище
         //без reflection
-        'cartRepository' => [
-            'class' => CartRepository::class
+//        'cartRepository' => [
+//            'class' => CartRepository::class
+//        ],
+//        'productRepository' => [
+//            'class' => ProductsRepository::class
+//        ],
+//        'userRepository' => [
+//            'class' => UsersRepository::class
+//        ],
+//        'orderRepository' => [
+//            'class' => OrderRepository::class
+//        ]
+        'testRepository' => [
+            'class' => TestRepository::class
         ],
-        'productRepository' => [
-            'class' => ProductsRepository::class
-        ],
-        'userRepository' => [
-            'class' => UsersRepository::class
-        ],
-        'orderRepository' => [
-            'class' => OrderRepository::class
-        ]
-
     ]
 ];
