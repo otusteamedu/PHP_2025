@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Домашнее задание 2</title>
+    <style>
+        .form-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .result {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Первая форма -->
+<div class="form-line">
+    <input type="number" id="number1" placeholder="Число 1">
+    <input type="number" id="number2" placeholder="Число 2">
+    <button id="calculateBtn">Вычислить</button>
+    <span id="calcResult" class="result"></span>
+</div>
+
+<!-- Вторая форма -->
+<div class="form-line">
+    <button id="cityBtn">Популярный город</button>
+    <span id="cityResult" class="result"></span>
+</div>
+
+<script>
+    // Первая форма
+    document.getElementById('calculateBtn').addEventListener('click', function () {
+        const number1 = document.getElementById('number1').value;
+        const number2 = document.getElementById('number2').value;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'consumeBash.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                document.getElementById('calcResult').textContent = xhr.responseText;
+            } else {
+                document.getElementById('calcResult').textContent = 'Ошибка';
+            }
+        };
+        xhr.send(`number1=${encodeURIComponent(number1)}&number2=${encodeURIComponent(number2)}`);
+    });
+
+    // Вторая форма
+    document.getElementById('cityBtn').addEventListener('click', function () {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'popularCity.php', true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                document.getElementById('cityResult').textContent = xhr.responseText;
+            } else {
+                document.getElementById('cityResult').textContent = 'Ошибка';
+            }
+        };
+        xhr.send();
+    });
+</script>
+
+</body>
+</html>

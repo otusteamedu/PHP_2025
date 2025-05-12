@@ -17,9 +17,6 @@ services:
     build: ./php
     volumes:
       - ./src:/var/www/html
-    depends_on:
-      - redis
-      - memcached
     networks:
       - appnet
 
