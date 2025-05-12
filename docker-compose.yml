@@ -49,3 +49,15 @@ services:
             DB_NAME: db_php
         volumes:
             - ./:/app
+    redis:
+        image: "redis:alpine"
+        command: redis-server --save 20 1 --loglevel warning
+        restart: unless-stopped
+        volumes:
+            - ./data/db/redis:/data
+    memcached:
+        image: memcached:alpine
+        command:
+            - --conn-limit=1024
+            - --memory-limit=64
+            - --threads=4
