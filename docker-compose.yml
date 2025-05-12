@@ -25,25 +25,21 @@ services:
 
   redis:
     image: redis:alpine
-    ports:
-      - "6379:6379"
     networks:
       - appnet
 
   memcached:
     image: memcached:alpine
-    ports:
-      - "11211:11211"
     networks:
       - appnet
 
   db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: app
-      MYSQL_USER: user
-      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - ./db:/var/lib/mysql
     ports:
