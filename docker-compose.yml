@@ -10,16 +10,14 @@ services:
         image: postgres:15
         ports:
             - 15432:5432
-        container_name: 'postgresql'
         restart: unless-stopped
         environment:
-            POSTGRES_DB: 'db_php'
-            POSTGRES_USER: 'db_user'
-            POSTGRES_PASSWORD: 'test'
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASS}
         volumes:
             - ./data/db/psql:/var/lib/postgresql/data
     srv-proxy:
-        container_name: 'srv-php-proxy'
         build:
             context: docker/srv-api/development
             dockerfile: nginx/Dockerfile
@@ -31,22 +29,21 @@ services:
             dockerfile: php-fpm/Dockerfile
         environment:
             PHP_IDE_CONFIG: serverName=SRVAPI
-            DB_HOST: db
-            DB_USER: db_user
-            DB_PASS: test
-            DB_NAME: db_php
+            DB_HOST: ${DB_HOST}
+            DB_USER: ${DB_USER}
+            DB_PASS: ${DB_PASS}
+            DB_NAME: ${DB_NAME}
         volumes:
             - ./:/app
     srv-cli:
-        container_name: 'srv-php-cli'
         build:
             context: docker/srv-api/development
             dockerfile: php-cli/Dockerfile
         environment:
-            DB_HOST: db
-            DB_USER: db_user
-            DB_PASS: test
-            DB_NAME: db_php
+            DB_HOST: ${DB_HOST}
+            DB_USER: ${DB_USER}
+            DB_PASS: ${DB_PASS}
+            DB_NAME: ${DB_NAME}
         volumes:
             - ./:/app
     redis:
