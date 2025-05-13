@@ -14,6 +14,6 @@ for x in "$a" "$b"; do
   [[ $x =~ $re ]] || { echo "Ошибка: '$x' не число" >&2; exit 1; }
 done
 
-sum=$(echo "$a + $b" | bc -l)
+sum=$(awk "BEGIN {print $a + $b}")
 
 echo "$sum"
