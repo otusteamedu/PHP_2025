@@ -1,5 +1,5 @@
 <?php
-class App 
+class App
 {
     /**
      * @var Validator Экземпляр валидатора
@@ -13,6 +13,7 @@ class App
     
     public function __construct() 
     {
+        $this->registerAutoLoader();
         $this->validator = new Validator();
         $this->view = new View();
     }
@@ -33,5 +34,14 @@ class App
             http_response_code(400);
             return $this->view->renderError($e->getMessage());
         }
+    }
+
+    /** Добавляет текущий путь в список для поиска include-файлов и включаем default механизм автолоадера
+     * @return void
+     */
+    public function registerAutoLoader(): void
+    {
+        set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__);
+        spl_autoload_register();
     }
 }
