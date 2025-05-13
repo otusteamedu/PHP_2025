@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Http\News\Controller;
 
-use App\Infrastructure\UseCase\GetNewsList;
+use App\Application\UseCase\GetNewsList;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -16,6 +16,9 @@ final class NewsIndexController extends AbstractController
     {
         try {
             $arDtoNews = $this->getNewsList->execute();
+
+            dd($arDtoNews);
+
             return $this->json(['STATUS' => 'OK', 'NEWS' => $arDtoNews]);
         } catch(\Exception $exception) {
             return $this->json([

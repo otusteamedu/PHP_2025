@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\UseCase;
+namespace App\Application\UseCase;
 
 use App\Application\DTO\News\CreateNewsDTO;
 use App\Application\DTO\News\NewsDTO;

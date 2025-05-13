@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Http\News\Controller;
 
 use App\Application\DTO\Report\RequestReportDTO;
-use App\Infrastructure\UseCase\GenerateReportUseCase;
+use App\Application\UseCase\GenerateReportUseCase;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
