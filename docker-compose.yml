@@ -5,7 +5,7 @@ services:
             context: docker/gateway
             dockerfile: development/nginx/Dockerfile
         ports:
-            - "8086:8086"
+            - "80:80"
     db:
         image: postgres:15
         ports:
