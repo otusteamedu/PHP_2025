@@ -2,6 +2,7 @@
 
 namespace App\Application\UseCase;
 
+use App\Application\DTO\News\ResponseNewsDTO;
 use App\Domain\Repository\NewsRepositoryInterface;
 
 class GetNewsList
@@ -12,7 +13,20 @@ class GetNewsList
 
     public function execute():array
     {
-        return $this->newsRepository->getList();
+        $arDtoNews = [];
+        $arNews = $this->newsRepository->getList();
+        if (!empty($arNews)) {
+            foreach ($arNews as $el) {
+                $arDtoNews[] = new ResponseNewsDTO(
+                    $el->getId(),
+                    $el->getTitle(),
+                    $el->getUrl(),
+                    $el->getCreateDate(),
+                );
+            }
+        }
+
+        return $arDtoNews;
     }
 
 }

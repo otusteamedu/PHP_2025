@@ -33,21 +33,9 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
 
     public function getList(): array
     {
-        $news = $this->entityManager
+        return $this->entityManager
             ->getRepository(News::class)
             ->findAll();
-
-        $data = [];
-        foreach ($news as $el) {
-            $data[] = new ResponseNewsDTO(
-                $el->getId(),
-                $el->getTitle(),
-                $el->getUrl(),
-                $el->getCreateDate(),
-            );
-        }
-
-        return $data;
     }
 
     public function getByIds(array $arNewsIds):array

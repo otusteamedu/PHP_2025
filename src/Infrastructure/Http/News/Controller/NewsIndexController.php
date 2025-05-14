@@ -16,9 +16,6 @@ final class NewsIndexController extends AbstractController
     {
         try {
             $arDtoNews = $this->getNewsList->execute();
-
-            dd($arDtoNews);
-
             return $this->json(['STATUS' => 'OK', 'NEWS' => $arDtoNews]);
         } catch(\Exception $exception) {
             return $this->json([
