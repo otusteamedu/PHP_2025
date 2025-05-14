@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Repository;
 
-use App\Application\DTO\News\ResponseNewsDTO;
 use App\Domain\Entity\News;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
