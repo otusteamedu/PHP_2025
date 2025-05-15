@@ -1,7 +1,7 @@
 services:
   nginx:
     build:
-      context: ./nginx
+      context: config/nginx
       dockerfile: Dockerfile
     container_name: nginx
     ports:
@@ -12,7 +12,7 @@ services:
       - my-network
   php:
     build:
-      context: ./fpm
+      context: config/fpm
       dockerfile: Dockerfile
     container_name: php
     volumes:

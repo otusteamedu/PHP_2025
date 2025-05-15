@@ -1,18 +1,18 @@
 <?php
 
-use App\Core\Adapter\FastFoodItemInterface;
-use App\Core\Adapter\Pizza;
-use App\Core\Adapter\PizzaAdapter;
-use App\Core\Adapter\PizzaInterface;
-use App\Core\Factories\FastFoodFactory;
-use App\Core\Factories\FastFoodFactoryInterface;
 use App\Core\Container;
 use App\Core\Kernel;
-use App\Core\Observer\OrderNotifier;
-use App\Core\Observer\SmsNotifier;
 use App\Core\Router;
-use App\Database\DatabaseConnection;
-use App\Services\SmsService;
+use App\Observer\OrderNotifier;
+use App\Observer\SmsNotifier;
+use Domain\Factories\FastFoodFactory;
+use Domain\Factories\FastFoodFactoryInterface;
+use Infrastructure\Adapter\FastFoodItemInterface;
+use Infrastructure\Adapter\Pizza;
+use Infrastructure\Adapter\PizzaAdapter;
+use Infrastructure\Adapter\PizzaInterface;
+use Infrastructure\Database\DatabaseConnection;
+use Infrastructure\Services\SmsService;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -36,8 +36,6 @@ $container->bind(FastFoodItemInterface::class, function(Container $container) {
 $container->bind(Router::class, function(Container $container) {
     return new Router($container);
 });
-
-
 
 $kernel = new Kernel($container);
 print_r($kernel->handle());

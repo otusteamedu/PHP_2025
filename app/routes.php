@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Controllers\OrderController;
+use Infrastructure\Http\Controllers\OrderController;
 
 return [
     '/orders/list' => ['GET', [OrderController::class, 'index']],
