@@ -1,0 +1,12 @@
+{
+    "name": "ilya/test-app",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Ilya\\TestApp\\": "src/"
+        }
+    },
+    "require": {
+        "ilya-kazakov/time-helper": "^1.0"
+    }
+}
