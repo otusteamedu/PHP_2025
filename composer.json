@@ -1,0 +1,20 @@
+{
+    "name": "elisad5791/testapp",
+    "description": "Simple test project",
+    "type": "project",
+    "authors": [
+        {
+            "name": "elisad5791",
+            "email": "elisad5791@mail.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Elisad5791\\Testapp\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "elisad5791/mybrackets": "^1.0"
+    }
+}
