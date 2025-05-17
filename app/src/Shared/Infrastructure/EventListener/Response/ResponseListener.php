@@ -20,9 +20,8 @@ class ResponseListener
     #[AsEventListener(priority: 200)]
     public function onKernelResponse(ResponseEvent $event): void
     {
-        $header = $event->getResponse()->headers->get('Content-Type');
+        $header = $event->getRequest()->headers->get('Accept');
         $statusCode = $event->getResponse()->getStatusCode();
-
         if (self::MIME_JSON === $header) {
             $response = new JsonResponse();
             $response->setStatusCode($statusCode);
