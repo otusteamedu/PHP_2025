@@ -1,0 +1,7 @@
+services:
+  packagist:
+    build: ./packagist
+    container_name: packagist_package
+    volumes:
+      - ./downloads/packagist:/app/Downloads
+    working_dir: /app

@@ -1,0 +1,11 @@
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/vlavlamat/video-dl.git"
+    }
+  ],
+  "require": {
+    "vmatkovskii/video-dl": "dev-main"
+  }
+}

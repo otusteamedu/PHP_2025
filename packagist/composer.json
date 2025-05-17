@@ -1,0 +1,5 @@
+{
+  "require": {
+    "vmatkovskii/video-dl": "^1.0"
+  }
+}

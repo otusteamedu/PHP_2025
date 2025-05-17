@@ -1,0 +1,7 @@
+services:
+  github:
+    build: ./github
+    container_name: github_package
+    volumes:
+      - ./downloads/github:/app/Downloads
+    working_dir: /app
