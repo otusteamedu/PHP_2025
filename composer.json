@@ -1,0 +1,19 @@
+{
+    "name": "andrey-yurchuk/password-generator",
+    "description": "Random password generator library",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "AndreyYurchuk\\PasswordGenerator\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andrey Yurchuk",
+            "email": "r1430@tut.by"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    }
+}
