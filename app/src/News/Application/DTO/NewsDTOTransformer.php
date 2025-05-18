@@ -6,7 +6,7 @@ namespace App\News\Application\DTO;
 
 use App\News\Domain\Entity\News;
 
-class NewsDTOTransformer
+class NewsDTOTransformer implements NewsDTOTransformerInterface
 {
     public function fromEntity(News $news): NewsDTO
     {
@@ -14,13 +14,12 @@ class NewsDTOTransformer
         $newsDTO->id = $news->getId()->toString();
         $newsDTO->title = $news->getTitle()->getValue();
         $newsDTO->link = $news->getLink()->getValue();
-        $newsDTO->created_at = $news->getCreatedAt()->format(DATE_ATOM);
+        $newsDTO->created_at = $news->getCreatedAt();
 
         return $newsDTO;
     }
 
-    // todo ...$news переделать на массив, но тогда, как контролировать, что в нем дто?
-    public function fromEntityList(News ...$news): array
+    public function fromEntityList(array $news): array
     {
         $newsDTOs = [];
         foreach ($news as $new) {

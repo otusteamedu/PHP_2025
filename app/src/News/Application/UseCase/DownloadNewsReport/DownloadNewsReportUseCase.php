@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace App\News\Application\UseCase\DownloadNewsReport;
 
-use App\Shared\Infrastructure\Service\FileHelper;
-use League\Flysystem\FilesystemException;
+use App\Shared\Application\Service\FileHelperInterface;
 
 readonly class DownloadNewsReportUseCase
 {
     public function __construct(
-        private FileHelper $reportFileHelper,
+        private FileHelperInterface $reportFileHelper,
     ) {
     }
 
-    /**
-     * @throws FilesystemException
-     */
     public function __invoke(DownloadNewsReportRequest $request): DownloadNewsReportResponse
     {
         $mimeType = $this->reportFileHelper->getFileMimeType($request->fileName);

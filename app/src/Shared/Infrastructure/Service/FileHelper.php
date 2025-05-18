@@ -2,22 +2,23 @@
 
 namespace App\Shared\Infrastructure\Service;
 
+use App\Shared\Application\Service\FileHelperInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 
-readonly class FileHelper
+readonly class FileHelper implements FileHelperInterface
 {
     public function __construct(
-        private Filesystem $fileSystem,
+        private Filesystem $reportFileSystem,
     ) {
     }
 
     /**
      * @throws FilesystemException
      */
-    public function readStream(string $fileName)
+    public function readStream(string $fileName): mixed
     {
-        $resource = $this->fileSystem->readStream($fileName);
+        $resource = $this->reportFileSystem->readStream($fileName);
         if (false === $resource) {
             throw new \Exception(sprintf('Не удалось открыть поток "%s"', $fileName));
         }
@@ -30,12 +31,12 @@ readonly class FileHelper
      */
     public function isExist(string $filename): bool
     {
-        return $this->fileSystem->fileExists($filename);
+        return $this->reportFileSystem->fileExists($filename);
     }
 
     public function save(string $content, string $fileName): void
     {
-        $result = $this->fileSystem->write($fileName, $content);
+        $result = $this->reportFileSystem->write($fileName, $content);
         if ($result) {
             throw new \Exception("Не удалось загрузить файл: $fileName");
         }
@@ -46,6 +47,6 @@ readonly class FileHelper
      */
     public function getFileMimeType(string $filename): string
     {
-        return $this->fileSystem->mimeType($filename);
+        return $this->reportFileSystem->mimeType($filename);
     }
 }

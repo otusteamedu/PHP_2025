@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace App\News\Infrastructure\Gateway;
 
 use App\News\Application\GateWay\NewsParserInterface;
+use App\News\Application\GateWay\NewsParserRequest;
+use App\News\Application\GateWay\NewsParserResponse;
 
 class GeneralNewsParser implements NewsParserInterface
 {
-    // todo отдавать дто
-    public function getTitle(string $url): string
+    public function getTitle(NewsParserRequest $request): NewsParserResponse
     {
         $dom = new \DOMDocument();
         $dom->formatOutput = true;
-        $content = file_get_contents($url, false, null);
+        $content = file_get_contents($request->url, false, null);
         $content = mb_convert_encoding($content, 'HTML-ENTITIES', $this->getEncoding($content));
         @$dom->loadHTML($content);
+        $title = $dom->getElementsByTagName('title')->item(0)->textContent;
 
-        return $dom->getElementsByTagName('title')->item(0)->textContent;
+        return new NewsParserResponse($title);
     }
 
     private function getEncoding(string $content): string

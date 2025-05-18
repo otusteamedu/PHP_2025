@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\News\Application\Service;
+namespace App\News\Infrastructure\Service;
 
 use App\News\Application\DTO\NewsDTO;
-use App\News\Domain\Service\NewsReportInterface;
+use App\News\Application\Service\NewsReportGeneratorInterface;
 use App\Shared\Infrastructure\Service\FileHelper;
 use Symfony\Component\Uid\Uuid;
 
-class HtmlNewsReportGenerator implements NewsReportInterface
+class HtmlNewsReportGeneratorGenerator implements NewsReportGeneratorInterface
 {
     private string $template = '<ul>{{CONTENT}}</ul>';
 
@@ -17,6 +17,9 @@ class HtmlNewsReportGenerator implements NewsReportInterface
     {
     }
 
+    /**
+     * @throws \Exception
+     */
     public function generate(array $newsDTOs): string
     {
         $fileName = Uuid::v4()->toString().'.html';

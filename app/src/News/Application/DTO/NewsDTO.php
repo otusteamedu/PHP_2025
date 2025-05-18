@@ -9,5 +9,5 @@ class NewsDTO
     public ?string $id;
     public ?string $title;
     public ?string $link;
-    public ?string $created_at;
+    public ?\DateTimeImmutable $created_at;
 }

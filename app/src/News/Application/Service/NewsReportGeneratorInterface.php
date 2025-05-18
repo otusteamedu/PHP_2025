@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\News\Domain\Service;
+namespace App\News\Application\Service;
 
-interface NewsReportInterface
+interface NewsReportGeneratorInterface
 {
     public function generate(array $newsDTOs): string;
 }

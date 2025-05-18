@@ -6,5 +6,5 @@ namespace App\News\Application\GateWay;
 
 interface NewsParserInterface
 {
-    public function getTitle(string $url): string;
+    public function getTitle(NewsParserRequest $request): NewsParserResponse;
 }
