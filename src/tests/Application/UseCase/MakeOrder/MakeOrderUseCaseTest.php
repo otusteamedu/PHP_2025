@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Domain\ValueObject;
-
 use PHPUnit\Framework\TestCase;
 use App\Application\UseCase\MakeOrder\MakeOrderUseCase;
 use App\Domain\Entity\Order\Order;

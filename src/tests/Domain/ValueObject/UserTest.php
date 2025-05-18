@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Domain\ValueObject;
-
 use App\Domain\ValueObject\User;
 use PHPUnit\Framework\TestCase;
 

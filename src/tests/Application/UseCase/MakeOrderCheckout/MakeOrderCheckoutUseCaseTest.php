@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Domain\ValueObject;
-
 use PHPUnit\Framework\TestCase;
 use App\Domain\Factory\PayWay\PayWayFactoryInterface;
 use App\Domain\Factory\GetWay\GetWayFactoryInterface;
