@@ -8,3 +8,4 @@ db/
 logs/
 storage/
 .env
+.phpunit.result.cache

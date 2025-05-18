@@ -1,24 +1,24 @@
 <?php
 
-spl_autoload_register();
-session_start();
+require "vendor/autoload.php";
+session_start();  
 
-use Application\UseCase\MakeProduct\MakeProductUseCase;
-use Application\UseCase\MakeOrder\MakeOrderUseCase;
-use Application\UseCase\MakeOrderCheckout\MakeOrderCheckoutUseCase;
-use Domain\Entity\Product\BurgerProduct;
-use Domain\Entity\Product\BurgerProductExt;
-use Domain\Entity\Product\HotdogProduct;
-use Domain\Entity\Product\HotdogProductExt;
-use Domain\Entity\Product\ProductExt;
-use Domain\Entity\PayWay\CardPayWay;
-use Domain\Entity\PayWay\CashPayWay;
-use Domain\Entity\GetWay\DescGetWay;
-use Domain\Entity\GetWay\HomeGetWay;
+use App\Application\UseCase\MakeProduct\MakeProductUseCase;
+use App\Application\UseCase\MakeOrder\MakeOrderUseCase;
+use App\Application\UseCase\MakeOrderCheckout\MakeOrderCheckoutUseCase;
+use App\Domain\Entity\Product\BurgerProduct;
+use App\Domain\Entity\Product\BurgerProductExt;
+use App\Domain\Entity\Product\HotdogProduct;
+use App\Domain\Entity\Product\HotdogProductExt;
+use App\Domain\Entity\Product\ProductExt;
+use App\Domain\Entity\PayWay\CardPayWay;
+use App\Domain\Entity\PayWay\CashPayWay;
+use App\Domain\Entity\GetWay\DescGetWay;
+use App\Domain\Entity\GetWay\HomeGetWay;
 
-use Domain\Entity\Order\Order;
-use Domain\ValueObject\User;
-use Domain\ValueObject\Product;
+use App\Domain\Entity\Order\Order;
+use App\Domain\ValueObject\User;
+use App\Domain\ValueObject\Product;
 
 try {
 
