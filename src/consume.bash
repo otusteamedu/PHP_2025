@@ -17,18 +17,6 @@ if ! is_number "$number2"; then
     exit 1
 fi
 
-if ! command -v bc >/dev/null 2>&1; then
-  echo "Ошибка: bc не установлен. Необходимо использовать целые числа<br>" >&2
-
-  if [[ "$number1" =~ ^-?[0-9]+$ ]]; then
-    echo "$number1 — не целое число<br>"
-    exit 1
-  elif [[ "$number1" =~ ^-?[0-9]+$ ]]; then
-    echo "$number2 — не целое число<br>"
-    exit 1
-  fi
-fi
-
-sum=$(echo "scale=2; $number1 + $number2" | bc -l)
+sum=$(awk "BEGIN { printf \"%.2f\", $number1 + $number2 }")
 
 echo "Сумма: $sum"
