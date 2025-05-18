@@ -3,7 +3,6 @@
 namespace App\DTO;
 
 use App\Entity\Order;
-use App\Entity\User;
 
 readonly class OrderDTO
 {
@@ -16,10 +15,8 @@ readonly class OrderDTO
     {
     }
 
-    static public function createFromEntity(Order $order): self
+    static public function createFromEntity(Order $order, ?UserDTO $userDTO = null): self
     {
-        $userDTO = $order->getUser() ? UserDTO::createFromEntity($order->getUser()) : null;
-
         return new self(
             $order->getId(),
             $order->getTotalAmount(),

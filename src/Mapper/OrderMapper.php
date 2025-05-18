@@ -4,20 +4,25 @@ namespace App\Mapper;
 
 use App\Database\PostgresConnection;
 use App\Entity\Order;
-use App\Entity\User;
 use PDO;
 
 class OrderMapper
 {
     private PDO $pdo;
+    private OrderIdentityMap $identityMap;
 
-    public function __construct()
+    public function __construct(OrderIdentityMap $identityMap)
     {
         $this->pdo = PostgresConnection::getInstance();
+        $this->identityMap = $identityMap;
     }
 
     public function fetchById(int $id): ?Order
     {
+        if ($this->identityMap->has($id)) {
+            return $this->identityMap->get($id);
+        }
+
         $stmt = $this->pdo->prepare("SELECT * FROM orders WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -26,11 +31,14 @@ class OrderMapper
             return null;
         }
 
-        $order = new Order();
-        $order->setId($data['id']);
-        $order->setUserId($data['user_id']);
-        $order->setTotalAmount($data['total_amount']);
-        $order->setCreatedAt($data['created_at']);
+        $order = new Order(
+            (int)$data['user_id'],
+            (float)$data['total_amount'],
+            new \DateTimeImmutable($data['created_at']),
+            (int)$data['id']
+        );
+
+        $this->identityMap->add($order);
 
         return $order;
     }
@@ -42,47 +50,17 @@ class OrderMapper
         $orders = [];
 
         while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $order = new Order();
-            $order->setId((int)$data['id']);
-            $order->setUserId((int)$data['user_id']);
-            $order->setTotalAmount((float)$data['total_amount']);
-            $order->setCreatedAt(new \DateTimeImmutable($data['created_at']));
-            $orders[] = $order;
-        }
-
-        return $orders;
-    }
-
-    public function fetchAllWithUser(int $userId): array
-    {
-        $stmt = $this->pdo->prepare("
-            SELECT o.id AS order_id,
-            o.user_id AS order_user_id,
-            o.total_amount AS order_total_amount,
-            o.created_at AS order_created_at,
-            u.id AS user_id,
-            u.name AS user_name,
-            u.email AS user_email
-            FROM orders o 
-            JOIN users u ON o.user_id = u.id 
-            WHERE o.user_id = :user_id
-        ");
-
-        $stmt->execute(['user_id' => $userId]);
-        $orders = [];
-
-        while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = new User();
-            $user->setId((int)$data['user_name']);
-            $user->setName($data['user_name']);
-            $user->setEmail($data['user_email']);
-
-            $order = new Order();
-            $order->setId((int)$data['order_id']);
-            $order->setUserId((int)$data['order_user_id']);
-            $order->setTotalAmount((float)$data['order_total_amount']);
-            $order->setCreatedAt(new \DateTimeImmutable($data['order_created_at']));
-            $order->setUser($user);
+            if (!$this->identityMap->has((int)$data['id'])) {
+                $order = new Order(
+                    (int)$data['user_id'],
+                    (float)$data['total_amount'],
+                    new \DateTimeImmutable($data['created_at']),
+                    (int)$data['id']
+                );
+                $this->identityMap->add($order);
+            } else {
+                $order = $this->identityMap->get((int)$data['id']);
+            }
 
             $orders[] = $order;
         }
@@ -97,23 +75,38 @@ class OrderMapper
         $orders = [];
 
         while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $order = new Order();
-            $order->setId((int)$data['id']);
-            $order->setUserId((int)$data['user_id']);
-            $order->setTotalAmount((float)$data['total_amount']);
-            $order->setCreatedAt(new \DateTimeImmutable($data['created_at']));
+            $id = (int)$data['id'];
+
+            if ($this->identityMap->has($id)) {
+                $orders[] = $this->identityMap->get($id);
+                continue;
+            }
+
+            $order = new Order(
+                (int)$data['user_id'],
+                (float)$data['total_amount'],
+                new \DateTimeImmutable($data['created_at']),
+                $id
+            );
+
+            $this->identityMap->add($order);
             $orders[] = $order;
         }
 
         return $orders;
     }
 
-    public function save(Order $order): void
+    public function save(Order $order): Order
     {
-        $this->insert($order);
+        if ($order->getId() === null) {
+            return $this->insert($order);
+        }
+
+        $this->update($order);
+        return $order;
     }
 
-    private function insert(Order $order): void
+    private function insert(Order $order): Order
     {
         $stmt = $this->pdo->prepare("
             INSERT INTO orders (user_id, total_amount, created_at) 
@@ -132,7 +125,28 @@ class OrderMapper
             throw new \RuntimeException("Insert order failed");
         }
 
-        $order->setId((int)$result['id']);
-        $order->setCreatedAt(new \DateTimeImmutable($result['created_at']));
+        $order = new Order(
+            $order->getUserId(),
+            $order->getTotalAmount(),
+            new \DateTimeImmutable($result['created_at']),
+            (int)$result['id']
+        );
+
+        $this->identityMap->add($order);
+
+        return $order;
+    }
+
+    private function update(Order $order): void
+    {
+        $stmt = $this->pdo->prepare("UPDATE orders SET user_id = :userId, total_amount = :totalAmount WHERE id = :id");
+
+        $stmt->execute([
+            'id' => $order->getId(),
+            'userId' => $order->getUserId(),
+            'totalAmount' => $order->getTotalAmount()
+        ]);
+
+        $this->identityMap->add($order);
     }
 }

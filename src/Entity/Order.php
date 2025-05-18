@@ -4,20 +4,27 @@ namespace App\Entity;
 
 class Order
 {
-    private ?int $id = null;
+    private ?int $id;
     private int $userId;
     private float $totalAmount;
     private \DateTimeInterface $createdAt;
-    private ?User $user = null;
+
+    public function __construct(int $userId, float $totalAmount, \DateTimeInterface $createdAt, ?int $id = null)
+    {
+        $this->id = $id;
+        $this->userId = $userId;
+        $this->totalAmount = $totalAmount;
+        $this->createdAt = $createdAt;
+    }
+
+    public static function createNew(int $userId, float $totalAmount): self
+    {
+        return new self($userId, $totalAmount, new \DateTimeImmutable(), null);
+    }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function setId(?int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getUserId(): int
@@ -25,38 +32,13 @@ class Order
         return $this->userId;
     }
 
-    public function setUserId(int $userId): void
-    {
-        $this->userId = $userId;
-    }
-
     public function getTotalAmount(): float
     {
         return $this->totalAmount;
     }
 
-    public function setTotalAmount(float $totalAmount): void
-    {
-        $this->totalAmount = $totalAmount;
-    }
-
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): void
-    {
-        $this->user = $user;
     }
 }

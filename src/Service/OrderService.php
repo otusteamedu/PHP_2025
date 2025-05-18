@@ -3,49 +3,51 @@
 namespace App\Service;
 
 use App\DTO\OrderDTO;
+use App\DTO\UserDTO;
 use App\Entity\Order;
 use App\Repository\OrderRepository;
+use App\Repository\UserRepository;
 
 class OrderService
 {
-    public function __construct(private OrderRepository $orderRepository)
+    private OrderRepository $orderRepository;
+    private UserRepository $userRepository;
+
+    public function __construct(OrderRepository $orderRepository, UserRepository $userRepository)
     {
+        $this->orderRepository = $orderRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function create(float $totalAmount, int $userId): OrderDTO
     {
-        $order = new Order();
-        $order->setTotalAmount($totalAmount);
-        $order->setUserId($userId);
+        $order = $this->orderRepository->save(Order::createNew($userId, $totalAmount));
+        $user = $this->userRepository->findById($userId);
+        $userDTO = $user ? UserDTO::createFromEntity($user) : null;
 
-        $this->orderRepository->save($order);
-        $createdOrder = $this->orderRepository->find((int)$order->getId());
-        return OrderDTO::createFromEntity($createdOrder);
+        return OrderDTO::createFromEntity($order, $userDTO);
     }
 
     public function getOrders(): array
     {
         $orders = $this->orderRepository->findAll();
-        return array_map(
-            fn(Order $order) => OrderDTO::createFromEntity($order),
-            $orders
-        );
+
+        return array_map(function (Order $order) {
+            $user = $this->userRepository->findById($order->getUserId());
+            $userDTO = $user ? UserDTO::createFromEntity($user) : null;
+
+            return OrderDTO::createFromEntity($order, $userDTO);
+        }, $orders);
     }
 
     public function getOrdersByUserId(int $userId): array
     {
         $orders = $this->orderRepository->findAllByUserId($userId);
-        return array_map(
-            fn(Order $order) => OrderDTO::createFromEntity($order),
-            $orders
-        );
-    }
+        $user = $this->userRepository->findById($userId);
+        $userDTO = $user ? UserDTO::createFromEntity($user) : null;
 
-    public function getOrdersWithUser(int $userId): array
-    {
-        $orders = $this->orderRepository->findAllWithUser($userId);
         return array_map(
-            fn(Order $order) => OrderDTO::createFromEntity($order),
+            fn(Order $order) => OrderDTO::createFromEntity($order, $userDTO),
             $orders
         );
     }

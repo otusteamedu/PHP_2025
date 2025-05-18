@@ -8,21 +8,23 @@ use App\Repository\UserRepository;
 
 class UserService
 {
-    public function __construct(private UserRepository $userRepository) {}
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository) {
+        $this->userRepository = $userRepository;
+    }
 
     public function findById(int $id): UserDTO {
-        $createdUser = $this->userRepository->find($id);
+        $createdUser = $this->userRepository->findById($id);
         return UserDTO::createFromEntity($createdUser);
     }
 
     public function create(string $name, string $email): UserDTO
     {
-        $user = new User();
-        $user->setName($name);
-        $user->setEmail($email);
+        $user = $this->userRepository->save(
+            new User($name, $email)
+        );
 
-        $this->userRepository->save($user);
-        $createdUser = $this->userRepository->find($user->getId());
-        return UserDTO::createFromEntity($createdUser);
+        return UserDTO::createFromEntity($user);
     }
 }

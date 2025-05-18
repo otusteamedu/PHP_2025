@@ -9,14 +9,20 @@ use PDO;
 class UserMapper
 {
     private PDO $pdo;
+    private UserIdentityMap $identityMap;
 
-    public function __construct()
+    public function __construct(UserIdentityMap $identityMap)
     {
         $this->pdo = PostgresConnection::getInstance();
+        $this->identityMap = $identityMap;
     }
 
     public function fetchById(int $id): ?User
     {
+        if ($this->identityMap->has($id)) {
+            return $this->identityMap->get($id);
+        }
+
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -25,24 +31,28 @@ class UserMapper
             return null;
         }
 
-        $user = new User();
-        $user->setId((int)$data['id']);
-        $user->setName($data['name']);
-        $user->setEmail($data['email']);
+        $user = new User(
+            $data['name'],
+            $data['email'],
+            (int)$data['id']
+        );
+
+        $this->identityMap->add($user);
 
         return $user;
     }
 
-    public function save(User $user): void
+    public function save(User $user): User
     {
         if ($user->getId() === null) {
-            $this->insert($user);
-        } else {
-            $this->update($user);
+            return $this->insert($user);
         }
+
+        $this->update($user);
+        return $user;
     }
 
-    private function insert(User $user): void
+    private function insert(User $user): User
     {
         $stmt = $this->pdo->prepare(
             "INSERT INTO users (name, email) VALUES (:name, :email) RETURNING id"
@@ -59,7 +69,15 @@ class UserMapper
             throw new \RuntimeException("Insert user failed");
         }
 
-        $user->setId((int)$result['id']);
+        $user = new User(
+            $user->getName(),
+            $user->getEmail(),
+            (int)$result['id']
+        );
+
+        $this->identityMap->add($user);
+
+        return $user;
     }
 
     private function update(User $user): void
@@ -71,5 +89,7 @@ class UserMapper
             'name' => $user->getName(),
             'email' => $user->getEmail()
         ]);
+
+        $this->identityMap->add($user);
     }
 }

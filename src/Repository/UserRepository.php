@@ -7,23 +7,19 @@ use App\Mapper\UserMapper;
 
 class UserRepository
 {
-    public function __construct(private UserMapper $mapper) {}
+    private UserMapper $mapper;
 
-    /**
-     * @param int $id
-     * @return User|null
-     */
-    public function find(int $id): ?User
+    public function __construct(UserMapper $mapper) {
+        $this->mapper = $mapper;
+    }
+
+    public function findById(int $id): ?User
     {
         return $this->mapper->fetchById($id);
     }
 
-    /**
-     * @param User $user
-     * @return void
-     */
-    public function save(User $user): void
+    public function save(User $user): User
     {
-        $this->mapper->save($user);
+        return $this->mapper->save($user);
     }
 }

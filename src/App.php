@@ -5,7 +5,9 @@ namespace App;
 use App\Exception\HttpException;
 use App\Http\Request;
 use App\Http\Response;
+use App\Mapper\OrderIdentityMap;
 use App\Mapper\OrderMapper;
+use App\Mapper\UserIdentityMap;
 use App\Mapper\UserMapper;
 use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
@@ -48,7 +50,7 @@ class App
             $userId = $this->request->getQueryParam('user_id');
 
             if (isset($userId)) {
-                $orders = $this->orderService->getOrdersWithUser((int)$userId);
+                $orders = $this->orderService->getOrdersByUserId((int)$userId);
             } else {
                 $orders = $this->orderService->getOrders();
             }
@@ -103,13 +105,24 @@ class App
         }
     }
 
+    private function createUserRepository(): UserRepository {
+        return new UserRepository(new UserMapper(new UserIdentityMap()));
+    }
+
+    private function createOrderRepository(): OrderRepository {
+        return new OrderRepository(new OrderMapper(new OrderIdentityMap()));
+    }
+
     private function createUserService(): UserService
     {
-        return new UserService(new UserRepository(new UserMapper()));
+        return new UserService($this->createUserRepository());
     }
 
     private function createOrderService(): OrderService
     {
-        return new OrderService(new OrderRepository(new OrderMapper()));
+        return new OrderService(
+            $this->createOrderRepository(),
+            $this->createUserRepository()
+        );
     }
 }

@@ -7,49 +7,29 @@ use App\Mapper\OrderMapper;
 
 class OrderRepository
 {
-    public function __construct(private OrderMapper $mapper) {}
+    private OrderMapper $mapper;
 
-    /**
-     * @param int $id
-     * @return Order|null
-     */
-    public function find(int $id): ?Order
+    public function __construct(OrderMapper $mapper) {
+        $this->mapper = $mapper;
+    }
+
+    public function findById(int $id): ?Order
     {
         return $this->mapper->fetchById($id);
     }
 
-    /**
-     * @param int $userId
-     * @return Order[]
-     */
     public function findAllByUserId(int $userId): array
     {
         return $this->mapper->fetchAllByUserId($userId);
     }
 
-    /**
-     * @param int $userId
-     * @return array
-     */
-    public function findAllWithUser(int $userId): array
-    {
-        return $this->mapper->fetchAllWithUser($userId);
-    }
-
-    /**
-     * @return Order[]
-     */
     public function findAll(): array
     {
         return $this->mapper->fetchAll();
     }
 
-    /**
-     * @param Order $order
-     * @return void
-     */
-    public function save(Order $order): void
+    public function save(Order $order): Order
     {
-        $this->mapper->save($order);
+        return $this->mapper->save($order);
     }
 }
