@@ -1,0 +1,67 @@
+services:
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: otus-test/nginx
+    container_name: otus-nginx
+    networks:
+      - test-network
+    ports:
+      - "82:82"
+    volumes:
+       - ./otus-app:/data/mysite.local
+       - php_fpm_socket:/var/run/php
+
+  php:
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    image: otus-test/php
+    container_name: otus-php
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - MEMCACHED_HOST=${MEMCACHED_HOST}
+      - MEMCACHED_PORT=${MEMCACHED_PORT}
+    networks:
+      - test-network
+    volumes:
+       - ./otus-app:/data/mysite.local
+       - php_fpm_socket:/var/run/php
+    depends_on:
+      - nginx
+
+  redis:
+    image: redis:latest
+    container_name: otus-redis
+    networks:
+      - test-network
+
+  memcached:
+    image: memcached:latest
+    container_name: otus-memcached
+    networks:
+      - test-network
+
+  mysql:
+    container_name: otus-mysql
+    image: mysql:9.3.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./docker/mysql:/var/lib/mysql:rw
+    ports:
+      - 3306:3306
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
+
+volumes:
+  php_fpm_socket:
