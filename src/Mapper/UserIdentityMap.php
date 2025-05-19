@@ -6,6 +6,9 @@ use App\Entity\User;
 
 class UserIdentityMap
 {
+    /**
+     * @var array<int, User>
+     */
     private array $users = [];
 
     public function has(int $id): bool

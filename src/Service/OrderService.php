@@ -21,13 +21,17 @@ class OrderService
 
     public function create(float $totalAmount, int $userId): OrderDTO
     {
-        $order = $this->orderRepository->save(Order::createNew($userId, $totalAmount));
+        $order = Order::createNew($userId, $totalAmount);
+        $this->orderRepository->save($order);
         $user = $this->userRepository->findById($userId);
         $userDTO = $user ? UserDTO::createFromEntity($user) : null;
 
         return OrderDTO::createFromEntity($order, $userDTO);
     }
 
+    /**
+     * @return OrderDTO[]
+     */
     public function getOrders(): array
     {
         $orders = $this->orderRepository->findAll();
@@ -40,14 +44,15 @@ class OrderService
         }, $orders);
     }
 
+    /**
+     * @return OrderDTO[]
+     */
     public function getOrdersByUserId(int $userId): array
     {
         $orders = $this->orderRepository->findAllByUserId($userId);
-        $user = $this->userRepository->findById($userId);
-        $userDTO = $user ? UserDTO::createFromEntity($user) : null;
 
         return array_map(
-            fn(Order $order) => OrderDTO::createFromEntity($order, $userDTO),
+            fn(Order $order) => OrderDTO::createFromEntity($order),
             $orders
         );
     }

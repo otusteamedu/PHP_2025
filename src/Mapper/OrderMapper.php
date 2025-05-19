@@ -96,17 +96,16 @@ class OrderMapper
         return $orders;
     }
 
-    public function save(Order $order): Order
+    public function save(Order $order): void
     {
         if ($order->getId() === null) {
-            return $this->insert($order);
+            $this->insert($order);
+        } else {
+            $this->update($order);
         }
-
-        $this->update($order);
-        return $order;
     }
 
-    private function insert(Order $order): Order
+    private function insert(Order $order): void
     {
         $stmt = $this->pdo->prepare("
             INSERT INTO orders (user_id, total_amount, created_at) 
@@ -125,16 +124,16 @@ class OrderMapper
             throw new \RuntimeException("Insert order failed");
         }
 
-        $order = new Order(
-            $order->getUserId(),
-            $order->getTotalAmount(),
-            new \DateTimeImmutable($result['created_at']),
-            (int)$result['id']
-        );
+        $reflectionClass = new \ReflectionClass($order);
+        $propertyId = $reflectionClass->getProperty('id');
+        $propertyId->setAccessible(true);
+        $propertyId->setValue($order, (int)$result['id']);
+
+        $propertyCreatedAt = $reflectionClass->getProperty('createdAt');
+        $propertyCreatedAt->setAccessible(true);
+        $propertyCreatedAt->setValue($order, new \DateTimeImmutable($result['created_at']));
 
         $this->identityMap->add($order);
-
-        return $order;
     }
 
     private function update(Order $order): void

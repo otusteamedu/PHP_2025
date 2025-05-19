@@ -6,6 +6,9 @@ use App\Entity\Order;
 
 class OrderIdentityMap
 {
+    /**
+     * @var array<int, Order>
+     */
     private array $orders = [];
 
     public function has(int $id): bool

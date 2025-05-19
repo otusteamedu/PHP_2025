@@ -18,18 +18,24 @@ class OrderRepository
         return $this->mapper->fetchById($id);
     }
 
+    /**
+     * @return Order[]
+     */
     public function findAllByUserId(int $userId): array
     {
         return $this->mapper->fetchAllByUserId($userId);
     }
 
+    /**
+     * @return Order[]
+     */
     public function findAll(): array
     {
         return $this->mapper->fetchAll();
     }
 
-    public function save(Order $order): Order
+    public function save(Order $order): void
     {
-        return $this->mapper->save($order);
+        $this->mapper->save($order);
     }
 }

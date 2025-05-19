@@ -21,10 +21,8 @@ class UserService
 
     public function create(string $name, string $email): UserDTO
     {
-        $user = $this->userRepository->save(
-            new User($name, $email)
-        );
-
+        $user = new User($name, $email);
+        $this->userRepository->save($user);
         return UserDTO::createFromEntity($user);
     }
 }

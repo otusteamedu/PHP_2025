@@ -3,8 +3,9 @@
 namespace App\DTO;
 
 use App\Entity\Order;
+use JsonSerializable;
 
-readonly class OrderDTO
+readonly class OrderDTO implements JsonSerializable
 {
     public function __construct(
         public int    $id,
@@ -13,6 +14,21 @@ readonly class OrderDTO
         public ?UserDTO $user,
     )
     {
+    }
+
+    public function jsonSerialize(): array
+    {
+        $data = [
+            'id' => $this->id,
+            'totalAmount' => $this->totalAmount,
+            'createdAt' => $this->createdAt,
+        ];
+
+        if ($this->user !== null) {
+            $data['user'] = $this->user;
+        }
+
+        return $data;
     }
 
     static public function createFromEntity(Order $order, ?UserDTO $userDTO = null): self

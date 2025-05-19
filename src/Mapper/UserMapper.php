@@ -42,17 +42,16 @@ class UserMapper
         return $user;
     }
 
-    public function save(User $user): User
+    public function save(User $user): void
     {
         if ($user->getId() === null) {
-            return $this->insert($user);
+            $this->insert($user);
+        } else {
+            $this->update($user);
         }
-
-        $this->update($user);
-        return $user;
     }
 
-    private function insert(User $user): User
+    private function insert(User $user): void
     {
         $stmt = $this->pdo->prepare(
             "INSERT INTO users (name, email) VALUES (:name, :email) RETURNING id"
@@ -69,15 +68,12 @@ class UserMapper
             throw new \RuntimeException("Insert user failed");
         }
 
-        $user = new User(
-            $user->getName(),
-            $user->getEmail(),
-            (int)$result['id']
-        );
+        $reflectionClass = new \ReflectionClass($user);
+        $propertyId = $reflectionClass->getProperty('id');
+        $propertyId->setAccessible(true);
+        $propertyId->setValue($user, (int)$result['id']);
 
         $this->identityMap->add($user);
-
-        return $user;
     }
 
     private function update(User $user): void

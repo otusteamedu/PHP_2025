@@ -18,8 +18,8 @@ class UserRepository
         return $this->mapper->fetchById($id);
     }
 
-    public function save(User $user): User
+    public function save(User $user): void
     {
-        return $this->mapper->save($user);
+        $this->mapper->save($user);
     }
 }
