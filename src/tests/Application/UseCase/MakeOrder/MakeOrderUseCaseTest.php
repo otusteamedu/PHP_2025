@@ -14,7 +14,7 @@ class MakeOrderUseCaseTest extends TestCase
         // Настройка методов заглушки
         $mockOrder->method('getId')->willReturn("123");
         $mockOrder->method('getOrder')->willReturn(["Бургер","Хотдог"]);
-        $mockOrder->method('getUser')->willReturn(456);
+        $mockOrder->method('getUser')->willReturn("456");
         $mockOrder->method('getStatus')->willReturn('in work');
 
         // Создание экземпляра MakeOrderUseCase с заглушкой

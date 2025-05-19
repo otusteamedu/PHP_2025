@@ -30,7 +30,7 @@ class Order
         return $this->product->getValue();  
     }  
 
-    public function getUser(): ?int 
+    public function getUser(): ?string 
     {  
         return $this->user->getValue();  
     }  
