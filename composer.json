@@ -13,6 +13,6 @@
         }
     ],
     "require": {
-        "komlev-ivan/phone-format": "^1.0"
+        "komlev-ivan/phone-format": "1.*"
     }
 }
