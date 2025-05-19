@@ -1,0 +1,32 @@
+name: test_design_patterns_app
+services:
+  nginx_with_balancer:
+    container_name: nginx_with_balancer_cont_2
+    build: ./nginx
+    ports:
+      - "8081:80"
+      - "4431:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - inner_network
+
+  php_app_1:
+    container_name: php_app_2_cont
+    build: ./php
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - ./logs/php:/var/log
+    networks:
+      - inner_network
+
+volumes:
+  src:
+  logs:
+
+networks:
+  inner_network:
+    driver: bridge

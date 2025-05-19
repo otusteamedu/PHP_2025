@@ -1,0 +1,24 @@
+{
+    "name": "artemsuchkov/unit_testing_example",
+    "description": "Unit Testing Example For OTUS",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Artem Suchkov"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.1",
+        "mockery/mockery": "^1.6"
+    }
+}

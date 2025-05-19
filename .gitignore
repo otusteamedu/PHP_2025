@@ -1,5 +1,11 @@
 .idea/
-/vendor/
+vendor/
+composer.lock
 .DS_Store
 .AppleDouble
 .LSOverride
+db/
+logs/
+storage/
+.env
+.phpunit.result.cache
