@@ -2,8 +2,6 @@
 
 namespace App;
 
-require_once __DIR__ . '/DotEnvLoader.php';
-
 class PgSQLDriver
 {
     private readonly DotEnvLoader $dotEnvLoader;
