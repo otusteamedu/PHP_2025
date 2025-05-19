@@ -1,4 +1,8 @@
 {
+    "name": "customer41/php-learning",
+    "description": "This project is designed to learn php at OTUS",
+    "type": "project",
+    "license": "proprietary",
     "require": {
         "php": ">=8.4",
         "ext-pdo": "*",
