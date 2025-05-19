@@ -4,8 +4,45 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "69f1d16efdfc2ceecca66cd6ea8be5c5",
+    "content-hash": "eea3c632fab0b62c57c07f992f5f5a73",
     "packages": [
+        {
+            "name": "customer41/multiexception",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/customer41/multiexception.git",
+                "reference": "13ef3b4d1c6fd35793a7fe2549cb74ec6d7acaf0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/customer41/multiexception/zipball/13ef3b4d1c6fd35793a7fe2549cb74ec6d7acaf0",
+                "reference": "13ef3b4d1c6fd35793a7fe2549cb74ec6d7acaf0",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Customer41\\MultiException\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Popov",
+                    "email": "alien1986cs@gmail.com"
+                }
+            ],
+            "description": "It's a simple package for managing multiple exceptions",
+            "support": {
+                "issues": "https://github.com/customer41/multiexception/issues",
+                "source": "https://github.com/customer41/multiexception/tree/1.0.0"
+            },
+            "time": "2025-05-19T10:03:37+00:00"
+        },
         {
             "name": "graham-campbell/result-type",
             "version": "v1.1.3",
