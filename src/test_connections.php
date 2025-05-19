@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\MemcachedDriver;
 use App\PgSQLDriver;
 use App\RedisDriver;
