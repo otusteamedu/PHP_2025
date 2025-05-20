@@ -1,8 +1,6 @@
 <?php
 
-require_once __DIR__ . '/PgSQLDriver.php';
-require_once __DIR__ . '/RedisDriver.php';
-require_once __DIR__ . '/MemcachedDriver.php';
+declare(strict_types=1);
 
 use App\MemcachedDriver;
 use App\PgSQLDriver;

@@ -4,8 +4,48 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "108be68e4e2b97fed51d36a10eed0849",
+    "content-hash": "eea3c632fab0b62c57c07f992f5f5a73",
     "packages": [
+        {
+            "name": "customer41/multiexception",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/customer41/multiexception.git",
+                "reference": "f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/customer41/multiexception/zipball/f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4",
+                "reference": "f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Customer41\\MultiException\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Popov",
+                    "email": "alien1986cs@gmail.com"
+                }
+            ],
+            "description": "It's a simple package for managing multiple exceptions",
+            "support": {
+                "issues": "https://github.com/customer41/multiexception/issues",
+                "source": "https://github.com/customer41/multiexception/tree/1.0.1"
+            },
+            "time": "2025-05-20T16:48:55+00:00"
+        },
         {
             "name": "graham-campbell/result-type",
             "version": "v1.1.3",
@@ -474,7 +514,12 @@
     "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
+    "platform": {
+        "php": ">=8.4",
+        "ext-pdo": "*",
+        "ext-redis": "*",
+        "ext-memcached": "*"
+    },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

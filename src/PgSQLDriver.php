@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+declare(strict_types=1);
 
-require_once __DIR__ . '/DotEnvLoader.php';
+namespace App;
 
 class PgSQLDriver
 {
