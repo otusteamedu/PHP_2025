@@ -8,17 +8,20 @@
     "packages": [
         {
             "name": "customer41/multiexception",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/customer41/multiexception.git",
-                "reference": "13ef3b4d1c6fd35793a7fe2549cb74ec6d7acaf0"
+                "reference": "f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/customer41/multiexception/zipball/13ef3b4d1c6fd35793a7fe2549cb74ec6d7acaf0",
-                "reference": "13ef3b4d1c6fd35793a7fe2549cb74ec6d7acaf0",
+                "url": "https://api.github.com/repos/customer41/multiexception/zipball/f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4",
+                "reference": "f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4",
                 "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
             },
             "type": "library",
             "autoload": {
@@ -39,9 +42,9 @@
             "description": "It's a simple package for managing multiple exceptions",
             "support": {
                 "issues": "https://github.com/customer41/multiexception/issues",
-                "source": "https://github.com/customer41/multiexception/tree/1.0.0"
+                "source": "https://github.com/customer41/multiexception/tree/1.0.1"
             },
-            "time": "2025-05-19T10:03:37+00:00"
+            "time": "2025-05-20T16:48:55+00:00"
         },
         {
             "name": "graham-campbell/result-type",
