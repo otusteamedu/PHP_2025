@@ -1,3 +1,6 @@
-# PHP_2025
+### Описание выполненного домашнего задания №4
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Для запуска выполните:
+```bash
+docker-compose build && docker-compose up -d
+```
