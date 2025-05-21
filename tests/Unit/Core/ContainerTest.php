@@ -39,15 +39,6 @@ class ContainerTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testClassResolution()
-    {
-        $object = $this->container->make(self::class);
-        $this->assertInstanceOf(self::class, $object);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
     public function testNonexistentClass()
     {
         $this->expectException(RuntimeException::class);

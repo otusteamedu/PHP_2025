@@ -5,6 +5,7 @@ namespace Tests\Integration\Core;
 use App\Core\Container;
 use App\Core\Router;
 use App\Core\Exceptions\NotFoundException;
+use Infrastructure\Adapter\FastFoodItemInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -15,6 +16,13 @@ class RouterTest extends TestCase
     protected function setUp(): void
     {
         $container = new Container();
+
+        // Регистрируем необходимые зависимости
+        $container->bind(
+            FastFoodItemInterface::class,
+            fn() => $this->createMock(FastFoodItemInterface::class)
+        );
+
         $this->router = new Router($container);
     }
 
@@ -44,4 +52,3 @@ class RouterTest extends TestCase
         $this->router->getRoute();
     }
 }
-

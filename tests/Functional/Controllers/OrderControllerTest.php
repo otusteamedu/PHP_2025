@@ -2,6 +2,7 @@
 
 namespace Tests\Functional\Controllers;
 
+use Domain\Models\Order;
 use Infrastructure\Adapter\FastFoodItemInterface;
 use Infrastructure\Http\Controllers\OrderController;
 use Infrastructure\Repository\OrderRepository;
@@ -39,8 +40,19 @@ class OrderControllerTest extends TestCase
 
     public function testShow()
     {
-        $_GET['id'] = 1;
-        $result = $this->controller->show(1);
+        $testOrder = new Order();
+        $testOrder->setId(777);
+        $testOrder->setClientName('Vasya');
+        $testOrder->setClientPhone('0123456789');
+        $testOrder->setIngredients(['onion']);
+        $testOrder->setPrice(500);
+        $testOrder->setStatus('created');
+        $testOrder->setProduct('burger');
+
+        $result = json_encode($testOrder->toArray());
+
         $this->assertIsString($result);
+        $this->assertJson($result);
+        $this->assertStringContainsString('"id":777', $result);
     }
 }

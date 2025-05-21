@@ -38,7 +38,8 @@ class OrderRepositoryTest extends TestCase
         $this->stmtMock->method('execute');
         $this->stmtMock->method('fetch')
             ->willReturnOnConsecutiveCalls(
-                ['id' => 1, 'client_name' => 'Test'],
+                ['id' => 1, 'client_name' => 'Test', 'client_phone' => '89000001231', 'order_status' => 'created',
+                'ingredients' => json_encode(['onion']), 'product' => 'burger', 'price' => 300],
                 false
             );
 

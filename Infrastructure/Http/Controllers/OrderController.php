@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Infrastructure\Http\Controllers;
 
+use App\Core\Exceptions\NotFoundException;
 use Infrastructure\Adapter\FastFoodItemInterface;
 use Infrastructure\Http\Requests\OrderRequest;
 use Infrastructure\Services\OrderService;
@@ -62,11 +63,16 @@ class OrderController extends BaseController
 
     /**
      * @param int $id
-     * @return false|string
+     * @return string
+     * @throws NotFoundException
      */
-    public function show(int $id): false|string
+    public function show(int $id): string
     {
         $order = $this->orderService->getOrder($id);
+
+        if ($order === false) {
+            throw new NotFoundException('Order not found');
+        }
 
         return $this->jsonResponse($order->toArray());
     }
