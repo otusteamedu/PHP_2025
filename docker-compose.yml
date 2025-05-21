@@ -19,6 +19,10 @@ services:
       - './:/var/www/html'
     networks:
       - my-network
+    command: >
+      sh -c "apt-get update && 
+      apt-get install -y php8.1-mbstring php8.1-xml php8.1-dom php8.1-json php8.1-tokenizer &&
+      ./vendor/bin/phpunit --coverage-html coverage-report"
   mysql:
     image: mysql:8.0
     container_name: mysql
