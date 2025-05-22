@@ -1,0 +1,6 @@
+{
+  "amount": 100,
+  "from": "RUB",
+  "to": "USD",
+  "expectedRate": 1000
+}
