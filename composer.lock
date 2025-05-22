@@ -1,0 +1,56 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "b62b74b4b75cef2463975cea7aae2fd6",
+    "packages": [
+        {
+            "name": "mdani/hello-world",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MaximDanileico/hello-world.git",
+                "reference": "a9a200fe453a842034cc22f5da88b535d7e2bbad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MaximDanileico/hello-world/zipball/a9a200fe453a842034cc22f5da88b535d7e2bbad",
+                "reference": "a9a200fe453a842034cc22f5da88b535d7e2bbad",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mdani\\HelloWorld\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "MDani",
+                    "email": "mdannileico@gmail.com"
+                }
+            ],
+            "description": "Hello world",
+            "support": {
+                "issues": "https://github.com/MaximDanileico/hello-world/issues",
+                "source": "https://github.com/MaximDanileico/hello-world/tree/v1.0.0"
+            },
+            "time": "2025-05-20T12:18:25+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.2.0"
+}
