@@ -7,6 +7,7 @@ services:
     container_name: "${CONTAINER_NAME_NGINX}"
     ports:
       - "8080:80"
+      - "443:443"
     volumes:
       - ./app/web/public:/data/mysite.local
     depends_on:
@@ -18,8 +19,6 @@ services:
       dockerfile: Dockerfile
     image: php-fpm
     container_name: "${CONTAINER_NAME_PHP}"
-    ports:
-      - "9000:9000"
     volumes:
       - ./app/web/public:/data/mysite.local
     depends_on:
@@ -29,8 +28,6 @@ services:
     image: redis
     container_name: "${CONTAINER_NAME_REDIS}"
     restart: always
-    ports:
-      - "63799:6379"
     depends_on:
       - app
 
@@ -41,8 +38,6 @@ services:
       - --conn-limit=1024
       - --memory-limit=64
     restart: always
-    ports:
-      - "11211:11211"
     depends_on:
       - app
 
@@ -50,11 +45,9 @@ services:
     image: postgres
     container_name: "${CONTAINER_NAME_POSTGRES}"
     environment:
-      POSTGRES_USER: postgres_user
-      POSTGRES_PASSWORD: postgres_password
-      POSTGRES_DB: postgres_db
+      POSTGRES_USER: POSTGRES_USER
+      POSTGRES_PASSWORD: POSTGRES_PASSWORD
+      POSTGRES_DB: POSTGRES_DB
     volumes:
       - /db/data:/var/lib/postgresql/data
       - /db/postgresql.conf:/var/lib/postgresql/data
-    ports:
-      - "54322:5432"
