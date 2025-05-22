@@ -20,7 +20,9 @@ services:
     volumes:
       - .:/var/www/html
     depends_on:
-      - redis
+      - redis1
+      - redis2
+      - redis3
 
   php2:
     build:
@@ -30,13 +32,33 @@ services:
     volumes:
       - .:/var/www/html
     depends_on:
-      - redis
+      - redis1
+      - redis2
+      - redis3
 
-  redis:
+  redis1:
     image: redis:alpine
-    container_name: redis
+    container_name: redis1
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     volumes:
-      - ./docker/data/redis:/data
+      - ./docker/redis1/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./docker/data/redis1:/data
+
+  redis2:
+    image: redis:alpine
+    container_name: redis2
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    volumes:
+      - ./docker/redis2/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./docker/data/redis2:/data
+
+  redis3:
+    image: redis:alpine
+    container_name: redis3
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    volumes:
+      - ./docker/redis3/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./docker/data/redis3:/data
 
 networks:
   default:
