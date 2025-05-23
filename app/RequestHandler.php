@@ -9,19 +9,17 @@ use Throwable;
 
 final class RequestHandler
 {
-    public function __construct(private BracketValidator $validator){}
+    public function __construct(private BracketValidator $validator, private ResponseSender $responseSender){}
 
     /**
-     * Читает POST-параметр `string`, валидирует и отправляет HTTP‑ответ
+     * Обрабатывает входные данные и возвращает результат в виде строки
      */
-    public function handle(): void
+    public function handle(array $post): string
     {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 throw new InvalidArgumentException('Требуется POST-запрос');
             }
-
-            $post = $_POST;
 
             if (!array_key_exists('string', $post)) {
                 throw new InvalidArgumentException('Не передан параметр string');
@@ -29,15 +27,14 @@ final class RequestHandler
 
             $this->validator->validate($post['string']);
 
-            http_response_code(200);
-            echo 'OK: строка корректна';
+            $this->responseSender->sendResponse(200);
+            return 'OK: строка корректна';
         } catch (InvalidArgumentException $e) {
-            http_response_code(400);
-            echo 'ERROR: ' . $e->getMessage();
+            $this->responseSender->sendResponse(400);
+            return 'ERROR: ' . $e->getMessage();
         } catch (Throwable $e) {
-            http_response_code(400);
-            echo 'ERROR: ' . $e->getMessage();
+            $this->responseSender->sendResponse(400);
+            return 'ERROR: ' . $e->getMessage();
         }
     }
 }
-
