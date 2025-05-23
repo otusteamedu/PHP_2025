@@ -2,10 +2,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\BracketValidator;
-use App\RequestHandler;
+use App\App;
 
-$validator = new BracketValidator();
-$handler   = new RequestHandler($validator);
-
-$handler->handle();
+$app = new App();
+echo $app->run();
