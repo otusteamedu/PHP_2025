@@ -1,0 +1,58 @@
+# в этом блоке мы описываем контейнеры, которые будут запускаться
+services:
+  #контейнер с Nginx
+  nginx:
+    build:
+      context: .
+      dockerfile: /docker/nginx/Dockerfile
+    image: first-proj/nginx
+    container_name: first-proj-webserver
+    # проброс портов
+    ports:
+      - "80:80"
+    volumes:
+       - ./src:/data/src
+    restart: always
+   
+
+  mysql:
+    build:
+      context: ./docker/mysql
+      dockerfile: Dockerfile
+    image: first-proj/mysql # имя будущего образа
+    container_name: first-proj-mysql
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  #Контейнер с PHP-FPM, назовём его app
+  app:
+    # Если нет секции build, то система будет искать образ в репозиториях
+    build:
+      context: .
+      dockerfile: /docker/php/Dockerfile
+    image: first-proj/php # имя будущего образа
+    container_name: first-proj
+    volumes:
+       - ./src:/data/src
+    depends_on:
+      - mysql
+    
+    # мы можем создать для контейнеров внутреннюю сеть
+  redis:
+    image: redis:alpine
+    container_name: first-proj-redis
+    ports:
+      - "6379:6379"
+
+  memcached:
+    image: memcached:alpine
+    container_name: first-proj-memcached
+    ports:
+      - "11211:11211"
+
+volumes:
+  db_data: 
