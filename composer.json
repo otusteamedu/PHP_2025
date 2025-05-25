@@ -13,5 +13,7 @@
             "email": "liveevil94@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=5.3"
+    }
 }
