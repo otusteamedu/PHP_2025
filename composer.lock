@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a7767180f3c53724d475180c5ba95ed",
+    "content-hash": "00a02bb5f5c8030abcc9b019c81b0b30",
     "packages": [
         {
             "name": "graham-campbell/result-type",
@@ -67,6 +67,39 @@
                 }
             ],
             "time": "2024-07-20T21:45:45+00:00"
+        },
+        {
+            "name": "liza-rachmanova/anagram-service",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/elizaveta27-gif/anagram-service.git",
+                "reference": "00eddc0c00f2d6663e107a014a89d303d74dccbf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/elizaveta27-gif/anagram-service/zipball/00eddc0c00f2d6663e107a014a89d303d74dccbf",
+                "reference": "00eddc0c00f2d6663e107a014a89d303d74dccbf",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "App\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Рахманова Елизавета",
+                    "email": "raxmanova_elizavetka@mail.ru"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/elizaveta27-gif/anagram-service/issues",
+                "source": "https://github.com/elizaveta27-gif/anagram-service/tree/1.0.0"
+            },
+            "time": "2025-05-25T10:24:20+00:00"
         },
         {
             "name": "phpoption/phpoption",
