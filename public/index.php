@@ -1,18 +1,9 @@
-<?php declare(strict_types=1);
+<?php
 
-use App\App;
-use App\Http\Response;
+use App\Kernel;
 
-require(__DIR__ . '/../vendor/autoload.php');
+require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
-try {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
-    $dotenv->load();
-
-    $app = new App();
-    $response = $app->run();
-
-    echo $response;
-} catch (\Throwable $e) {
-    echo (new Response())->send(500, ['error' => 'Internal server error']);
-}
+return function (array $context) {
+    return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+};
