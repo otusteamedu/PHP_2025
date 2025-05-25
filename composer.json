@@ -1,0 +1,14 @@
+{
+    "name": "alexander/project",
+    "description": "Описание проекта",
+    "require": {
+        "alexander-samoylov/mypackage": "^1.0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "code/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
