@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  nginx-balancer:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - php-fpm1
+      - php-fpm2
+      - redis
+    networks:
+      - app-network
+
+  php-fpm1:
+    build: ./php-fpm
+    volumes:
+      - ./php-fpm:/var/www/html
+      - ./logs:/var/log
+    networks:
+      - app-network
+
+  php-fpm2:
+    build: ./php-fpm
+    volumes:
+      - ./php-fpm:/var/www/html
+      - ./logs:/var/log
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
