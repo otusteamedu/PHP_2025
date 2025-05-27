@@ -31,10 +31,8 @@ services:
       - db_pgdata:/var/lib/postgresql/data:rw
       - db_wal:/var/lib/postgresql/wal:rw
     environment:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: password
-    ports:
-      - '5432:5432'
+          POSTGRES_USER: '${POSTGRES_USER}'
+          POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
 
   redis:
     build:
@@ -42,15 +40,11 @@ services:
       dockerfile: docker/redis/Dockerfile
     volumes:
       - ./docker/redis/data:/data
-    ports:
-      - '6379:6379'
 
   memcached:
     build:
       context: .
       dockerfile: docker/memcached/Dockerfile
-    ports:
-      - "11211:11211"
 
 volumes:
   db_pgdata:
