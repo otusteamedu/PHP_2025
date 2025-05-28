@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nginx-balancer:
-    build: ./nginx
+    build: ./_docker/nginx
     ports:
       - "80:80"
     depends_on:
@@ -13,17 +13,17 @@ services:
       - app-network
 
   php-fpm1:
-    build: ./php-fpm
+    build: ./_docker/php-fpm
     volumes:
-      - ./php-fpm:/var/www/html
+      - ./:/var/www/html
       - ./logs:/var/log
     networks:
       - app-network
 
   php-fpm2:
-    build: ./php-fpm
+    build: ./_docker/php-fpm
     volumes:
-      - ./php-fpm:/var/www/html
+      - ./:/var/www/html
       - ./logs:/var/log
     networks:
       - app-network
