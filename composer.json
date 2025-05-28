@@ -1,0 +1,19 @@
+{
+    "name": "otus/hwfour",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "MyApp\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "asplekhanov",
+            "email": "liveevil94@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "ext-mbstring": "*"
+    }
+}
