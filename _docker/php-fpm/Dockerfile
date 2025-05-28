@@ -1,5 +1,9 @@
 FROM php:8.2-fpm-alpine
 
+RUN touch /var/log/requests.log && \
+    chown www-data:www-data /var/log/requests.log && \
+    chmod 644 /var/log/requests.log
+
 RUN apk add --no-cache \
         autoconf \
         g++ \

@@ -6,7 +6,7 @@ session_start();
 
 header('Content-Type: text/plain');
 
-require_once 'autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use App\Application;
 
