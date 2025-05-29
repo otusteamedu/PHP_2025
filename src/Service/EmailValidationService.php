@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Aovchinnikova\Hw15\Service;
@@ -8,19 +7,6 @@ use Aovchinnikova\Hw15\Model\ValidationResult;
 
 class EmailValidationService
 {
-
-    // Нарушение: Валидаторы жестко закодированы (нарушение Open/Closed principle).
-    // Решение: Использовать стратегии через интерфейс.
-    // Правильный код:
-    // private array $validators;
-    // public function __construct(array $validators) {
-    //     $this->validators = $validators;
-    // }
-    
-    /**
-     * @param string $email
-     * @return ValidationResult
-     */
     public function validate(string $email): ValidationResult
     {
         $isValidFormat = $this->isValidFormat($email);
@@ -29,10 +15,6 @@ class EmailValidationService
         return new ValidationResult($email, $isValidFormat, $hasValidDNS);
     }
 
-    /**
-     * @param string $email
-     * @return bool
-     */
     private function isValidFormat(string $email): bool
     {
         $pattern = '/^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/';
@@ -40,10 +22,6 @@ class EmailValidationService
         return preg_match($pattern, $email) === 1;
     }
 
-    /**
-     * @param string $email
-     * @return bool
-     */
     private function hasValidDNS(string $email): bool
     {
         $domain = substr(strrchr($email, "@"), 1);
