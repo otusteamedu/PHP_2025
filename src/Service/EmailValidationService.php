@@ -23,9 +23,13 @@ class EmailValidationService
     }
 
     private function hasValidDNS(string $email): bool
-    {
-        $domain = substr(strrchr($email, "@"), 1);
-
-        return checkdnsrr($domain, "MX");
+    {    
+        $domainPart = strrchr($email, "@");
+        if ($domainPart === false) {
+            return false;
+        }
+    
+        $domain = substr($domainPart, 1);
+        return !empty($domain) && checkdnsrr($domain, "MX");
     }
 }
