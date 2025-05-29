@@ -11,7 +11,7 @@ declare(strict_types=1);
  * }
  */
 
-class Solution {
+class Solution1 {
     function getIntersectionNode($headA, $headB) {
         if ($headA === null || $headB === null) return null;
 

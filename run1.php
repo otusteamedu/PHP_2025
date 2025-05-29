@@ -1,5 +1,7 @@
 <?php
 
+require_once 'ListNode.php';
+require_once 'Solution1.php';
 
 // Создание тестовых данных
 // Список A: 4 -> 1 -> 8 -> 4 -> 5
@@ -10,7 +12,7 @@ $commonNode = new ListNode(8, new ListNode(4, new ListNode(5)));
 $headA = new ListNode(4, new ListNode(1, $commonNode));
 $headB = new ListNode(5, new ListNode(6, new ListNode(1, $commonNode)));
 
-$solution = new Solution();
+$solution = new Solution1();
 $result = $solution->getIntersectionNode($headA, $headB);
 
 // Вывод результата
