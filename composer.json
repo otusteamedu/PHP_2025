@@ -11,5 +11,7 @@
             "email": "nastya.ovchinnikova89@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php-amqplib/php-amqplib": "^3.7"
+    }
 }
