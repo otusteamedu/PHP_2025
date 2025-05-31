@@ -1,3 +1,11 @@
-# PHP_2025
+### Описание выполненного домашнего задания №5
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Реализовано приложение для верификации e‑mail‑адресов:
+
+- Проверка email по регулярным выражениям;
+- Проверка DNS MX-записей.
+
+Для запуска приложения выполните:
+```bash
+docker-compose build && docker-compose up -d
+```
