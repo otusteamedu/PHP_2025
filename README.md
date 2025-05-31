@@ -1,3 +1,2 @@
-# PHP_2025
-
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+1. Создал верификацию строки со скобками в файле /code/test_skobochek.php. Верификация происходит отправкой запроса командой curl -X POST -d "string=(()()()()))((((()()()))(()()()(((()))))))" http://localhost/test_skobochek.php
+2. Создал балансировщик: добавил в docker-compose.yml второй контейнер app2, в /nginx/hosts/mysite.local.conf добавил директиву upstream для группировки контйнеров, в /fpm/php.ini изменил memcache на redis.
