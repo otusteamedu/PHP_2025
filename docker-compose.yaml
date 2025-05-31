@@ -36,7 +36,7 @@ services:
     image: myapp/php
     container_name: app2
     volumes:
-      - ./code2:/data/mysite.local
+      - ./code:/data/mysite.local
     depends_on:
       - redis
       - memcached
