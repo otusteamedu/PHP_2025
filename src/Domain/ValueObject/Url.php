@@ -19,8 +19,8 @@ class Url
 
     private function assertValidUrl(string $value): void
     {
-        if (mb_strlen($value) < 3) {
-            throw new \InvalidArgumentException('URL string must have at least 3 characters.');
+        if (!filter_var($value, FILTER_VALIDATE_URL)) {
+            throw new \InvalidArgumentException('Invalid URL format.');
         }
     }
 }

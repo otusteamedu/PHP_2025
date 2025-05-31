@@ -13,3 +13,12 @@ services:
 
   App\Domain\Factory\NewsFactoryInterface:
     alias: App\Infrastructure\Factory\NewsFactory
+
+  App\Application\UseCase\NewsMetadataProvider\NewsMetadataProviderInterface:
+    alias: App\Infrastructure\Service\HtmlNewsMetadataProvider
+
+  App\Domain\Repository\NewsRepositoryInterface:
+    alias: App\Infrastructure\Repository\DoctrineNewsRepository
+
+#  App\Domain\Repository\NewsRepositoryInterface:
+#    alias: App\Infrastructure\Repository\FileNewsRepository

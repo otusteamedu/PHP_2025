@@ -6,7 +6,6 @@ readonly class SubmitNewsRequest
 {
     public function __construct(
         public string $url,
-        public string $title,
     )
     {
     }

@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace App\Application\UseCase\SubmitNews;
+namespace App\Application\UseCase\FindAllNews;
 
-readonly class SubmitNewsResponse
+readonly class FindAllNewsResponse
 {
     public function __construct(
         public int $id,

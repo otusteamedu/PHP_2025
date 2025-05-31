@@ -19,8 +19,10 @@ class Title
 
     private function assertValidTitle(string $value): void
     {
-        if (mb_strlen($value) === 0) {
-            throw new \InvalidArgumentException('Title string must have more then 0 characters.');
+        $trimmed = trim($value);
+
+        if (mb_strlen($trimmed) < 3) {
+            throw new \InvalidArgumentException('Title must be at least 3 characters long.');
         }
     }
 }
