@@ -5,6 +5,8 @@ namespace App\Application\UseCase\SubmitNews;
 use App\Application\Service\NewsMetadataProvider\NewsMetadataProviderInterface;
 use App\Domain\Factory\NewsFactoryInterface;
 use App\Domain\Repository\NewsRepositoryInterface;
+use App\Domain\ValueObject\Title;
+use App\Domain\ValueObject\Url;
 
 class SubmitNewsUseCase
 {
@@ -18,8 +20,9 @@ class SubmitNewsUseCase
 
     public function __invoke(SubmitNewsRequest $request): SubmitNewsResponse
     {
-        $title = $this->newsMetadataProvider->fetchTitle($request->url);
-        $news = $this->newsFactory->create($request->url, $title);
+        $url = new Url($request->url);
+        $title = new Title($this->newsMetadataProvider->fetchTitle($url->getValue()));
+        $news = $this->newsFactory->create($request->url, $title->getValue());
         $this->newsRepository->save($news);
 
         return new SubmitNewsResponse(
