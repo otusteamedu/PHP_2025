@@ -20,4 +20,9 @@ class RedisDriver
     {
         return $this->redisHandler->info('Server')['redis_version'];
     }
+
+    public function getHandler(): \Redis
+    {
+        return $this->redisHandler;
+    }
 }
