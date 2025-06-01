@@ -1,6 +1,5 @@
 
-version: '3.8'
-
+name: test_rabbit_app
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -15,9 +14,31 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - inner_network
 
-  producer:
-    build: ./producer
+  nginx_with_balancer:
+    container_name: nginx_with_balancer_rabbit_app
+    build: ./nginx
+    ports:
+      - "8082:80"
+      - "4432:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - inner_network
+
+  php_app_1:
+    container_name: php_rabbit_app_cont
+    build: ./php
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - ./logs/php:/var/log
+    networks:
+      - inner_network
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -27,9 +48,13 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+    networks:
+      - inner_network
 
-  consumer2:
-    build: ./consumer2
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
+volumes:
+  src:
+  logs:
+
+networks:
+  inner_network:
+    driver: bridge
