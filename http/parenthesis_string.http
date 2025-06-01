@@ -1,0 +1,8 @@
+POST http://localhost:{{nginxPublishedPort}}/parenthesis-verifier
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+    "string": "(()()()()))((((()()()))(()()()(((()))))))"
+}

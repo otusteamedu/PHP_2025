@@ -5,3 +5,4 @@
 .LSOverride
 .env
 /var/
+/http/http-client.env.json
