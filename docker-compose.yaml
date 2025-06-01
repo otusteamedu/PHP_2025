@@ -1,0 +1,71 @@
+
+services:
+  # Контейнер с Nginx
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: "${CONTAINER_NAME}"
+    ports:
+      - "80:80"
+    volumes:
+      - ./code:/data/mysite.local
+    depends_on:
+      - app
+
+  # Контейнер с PHP-FPM
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: app
+    volumes:
+      - ./code:/data/mysite.local
+    depends_on:
+      - redis
+      - memcached
+      - db
+  
+  # Контейнер с PHP-FPM (второй экземпляр)
+  app2:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: app2
+    volumes:
+      - ./code:/data/mysite.local
+    depends_on:
+      - redis
+      - memcached
+      - db
+
+
+  # Контейнер с Redis
+  redis:
+    image: redis:latest
+    container_name: redis
+
+  # Контейнер с Memcached
+  memcached:
+    image: memcached:latest
+    container_name: memcached
+
+  # Контейнер с базой данных (например, MySQL)
+  db:
+    image: mysql:latest
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  db_data:
