@@ -1,3 +1,1 @@
-# PHP_2025
-
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Структурировал логику обработки запроса для проверки корректности строки. Классы для верификации строки и отправки ответа по команде curl -X POST -d "string=(()()()()))((((()()()))(()()()(((()))))))" http://localhost находятся в папке code/src/ и добавлены в автозагрузку в файле code/composer.json
