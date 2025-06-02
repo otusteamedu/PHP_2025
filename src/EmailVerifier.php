@@ -3,17 +3,21 @@ namespace Elisad5791\Phpapp;
 
 class EmailVerifier implements EmailVerifierInterface
 {
-    public function __construct(protected MxCheckerInterface $mxChecker) {}
+    protected $mxChecker;
 
-    public function verifyEmails(array $emails): array
+    public function __construct(?MxCheckerInterface $mxChecker = null) {
+        $this->mxChecker = $mxChecker ?? new DefaultMxChecker();
+    }
+
+    public function verifyEmails(array $emails): string
     {
         $results = [];
-        
         foreach ($emails as $email) {
             $results[$email] = $this->verifyEmail($email);
         }
-        
-        return $results;
+
+        $output = $this->formatResult($results);
+        return $output;
     }
     
     public function verifyEmail(string $email): array
@@ -44,5 +48,19 @@ class EmailVerifier implements EmailVerifierInterface
         $domain = $parts[1];
         
         return $this->mxChecker->checkMxRecord($domain);
+    }
+
+    protected function formatResult(array $results): string
+    {
+        $output = '';
+        foreach ($results as $email => $result) {
+            $output .= "Email: $email\n";
+            $output .= "Valid format: " . ($result['format_is_valid'] ? 'Yes' : 'No') . "\n";
+            $output .= "Valid MX: " . ($result['mx_is_valid'] ? 'Yes' : 'No') . "\n";
+            $output .= "Overall valid: " . ($result['valid'] ? 'Yes' : 'No') . "\n";
+            $output .= "-----------------\n";
+        }
+        
+        return $output;
     }
 }
