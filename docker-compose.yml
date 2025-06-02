@@ -1,0 +1,47 @@
+
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Nginx.Dockerfile
+    ports:
+      - "8096:80"
+    networks:
+      - internal
+    volumes:
+      - ./:/var/www/app
+  fpm:
+    build:
+      context: .
+      dockerfile: ./docker/php/Fpm.Dockerfile
+    volumes:
+      - ./:/var/www/app
+    networks:
+      - internal
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./docker/rabbitmq/config/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./docker/rabbitmq/config/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+  consumer:
+    build: ./consumer
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - internal
+
+networks:
+  internal:

@@ -2,57 +2,28 @@
 
 namespace App\Classes;
 
+//use PhpAmqpLib\Connection\AMQPConnection;
+//use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
+use Symfony\Component\Dotenv\Dotenv;
+use App\Classes\RabbitMQManager;
+use App\Classes\TelegramService;
+
 class App
 {
-    protected array $commands = [];
-
-    public function __construct(
-        protected string $namespace,
-        protected array $argv,
-        protected string $commandName = '',
-    ){}
-
     public function run()
     {
-        $this->registerCommand();
-        $this->parseOptions();
+        $dotenv = new Dotenv();
+        $dotenv->load($_SERVER['DOCUMENT_ROOT'].'/.env');
 
-        if (!array_key_exists($this->commandName, $this->commands)) {
-            throw new \RuntimeException('Error: command not found'.PHP_EOL);
-        }
+        //TODO работает
+        //$telegramService = new TelegramService();
+        //$telegramService->sendNotification('345345435');
 
-        $command = $this->commands[$this->commandName];
-        $commandInstance = new $command;
-
-        if (!($commandInstance instanceof CommandInterface)) {
-            throw new \RuntimeException('Error: command is not implementing the correct interface'.PHP_EOL);
-        }
-
-        return (new $command)->execute($this->argv);
-    }
-
-    private function registerCommand():void
-    {
-        $commandFiles = new \DirectoryIterator(__DIR__.'/Commands/');
-
-        foreach ($commandFiles as $command) {
-            if (!$command->isFile()) {
-                continue;
-            }
-
-            $command = $this->namespace.pathinfo($command, PATHINFO_FILENAME);
-            $commandName = $command::getName();
-            $this->commands[$commandName] = $command;
-        }
-    }
-
-    private function parseOptions():void
-    {
-        if (!isset($this->argv[1])) {
-            throw new \RuntimeException('Error: command not provided'.PHP_EOL);
-        }
-        $this->commandName = $this->argv[1];
-        $this->argv = array_slice($this->argv, 2);
+        $RabbitMQManager = new RabbitMQManager();
+        $RabbitMQManager->pushMessage('TEST_TEST_666666');
     }
 
 }
