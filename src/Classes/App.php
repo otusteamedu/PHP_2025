@@ -2,14 +2,7 @@
 
 namespace App\Classes;
 
-//use PhpAmqpLib\Connection\AMQPConnection;
-//use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\Dotenv\Dotenv;
-use App\Classes\RabbitMQManager;
-use App\Classes\TelegramService;
 
 class App
 {
@@ -18,12 +11,16 @@ class App
         $dotenv = new Dotenv();
         $dotenv->load($_SERVER['DOCUMENT_ROOT'].'/.env');
 
-        //TODO работает
-        //$telegramService = new TelegramService();
-        //$telegramService->sendNotification('345345435');
+        if (!isset($_REQUEST['date_from'])) throw new \RuntimeException('Date from didn`t send');
+        if (!isset($_REQUEST['date_to'])) throw new \RuntimeException('Date to didn`t send');
+
+        $message = 'Отправлен в очередь запрос на генерацию финансового отчета с '.$_REQUEST['date_from'].' по '.$_REQUEST['date_to'];
+        print_r($message);
 
         $RabbitMQManager = new RabbitMQManager();
-        $RabbitMQManager->pushMessage('TEST_TEST_666666');
-    }
+        $RabbitMQManager->pushMessage($message);
 
+        $telegramService = new TelegramService();
+        $telegramService->sendNotification($message);
+    }
 }

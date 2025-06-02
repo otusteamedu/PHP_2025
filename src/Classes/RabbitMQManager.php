@@ -5,13 +5,12 @@ namespace App\Classes;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Component\Dotenv\Dotenv;
+
 
 class RabbitMQManager
 {
     const EXCHANGE_NAME = 'hash_exchange';
     const EXCHANGE_TYPE = 'x-consistent-hash';
-
 
 
     private AMQPStreamConnection $connection;

@@ -1,4 +1,5 @@
 <?php
+//TODO почистить код (Написать нормальный класс для Consumer)
 $conn = new AMQPConnection([
     'host' => 'rabbitmq',
     'port' => 5672,
