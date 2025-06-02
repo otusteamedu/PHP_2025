@@ -17,8 +17,8 @@ class App
         $message = 'Отправлен в очередь запрос на генерацию финансового отчета с '.$_REQUEST['date_from'].' по '.$_REQUEST['date_to'];
         print_r($message);
 
-        $RabbitMQManager = new RabbitMQManager();
-        $RabbitMQManager->pushMessage($message);
+        $rabbitMQManager = new RabbitMQManager();
+        $rabbitMQManager->pushMessage($message);
 
         $telegramService = new TelegramService();
         $telegramService->sendNotification($message);

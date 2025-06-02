@@ -1,39 +1,13 @@
 <?php
-//TODO почистить код (Написать нормальный класс для Consumer)
-$conn = new AMQPConnection([
-    'host' => 'rabbitmq',
-    'port' => 5672,
-    'login' => 'guest',
-    'password' => 'guest',
-    'vhost' => '/'
-]);
-$conn->connect();
 
-$channel = new AMQPChannel($conn);
+require_once '../vendor/autoload.php';
 
-// Устанавливаем QoS: prefetch_count = 1
-$channel->qos(0, 1); // prefetch size = 0, count = 1
+use App\Classes\Consumer;
 
-$exchange = new AMQPExchange($channel);
-$exchange->setName('hash_exchange');
-$exchange->setType('x-consistent-hash');
-$exchange->setArgument('hash-header', 'hash-on');
-$exchange->declareExchange();
+try {
+    $app = new Consumer();
+    $app->consume();
+} catch (Exception $e) {
+    print_r($e->getMessage());
+}
 
-$queue = new AMQPQueue($channel);
-$queue->setName('queue_1');
-$queue->declareQueue();
-$queue->bind('hash_exchange', '1'); // вес очереди
-
-echo "Waiting for messages...\n";
-
-// consume с ручным ack
-$queue->consume(function ($envelope, $queue) {
-    $body = $envelope->getBody();
-    echo "Received: " . $body . "\n";
-
-    // Обработка...
-
-    // Явное подтверждение
-    $queue->ack($envelope->getDeliveryTag());
-}, AMQP_NOPARAM);
