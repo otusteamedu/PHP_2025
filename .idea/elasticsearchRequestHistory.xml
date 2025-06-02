@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ElasticsearchRequestHistory">
+    <option name="requestHistory">
+      <map>
+        <entry key="6a696eb9-06a7-4148-8487-39c51e53c793">
+          <value>
+            <list>
+              <HistoryRequest>
+                <option name="body" value="{&#10;  &quot;from&quot;: 0,&#10;  &quot;size&quot;: 50,&#10;  &quot;query&quot;: {&#10;    &quot;match_all&quot;: {}&#10;  }&#10;}" />
+                <option name="path" value="/book_store/_search" />
+              </HistoryRequest>
+              <HistoryRequest>
+                <option name="path" value="/_nodes/VccM63i5SZSxM656Y90cYA" />
+              </HistoryRequest>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
