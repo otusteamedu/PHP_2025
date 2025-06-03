@@ -2,41 +2,32 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Controller;
 
-class ParenthesisStringVerifier
+use App\Validator\ParenthesisStringValidator;
+
+class ParenthesisStringController
 {
-    private ?int $httpCode = null;
-    private ?string $message = null;
-
-    public function run(): self
+    public function verifyParenthesisString(): void
     {
         try {
-            $this->verify();
-            $this->httpCode = 200;
-            $this->message = 'Всё хорошо';
+            $parenthesisStr = $this->getPayload();
+            $isValidStr = ParenthesisStringValidator::isValid($parenthesisStr);
+            $httpCode = $isValidStr ? 200 : 400;
+            $message = $isValidStr ? 'Всё хорошо' : 'Всё плохо';
         } catch (\Exception $e) {
-            $this->httpCode = $e->getCode();
-            $this->message = $e->getMessage();
-        } finally {
-            return $this;
+            $httpCode = $e->getCode();
+            $message = $e->getMessage();
         }
-    }
 
-    public function getHttpCode(): ?int
-    {
-        return $this->httpCode;
-    }
-
-    public function getMessage(): ?string
-    {
-        return $this->message;
+        header('Content-Type: application/json; charset=utf-8', response_code: $httpCode);
+        echo json_encode(['response' => $message]);
     }
 
     /**
      * @throws \Exception
      */
-    private function verify(): void
+    private function getPayload(): string
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new \Exception('Method Not Allowed (Allow: POST)', 405);
@@ -56,8 +47,6 @@ class ParenthesisStringVerifier
             throw new \Exception('Параметр "string" не передан в теле запроса', 400);
         }
 
-        if (!ParenthesisStringValidator::isValid($body['string'])) {
-            throw new \Exception('Всё плохо', 400);
-        }
+        return $body['string'];
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Service;
 
 use Dotenv\Dotenv;
 
@@ -12,7 +12,7 @@ class DotEnvLoader
 
     public function __construct()
     {
-        $this->params = Dotenv::createImmutable(__DIR__ . '/../')->load();
+        $this->params = Dotenv::createImmutable(__DIR__ . '/../../')->load();
     }
 
     public function getEnv(string $var): ?string

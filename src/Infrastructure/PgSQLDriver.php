@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Infrastructure;
+
+use App\Service\DotEnvLoader;
 
 class PgSQLDriver
 {
