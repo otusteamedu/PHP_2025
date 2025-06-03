@@ -1,7 +1,7 @@
 FROM nginx:latest
 LABEL authors="SGolovanov"
 
-COPY ./hosts/mysite.local.conf /etc/nginx/conf.d/default.conf
+COPY mysite.local.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /data
 

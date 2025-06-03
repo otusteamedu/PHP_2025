@@ -2,3 +2,5 @@
 /vendor/
 
 .env
+/data/redisdata/dump.rdb
+/redis/redis.conf
