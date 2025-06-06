@@ -16,10 +16,11 @@ class MainPage {
         echo "
         <hr/>
         <form method='post'>
+            <h2>Получить выгрузку</h2>
             <p>Выберите дату</p>
             <p><input type='date' name='date' value='' required /></p>
             <p>Впишите ваш эл. адрес</p>
-            <input type='email' name='email' required />
+            <p><input type='email' name='email' required /></p>
             <button type='submit'>Отправить</button>
         </form>";
 

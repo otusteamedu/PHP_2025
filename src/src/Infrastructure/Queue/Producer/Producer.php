@@ -30,16 +30,8 @@ class Producer {
         $exchange->publish($json, '', AMQP_NOPARAM, [
             'headers' => ['hash-on' => "date"]
         ]);
-        echo "<p>Sent message</p>";
 
-       /*  for ($i = 0; $i < 5; $i++) {
-            $key = rand(1, 100);
-            $exchange->publish($key."email", '', AMQP_NOPARAM, [
-                'headers' => ['hash-on' => "user$i"]
-            ]);
-            echo "<p>Sent message $i with key $key</p>";
-            sleep(1);
-        } */
+        echo "<p>".date("Y:m:d H.i.s")." Сообщение отправлено!</p>";
 
     }
 
