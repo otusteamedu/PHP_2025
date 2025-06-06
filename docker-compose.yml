@@ -48,6 +48,10 @@ services:
 
   consumer1:
     build: ./consumer1
+    working_dir: /app
+    volumes:
+      - ./src/src/Infrastructure/Queue/Consumer:/app
+    command: php App.php
     depends_on:
       rabbitmq:
         condition: service_healthy

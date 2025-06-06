@@ -3,7 +3,7 @@ FROM php:8.4-fpm-bullseye
 
 RUN apt-get update && apt-get install -y librabbitmq-dev libssh-dev     && pecl install amqp     && docker-php-ext-enable amqp
 
-WORKDIR /app
-COPY . /app
+#WORKDIR /app
+#COPY . /app
 
-CMD ["php", "app.php"]
+#CMD ["php", "app.php"]

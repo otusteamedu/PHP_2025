@@ -4,5 +4,6 @@
 spl_autoload_register();
 
 use Src\Infrastructure\Http\Common;
+use Src\Infrastructure\MySite\Html\MainPage;
 
-(new Common)();
+(new MainPage)();
