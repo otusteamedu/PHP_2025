@@ -22,6 +22,7 @@ class FindAllNewsUseCase
                 $news->getId(),
                 $news->getUrl()->getValue(),
                 $news->getTitle()->getValue(),
+                $news->getCreatedAt()->format('Y-m-d H:i:s')
             );
         }
     }

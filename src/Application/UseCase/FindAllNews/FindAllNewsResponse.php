@@ -8,6 +8,7 @@ readonly class FindAllNewsResponse
         public int $id,
         public string $url,
         public string $title,
+        public string $createdAt,
     )
     {
     }

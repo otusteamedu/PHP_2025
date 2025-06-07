@@ -11,6 +11,10 @@ interface NewsRepositoryInterface
      */
     public function findAll(): iterable;
     public function findById(int $id): ?News;
+    /**
+     * @return News[]
+     */
+    public function findByIds(array $ids): iterable;
     public function save(News $news);
     public function delete(News $news);
 }

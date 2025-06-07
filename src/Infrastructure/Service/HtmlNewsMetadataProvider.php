@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Service;
 
-use App\Application\Service\NewsMetadataProvider\NewsMetadataProviderInterface;
+use App\Application\Service\NewsMetadataProviderInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class HtmlNewsMetadataProvider implements NewsMetadataProviderInterface

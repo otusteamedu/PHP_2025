@@ -14,11 +14,23 @@ services:
   App\Domain\Factory\NewsFactoryInterface:
     alias: App\Infrastructure\Factory\NewsFactory
 
-  App\Application\UseCase\NewsMetadataProvider\NewsMetadataProviderInterface:
+  App\Application\Service\NewsMetadataProviderInterface:
     alias: App\Infrastructure\Service\HtmlNewsMetadataProvider
+
+  App\Application\Service\ReportGeneratorInterface:
+    alias: App\Infrastructure\Service\HtmlReportGenerator
 
   App\Domain\Repository\NewsRepositoryInterface:
     alias: App\Infrastructure\Repository\DoctrineNewsRepository
 
-#  App\Domain\Repository\NewsRepositoryInterface:
-#    alias: App\Infrastructure\Repository\FileNewsRepository
+  App\Application\UseCase\ReportNews\ReportNewsUseCase:
+      arguments:
+        $reportsDir: '%reports_dir%'
+
+  App\Infrastructure\Http\:
+    resource: '../src/Infrastructure/Http'
+    public: true
+    tags: [ 'controller.service_arguments' ]
+
+parameters:
+  reports_dir: '%kernel.project_dir%/public/reports'

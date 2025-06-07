@@ -33,7 +33,8 @@
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "ext-pdo_pgsql": "*",
         "symfony/dotenv": "^7.3",
-        "doctrine/orm": "^3.3"
+        "doctrine/orm": "^3.3",
+        "symfony/mime": "^7.3"
     },
     "config": {
         "allow-plugins": {

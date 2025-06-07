@@ -18,4 +18,7 @@ class NewsRecord
 
     #[ORM\Column(type: 'string')]
     public string $title;
+
+    #[ORM\Column(type: 'datetime_immutable')]
+    public \DateTimeImmutable $createdAt;
 }

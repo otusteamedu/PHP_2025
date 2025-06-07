@@ -9,10 +9,10 @@ class News
 {
     private ?int $id = null;
 
-
     public function __construct(
         private Url $url,
         private Title $title,
+        private \DateTimeImmutable $createdAt,
     )
     {
     }
@@ -27,5 +27,9 @@ class News
 
     public function getUrl(): Url {
         return $this->url;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable {
+        return $this->createdAt;
     }
 }

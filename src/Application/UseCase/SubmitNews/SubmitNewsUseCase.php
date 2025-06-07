@@ -2,7 +2,7 @@
 
 namespace App\Application\UseCase\SubmitNews;
 
-use App\Application\Service\NewsMetadataProvider\NewsMetadataProviderInterface;
+use App\Application\Service\NewsMetadataProviderInterface;
 use App\Domain\Factory\NewsFactoryInterface;
 use App\Domain\Repository\NewsRepositoryInterface;
 use App\Domain\ValueObject\Title;
@@ -22,13 +22,16 @@ class SubmitNewsUseCase
     {
         $url = new Url($request->url);
         $title = new Title($this->newsMetadataProvider->fetchTitle($url->getValue()));
-        $news = $this->newsFactory->create($request->url, $title->getValue());
+        $createdAt = new \DateTimeImmutable();
+
+        $news = $this->newsFactory->create($request->url, $title->getValue(), $createdAt);
         $this->newsRepository->save($news);
 
         return new SubmitNewsResponse(
             $news->getId(),
             $news->getUrl()->getValue(),
-            $news->getTitle()->getValue()
+            $news->getTitle()->getValue(),
+            $news->getCreatedAt()->format('Y-m-d H:i:s')
         );
     }
 }

@@ -8,6 +8,7 @@ readonly class SubmitNewsResponse
         public int $id,
         public string $url,
         public string $title,
+        public string $createdAt,
     )
     {
     }

@@ -22,14 +22,7 @@ class DoctrineNewsRepository implements NewsRepositoryInterface
         $records = $this->em->getRepository(NewsRecord::class)->findAll();
 
         foreach ($records as $record) {
-            $news = new News(new Url($record->url), new Title($record->title));
-
-            $reflection = new \ReflectionClass($news);
-            $idProp = $reflection->getProperty('id');
-            $idProp->setAccessible(true);
-            $idProp->setValue($news, $record->id);
-
-            yield $news;
+            yield $this->mapRecordToDomainEntity($record);
         }
     }
 
@@ -39,7 +32,21 @@ class DoctrineNewsRepository implements NewsRepositoryInterface
 
         if (!$record) return null;
 
-        return new News(new Url($record->url), new Title($record->title));
+        return new News(new Url($record->url), new Title($record->title), $record->createdAt);
+    }
+
+    public function findByIds(array $ids): iterable
+    {
+        $records = $this->em->getRepository(NewsRecord::class)
+            ->createQueryBuilder('n')
+            ->where('n.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+
+        foreach ($records as $record) {
+            yield $this->mapRecordToDomainEntity($record);
+        }
     }
 
     public function save(News $news)
@@ -47,6 +54,7 @@ class DoctrineNewsRepository implements NewsRepositoryInterface
         $record = new NewsRecord();
         $record->url = $news->getUrl()->getValue();
         $record->title = $news->getTitle()->getValue();
+        $record->createdAt = $news->getCreatedAt();
 
         try {
             $this->em->persist($record);
@@ -64,5 +72,17 @@ class DoctrineNewsRepository implements NewsRepositoryInterface
 
     public function delete(News $news)
     {
+    }
+
+    private function mapRecordToDomainEntity(NewsRecord $record): News
+    {
+        $news = new News(new Url($record->url), new Title($record->title), $record->createdAt);
+
+        $reflection = new \ReflectionClass($news);
+        $idProp = $reflection->getProperty('id');
+        $idProp->setAccessible(true);
+        $idProp->setValue($news, $record->id);
+
+        return $news;
     }
 }

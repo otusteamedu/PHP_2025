@@ -9,11 +9,12 @@ use App\Domain\ValueObject\Url;
 
 class NewsFactory implements NewsFactoryInterface
 {
-    public function create(string $url, string $title): News
+    public function create(string $url, string $title, \DateTimeImmutable $createdAt): News
     {
         return new News(
             new Url($url),
-            new Title($title)
+            new Title($title),
+            $createdAt
         );
     }
 }

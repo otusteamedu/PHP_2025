@@ -1,8 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Application\Service\NewsMetadataProvider;
-
-use App\Domain\ValueObject\Url;
+namespace App\Application\Service;
 
 interface NewsMetadataProviderInterface
 {
