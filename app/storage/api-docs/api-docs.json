@@ -1,0 +1,92 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "OTUS EVENTS API",
+        "version": "1.0"
+    },
+    "paths": {
+        "/add-event": {
+            "post": {
+                "tags": [
+                    "AddEvent"
+                ],
+                "summary": "Add new Event",
+                "operationId": "61b7d289aaf5f9a464e95e068ed79ddb",
+                "requestBody": {
+                    "description": "Add new event",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "number"
+                                ],
+                                "properties": {
+                                    "number": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "New event added to queue",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error: 500 Internal Server Error. When event with such number has already exists or parameters are wrong or were not supplied"
+                    }
+                }
+            }
+        },
+        "/get-event/{number}": {
+            "get": {
+                "tags": [
+                    "GetEvent"
+                ],
+                "operationId": "f7d84bf65f2b6376ce9e8ce22c25bf17",
+                "parameters": [
+                    {
+                        "name": "number",
+                        "in": "path",
+                        "description": "The number of user event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns some sample category things",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error: 500 Internal Server Error. When required parameters are wrong or were not supplied."
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "AddEvent",
+            "description": "AddEvent"
+        },
+        {
+            "name": "GetEvent",
+            "description": "GetEvent"
+        }
+    ]
+}
