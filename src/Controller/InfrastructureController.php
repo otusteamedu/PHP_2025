@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Application\Response;
 use App\Service\InfrastructureHealthCheck;
 
-class InfrastructureController
+class InfrastructureController extends AbstractController
 {
-    public function checkServiceHealth(): void
+    public function checkServiceHealth(): Response
     {
         $infrastructureHealthCheck = new InfrastructureHealthCheck();
 
-        $postgresMsg = $infrastructureHealthCheck->checkPostgresHealth();
-        $redisMsg = $infrastructureHealthCheck->checkRedisHealth();
-        $memcachedMsg = $infrastructureHealthCheck->checkMemcachedHealth();
+        $this->view->postgresMsg = $infrastructureHealthCheck->checkPostgresHealth();
+        $this->view->redisMsg = $infrastructureHealthCheck->checkRedisHealth();
+        $this->view->memcachedMsg = $infrastructureHealthCheck->checkMemcachedHealth();
 
-        include __DIR__ . '/../../templates/infrastructure.php';
+        return $this->view->render('infrastructure.php');
     }
 }

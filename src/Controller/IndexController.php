@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-class IndexController
+use App\Application\Response;
+
+class IndexController extends AbstractController
 {
-    public function displayMainPage(): void
+    public function displayMainPage(): Response
     {
-        include __DIR__ . '/../../templates/index.php';
+        return $this->view->render('index.php')->setHeaders(['Cache-Control: no-cache']);
     }
 }

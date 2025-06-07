@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Application\Response;
 use App\Service\SessionStorageChecker;
 
-class SessionController
+class SessionController extends AbstractController
 {
     public function __construct()
     {
@@ -14,13 +15,15 @@ class SessionController
         session_start();
         $_SESSION['test_session_key_1'] ??= 'test_session_value_1';
         $_SESSION['test_session_key_2'] ??= 'test_session_value_2';
+
+        parent::__construct();
     }
 
-    public function checkSessionStorage(): void
+    public function checkSessionStorage(): Response
     {
         $sessionStorageChecker = new SessionStorageChecker();
-        $sessionVars = $sessionStorageChecker->getSessionVarsFromStorage();
+        $this->view->sessionVars = $sessionStorageChecker->getSessionVarsFromStorage();
 
-        include __DIR__ . '/../../templates/session-storage.php';
+        return $this->view->render('session-storage.php');
     }
 }

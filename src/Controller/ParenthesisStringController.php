@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Application\Response;
 use App\Validator\ParenthesisStringValidator;
 
-class ParenthesisStringController
+class ParenthesisStringController extends AbstractController
 {
-    public function verifyParenthesisString(): void
+    public function verifyParenthesisString(): Response
     {
         try {
-            $parenthesisStr = $this->getPayload();
-            $isValidStr = ParenthesisStringValidator::isValid($parenthesisStr);
+            $payload = $this->request->getPayload();
+            if (!isset($payload['string'])) {
+                throw new \Exception('String parameter is not passed in request body', 400);
+            }
+            $isValidStr = ParenthesisStringValidator::isValid($payload['string']);
             $httpCode = $isValidStr ? 200 : 400;
             $message = $isValidStr ? 'Всё хорошо' : 'Всё плохо';
         } catch (\Exception $e) {
@@ -20,33 +24,10 @@ class ParenthesisStringController
             $message = $e->getMessage();
         }
 
-        header('Content-Type: application/json; charset=utf-8', response_code: $httpCode);
-        echo json_encode(['response' => $message]);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function getPayload(): string
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            throw new \Exception('Method Not Allowed (Allow: POST)', 405);
-        }
-
-        $body = file_get_contents('php://input');
-        if ($body === false) {
-            throw new \Exception('Не удалось получить данные из тела запроса', 400);
-        }
-        try {
-            $body = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
-            throw new \Exception($e->getMessage(), 400);
-        }
-
-        if (!isset($body['string'])) {
-            throw new \Exception('Параметр "string" не передан в теле запроса', 400);
-        }
-
-        return $body['string'];
+        return new Response(
+            json_encode(['response' => $message]),
+            $httpCode,
+            ['Content-Type: application/json; charset=utf-8'],
+        );
     }
 }
