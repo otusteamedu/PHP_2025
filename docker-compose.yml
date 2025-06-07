@@ -1,0 +1,43 @@
+
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Nginx.Dockerfile
+    ports:
+      - "8096:80"
+    networks:
+      - internal
+    volumes:
+      - ./:/var/www/app
+  fpm:
+    build:
+      context: .
+      dockerfile: ./docker/php/Fpm.Dockerfile
+    volumes:
+      - ./:/var/www/app
+    networks:
+      - internal
+  db:
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Db.Dockerfile
+    container_name: events-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: 'events'
+      MYSQL_ROOT_PASSWORD: 'rightway'
+      MYSQL_PASSWORD: 'rightway'
+      MYSQL_USER: 'pavel'
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - internal
+networks:
+  internal:
