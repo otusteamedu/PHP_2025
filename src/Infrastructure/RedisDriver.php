@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Infrastructure;
 
 class RedisDriver
 {
@@ -19,5 +19,10 @@ class RedisDriver
     public function getVersion(): string
     {
         return $this->redisHandler->info('Server')['redis_version'];
+    }
+
+    public function getHandler(): \Redis
+    {
+        return $this->redisHandler;
     }
 }

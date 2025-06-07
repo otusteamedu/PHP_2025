@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eea3c632fab0b62c57c07f992f5f5a73",
+    "content-hash": "bc35491b9f71997b3d64dad0fbb41235",
     "packages": [
         {
             "name": "customer41/multiexception",
@@ -518,7 +518,8 @@
         "php": ">=8.4",
         "ext-pdo": "*",
         "ext-redis": "*",
-        "ext-memcached": "*"
+        "ext-memcached": "*",
+        "ext-intl": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"

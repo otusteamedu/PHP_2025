@@ -33,6 +33,7 @@ RUN pecl channel-update pecl.php.net \
         redis \
         memcached
 
+COPY docker/php/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
 COPY docker/php/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 RUN mkdir -p /var/run/php
 

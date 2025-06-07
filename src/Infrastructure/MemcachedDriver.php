@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Infrastructure;
 
 class MemcachedDriver
 {
@@ -16,7 +16,7 @@ class MemcachedDriver
         }
     }
 
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->memcachedHandler->getVersion()['memcached:11211'];
     }
