@@ -1,0 +1,14 @@
+POST http://localhost:{{nginxPublishedPort}}/emails-verifier
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "emails": [
+    "ivanov@mail.ru",
+    "petrov@test.test",
+    "popov@email.net",
+    "\"sidorov@1990\"@gmail.com",
+    "semenov1123@org"
+  ]
+}
