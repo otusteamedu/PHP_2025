@@ -1,23 +1,50 @@
 <?php
 require  __DIR__ . '/../vendor/autoload.php';
+ob_start();
 
 try {
-    $dotenv = Dotenv\Dotenv::createImmutable('/app/');
-    $dotenv->load();
-    $host = $_ENV['DB_HOST'];
-    $port = $_ENV['DB_PORT'];
-    $dbname = $_ENV["POSTGRES_DB"];
-    $username = $_ENV["POSTGRES_USER"];
-    $password = $_ENV["POSTGRES_PASSWORD"];
-    $connection = new PDO("pgsql:host=$host;port=$port;dbname=$dbname;user=$username;password=$password");
-    $memcached = new Memcached();
-    $memcached->addServer($_ENV['MEMCACHED_HOST'], 11211);
-    $redis = new Redis();
-    $redis->connect($_ENV['REDIS_HOST'], 6379);
 
-    echo "Connected successfully";
-} catch (\Throwable $e) {
-    dump($e->getTraceAsString());
-    die("Connection failed: " . $e->getMessage());
+    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+        throw new \App\Exception\HttpException('Запрос должен быть типа POST');
+    }
+
+    if (isset($_POST['string']))
+    {
+        $string = $_POST['string'];
+    } elseif(file_get_contents('php://input'))
+    {
+        $string = json_decode(file_get_contents('php://input'), true);
+    }
+
+    if (empty($string))
+    {
+        throw new \App\Exception\HttpException('Параметр string является обязательным');
+    }
+
+    $status = true;
+
+    if (!\App\StringValidator::validateExternalSymbols($string)) {
+        throw new \App\Exception\ValidateException('Строка содержит лишние символы');
+    }
+
+    if (!\App\StringValidator::isStaplesValid($string)) {
+        throw new \App\Exception\ValidateException('Строка некорретная. Присутствуют лишние символы');
+    } else {
+        $message = 'Строка корректна';
+    }
+
+} catch (\App\Exception\HttpException | \App\Exception\ValidateException $e) {
+    $status = false;
+    $message = $e->getMessage();
+} catch (\Exception $e) {
+    $status = false;
+    $message = 'Произошла ошибка';
 }
+
+ob_end_clean();
+header('Content-Type: application/json');
+http_response_code($status ? 200 : 400);
+echo json_encode([
+    'message' => $message,
+]);
 

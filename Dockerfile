@@ -48,6 +48,7 @@ COPY composer.json ./composer.json
 COPY composer.lock ./composer.lock
 
 COPY /docker/php/entrypoint.sh /usr/local/bin/
+COPY /docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
 

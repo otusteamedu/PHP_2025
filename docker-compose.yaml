@@ -1,30 +1,63 @@
 version: '3.8'
 
 services:
-  nginx:
+  nginx_balancer:
     image: nginx:alpine
     container_name: app_nginx
     ports:
       - "${NGINX_PORT}:80"
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./public:/public
+      - ./docker/nginx/upstream/nginx.conf:/etc/nginx/nginx.conf
       - ./logs/nginx:/var/log/nginx
     depends_on:
-      - php-fpms
+      - nginx_instance_1
+      - nginx_instance_2
     networks:
       - app-network
-  php-fpms:
+  nginx_instance_1:
+    build:
+      context: ./docker/nginx/instance
+    container_name: app_nginx_1
+    volumes:
+      - ./public:/app/public
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - php-fpm1
+      - php-fpm2
+    networks:
+      - app-network
+  nginx_instance_2:
+    build:
+      context: ./docker/nginx/instance
+    container_name: app_nginx_2
+    volumes:
+      - ./public:/app/public
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - php-fpm1
+      - php-fpm2
+    networks:
+      - app-network
+  php-fpm1:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: app_php_fpm
+    container_name: app_php_fpm1
     volumes:
       - ./:/app
-    environment:
-      - REDIS_HOST=redis
-      - MEMCACHED_HOST=memcached
-      - DB_HOST=db
+    networks:
+      - app-network
+    depends_on:
+      - redis
+      - memcached
+      - db
+  php-fpm2:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: app_php_fpm2
+    volumes:
+      - ./:/app
     networks:
       - app-network
     depends_on:
