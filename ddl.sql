@@ -24,6 +24,7 @@ CREATE TABLE Session (
     movie_id INT,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
+    base_price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (hall_id) REFERENCES Hall(hall_id),
     FOREIGN KEY (movie_id) REFERENCES Movie(movie_id)
 );
@@ -42,4 +43,30 @@ CREATE TABLE Ticket (
     price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (session_id) REFERENCES Session(session_id),
     FOREIGN KEY (client_id) REFERENCES Client(client_id)
+);
+
+CREATE TABLE SeatTypes
+(
+    seat_type_id INT PRIMARY KEY AUTO_INCREMENTL,
+    title varchar(50) NOT NULL
+);
+
+CREATE TABLE Seats
+(
+    seat_id INT PRIMARY KEY AUTO_INCREMENT,
+    hall_id INT,
+    row_number INT NOT NULL,
+    seat_number INT NOT NULL,
+    seat_type_id INT,
+    FOREIGN KEY (hall_id) REFERENCES Hall(hall_id),
+    FOREIGN KEY (seat_type_id) REFERENCES SeatType(seat_type_id)
+);
+
+CREATE TABLE PricingRules (
+    pricing_rule_id INT PRIMARY KEY AUTO_INCREMENT,
+    session_id INT, 
+    seat_type_id INT,
+    modifier DECIMAL(10, 2) NOT NULL, 
+    FOREIGN KEY (session_id) REFERENCES Session(session_id),
+    FOREIGN KEY (seat_type_id) REFERENCES SeatType(seat_type_id)
 );
