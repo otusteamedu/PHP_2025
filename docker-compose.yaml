@@ -1,0 +1,40 @@
+version: '1.0.2'
+
+name: 'PHP 2025 homework'
+
+services:
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: app/nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - './public:/var/www/public'
+      - './app:/var/www/app'
+      - './composer/vendor:/var/www/composer/vendor'
+    depends_on:
+      - php_fpm
+    networks:
+      - app-network
+
+  php_fpm:
+    build:
+      context: docker/fpm
+      dockerfile: Dockerfile
+    image: app/php_fpm
+    container_name: php_fpm
+    restart: always
+    volumes:
+      - './public:/var/www/public'
+      - './app:/var/www/app'
+      - './composer/vendor:/var/www/composer/vendor'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
