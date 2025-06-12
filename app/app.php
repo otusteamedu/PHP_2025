@@ -5,12 +5,11 @@ require __DIR__ . '/vendor/autoload.php';
 
 use App\ProductGateway;
 
-$pdo = require __DIR__ . '/src/bootstrap.php'; 
+$pdo = require __DIR__ . '/src/bootstrap.php';
 
 $productGateway = new ProductGateway($pdo);
 $products = $productGateway->findAll();
 
-// для примера
 echo "Количество продуктов: " . $products->count() . PHP_EOL;
 
 foreach ($products as $product) {

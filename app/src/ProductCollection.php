@@ -4,15 +4,12 @@ declare(strict_types=1);
 namespace App;
 
 use PDO;
-use IteratorAggregate;
-use ArrayIterator;
+use Traversable;
 
-class ProductCollection implements IteratorAggregate
+class ProductCollection implements \IteratorAggregate
 {
     private PDO $pdo;
     private string $query;
-
-    private ?array $products = null;
 
     public function __construct(PDO $pdo, string $query)
     {
@@ -20,26 +17,18 @@ class ProductCollection implements IteratorAggregate
         $this->query = $query;
     }
 
-    //для Lazy Load 
-    private function load(): void
+    public function getIterator(): Traversable
     {
-        if ($this->products === null) {
-            $stmt = $this->pdo->query($this->query);
-            $this->products = $stmt->fetchAll();
-        }
-    }
+        $stmt = $this->pdo->query($this->query);
 
-    
-    //ArrayIterator для обхода коллекции через foreach.
-    public function getIterator(): ArrayIterator
-    {
-        $this->load();
-        return new ArrayIterator($this->products);
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            yield $row;
+        }
     }
 
     public function count(): int
     {
-        $this->load();
-        return count($this->products);
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM products");
+        return (int)$stmt->fetchColumn();
     }
 }

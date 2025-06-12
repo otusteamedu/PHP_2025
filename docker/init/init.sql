@@ -36,7 +36,7 @@ INSERT INTO products (name, price, category_id) VALUES
 -- Генерация оставшихся 95 продуктов
 DO $$
 BEGIN
-  FOR i IN 6..100 LOOP
+  FOR i IN 6..100000000 LOOP
     INSERT INTO products (name, price, category_id)
     VALUES (
       'Продукт ' || i,
