@@ -14,7 +14,7 @@ RUN docker-php-ext-install \
     mysqli \
     zip
 
-RUN apt-get update && apt-get install -y librabbitmq-dev libssh-dev     && pecl install amqp     && docker-php-ext-enable amqp
+RUN apt-get update && apt-get install -y librabbitmq-dev libssh-dev && pecl install amqp redis && docker-php-ext-enable amqp redis
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 

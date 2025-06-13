@@ -1,6 +1,5 @@
 <?php
 
-
 class Consumer {
 
     public function __invoke() {
@@ -30,17 +29,17 @@ class Consumer {
         $queue->declareQueue();
         $queue->bind('hash_exchange', '1'); // вес очереди
 
-        echo "Waiting for messages...\n";
+        echo "Ждем сообщения...\n";
 
         // consume с ручным ack
         $queue->consume(function ($envelope, $queue) {
             $body = $envelope->getBody();
-            echo "Received: " . $body . "\n";
+            echo "Принято: " . $body . "\n";
             $data = json_decode($body,true);
-            echo "Обрабатываем...\n";
-            (new GetFileProcess)();
-            (new SendEmail)($data["email"]);
-
+            echo "Обрабатываем 60 секунд...\n";
+            sleep(60);
+            // Удалим файл из хранилища
+            (new FileStorage())($data["id"]);
             // Явное подтверждение
             $queue->ack($envelope->getDeliveryTag());
         }, AMQP_NOPARAM);

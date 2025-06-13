@@ -1,6 +1,7 @@
 <?php
 
 namespace Src\Infrastructure\Queue\Producer; 
+use src\Infrastructure\Storage\FileStorage\FileStorage;
 
 class Producer {
 
@@ -31,7 +32,10 @@ class Producer {
             'headers' => ['hash-on' => "date"]
         ]);
 
-        echo "<p>".date("Y:m:d H.i.s")." Сообщение отправлено. Выгрузка придет на указанный вами эл. адрес!</p>";
+        $id = (new FileStorage())->save($json);
+
+        return $id;
+
 
     }
 

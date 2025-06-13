@@ -47,6 +47,7 @@ services:
         condition: service_healthy
 
   consumer1:
+    container_name: rabbit_consumer
     build: ./consumer1
     working_dir: /app
     volumes:
@@ -57,10 +58,19 @@ services:
         condition: service_healthy
     networks:
       - inner_network
+  
+  redis:
+    container_name: rabbit_redis_base
+    image: redis:latest
+    volumes:
+      - ./db/redis:/data
+    networks:
+      - inner_network
 
 volumes:
   src:
   logs:
+  db:
 
 networks:
   inner_network:
