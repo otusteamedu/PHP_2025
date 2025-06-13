@@ -29,6 +29,10 @@ class StringValidator
         $arrayIncoming = str_split($string);
         $staplesOpen = [];
 
+        if (!\App\StringValidator::validateExternalSymbols($string)) {
+            throw new \App\Exception\ValidateException('Строка содержит лишние символы');
+        }
+
         for($i = 0; $i < count($arrayIncoming); $i++) {
             if($arrayIncoming[$i] == '(') {
                 $staplesOpen[] = $arrayIncoming[$i];
