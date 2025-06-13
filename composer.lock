@@ -1,0 +1,46 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "261508b8c11a812b0177da3b96c55533",
+    "packages": [
+        {
+            "name": "tenshuu/otus-package-test",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tenshuu/otus-package-test.git",
+                "reference": "01e40fafdf46cb260313139e7fcc7d8157e6325c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tenshuu/otus-package-test/zipball/01e40fafdf46cb260313139e7fcc7d8157e6325c",
+                "reference": "01e40fafdf46cb260313139e7fcc7d8157e6325c",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Tenshuu\\OtusPackageTest\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/tenshuu/otus-package-test/issues",
+                "source": "https://github.com/tenshuu/otus-package-test/tree/1.0.0"
+            },
+            "time": "2025-06-13T15:01:20+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}
