@@ -14,10 +14,10 @@ class EventController extends Controller
     protected ?string $validator = EventControllerValidator::class;
 
     /** @var RedisRepository */
-    protected RedisRepository $redisService;
+    protected RedisRepository $redisRepository;
 
     public function __construct() {
-        $this->redisService = (new RedisRepository());
+        $this->redisRepository = (new RedisRepository());
     }
 
     /**
@@ -25,7 +25,7 @@ class EventController extends Controller
      */
     public function get(): Response {
         $params = $this->request->getData()['params'];
-        $event = $this->redisService->getEvent(new EventDTO(
+        $event = $this->redisRepository->getEvent(new EventDTO(
             null,
             [],
             $params
@@ -47,7 +47,7 @@ class EventController extends Controller
     public function create(): Response {
         $data = $this->request->getData();
 
-        $this->redisService->createEvent(new EventDTO(
+        $this->redisRepository->createEvent(new EventDTO(
             $data['priority'],
             $data['event'],
             $data['conditions'],
@@ -61,7 +61,7 @@ class EventController extends Controller
      * @throws RedisException
      */
     public function delete(): Response {
-        $this->redisService->truncateEvent();
+        $this->redisRepository->truncateEvent();
         return new Response([], 200, "События были удалены");
     }
 }
