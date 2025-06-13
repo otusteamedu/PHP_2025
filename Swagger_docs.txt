@@ -1,0 +1,104 @@
+openapi: 3.0.0
+info:
+  title: Сообщения API
+  version: 1.0.0
+  description: API для работы с сообщениями, включая добавление и обработку сообщений.
+servers:
+  - url: http://localhost:8082/Api/V1
+paths:
+  /AddMsg:
+    post:
+      summary: Добавление сообщения
+      description: Метод для добавления нового сообщения в базу данных.
+      parameters:
+        - name: msg
+          in: query
+          required: true
+          description: Текст сообщения, которое необходимо добавить.
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Сообщение добавлено в очередь
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Сообщение № ... добавлено в очередь"
+        '500':
+          description: Ошибка сохранения сообщения
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Ошибка сохранения сообщения"
+
+  /GetMsg:
+    get:
+      summary: Получение всех сообщений
+      description: Метод для получения списка всех сообщений, которые находятся в обработке.
+      responses:
+        '201':
+          description: Сообщение добавлено в очередь
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "{"684c349c2735c":"{\"msg\":\"Hi\",\"id\":\"684c349c2735c\"}"}"
+
+  /GetMsg/{id}:
+    get:
+      summary: Получение сообщения по ID
+      description: Метод для получения сообщения по его уникальному идентификатору.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор сообщения, которое необходимо получить.
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Сообщение в обработке
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Сообщение №... в обработке"
+        '200':
+          description: Сообщение обработано
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Сообщение №... обработано"
