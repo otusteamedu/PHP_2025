@@ -1,0 +1,89 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginx
+    container_name: "${CONTAINER_NAME_NGINX}"
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+#      - ./app/web/public:/data/mysite.local
+      - .:/data
+    depends_on:
+      - app1
+      - app2
+
+  app1:
+    build:
+      context: ./php-fpm
+      dockerfile: Dockerfile
+    image: php-fpm
+    container_name: "${CONTAINER_NAME_PHP}1"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+#      - ./app/web/public:/data/mysite.local
+      - .:/data
+    depends_on:
+      - postgresql
+
+  app2:
+    build:
+      context: ./php-fpm
+      dockerfile: Dockerfile
+    image: php-fpm
+    container_name: "${CONTAINER_NAME_PHP}2"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+#      - ./app/web/public:/data/mysite.local
+      - .:/data
+    depends_on:
+      - postgresql
+
+  redis:
+    image: redis
+    build:
+      context: redis
+      dockerfile: Dockerfile
+    container_name: "${CONTAINER_NAME_REDIS}"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - ./data/redisdata:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    restart: always
+    depends_on:
+      - app1
+      - app2
+
+  memcached:
+    image: memcached
+    container_name: "${CONTAINER_NAME_MEMCACHED}"
+    command:
+      - --conn-limit=1024
+      - --memory-limit=64
+    restart: always
+    depends_on:
+      - app1
+      - app2
+
+  postgresql:
+    image: postgres
+    container_name: "${CONTAINER_NAME_POSTGRES}"
+    environment:
+      POSTGRES_USER: POSTGRES_USER
+      POSTGRES_PASSWORD: POSTGRES_PASSWORD
+      POSTGRES_DB: POSTGRES_DB
+    volumes:
+      - /db/data:/var/lib/postgresql/data
+      - /db/postgresql.conf:/var/lib/postgresql/data
