@@ -32,10 +32,10 @@ class Producer {
             'headers' => ['hash-on' => "date"]
         ]);
 
-        $id = (new FileStorage())->save($json);
+        if($id = (new FileStorage())->save($json))
+            return $id;
 
-        return $id;
-
+        return false;
 
     }
 

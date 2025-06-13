@@ -18,8 +18,10 @@ class FileStorage implements Storage {
     {
 
         $file_arr = json_decode($json, true);
-        $this->redis->set($file_arr["id"], $json);
-        return $file_arr["id"];
+        if($this->redis->set($file_arr["id"], $json))
+            return $file_arr["id"];
+        else
+            return false;
 
     }
 

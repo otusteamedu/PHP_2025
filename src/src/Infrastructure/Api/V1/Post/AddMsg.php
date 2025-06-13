@@ -8,13 +8,20 @@ use src\Infrastructure\Api\V1\Common;
 class AddMsg {
 
     public function return_answer($endpoint,$data) {
+
         $data["id"] = uniqid();
-        $msg_id = (new Producer)(json_encode($data));
+
+        if($msg_id = (new Producer)(json_encode($data)))
+
+            return Common::send_response([
+                'status' => 'success',
+                'message' => "Сообщение № {$msg_id} добавлено в очередь",
+            ], 201);
 
         return Common::send_response([
-            'status' => 'success',
-            'message' => "Сообщение № {$msg_id} добавлено в очередь",
-        ], 201);
+            'status' => 'error',
+            'message' => "Ошибка сохранения сообщения",
+        ], 500);
         
     }
 
