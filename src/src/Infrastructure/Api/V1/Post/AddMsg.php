@@ -14,7 +14,7 @@ class AddMsg {
         return Common::send_response([
             'status' => 'success',
             'message' => "Сообщение № {$msg_id} добавлено в очередь",
-        ], 200);
+        ], 201);
         
     }
 

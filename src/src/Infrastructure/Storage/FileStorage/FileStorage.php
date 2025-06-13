@@ -23,13 +23,5 @@ class FileStorage implements Storage {
 
     }
 
-    public function get($filename) 
-    {
-        if (file_exists($_SERVER['DOCUMENT_ROOT']."/temp/".$filename."")) {
-            return "Запрос в обработке";
-        } else {
-            return "Запрос обработан";
-        }
-    }
 
 }

@@ -32,7 +32,7 @@ class GetMsg {
                 return Common::send_response([
                     'status' => 'success',
                     'message' => "Сообщение {$endpoint[1]} в обработке"
-                ], 200);
+                ], 202);
             }
             else {
                 return Common::send_response([

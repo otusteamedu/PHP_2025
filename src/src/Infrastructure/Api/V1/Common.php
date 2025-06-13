@@ -5,7 +5,8 @@ namespace src\Infrastructure\Api\V1;
 
 class Common {
 
-	public static function get_endpoint () {
+	public static function get_endpoint ($pass) {
+		$_SERVER["REQUEST_URI"] = str_replace($pass, "", $_SERVER["REQUEST_URI"]);
 		return (preg_split("/\//", $_SERVER["REQUEST_URI"], -1, PREG_SPLIT_NO_EMPTY));
 	}
 
