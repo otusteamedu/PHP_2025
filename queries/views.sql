@@ -43,13 +43,13 @@ LEFT JOIN cte_in_20_days c20 ON c20.movie_id = m.id;
 -- представление - рейтинг фильмов
 CREATE VIEW rating_view AS
 WITH cte_imdb AS (
-	SELECT m.title, v.value_decimal
+	SELECT m.title, v.value_real
 	FROM movies m
 	LEFT JOIN values v ON v.movie_id = m.id
 	LEFT JOIN attributes a ON a.id = v.attribute_id
 	WHERE a.attribute_name = 'Imdb Rating'
 ), cte_kp AS (
-	SELECT m.title, v.value_decimal
+	SELECT m.title, v.value_real
 	FROM movies m
 	LEFT JOIN values v ON v.movie_id = m.id
 	LEFT JOIN attributes a ON a.id = v.attribute_id
@@ -63,7 +63,7 @@ WITH cte_imdb AS (
 	WHERE at.type_name = 'Award' AND v.value_boolean IS NOT NULL AND v.value_boolean
 	GROUP BY m.title
 )
-SELECT ci.title, COALESCE(ca.awards_count, 0) AS awards_count, ci.value_decimal AS imdb_rating, ck.value_decimal AS kinopoisk_rating
+SELECT ci.title, COALESCE(ca.awards_count, 0) AS awards_count, ci.value_real AS imdb_rating, ck.value_real AS kinopoisk_rating
 FROM cte_imdb ci
 LEFT JOIN cte_awards ca ON ca.title = ci.title
 LEFT JOIN cte_kp ck ON ck.title = ci.title
