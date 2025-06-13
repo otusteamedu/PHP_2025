@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Services;
+namespace App\Repositories;
 
+use App\DTO\EventDTO;
+use App\Tasks\GetEventHashTask;
 use Exception;
 use Redis;
 use RedisException;
 
-class RedisService extends Service
+class RedisRepository extends Repository
 {
     /** @var Redis */
     public Redis $client;
@@ -40,21 +42,12 @@ class RedisService extends Service
     }
 
     /**
-     * @param array $data
-     * @return string
-     */
-    protected function getEventHash(array $data): string {
-        ksort($data);
-        return md5(serialize($data));
-    }
-
-    /**
-     * @param array $data
+     * @param EventDTO $dto
      * @return array|null
      * @throws RedisException
      */
-    public function getEvent(array $data): ?array {
-        $hash = $this->getEventHash($data);
+    public function getEvent(EventDTO $dto): ?array {
+        $hash = (new GetEventHashTask())->run($dto->params);
         $key = "event:$hash";
 
         $events = $this->client->hGetAll($key);
@@ -69,17 +62,17 @@ class RedisService extends Service
     }
 
     /**
-     * @param array $data
+     * @param EventDTO $dto
      * @return void
      * @throws RedisException
      */
-    public function createEvent(array $data): void {
-        $hash = $this->getEventHash($data['conditions']);
+    public function createEvent(EventDTO $dto): void {
+        $hash = (new GetEventHashTask())->run($dto->params);
         $key = "event:$hash";
 
-        $priority = $data['priority'];
+        $priority = $dto->priority;
 
-        $this->client->hSet($key, $priority, json_encode($data['event']));
+        $this->client->hSet($key, $priority, json_encode($dto->event));
     }
 
     /**

@@ -2,8 +2,9 @@
 
 namespace App\Controllers;
 
+use App\DTO\EventDTO;
 use App\Http\Response;
-use App\Services\RedisService;
+use App\Repositories\RedisRepository;
 use App\Validators\EventControllerValidator;
 use RedisException;
 
@@ -12,20 +13,23 @@ class EventController extends Controller
     /** @var string|null */
     protected ?string $validator = EventControllerValidator::class;
 
-    /** @var RedisService */
-    protected RedisService $redisService;
+    /** @var RedisRepository */
+    protected RedisRepository $redisService;
 
     public function __construct() {
-        $this->redisService = (new RedisService);
+        $this->redisService = (new RedisRepository());
     }
-
 
     /**
      * @throws RedisException
      */
     public function get(): Response {
         $params = $this->request->getData()['params'];
-        $event = $this->redisService->getEvent($params);
+        $event = $this->redisService->getEvent(new EventDTO(
+            null,
+            [],
+            $params
+        ));
 
         if (empty($event)) {
             $response = new Response([], 200, "События удовлетворяющие условиям не были найдены");
@@ -43,7 +47,11 @@ class EventController extends Controller
     public function create(): Response {
         $data = $this->request->getData();
 
-        $this->redisService->createEvent($data);
+        $this->redisService->createEvent(new EventDTO(
+            $data['priority'],
+            $data['event'],
+            $data['conditions'],
+        ));
 
         return new Response([], 200, "Событие создано");
     }
