@@ -19,7 +19,7 @@ paths:
             type: string
       responses:
         '201':
-          description: Сообщение обавлено в очередь
+          description: Сообщение добавлено в очередь
           content:
             application/json:
               schema:
@@ -51,7 +51,7 @@ paths:
       description: Метод для получения списка всех сообщений, которые находятся в обработке.
       responses:
         '201':
-          description: Сообщение обавлено в очередь
+          description: Сообщение добавлено в очередь
           content:
             application/json:
               schema:
