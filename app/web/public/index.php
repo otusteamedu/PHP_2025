@@ -1,13 +1,10 @@
 <?php
 
-echo "Запрос обработал контейнер: " . $_SERVER["HOSTNAME"] . PHP_EOL;
+declare(strict_types=1);
 
-$redis = new Redis();
-try {
-  $redis->connect('redis', 6379);
-  $redis->auth($_ENV['REDIS_PASSWORD']);
-  $redis->publish('hello', 'Hello World!');
-  $redis->close();
-} catch (Exception $e) {
-  echo $e->getMessage();
-}
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use SergeyGolovanov\HW4\Application\App;
+
+$app = new App();
+$app->run($_REQUEST);

@@ -9,7 +9,8 @@ services:
       - "8080:80"
       - "443:443"
     volumes:
-      - ./app/web/public:/data/mysite.local
+#      - ./app/web/public:/data/mysite.local
+      - .:/data
     depends_on:
       - app1
       - app2
@@ -23,7 +24,8 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
-      - ./app/web/public:/data/mysite.local
+#      - ./app/web/public:/data/mysite.local
+      - .:/data
     depends_on:
       - postgresql
 
@@ -36,7 +38,8 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
-      - ./app/web/public:/data/mysite.local
+#      - ./app/web/public:/data/mysite.local
+      - .:/data
     depends_on:
       - postgresql
 
