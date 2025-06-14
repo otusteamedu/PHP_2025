@@ -1,0 +1,308 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Fast Food Restaurant API",
+        "description": "API for managing fast food orders",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost",
+            "description": "Main server"
+        }
+    ],
+    "paths": {
+        "/orders/list": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get list of all orders",
+                "operationId": "9b40b81e800d4f202db7893557f98e75",
+                "responses": {
+                    "200": {
+                        "description": "List of orders",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Order"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/new_order": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create new order",
+                "operationId": "f6b0108b949b8b8a1901f09f3b67d225",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewOrderRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get order by ID",
+                "operationId": "da018bb6f12f4566fff765ccedfd7ad3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                }
+            }
+        },
+        "/orders/{id}/pay": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Pay for order",
+                "operationId": "0397266dceee5923909210dcabd01027",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "properties": {
+                                    "payment": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid payment amount"
+                    }
+                }
+            }
+        },
+        "/orders/pizza": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Make pizza",
+                "operationId": "bdff7073ac9ff328a79e2c478ec2312c",
+                "responses": {
+                    "200": {
+                        "description": "Pizza prepared",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api-docs": {
+            "get": {
+                "summary": "Generate Swagger documentation",
+                "operationId": "f478fb6f34c8e56a4de35f1ec5427bde",
+                "responses": {
+                    "200": {
+                        "description": "Swagger JSON",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Order": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "client_name": {
+                        "type": "string"
+                    },
+                    "client_phone": {
+                        "type": "string"
+                    },
+                    "order_status": {
+                        "type": "string",
+                        "enum": [
+                            "created",
+                            "at work",
+                            "completed"
+                        ]
+                    },
+                    "product_name": {
+                        "type": "string"
+                    },
+                    "product_price": {
+                        "type": "number"
+                    },
+                    "payment_link": {
+                        "type": "string"
+                    },
+                    "ingredients": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "OrderResponse": {
+                "properties": {
+                    "success": {
+                        "type": "string"
+                    },
+                    "order": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Order"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "NewOrderRequest": {
+                "required": [
+                    "client_name",
+                    "client_phone",
+                    "product"
+                ],
+                "properties": {
+                    "client_name": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 2,
+                        "example": "John Doe"
+                    },
+                    "client_phone": {
+                        "type": "string",
+                        "pattern": "^\\d{10}$",
+                        "example": "1234567890"
+                    },
+                    "product": {
+                        "type": "string",
+                        "enum": [
+                            "Burger",
+                            "Sandwich",
+                            "HotDog"
+                        ],
+                        "example": "Burger"
+                    },
+                    "ingredients": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "cheese",
+                                "onion",
+                                "bacon",
+                                "mustard",
+                                "cucumbers",
+                                "salad",
+                                "tomatoes"
+                            ]
+                        },
+                        "example": [
+                            "cheese",
+                            "bacon"
+                        ]
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Orders",
+            "description": "Orders"
+        }
+    ]
+}

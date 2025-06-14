@@ -1,0 +1,20 @@
+{
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Infrastructure\\": "Infrastructure/",
+      "Domain\\": "Domain/"
+    }
+  },
+  "require": {
+    "vlucas/phpdotenv": "^5.6",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "php-amqplib/php-amqplib": "^3.7",
+    "zircote/swagger-php": "^5.1",
+    "darkaonline/l5-swagger": "^9.0"
+  },
+  "scripts": {
+    "generate-docs": "php generate-swagger-docs.php"
+  }
+}
