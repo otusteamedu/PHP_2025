@@ -11,5 +11,7 @@
             "email": "nastya.ovchinnikova89@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "predis/predis": "^3.0"
+    }
 }
