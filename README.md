@@ -1,3 +1,42 @@
-# PHP_2025
+## Описание
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Проект реализует простой API с поддержкой очередей. Используется Laravel, L5-Swagger для документации, Redis для очередей.
+
+Документация к API доступна по адресу `/api/documentation`
+
+---
+
+## API Методы
+
+### Создать запрос
+
+**POST** `/api/v1/request`
+
+**Описание:**  
+Создаёт новый запрос и отправляет его в очередь на обработку.
+
+**Пример ответа:**
+```JSON
+{
+  "requestId": "e2cdb445-7d38-4ff1-a91c-74c7724a9240"
+}
+```
+
+### Получить статус запроса по ID
+
+**GET** `/api/v1/request/{requestId}`
+
+**Описание:**
+Позволяет получить статус обработки ранее созданного запроса.
+
+**Пример ответа:**
+
+```JSON
+{
+    "status": "pending"
+}
+```
+
+## Запуск воркера 
+
+`php artisan queue:work redis`

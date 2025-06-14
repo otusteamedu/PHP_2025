@@ -1,0 +1,82 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Client Request API",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/request": {
+            "post": {
+                "tags": [
+                    "ClientRequests"
+                ],
+                "summary": "Создать задачу",
+                "operationId": "4507d415d1d5ccfcea916a2dfce9a4b1",
+                "responses": {
+                    "200": {
+                        "description": "Успешно создана задача",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "requestId": {
+                                            "type": "string",
+                                            "example": "d6c6e1f2-b3ae-4c17-bec9-132da48b519b"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/request/{requestId}": {
+            "get": {
+                "tags": [
+                    "ClientRequests"
+                ],
+                "summary": "Получить статус задачи",
+                "operationId": "df5db1dc76753acf4f2454f64e82f21f",
+                "parameters": [
+                    {
+                        "name": "requestId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статус задачи",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "pending"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Задача не найдена"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "ClientRequests",
+            "description": "ClientRequests"
+        }
+    ]
+}
