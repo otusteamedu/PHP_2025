@@ -1,0 +1,17 @@
+{
+    "name": "aovchinnikova/hw1-5",
+    "autoload": {
+        "psr-4": {
+            "Aovchinnikova\\Hw15\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Anastasiia Ovchinnikova",
+            "email": "nastya.ovchinnikova89@gmail.com"
+        }
+    ],
+    "require": {
+        "predis/predis": "^3.0"
+    }
+}
