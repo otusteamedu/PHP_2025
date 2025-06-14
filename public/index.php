@@ -1,18 +1,20 @@
-<?php declare(strict_types=1);
+<?php
 
-use App\App;
-use App\Http\Response;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 
-require(__DIR__ . '/../vendor/autoload.php');
+define('LARAVEL_START', microtime(true));
 
-try {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
-    $dotenv->load();
-
-    $app = new App();
-    $response = $app->run();
-
-    echo $response;
-} catch (\Throwable $e) {
-    echo (new Response())->send(500, ['error' => 'Internal server error']);
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
 }
+
+// Register the Composer autoloader...
+require __DIR__.'/../vendor/autoload.php';
+
+// Bootstrap Laravel and handle the request...
+/** @var Application $app */
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$app->handleRequest(Request::capture());
