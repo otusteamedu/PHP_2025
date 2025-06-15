@@ -4,4 +4,4 @@ use App\App;
 
 require  __DIR__ . '/../vendor/autoload.php';
 
-(new App)->run();
+echo (new App)->run();

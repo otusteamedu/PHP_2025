@@ -14,7 +14,7 @@ class App
             'CONTROLLER' => StringController::class,
         ]
     ];
-    public function run(): void
+    public function run(): string
     {
         try {
             ob_start();
@@ -52,8 +52,9 @@ class App
         }
 
         header('Content-Type: application/json');
-        echo json_encode($response->getResponse());
 
         ob_end_flush();
+
+        return json_encode($response->getResponse());
     }
 }
