@@ -10,5 +10,8 @@ CREATE INDEX idx_attribute_values_film_attribute ON attribute_values (film_id, a
 -- поиск всех записей с определённым значением даты
 CREATE INDEX idx_attribute_values_date_value ON attribute_values (date_value);
 
--- поиск всех записей с определённым числовым значением
-CREATE INDEX idx_attribute_values_numeric_value ON attribute_values (numeric_value);
+-- поиск всех записей с определённым целочисленным значением
+CREATE INDEX idx_attribute_values_integer_value ON attribute_values (integer_value);
+
+-- поиск всех записей с определённым дробным значением
+CREATE INDEX idx_attribute_values_decimal_value ON attribute_values (decimal_value);

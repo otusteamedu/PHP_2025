@@ -23,7 +23,8 @@ SELECT
             fav.text_value,
             fav.boolean_value::text,
             fav.date_value::text,
-            fav.numeric_value::text
+            fav.integer_value::text,
+            fav.decimal_value::text
     ) AS value_text
 FROM films f
          JOIN attribute_values fav ON fav.film_id    = f.film_id

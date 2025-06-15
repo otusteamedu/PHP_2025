@@ -22,5 +22,6 @@ CREATE TABLE attribute_values (
     text_value TEXT,
     date_value DATE,
     boolean_value BOOLEAN,
-    numeric_value NUMERIC(10, 2)
+    integer_value INT,
+    decimal_value NUMERIC(10, 2)
 );
