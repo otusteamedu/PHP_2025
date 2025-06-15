@@ -1,0 +1,27 @@
+name: otus-php
+services:
+  otus-nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: otus-php/nginx
+    container_name: otus-nginx
+    working_dir: /app
+    ports:
+      - '80:80'
+    volumes:
+      - ./app:/app/otus-php.local
+
+  otus-fpm:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: otus-php/php
+    container_name: otus-fpm
+    working_dir: /app
+    volumes:
+      - ./app:/app/otus-php.local
+    depends_on:
+      - otus-nginx
+
+
