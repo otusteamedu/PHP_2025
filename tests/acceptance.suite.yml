@@ -1,0 +1,7 @@
+actor: AcceptanceTester
+modules:
+  enabled:
+    - REST:
+        url: http://mysite.local:80
+        depends: PhpBrowser
+    - Asserts
