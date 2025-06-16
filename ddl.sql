@@ -58,6 +58,7 @@ CREATE TABLE ticket (
     id SERIAL PRIMARY KEY,
     session_movie_id INTEGER REFERENCES session_movie(id),
     status VARCHAR NOT NULL CHECK (status IN ('куплен', 'забронирован', 'возвращен', 'использован')),
+    actual_price DECIMAL(10,2) NOT NULL,
     schema_id INTEGER NOT NULL REFERENCES schema_room(id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
