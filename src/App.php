@@ -27,8 +27,10 @@ class App
                     if (class_exists($route['CONTROLLER'])) {
                         $objController = new $route['CONTROLLER']();
                         $response = $objController($request);
-                        break;
+                    } else {
+                        $response = new Response(['message' => 'Ошибка конфигурации сервера: отсутствует метод реализации'], 500);
                     }
+                    break;
                 }
             }
 
@@ -39,7 +41,6 @@ class App
             $response = new Response(['message'  => $applicationException->getMessage()], $applicationException->getHttpCode());
         }
         catch (\Throwable $e) {
-
             $response = new Response(['message' => 'Произошла ошибка'], 500);
         }
 
