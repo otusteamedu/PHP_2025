@@ -69,7 +69,7 @@ class RouteService extends Service
      * @param array $options
      * @return void
      */
-    public static function setRoute(string $name, string $method, array $options) {
+    private static function setRoute(string $name, string $method, array $options) {
         $path = self::getRoutePath($name, $method);
 
         self::$routes[$path] = [
