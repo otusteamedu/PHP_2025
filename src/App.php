@@ -23,12 +23,10 @@ class App
             $pathRequest = $request->getPath();
 
             foreach (self::$routes as $path => $route) {
-                if (preg_match("#^{$path}$#", $pathRequest) && $method == $route['METHOD']) {
-                    if (class_exists($route['CONTROLLER'])) {
+                if (isset($route['METHOD']) && preg_match("#^{$path}$#", $pathRequest) && $method == $route['METHOD']) {
+                    if (isset($route['CONTROLLER']) && class_exists($route['CONTROLLER'])) {
                         $objController = new $route['CONTROLLER']();
                         $response = $objController($request);
-                    } else {
-                        $response = new Response(['message' => 'Ошибка конфигурации сервера: отсутствует метод реализации'], 500);
                     }
                     break;
                 }
