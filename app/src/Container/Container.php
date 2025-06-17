@@ -14,7 +14,7 @@ class Container
     public function get(string $id): mixed
     {
         if (!$this->has($id)) {
-            throw new \RuntimeException("Service '$id' not found in container.");
+            throw new \RuntimeException("Сервис '$id' не найден в контейнере.");
         }
 
         return $this->bindings[$id]();
