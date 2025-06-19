@@ -1,0 +1,119 @@
+                                                          QUERY PLAN                                                          
+------------------------------------------------------------------------------------------------------------------------------
+ Unique  (cost=26.40..26.58 rows=14 width=36) (actual time=0.214..0.220 rows=10 loops=1)
+   ->  Sort  (cost=26.40..26.44 rows=14 width=36) (actual time=0.214..0.216 rows=14 loops=1)
+         Sort Key: m.movie_id, m.title, m.duration, m.age_rating
+         Sort Method: quicksort  Memory: 25kB
+         ->  Hash Join  (cost=6.50..26.14 rows=14 width=36) (actual time=0.082..0.175 rows=14 loops=1)
+               Hash Cond: (s.movie_id = m.movie_id)
+               ->  Seq Scan on screening s  (cost=0.00..19.60 rows=14 width=4) (actual time=0.010..0.100 rows=14 loops=1)
+                     Filter: (show_date = CURRENT_DATE)
+                     Rows Removed by Filter: 826
+               ->  Hash  (cost=4.00..4.00 rows=200 width=36) (actual time=0.054..0.054 rows=200 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 22kB
+                     ->  Seq Scan on movie m  (cost=0.00..4.00 rows=200 width=36) (actual time=0.006..0.020 rows=200 loops=1)
+ Planning Time: 0.682 ms
+ Execution Time: 0.290 ms
+(14 rows)
+
+                                                 QUERY PLAN                                                 
+------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=102.33..102.34 rows=1 width=8) (actual time=0.792..0.793 rows=1 loops=1)
+   ->  Seq Scan on ticket  (cost=0.00..100.00 rows=932 width=0) (actual time=0.010..0.747 rows=931 loops=1)
+         Filter: (purchase_time >= (CURRENT_DATE - '7 days'::interval))
+         Rows Removed by Filter: 3069
+ Planning Time: 0.188 ms
+ Execution Time: 0.807 ms
+(6 rows)
+
+                                                          QUERY PLAN                                                          
+------------------------------------------------------------------------------------------------------------------------------
+ Unique  (cost=26.40..26.58 rows=14 width=42) (actual time=0.187..0.194 rows=14 loops=1)
+   ->  Sort  (cost=26.40..26.44 rows=14 width=42) (actual time=0.187..0.189 rows=14 loops=1)
+         Sort Key: s.show_time, m.title, s.hall_id, s.base_price
+         Sort Method: quicksort  Memory: 26kB
+         ->  Hash Join  (cost=6.50..26.14 rows=14 width=42) (actual time=0.079..0.160 rows=14 loops=1)
+               Hash Cond: (s.movie_id = m.movie_id)
+               ->  Seq Scan on screening s  (cost=0.00..19.60 rows=14 width=21) (actual time=0.010..0.087 rows=14 loops=1)
+                     Filter: (show_date = CURRENT_DATE)
+                     Rows Removed by Filter: 826
+               ->  Hash  (cost=4.00..4.00 rows=200 width=29) (actual time=0.058..0.059 rows=200 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 21kB
+                     ->  Seq Scan on movie m  (cost=0.00..4.00 rows=200 width=29) (actual time=0.005..0.025 rows=200 loops=1)
+ Planning Time: 0.200 ms
+ Execution Time: 0.231 ms
+(14 rows)
+
+                                                                  QUERY PLAN                                                                  
+----------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=147.10..147.11 rows=3 width=61) (actual time=1.793..1.796 rows=3 loops=1)
+   ->  Sort  (cost=147.10..147.60 rows=200 width=61) (actual time=1.793..1.794 rows=3 loops=1)
+         Sort Key: (sum(t.price)) DESC
+         Sort Method: top-N heapsort  Memory: 25kB
+         ->  HashAggregate  (cost=142.02..144.52 rows=200 width=61) (actual time=1.710..1.748 rows=140 loops=1)
+               Group Key: m.movie_id
+               Batches: 1  Memory Usage: 96kB
+               ->  Hash Join  (cost=32.40..137.36 rows=932 width=34) (actual time=0.349..1.428 rows=931 loops=1)
+                     Hash Cond: (s.movie_id = m.movie_id)
+                     ->  Hash Join  (cost=25.90..128.36 rows=932 width=9) (actual time=0.253..1.164 rows=931 loops=1)
+                           Hash Cond: (t.screening_id = s.screening_id)
+                           ->  Seq Scan on ticket t  (cost=0.00..100.00 rows=932 width=9) (actual time=0.008..0.728 rows=931 loops=1)
+                                 Filter: (purchase_time >= (CURRENT_DATE - '7 days'::interval))
+                                 Rows Removed by Filter: 3069
+                           ->  Hash  (cost=15.40..15.40 rows=840 width=8) (actual time=0.223..0.223 rows=840 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 41kB
+                                 ->  Seq Scan on screening s  (cost=0.00..15.40 rows=840 width=8) (actual time=0.004..0.094 rows=840 loops=1)
+                     ->  Hash  (cost=4.00..4.00 rows=200 width=29) (actual time=0.065..0.066 rows=200 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 21kB
+                           ->  Seq Scan on movie m  (cost=0.00..4.00 rows=200 width=29) (actual time=0.007..0.027 rows=200 loops=1)
+ Planning Time: 0.386 ms
+ Execution Time: 1.843 ms
+(22 rows)
+
+                                                                                 QUERY PLAN                                                                                  
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=23.61..23.62 rows=2 width=81) (actual time=0.598..0.608 rows=176 loops=1)
+   Sort Key: s.row_number, s.seat_number
+   Sort Method: quicksort  Memory: 36kB
+   ->  Nested Loop Left Join  (cost=1.14..23.60 rows=2 width=81) (actual time=0.073..0.551 rows=176 loops=1)
+         ->  Nested Loop  (cost=0.86..22.85 rows=2 width=35) (actual time=0.052..0.282 rows=176 loops=1)
+               ->  Nested Loop  (cost=0.71..22.48 rows=2 width=25) (actual time=0.044..0.105 rows=176 loops=1)
+                     ->  Nested Loop  (cost=0.43..16.47 rows=1 width=17) (actual time=0.027..0.029 rows=1 loops=1)
+                           ->  Index Scan using screening_pkey on screening sc  (cost=0.28..8.29 rows=1 width=13) (actual time=0.012..0.013 rows=1 loops=1)
+                                 Index Cond: (screening_id = 1)
+                           ->  Index Only Scan using hall_pkey on hall h  (cost=0.15..8.17 rows=1 width=4) (actual time=0.012..0.012 rows=1 loops=1)
+                                 Index Cond: (hall_id = sc.hall_id)
+                                 Heap Fetches: 1
+                     ->  Index Scan using seat_hall_id_row_number_seat_number_key on seat s  (cost=0.28..3.96 rows=205 width=20) (actual time=0.014..0.046 rows=176 loops=1)
+                           Index Cond: (hall_id = h.hall_id)
+               ->  Index Scan using seat_type_pkey on seat_type st  (cost=0.15..0.19 rows=1 width=18) (actual time=0.001..0.001 rows=1 loops=176)
+                     Index Cond: (seat_type_id = s.seat_type_id)
+         ->  Index Scan using ticket_screening_id_seat_id_key on ticket t  (cost=0.28..0.36 rows=1 width=12) (actual time=0.001..0.001 rows=0 loops=176)
+               Index Cond: ((screening_id = 1) AND (seat_id = s.seat_id))
+ Planning Time: 0.915 ms
+ Execution Time: 0.652 ms
+(20 rows)
+
+                                                                                 QUERY PLAN                                                                                 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=23.40..23.41 rows=1 width=72) (actual time=0.355..0.356 rows=1 loops=1)
+   ->  Sort  (cost=23.37..23.38 rows=2 width=14) (actual time=0.255..0.264 rows=176 loops=1)
+         Sort Key: st.seat_type_id
+         Sort Method: quicksort  Memory: 31kB
+         ->  Nested Loop  (cost=0.86..23.36 rows=2 width=14) (actual time=0.024..0.223 rows=176 loops=1)
+               ->  Nested Loop  (cost=0.71..22.99 rows=2 width=9) (actual time=0.022..0.073 rows=176 loops=1)
+                     Join Filter: (sc.hall_id = s.hall_id)
+                     ->  Nested Loop  (cost=0.43..16.47 rows=1 width=13) (actual time=0.014..0.015 rows=1 loops=1)
+                           ->  Index Scan using screening_pkey on screening sc  (cost=0.28..8.29 rows=1 width=9) (actual time=0.009..0.010 rows=1 loops=1)
+                                 Index Cond: (screening_id = 1)
+                           ->  Index Only Scan using hall_pkey on hall h  (cost=0.15..8.17 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1)
+                                 Index Cond: (hall_id = sc.hall_id)
+                                 Heap Fetches: 1
+                     ->  Index Scan using seat_hall_id_row_number_seat_number_key on seat s  (cost=0.28..3.96 rows=205 width=8) (actual time=0.006..0.033 rows=176 loops=1)
+                           Index Cond: (hall_id = h.hall_id)
+               ->  Index Scan using seat_type_pkey on seat_type st  (cost=0.15..0.19 rows=1 width=9) (actual time=0.001..0.001 rows=1 loops=176)
+                     Index Cond: (seat_type_id = s.seat_type_id)
+ Planning Time: 0.414 ms
+ Execution Time: 0.388 ms
+(19 rows)
+
