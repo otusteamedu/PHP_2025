@@ -2,12 +2,22 @@
 
 namespace App\Infrastructure\Service;
 
-use App\Application\Service\ReportGeneratorInterface;
+use App\Application\Service\ReportGenerator\ReportGeneratorInterface;
+use App\Application\Service\ReportGenerator\ReportGeneratorRequest;
+use App\Application\Service\ReportGenerator\ReportGeneratorResponse;
 
 class HtmlReportGenerator implements ReportGeneratorInterface
 {
-    public function generate(iterable $newsList): string
+    public function __construct(
+        private string $reportsDir,
+    )
     {
+    }
+
+    public function generate(ReportGeneratorRequest $request): ReportGeneratorResponse
+    {
+        $newsList = $request->newsList;
+
         $html = "<ul>\n";
         foreach ($newsList as $news) {
             $html .= sprintf(
@@ -18,11 +28,15 @@ class HtmlReportGenerator implements ReportGeneratorInterface
         }
         $html .= "</ul>";
 
-        return $html;
-    }
+        if (!is_dir($this->reportsDir)) {
+            mkdir($this->reportsDir, 0777, true);
+        }
 
-    public function saveToFile(string $html, string $filename): void
-    {
-        file_put_contents($filename, $html);
+        $filename = 'report_' . time() . '.html';
+        $fullPath = $this->reportsDir . '/' . $filename;
+
+        file_put_contents($fullPath, $html);
+
+        return new ReportGeneratorResponse($fullPath);
     }
 }

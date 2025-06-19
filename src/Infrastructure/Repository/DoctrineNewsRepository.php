@@ -49,7 +49,7 @@ class DoctrineNewsRepository implements NewsRepositoryInterface
         }
     }
 
-    public function save(News $news)
+    public function save(News $news): void
     {
         $record = new NewsRecord();
         $record->url = $news->getUrl()->getValue();
@@ -70,7 +70,7 @@ class DoctrineNewsRepository implements NewsRepositoryInterface
         }
     }
 
-    public function delete(News $news)
+    public function delete(News $news): void
     {
     }
 

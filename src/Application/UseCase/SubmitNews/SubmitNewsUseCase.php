@@ -2,7 +2,8 @@
 
 namespace App\Application\UseCase\SubmitNews;
 
-use App\Application\Service\NewsMetadataProviderInterface;
+use App\Application\Service\NewsMetadataProvider\NewsMetadataProviderInterface;
+use App\Application\Service\NewsMetadataProvider\NewsMetadataProviderRequest;
 use App\Domain\Factory\NewsFactoryInterface;
 use App\Domain\Repository\NewsRepositoryInterface;
 use App\Domain\ValueObject\Title;
@@ -21,7 +22,11 @@ class SubmitNewsUseCase
     public function __invoke(SubmitNewsRequest $request): SubmitNewsResponse
     {
         $url = new Url($request->url);
-        $title = new Title($this->newsMetadataProvider->fetchTitle($url->getValue()));
+
+        $metaRequest = new NewsMetadataProviderRequest($url->getValue());
+        $metaResponse = $this->newsMetadataProvider->fetchTitle($metaRequest);
+
+        $title = new Title($metaResponse->title);
         $createdAt = new \DateTimeImmutable();
 
         $news = $this->newsFactory->create($request->url, $title->getValue(), $createdAt);

@@ -2,15 +2,15 @@
 
 namespace App\Application\UseCase\ReportNews;
 
+use App\Application\Service\ReportGenerator\ReportGeneratorInterface;
+use App\Application\Service\ReportGenerator\ReportGeneratorRequest;
 use App\Domain\Repository\NewsRepositoryInterface;
-use App\Application\Service\ReportGeneratorInterface;
 
 class ReportNewsUseCase
 {
     public function __construct(
         private NewsRepositoryInterface $newsRepository,
         private ReportGeneratorInterface $reportGenerator,
-        private string $reportsDir,
     ) {}
 
     public function __invoke(ReportNewsRequest $request): ReportNewsResponse
@@ -19,18 +19,9 @@ class ReportNewsUseCase
             throw new InvalidReportRequestException('ID list cannot be empty');
         }
 
-        $newsList = $this->newsRepository->findByIds($request->ids);
-        $html = $this->reportGenerator->generate($newsList);
+        $reportRequest = new ReportGeneratorRequest($this->newsRepository->findByIds($request->ids));
+        $reportResponse = $this->reportGenerator->generate($reportRequest);
 
-        if (!is_dir($this->reportsDir)) {
-            mkdir($this->reportsDir, 0777, true);
-        }
-
-        $filename = 'report_' . time() . '.html';
-        $fullPath = $this->reportsDir . '/' . $filename;
-
-        $this->reportGenerator->saveToFile($html, $fullPath);
-
-        return new ReportNewsResponse($fullPath);
+        return new ReportNewsResponse($reportResponse->path);
     }
 }

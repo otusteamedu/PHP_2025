@@ -15,6 +15,6 @@ interface NewsRepositoryInterface
      * @return News[]
      */
     public function findByIds(array $ids): iterable;
-    public function save(News $news);
-    public function delete(News $news);
+    public function save(News $news): void;
+    public function delete(News $news): void;
 }

@@ -23,7 +23,7 @@ services:
   App\Domain\Repository\NewsRepositoryInterface:
     alias: App\Infrastructure\Repository\DoctrineNewsRepository
 
-  App\Application\UseCase\ReportNews\ReportNewsUseCase:
+  App\Infrastructure\Service\HtmlReportGenerator:
       arguments:
         $reportsDir: '%reports_dir%'
 
