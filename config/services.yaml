@@ -1,0 +1,36 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  App\:
+    resource: '../src/*'
+    exclude:
+      - '../src/Kernel.php'
+      - '../src/Domain/Entity/'
+      - '../src/Domain/ValueObject/'
+
+  App\Domain\Factory\NewsFactoryInterface:
+    alias: App\Infrastructure\Factory\NewsFactory
+
+  App\Application\Service\NewsMetadataProviderInterface:
+    alias: App\Infrastructure\Service\HtmlNewsMetadataProvider
+
+  App\Application\Service\ReportGeneratorInterface:
+    alias: App\Infrastructure\Service\HtmlReportGenerator
+
+  App\Domain\Repository\NewsRepositoryInterface:
+    alias: App\Infrastructure\Repository\DoctrineNewsRepository
+
+  App\Infrastructure\Service\HtmlReportGenerator:
+      arguments:
+        $reportsDir: '%reports_dir%'
+
+  App\Infrastructure\Http\:
+    resource: '../src/Infrastructure/Http'
+    public: true
+    tags: [ 'controller.service_arguments' ]
+
+parameters:
+  reports_dir: '%kernel.project_dir%/public/reports'
