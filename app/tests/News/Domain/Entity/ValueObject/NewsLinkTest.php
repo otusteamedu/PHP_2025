@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+
+namespace App\Tests\News\Domain\Entity\ValueObject;
+
+use App\News\Domain\Entity\ValueObject\NewsLink;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+class NewsLinkTest extends KernelTestCase
+{
+    #[dataProvider('getDataProvider')]
+    public function test_news_link_creation_successfully(
+        string $link,
+    ): void {
+        // Arrange
+        $newsLink = new NewsLink($link);
+
+        // Act
+
+        // Assert
+        $this->assertInstanceOf(NewsLink::class, $newsLink);
+        $this->assertSame($newsLink->getValue(), $link);
+    }
+
+    #[dataProvider('invalidLinkDataProvider')]
+    public function test_news_link_creation_negative(
+        string $link,
+    ): void {
+        // Arrange
+
+        // Act
+
+        // Assert
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('News link is not a valid URL.');
+
+        new NewsLink($link);
+    }
+
+    public static function getDataProvider(): \Generator
+    {
+        yield 'standard case' => ['https://symfony.com/packages/HttpFoundation'];
+        yield 'long title' => ['https://otus.ru/learning/300046/#/'];
+        yield 'complex URL' => ['https://example.com/path?param=value&another=param#fragment'];
+    }
+
+    public static function invalidLinkDataProvider(): \Generator
+    {
+        yield 'empty link' => [''];
+        yield 'invalid url format' => ['not-a-valid-url'];
+        yield 'missing protocol' => ['example.com/news'];
+        yield 'javascript protocol' => ['javascript:alert(1)'];
+        yield 'space in url' => ['https://example.com/with space'];
+    }
+
+}
