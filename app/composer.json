@@ -20,7 +20,9 @@
         "symfony/runtime": "7.2.*",
         "symfony/uid": "7.2.*",
         "symfony/yaml": "7.2.*",
-        "webmozart/assert": "^1.11"
+        "webmozart/assert": "^1.11",
+        "ext-pdo": "*",
+        "ext-redis": "*"
     },
     "config": {
         "allow-plugins": {
@@ -74,6 +76,9 @@
     },
     "require-dev": {
         "deptrac/deptrac": "^3.0",
-        "friendsofphp/php-cs-fixer": "^3.75"
+        "friendsofphp/php-cs-fixer": "^3.75",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^12.2",
+        "symfony/phpunit-bridge": "^7.3"
     }
 }
