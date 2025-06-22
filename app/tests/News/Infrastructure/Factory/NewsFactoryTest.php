@@ -9,10 +9,10 @@ use App\News\Domain\Entity\ValueObject\NewsLink;
 use App\News\Domain\Entity\ValueObject\NewsTitle;
 use App\News\Infrastructure\Factory\NewsFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 
-class NewsFactoryTest extends KernelTestCase
+class NewsFactoryTest extends TestCase
 {
     private ?NewsFactory $factory;
 

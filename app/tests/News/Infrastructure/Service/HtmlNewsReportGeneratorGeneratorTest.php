@@ -8,10 +8,10 @@ use App\News\Application\DTO\NewsDTO;
 use App\News\Infrastructure\Service\HtmlNewsReportGeneratorGenerator;
 use App\Shared\Infrastructure\Service\FileHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 
-class HtmlNewsReportGeneratorGeneratorTest extends KernelTestCase
+class HtmlNewsReportGeneratorGeneratorTest extends TestCase
 {
     private ?HtmlNewsReportGeneratorGenerator $generator;
     private ?FileHelper $fileHelperMock;
@@ -32,7 +32,7 @@ class HtmlNewsReportGeneratorGeneratorTest extends KernelTestCase
     #[dataProvider('getDataProvider')]
     public function testGenerateReportWithSingleItem(string $title, string $link): void
     {
-        //arrange
+        //Arrange
         $newsDTOs = [];
         $dto = new NewsDTO();
         $dto->title = $title;
@@ -59,7 +59,7 @@ class HtmlNewsReportGeneratorGeneratorTest extends KernelTestCase
     }
     public function testGenerateReportWithEmptyItem(): void
     {
-        //arrange
+        //Arrange
         $newsDTOs = [];
 
         $expectedContent = '<ul></ul>';
@@ -82,7 +82,7 @@ class HtmlNewsReportGeneratorGeneratorTest extends KernelTestCase
     #[dataProvider('getDataProvider')]
     public function testGenerateReportWithMultipleItems(string $title, string $link): void
     {
-        //arrange
+        //Arrange
         $count = 10;
         $dto = new NewsDTO();
         $dto->title = $title;
@@ -130,6 +130,4 @@ class HtmlNewsReportGeneratorGeneratorTest extends KernelTestCase
             'https://example.com/special/quotes'
         ];
     }
-
-
 }

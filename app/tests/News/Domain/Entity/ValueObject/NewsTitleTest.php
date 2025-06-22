@@ -7,9 +7,9 @@ namespace App\Tests\News\Domain\Entity\ValueObject;
 use App\News\Domain\Entity\ValueObject\NewsTitle;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 
-class NewsTitleTest extends KernelTestCase
+class NewsTitleTest extends TestCase
 {
 
     #[dataProvider('getDataProvider')]

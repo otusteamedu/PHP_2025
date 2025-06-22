@@ -8,9 +8,9 @@ use App\News\Application\GateWay\NewsParserRequest;
 use App\News\Application\GateWay\NewsParserResponse;
 use App\News\Infrastructure\Gateway\GeneralNewsParser;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 
-class GeneralNewsParserTest extends KernelTestCase
+class GeneralNewsParserTest extends TestCase
 {
 
     #[dataProvider('getDataProvider')]

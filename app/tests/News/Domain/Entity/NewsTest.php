@@ -8,10 +8,10 @@ use App\News\Domain\Entity\News;
 use App\News\Domain\Entity\ValueObject\NewsLink;
 use App\News\Domain\Entity\ValueObject\NewsTitle;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 
-class NewsTest extends KernelTestCase
+class NewsTest extends TestCase
 {
     #[dataProvider('getDataProvider')]
     public function testNewsCreationSuccessfully(
