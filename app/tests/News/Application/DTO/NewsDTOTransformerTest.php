@@ -61,6 +61,4 @@ class NewsDTOTransformerTest extends TestCase
             'https://example.com/special/quotes'
         ];
     }
-
-
 }

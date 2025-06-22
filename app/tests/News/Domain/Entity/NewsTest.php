@@ -25,15 +25,12 @@ class NewsTest extends TestCase
         $news = new News($id, $title, $link);
 
         // Assert
-        // Проверяем геттеры
         $this->assertSame($id, $news->getId());
         $this->assertSame($title, $news->getTitle());
         $this->assertSame($link, $news->getLink());
 
-        // Проверяем createdAt
         $this->assertInstanceOf(\DateTimeImmutable::class, $news->getCreatedAt());
         $this->assertLessThanOrEqual(new \DateTimeImmutable(), $news->getCreatedAt());
-
     }
 
     public static function getDataProvider(): array

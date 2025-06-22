@@ -30,23 +30,20 @@ class NewsFactoryTest extends TestCase
     #[dataProvider('getDataProvider')]
     public function testNewsCreatedSuccessfully(string $title, string $link)
     {
+        // Act
         $news = $this->factory->create($title, $link);
 
-        // Проверяем тип возвращаемого объекта
+        // Assert
         $this->assertInstanceOf(News::class, $news);
 
-        // Проверяем, что заголовок установлен правильно
         $this->assertInstanceOf(NewsTitle::class, $news->getTitle());
         $this->assertEquals($title, $news->getTitle()->getValue());
 
-        // Проверяем, что ссылка установлена правильно
         $this->assertInstanceOf(NewsLink::class, $news->getLink());
         $this->assertEquals($link, $news->getLink()->getValue());
 
-        // Проверяем, что ID является валидным UUID
         $this->assertTrue(Uuid::isValid($news->getId()->toRfc4122()));
 
-        // Проверяем, что дата создания установлена
         $this->assertNotNull($news->getCreatedAt());
     }
 

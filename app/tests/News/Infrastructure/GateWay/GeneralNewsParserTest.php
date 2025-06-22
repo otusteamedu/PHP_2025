@@ -12,10 +12,10 @@ use PHPUnit\Framework\TestCase;
 
 class GeneralNewsParserTest extends TestCase
 {
-
     #[dataProvider('getDataProvider')]
     public function testGetTitle(string $url, string $html): void
     {
+        // Arrange
         $request = new NewsParserRequest($url);
 
         $mock = $this->getMockBuilder(GeneralNewsParser::class)
@@ -27,8 +27,10 @@ class GeneralNewsParserTest extends TestCase
             ->with($request->url)
             ->willReturn($html);
 
+        // Act
         $response = $mock->getTitle($request);
 
+        // Assert
         $this->assertInstanceOf(NewsParserResponse::class, $response);
         $this->assertEquals('Тестовый заголовок', $response->title);
     }
@@ -36,6 +38,7 @@ class GeneralNewsParserTest extends TestCase
     #[dataProvider('getDataProviderNoTitle')]
     public function testGetTitleWithNoTitle(string $url, string $html): void
     {
+        // Arrange
         $request = new NewsParserRequest($url);
 
         $mock = $this->getMockBuilder(GeneralNewsParser::class)
@@ -47,8 +50,10 @@ class GeneralNewsParserTest extends TestCase
             ->with($request->url)
             ->willReturn($html);
 
+        // Act
         $response = $mock->getTitle($request);
 
+        // Assert
         $this->assertInstanceOf(NewsParserResponse::class, $response);
         $this->assertEquals('', $response->title);
     }

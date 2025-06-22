@@ -32,7 +32,7 @@ class HtmlNewsReportGeneratorGeneratorTest extends TestCase
     #[dataProvider('getDataProvider')]
     public function testGenerateReportWithSingleItem(string $title, string $link): void
     {
-        //Arrange
+        // Arrange
         $newsDTOs = [];
         $dto = new NewsDTO();
         $dto->title = $title;
@@ -42,8 +42,8 @@ class HtmlNewsReportGeneratorGeneratorTest extends TestCase
         $newsDTOs[] = $dto;
 
         $expectedContent = sprintf('<ul><li><a href="%s">%s</a></li></ul>', $link, $title);
-        //act
 
+        // Act
         $this->fileHelperMock->expects($this->once())
             ->method('save')
             ->with(
@@ -53,7 +53,7 @@ class HtmlNewsReportGeneratorGeneratorTest extends TestCase
 
         $result = $this->generator->generate($newsDTOs);
 
-        //assert
+        // Assert
         $this->assertStringEndsWith('.html', $result);
         $this->assertTrue(Uuid::isValid(basename($result, '.html')));
     }
@@ -61,10 +61,9 @@ class HtmlNewsReportGeneratorGeneratorTest extends TestCase
     {
         //Arrange
         $newsDTOs = [];
-
         $expectedContent = '<ul></ul>';
-        //act
 
+        // Act
         $this->fileHelperMock->expects($this->once())
             ->method('save')
             ->with(
@@ -74,7 +73,7 @@ class HtmlNewsReportGeneratorGeneratorTest extends TestCase
 
         $result = $this->generator->generate($newsDTOs);
 
-        //assert
+        // Assert
         $this->assertStringEndsWith('.html', $result);
         $this->assertTrue(Uuid::isValid(basename($result, '.html')));
     }
@@ -96,8 +95,7 @@ class HtmlNewsReportGeneratorGeneratorTest extends TestCase
         $item = sprintf('<li><a href="%s">%s</a></li>', $link, $title);
         $expectedContent = '<ul>' . str_repeat($item, $count) . '</ul>';
 
-        //act
-
+        // Act
         $this->fileHelperMock->expects($this->once())
             ->method('save')
             ->with(
@@ -107,7 +105,7 @@ class HtmlNewsReportGeneratorGeneratorTest extends TestCase
 
         $result = $this->generator->generate($newsDTOs);
 
-        //assert
+        // Assert
         $this->assertStringEndsWith('.html', $result);
         $this->assertTrue(Uuid::isValid(basename($result, '.html')));
     }

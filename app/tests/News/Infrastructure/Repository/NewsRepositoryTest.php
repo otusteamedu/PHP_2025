@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Tests\News\Infrastructure\Repository;
 
 use App\News\Domain\Entity\News;
@@ -11,14 +10,7 @@ use App\News\Domain\Entity\ValueObject\NewsTitle;
 use App\News\Domain\Repository\NewsFilter;
 use App\News\Infrastructure\Repository\NewsRepository;
 use App\Shared\Domain\Repository\PaginationResult;
-use App\Shared\Infrastructure\Kernel;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
-use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Uid\Uuid;
 
@@ -128,5 +120,4 @@ class NewsRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result->items);
         $this->assertEquals($news1->getId()->toString(), $result->items[0]->getId()->toString());
     }
-
 }

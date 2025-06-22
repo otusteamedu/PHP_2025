@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Tests\News\Application\UseCase\GenerateNewsReport;
 
 use App\News\Application\DTO\NewsDTO;
@@ -19,7 +18,6 @@ use App\News\Domain\Repository\NewsRepositoryInterface;
 use App\Shared\Domain\Repository\PaginationResult;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\TextUI\Configuration\File;
 use Symfony\Component\Uid\Uuid;
 
 class GenerateNewsReportUseCaseTest extends TestCase
@@ -84,11 +82,11 @@ class GenerateNewsReportUseCaseTest extends TestCase
             ->method('generate')
             ->willReturn($fileName);
 
-        //act
+        // Act
         $request = new GenerateNewsReportRequest(...$newsIds);
         $response = ($this->useCase)($request);
 
-        //assert
+        // Assert
         $this->assertInstanceOf(GenerateNewsReportResponse::class, $response);
         $this->assertEquals($fileName, $response->pathToFile);
     }

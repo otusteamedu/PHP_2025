@@ -22,7 +22,8 @@ class DownloadNewsReportUseCaseTest extends TestCase
     }
 
     public function testInvokeReturnsCorrectResponseSuccessfully(): void
-    { //Arrange
+    {
+        //Arrange
         $fileName = 'report123.html';
         $mimeType = 'text/html';
         $stream = fopen('php://memory', 'r+');
@@ -37,9 +38,11 @@ class DownloadNewsReportUseCaseTest extends TestCase
             ->with($fileName)
             ->willReturn($stream);
 
+        // Act
         $request = new DownloadNewsReportRequest($fileName);
         $response = ($this->useCase)($request);
 
+        // Assert
         $this->assertInstanceOf(DownloadNewsReportResponse::class, $response);
         $this->assertSame($stream, $response->stream);
         $this->assertSame($mimeType, $response->mimeType);
@@ -58,5 +61,4 @@ class DownloadNewsReportUseCaseTest extends TestCase
         $this->assertNull($response->stream);
         $this->assertInstanceOf(DownloadNewsReportResponse::class, $response);
     }
-
 }
