@@ -35,7 +35,7 @@ class HtmlNewsReportGeneratorGenerator implements NewsReportGeneratorInterface
 
         /** @var NewsDTO $dto */
         foreach ($newsDTOs as $dto) {
-            $content .= sprintf('<li><a href="%s">%s</a><li>', $dto->link, $dto->title);
+            $content .= sprintf('<li><a href="%s">%s</a></li>', $dto->link, $dto->title);
         }
 
         return str_replace('{{CONTENT}}', $content, $this->template);
