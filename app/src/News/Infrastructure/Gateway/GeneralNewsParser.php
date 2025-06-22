@@ -14,12 +14,17 @@ class GeneralNewsParser implements NewsParserInterface
     {
         $dom = new \DOMDocument();
         $dom->formatOutput = true;
-        $content = file_get_contents($request->url, false, null);
-        $content = mb_convert_encoding($content, 'HTML-ENTITIES', $this->getEncoding($content));
+        $content = $this->getFileContents($request->url);
         @$dom->loadHTML($content);
-        $title = $dom->getElementsByTagName('title')->item(0)->textContent;
+        $title = $dom->getElementsByTagName('title')->item(0)->textContent ?? '';
 
         return new NewsParserResponse($title);
+    }
+
+    public function getFileContents(string $url): string
+    {
+        $content = file_get_contents($url, false, null);
+        return mb_convert_encoding($content, 'HTML-ENTITIES', $this->getEncoding($content));
     }
 
     private function getEncoding(string $content): string

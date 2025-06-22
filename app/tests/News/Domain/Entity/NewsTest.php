@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Uuid;
 class NewsTest extends KernelTestCase
 {
     #[dataProvider('getDataProvider')]
-    public function test_news_creation_successfully(
+    public function testNewsCreationSuccessfully(
         Uuid $id,
         NewsTitle $title,
         NewsLink $link

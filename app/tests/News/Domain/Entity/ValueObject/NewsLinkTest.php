@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Tests\News\Domain\Entity\ValueObject;
 
 use App\News\Domain\Entity\ValueObject\NewsLink;
@@ -13,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class NewsLinkTest extends KernelTestCase
 {
     #[dataProvider('getDataProvider')]
-    public function test_news_link_creation_successfully(
+    public function testNewsLinkCreationSuccessfully(
         string $link,
     ): void {
         // Arrange
@@ -27,7 +26,7 @@ class NewsLinkTest extends KernelTestCase
     }
 
     #[dataProvider('invalidLinkDataProvider')]
-    public function test_news_link_creation_negative(
+    public function testNewsLinkCreationNegative(
         string $link,
     ): void {
         // Arrange

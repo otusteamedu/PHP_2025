@@ -2,21 +2,18 @@
 
 declare(strict_types=1);
 
-
 namespace App\Tests\News\Domain\Entity\ValueObject;
 
-use App\News\Domain\Entity\ValueObject\NewsLink;
 use App\News\Domain\Entity\ValueObject\NewsTitle;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Random\RandomException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class NewsTitleTest extends KernelTestCase
 {
 
     #[dataProvider('getDataProvider')]
-    public function test_news_title_creation_successfully(
+    public function testNewsTitleCreationSuccessfully(
         string $title,
     ): void {
         // Arrange
@@ -29,7 +26,7 @@ class NewsTitleTest extends KernelTestCase
     }
 
     #[dataProvider('invalidLinkDataProvider')]
-    public function test_news_title_creation_negative(
+    public function testNewsTitleCreationNegative(
         string $title,
     ): void {
         // Arrange
