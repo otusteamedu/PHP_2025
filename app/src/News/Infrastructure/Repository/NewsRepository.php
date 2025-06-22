@@ -34,8 +34,8 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
     {
         $qb = $this->createQueryBuilder('n');
         if ($filter->search) {
-            $qb->andWhere('n.title LIKE :search')
-                ->setParameter('search', '%'.$filter->search.'%');
+            $qb->andWhere('n.title.value LIKE :search')
+                ->setParameter('search', '%' . $filter->search . '%');
         }
         if ($filter->getNewsIds()) {
             $qb->andWhere('n.id IN (:ids)')
@@ -46,6 +46,7 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
             $qb->setMaxResults($filter->pager->getLimit());
             $qb->setFirstResult($filter->pager->getOffset());
         }
+
         $paginator = new Paginator($qb->getQuery());
 
         return new PaginationResult(iterator_to_array($paginator->getIterator()), $paginator->count());
