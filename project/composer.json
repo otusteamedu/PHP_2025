@@ -1,0 +1,10 @@
+{
+  "require": {
+    "sobol/php-typed-env": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "project/"
+    }
+  }
+}
