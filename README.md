@@ -1,3 +1,1 @@
-# PHP_2025
-
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Файл index.php своего рода клиент. Вызывает методы из env.php, который содержит в себе подключение пакета и вызывает методы из пакета
