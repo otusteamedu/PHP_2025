@@ -13,7 +13,7 @@ INSERT INTO halls (name, type)
 VALUES ('Small Hall', 'small'),
        ('Big Hall', 'big');
 
-create table small_hall
+create table hall_scheme_small
 (
     place   INT,
     line    INT,
@@ -24,14 +24,14 @@ create table small_hall
     FOREIGN KEY (hall_id) REFERENCES halls (id) ON DELETE CASCADE
 );
 
-INSERT INTO small_hall (place, line, type, price, hall_id)
+INSERT INTO hall_scheme_small (place, line, type, price, hall_id)
 VALUES (1, 1, 'Standard', 10.00, 1),
        (2, 1, 'Standard', 10.00, 1),
        (3, 1, 'VIP', 15.00, 1),
        (1, 2, 'Standard', 10.00, 1),
        (2, 2, 'VIP', 15.00, 1);
 
-create table big_hall
+create table hall_scheme_big
 (
     place   INT,
     line    INT,
@@ -42,7 +42,7 @@ create table big_hall
     FOREIGN KEY (hall_id) REFERENCES halls (id) ON DELETE CASCADE
 );
 
-INSERT INTO big_hall (place, line, type, price, hall_id)
+INSERT INTO hall_scheme_big (place, line, type, price, hall_id)
 VALUES (1, 1, 'Standard', 12.00, 2),
        (2, 1, 'Standard', 12.00, 2),
        (3, 1, 'VIP', 18.00, 2),
