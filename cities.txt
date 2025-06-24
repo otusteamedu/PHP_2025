@@ -1,0 +1,6 @@
+id user city phone
+1 test Moscow 5
+2 test2 Saint-P 6
+3 test3 Tver 7
+4 test4 Milan 8
+5 test5 Moscow 9
