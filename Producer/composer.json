@@ -1,0 +1,23 @@
+{
+  "name": "producer-afenin/hw19",
+  "type": "project",
+  "autoload": {
+    "files": [
+      "src/helpers.php"
+    ],
+    "psr-4": {
+      "Producer\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Adel"
+    }
+  ],
+  "require": {
+    "vlucas/phpdotenv": "^5.6.2",
+    "ext-json": "*",
+    "ext-amqp": "*",
+    "phpmailer/phpmailer": "^6.10"
+  }
+}
