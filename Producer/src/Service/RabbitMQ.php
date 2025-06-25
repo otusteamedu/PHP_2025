@@ -21,7 +21,7 @@ class RabbitMQ
      */
     public function __construct() {
         $connection = new AMQPConnection([
-            'host' => 'rabbitmq',
+            'host' => getenv('RABBITMQ_HOST'),
             'port' => 5672,
             'login' => getenv('RABBITMQ_DEFAULT_USER'),
             'password' => getenv('RABBITMQ_DEFAULT_PASS'),

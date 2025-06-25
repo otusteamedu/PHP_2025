@@ -19,7 +19,7 @@ class Kernel
     public function run(): void {
         try {
             $connection = new AMQPConnection([
-                'host' => 'rabbitmq',
+                'host' => getenv('RABBITMQ_HOST'),
                 'port' => 5672,
                 'login' => getenv('RABBITMQ_DEFAULT_USER'),
                 'password' => getenv('RABBITMQ_DEFAULT_PASS'),
