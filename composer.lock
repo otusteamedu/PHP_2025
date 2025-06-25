@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "d65778cec7d8e7ec3a90d86e7d47a406",
+    "packages": [
+        {
+            "name": "marina-lubnik/package-uppercase",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marinalubnik/package-uppercase.git",
+                "reference": "3da38ec5177a0934ed7b580a0a4bb7977bfeabdb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/marinalubnik/package-uppercase/zipball/3da38ec5177a0934ed7b580a0a4bb7977bfeabdb",
+                "reference": "3da38ec5177a0934ed7b580a0a4bb7977bfeabdb",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MarinaLubnik\\PackageUppercase\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Марина Лубник",
+                    "email": "m.kalinina@21vek.by"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/marinalubnik/package-uppercase/issues",
+                "source": "https://github.com/marinalubnik/package-uppercase/tree/1.0.3"
+            },
+            "time": "2025-06-25T17:15:15+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
