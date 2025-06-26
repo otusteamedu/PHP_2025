@@ -1,0 +1,57 @@
+services:
+  nginx:
+    container_name: "nginx"
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: ${PROJ_NAME}-nginx:alpine
+    ports:
+      - "${NGINX_PORT}:${NGINX_PORT}"
+    volumes:
+      - ../src:/var/www/src
+      - ../public:/var/www/public:ro
+      - ../vendor:/var/www/vendor:ro
+      - ../docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../docker/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../docker/_logs/nginx:/var/log/nginx
+      - php_socket:/run/php
+    depends_on:
+      - php
+    networks:
+      app_grot:
+        ipv4_address: 172.30.0.1
+
+  php:
+    container_name: "php-fpm"
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    image: ${PROJ_NAME}-php:fpm-alpine
+    volumes:
+      - ../src:/var/www/src
+      - ../public:/var/www/public:ro
+      - ../vendor:/var/www/vendor:ro
+      - ../docker/php/conf/php.ini:/usr/local/etc/php/php.ini:ro
+      - ../docker/php/conf/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ../docker/php/conf/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+      - ../docker/_logs/php:/var/log/php
+      - php_socket:/run/php
+    environment:
+      - PHP_OPCACHE_VALIDATE_TIMESTAMPS=${PHP_OPCACHE_VALIDATE_TIMESTAMPS}
+    networks:
+      app_grot:
+        ipv4_address: 172.30.0.2
+
+# Настроим общую сеть для контейнеров
+networks:
+  app_grot:
+    name: "app_grot"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/16
+          ip_range: 172.30.5.0/24
+          gateway: 172.30.5.254
+
+volumes:
+  php_socket:
