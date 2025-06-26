@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "marina-lubnik/package-uppercase",
-            "version": "1.0.3",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marinalubnik/package-uppercase.git",
-                "reference": "3da38ec5177a0934ed7b580a0a4bb7977bfeabdb"
+                "reference": "a8d3a8f74c924aebf00444f66bf21c28a6cd9ede"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marinalubnik/package-uppercase/zipball/3da38ec5177a0934ed7b580a0a4bb7977bfeabdb",
-                "reference": "3da38ec5177a0934ed7b580a0a4bb7977bfeabdb",
+                "url": "https://api.github.com/repos/marinalubnik/package-uppercase/zipball/a8d3a8f74c924aebf00444f66bf21c28a6cd9ede",
+                "reference": "a8d3a8f74c924aebf00444f66bf21c28a6cd9ede",
                 "shasum": ""
             },
             "type": "library",
@@ -35,9 +35,9 @@
             ],
             "support": {
                 "issues": "https://github.com/marinalubnik/package-uppercase/issues",
-                "source": "https://github.com/marinalubnik/package-uppercase/tree/1.0.3"
+                "source": "https://github.com/marinalubnik/package-uppercase/tree/1.0.4"
             },
-            "time": "2025-06-25T17:15:15+00:00"
+            "time": "2025-06-26T11:05:17+00:00"
         }
     ],
     "packages-dev": [],
