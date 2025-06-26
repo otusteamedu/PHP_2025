@@ -1,6 +1,6 @@
 <?php
 
-namespace Producer\Exception;
+namespace Producer\Infrastructure\Exception;
 
 use Exception;
 

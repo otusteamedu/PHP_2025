@@ -1,6 +1,6 @@
 <?php
 
-namespace Producer\Service;
+namespace Producer\Application\Queue;
 
 use AMQPChannel;
 use AMQPChannelException;
@@ -10,8 +10,9 @@ use AMQPExchange;
 use AMQPExchangeException;
 use AMQPQueue;
 use AMQPQueueException;
+use Producer\Domain\Notifier\NotifierInterface;
 
-class RabbitMQ
+class RabbitMQ implements NotifierInterface
 {
     /** @var AMQPChannel */
     private AMQPChannel $channel;
@@ -39,7 +40,7 @@ class RabbitMQ
      * @throws AMQPConnectionException
      * @throws AMQPChannelException
      */
-    public function trySendTest(string $data): void {
+    public function notify(string $message): void {
         $exchange = new AMQPExchange($this->channel);
         $exchange->setName('hash_exchange');
         $exchange->setType('x-consistent-hash');
@@ -53,7 +54,7 @@ class RabbitMQ
 
         $number = rand(1, 100);
 
-        $exchange->publish($data, '', AMQP_NOPARAM, [
+        $exchange->publish($message, '', AMQP_NOPARAM, [
             'headers' => ['hash-on' => "user$number"]
         ]);
     }

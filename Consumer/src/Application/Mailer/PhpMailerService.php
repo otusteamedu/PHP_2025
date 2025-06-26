@@ -1,12 +1,13 @@
 <?php
 
-namespace Consumer\Service;
+namespace Consumer\Application\Mailer;
 
+use Consumer\Domain\Mailer\MailerInterface;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
-class MailSender
+class PhpMailerService implements MailerInterface
 {
     private PHPMailer $mail;
 
@@ -33,19 +34,25 @@ class MailSender
     }
 
     /**
+     * @param string $subject
+     * @param string $body
+     * @param string $to
+     * @param string|null $from
+     * @return void
      * @throws Exception
      */
-    public function send(array $data): void {
+    public function mail(
+        string $subject,
+        string $body,
+        string $to,
+        ?string $from
+    ): void {
         $mail = $this->mail;
-        $mail->setFrom(getenv('EMAIL_TO'));
-        $mail->addAddress(getenv('EMAIL_FROM'));
+        $mail->setFrom($from ?? getenv('EMAIL_TO'));
+        $mail->addAddress($to);
         $mail->isHTML();
-        $mail->Subject = 'Данные выписки из банка';
-        $mail->Body =
-            "<b>Банк</b>: {$data['bank']}<br>" .
-            "<b>Счет</b>: {$data['account']}<br>" .
-            "<b>БИК</b>: {$data['bik']}<br>" .
-            "<b>Клиент</b>: {$data['client']}<br>";
+        $mail->Subject = $subject;
+        $mail->Body = $body;
 
         $sent = $mail->send();
         if (!$sent) {

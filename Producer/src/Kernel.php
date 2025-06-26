@@ -2,10 +2,14 @@
 
 namespace Producer;
 
+use Producer\Application\BankDetail\BankDetailUseCase;
+use Producer\Application\Http\Response;
+use Producer\Application\Queue\RabbitMQ;
+use Producer\Domain\DTO\BankDetailDTO;
+use Producer\Infrastructure\BankDetail\RabbitMQNotifier;
+use Producer\Infrastructure\Exception\ValidationException;
+use Producer\Infrastructure\Task\ValidateBankDetailTask;
 use Exception;
-use Producer\Exception\ValidationException;
-use Producer\Http\Response;
-use Producer\Service\RabbitMQ;
 use Throwable;
 
 class Kernel
@@ -23,51 +27,24 @@ class Kernel
                 throw new Exception('Принимает только POST запросы', 400);
             }
 
-            $this->validation($request);
+            (new ValidateBankDetailTask())->run($request);
 
-            $rabbitMQ = new RabbitMQ();
-
-            $data = json_encode([
-                'bik' => $request['bik'],
-                'account' => $request['account'],
-                'client' => $request['client'],
-                'bank' => $request['bank'],
-            ]);
-
-            $rabbitMQ->trySendTest($data);
+            (new BankDetailUseCase(
+                new RabbitMQNotifier(new RabbitMQ())
+            ))->run(new BankDetailDTO(
+                bik: $request['bik'],
+                account: $request['account'],
+                client: $request['client'],
+                bank: $request['bank'],
+            ));
 
             $response = new Response([], 200, 'Ok');
-        } catch (ValidationException|Exception $e) {
+        } catch (ValidationException $e) {
             $response = new Response([], $e->getCode(), $e->getMessage());
         } catch (Throwable) {
             $response = new Response([], 500, 'Что-то пошло не так!');
         } finally {
             $response->init();
-        }
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    protected function validation(array $data): void {
-        $account = $data['account'] ?? null;
-        if (!is_string($account) || strlen($account) != 20 || empty($account)) {
-            throw new ValidationException('Строка account должна быть 20 символам');
-        }
-
-        $client = $data['client'] ?? null;
-        if (!is_string($client) || empty($client)) {
-            throw new ValidationException('Строка client должна быть ФИО');
-        }
-
-        $bank = $data['bank'] ?? null;
-        if (!is_string($bank) || empty($bank)) {
-            throw new ValidationException('Строка bank должна быть Наименованием банка');
-        }
-
-        $bik = $data['bik'] ?? null;
-        if (!is_string($bik) || strlen($bik) != 9 || empty($bik)) {
-            throw new ValidationException('Строка bik должна быть 9 символам');
         }
     }
 }
