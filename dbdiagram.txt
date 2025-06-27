@@ -1,0 +1,62 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+Table sessions {
+  id integer [primary key]
+  time time
+  seat_id integer
+  film_id integer
+}
+
+Table halls {
+  id integer [primary key]
+  name varchar
+}
+
+Table customers {
+  id integer [primary key]
+  login varchar
+  password varchar
+  email varchar
+  discount integer
+  created_at timestamp
+}
+
+Table films {
+  id integer [primary key]
+  title varchar
+  duration integer [note: 'Продолжительность в минутах']
+  created_at timestamp
+}
+
+Table customer_sessions {
+  id integer [primary key]
+  session_id integer
+  customer_id integer
+}
+
+Table seats {
+  id integer [primary key]
+  number integer
+  seat_category_id integer
+  hall_id integer
+
+}
+
+Table seat_category {
+  id integer [primary key]
+  category_name varchar
+  cost money
+
+}
+
+Ref: customer_sessions.session_id - sessions.id
+Ref: customer_sessions.customer_id > customers.id
+
+Ref: sessions.seat_id - seats.id
+Ref: seats.hall_id > halls.id
+
+Ref: films.id < sessions.film_id
+
+Ref: seats.seat_category_id > seat_category.id
