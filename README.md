@@ -1,7 +1,7 @@
 ## ДЗ № 5. Основные понятия баз данных
 ###### Комлев Иван
 
-[(/cinema.png)]
+[(https://github.com/otusteamedu/PHP_2025/blob/ikomlev/hw6/cinema.png?raw=true)]
 Логическая модель базы данных кинотеатра:
 [https://dbdiagram.io/d/Cinema-6842084bba2a4ac57b0eff84]
 
