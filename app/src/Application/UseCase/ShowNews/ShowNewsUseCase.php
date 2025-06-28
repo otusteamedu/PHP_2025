@@ -7,6 +7,7 @@ namespace App\Application\UseCase\ShowNews;
 use App\Application\NewsContentModifier\DummyNewsContentModifier;
 use App\Application\NewsContentModifier\NewsContentModifierInterface;
 use App\Domain\Repository\NewsRepositoryInterface;
+use App\Domain\Repository\NotFoundException;
 
 readonly class ShowNewsUseCase
 {
@@ -22,6 +23,10 @@ readonly class ShowNewsUseCase
     ): ShowNewsResponse
     {
         $news = $this->newsRepository->findOneById($request->id);
+
+        if (empty($news)) {
+            throw new NotFoundException('News not found');
+        }
 
         return new ShowNewsResponse(
             $news->getId(),

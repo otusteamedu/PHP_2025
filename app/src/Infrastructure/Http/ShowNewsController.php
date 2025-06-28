@@ -10,6 +10,7 @@ use App\Application\NewsContentModifier\SocialNetworksNewsContentModifier;
 use App\Application\ReadingTimeCalculator\ReadingTimeCalculator;
 use App\Application\UseCase\ShowNews\ShowNewsRequest;
 use App\Application\UseCase\ShowNews\ShowNewsUseCase;
+use App\Domain\Repository\NotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -41,6 +42,11 @@ class ShowNewsController extends AbstractController
             return $this->json(
                 $response,
                 Response::HTTP_OK
+            );
+        } catch (NotFoundException $e) {
+            return $this->json(
+                ['error' => $e->getMessage()],
+                Response::HTTP_NOT_FOUND
             );
         } catch (Throwable $e) {
             return $this->json(

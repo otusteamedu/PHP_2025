@@ -6,6 +6,7 @@ namespace App\Infrastructure\Http;
 
 use App\Application\UseCase\CreateSubscription\CreateSubscriptionRequest;
 use App\Application\UseCase\CreateSubscription\CreateSubscriptionUseCase;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -31,6 +32,11 @@ class CreateSubscriptionController extends AbstractController
             return $this->json(
                 $response,
                 Response::HTTP_CREATED
+            );
+        } catch (InvalidArgumentException $e) {
+            return $this->json(
+                ['error' => $e->getMessage()],
+                Response::HTTP_BAD_REQUEST
             );
         } catch (Throwable $e) {
             return $this->json(
