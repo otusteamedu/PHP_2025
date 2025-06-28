@@ -96,3 +96,8 @@ curl --location 'http://localhost/api/v1/subscriptions' \
     "email": "sport@test.local"
 }'
 ```
+
+## Документация Swagger
+
+Документация доступна по ссылке: http://localhost/api/doc
+
