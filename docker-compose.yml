@@ -24,10 +24,12 @@ services:
       - ./:/var/www/html
     environment:
       - REDIS_HOST=redis
+      - MONGO_HOST=mongo
     networks:
       - app-network
     depends_on:
       - redis
+      - mongo
 
   # Redis service
   redis:
@@ -37,8 +39,22 @@ services:
     networks:
       - app-network
 
+  # MongoDB service
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
 volumes:
   redis_data:
+  mongo_data:
 
 networks:
   app-network:
