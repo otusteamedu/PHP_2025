@@ -6,7 +6,7 @@ namespace User\Php2025;
 
 class Validate
 {
-    public function validateString(?array $input): array
+    public function getValidateString(?array $input): array
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return $this->respond(405, 'Метод не поддерживается');

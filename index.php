@@ -16,6 +16,6 @@ $body = file_get_contents('php://input');
 $input = json_decode($body, true);
 
 $validate = new Validate();
-$validateString = $validate->validateString($input);
+$validateString = $validate->getValidateString($input);
 
 echo $validateString['message'];
