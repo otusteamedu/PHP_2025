@@ -1,0 +1,15 @@
+{
+    "name": "user/php_2025",
+    "autoload": {
+        "psr-4": {
+            "User\\Php2025\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Марина Лубник",
+            "email": "m.kalinina@21vek.by"
+        }
+    ],
+    "require": {}
+}

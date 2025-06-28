@@ -7,6 +7,9 @@ services:
       - "80:80"
     networks:
       - app-network
+    depends_on:
+      - app1
+      - app2
 
   app:
     build:
@@ -16,7 +19,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
     volumes:
-       - ./code:/data/mysite.local
+       - .:/data/mysite.local
     networks:
       - app-network
     depends_on:
@@ -29,7 +32,7 @@ services:
     image: balance/php
     container_name: app1
     volumes:
-      - ./code:/data/mysite.local
+      - .:/data/mysite.local
     networks:
       - app-network
     depends_on:
@@ -42,7 +45,7 @@ services:
     image: balance/php
     container_name: app2
     volumes:
-      - ./code:/data/mysite.local
+      - .:/data/mysite.local
     networks:
       - app-network
     depends_on:
@@ -54,7 +57,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ./code:/data/mysite.local
+      - .:/data/mysite.local
     networks:
       - app-network
 
