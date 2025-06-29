@@ -24,7 +24,7 @@ readonly class ShowNewsUseCase
     {
         $news = $this->newsRepository->findOneById($request->id);
 
-        if (empty($news)) {
+        if ($news === null) {
             throw new NotFoundException('News not found');
         }
 
