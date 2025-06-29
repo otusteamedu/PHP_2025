@@ -20,6 +20,8 @@ CREATE TABLE values (
     value_text TEXT,
     value_date DATE,
     value_boolean BOOLEAN,
+    value_float FLOAT,
+    value_int INT,
     FOREIGN KEY (film_id) REFERENCES films(film_id),
     FOREIGN KEY (attribute_id) REFERENCES attributes(attribute_id)
 );
