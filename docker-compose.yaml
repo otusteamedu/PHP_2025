@@ -16,9 +16,7 @@ services:
 
   manager_php-fpm:
     container_name: manager_php-fpm
-    build:
-      context: docker/php-fpm
-      dockerfile: Dockerfile
+    image: php:8.4-fpm
     volumes:
       - ./app:/app:rw
     depends_on:
@@ -26,6 +24,21 @@ services:
         condition: service_healthy
     working_dir: /app
     env_file: .env
+    networks:
+      - app-network
+
+  manager_php-cli:
+    container_name: manager_php-cli
+    build:
+      context: docker/php-cli
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app:rw
+    depends_on:
+      manager_db:
+        condition: service_healthy
+    working_dir: /app
+    command: bash -c "composer install --no-dev --no-interaction --optimize-autoloader"
     networks:
       - app-network
 
@@ -50,6 +63,22 @@ services:
     ports:
       - ${DB_EXTERNAL_PORT}:${DB_PORT}
     command: [ "postgres", "-c", "logging_collector=on", "-c", "log_directory=/var/lib/postgresql/data/pg_log", "-c", "log_filename=postgresql.log", "-c", "log_statement=all" ]
+
+  manager_rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    restart: always
+    healthcheck:
+      start_period: 30s
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 1m
+      timeout: 3s
+      retries: 30
+    ports:
+      - ${RABBITMQ_INTERNAL_PORT}:${RABBITMQ_INTERNAL_PORT}      # для общения с приложением
+      - ${RABBITMQ_EXTERNAL_PORT}:${RABBITMQ_EXTERNAL_PORT}     # для панели управления
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS}
 
 networks:
   app-network:
