@@ -20,9 +20,12 @@ https://leetcode.com/problems/fraction-to-recurring-decimal/
 Решение проходит тесты
 
 для задачи с поиском пересечения
+сложность O(n) - n - это количество нод первого и втого списков
 с циклом https://leetcode.com/problems/intersection-of-two-linked-lists/submissions/1680068103/
+сложность O(n) - n - это количество нод первого и втого списков
 с рекурсией https://leetcode.com/problems/intersection-of-two-linked-lists/submissions/1680075230/
 
 для задачи с делением
+сложность O(n) - n - это количество цифр дробной части
 с рекурсией https://leetcode.com/problems/fraction-to-recurring-decimal/submissions/1679229212/
 
