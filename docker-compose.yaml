@@ -77,8 +77,8 @@ services:
       - ${RABBITMQ_INTERNAL_PORT}:${RABBITMQ_INTERNAL_PORT}      # для общения с приложением
       - ${RABBITMQ_EXTERNAL_PORT}:${RABBITMQ_EXTERNAL_PORT}     # для панели управления
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
 
 networks:
   app-network:
