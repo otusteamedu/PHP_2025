@@ -10,8 +10,11 @@ class Auth
 {
     public function authenticate(): void
     {
+        $redisHost = getenv('REDIS_HOST');
+        $redisPort = getenv('REDIS_PORT');
+
         $redis = new Redis();
-        $redis->connect('redis', 6379);
+        $redis->connect($redisHost, (int)$redisPort);
         $redis->set('auth:' . 'marina', 'ok', 3600);
     }
 }

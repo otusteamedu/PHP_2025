@@ -16,8 +16,8 @@ services:
       context: ./fpm
       dockerfile: Dockerfile
     environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      REDIS_HOST: '${REDIS_HOST}'
+      REDIS_PORT: '${REDIS_PORT}'
     volumes:
        - .:/data/mysite.local
     networks:
@@ -31,6 +31,9 @@ services:
       dockerfile: Dockerfile
     image: balance/php
     container_name: app1
+    environment:
+      REDIS_HOST: '${REDIS_HOST}'
+      REDIS_PORT: '${REDIS_PORT}'
     volumes:
       - .:/data/mysite.local
     networks:
@@ -44,6 +47,9 @@ services:
       dockerfile: Dockerfile
     image: balance/php
     container_name: app2
+    environment:
+      REDIS_HOST: '${REDIS_HOST}'
+      REDIS_PORT: '${REDIS_PORT}'
     volumes:
       - .:/data/mysite.local
     networks:

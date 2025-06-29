@@ -8,21 +8,23 @@ class Validate
 {
     public function getValidateString(?array $input): array
     {
+        $response = new Response();
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return $this->respond(405, 'Метод не поддерживается');
+            return $response->createResponse(405, 'Метод не поддерживается');
         }
 
         if (!isset($input['string']) || trim($input['string']) === '') {
-            return $this->respond(422, 'Поле string не должно быть пустым');
+            return $response->createResponse(422, 'Поле string не должно быть пустым');
         }
 
         $value = $input['string'];
 
         if (!$this->hasBalancedBrackets($value)) {
-            return $this->respond(400, 'Скобки не сбалансированы');
+            return $response->createResponse(400, 'Скобки не сбалансированы');
         }
 
-        return $this->respond(200, 'Строка валидна и сбалансирована');
+        return $response->createResponse(200, 'Ок');
     }
 
     private function hasBalancedBrackets(string $str): bool
@@ -41,12 +43,5 @@ class Validate
         }
 
         return $balance === 0;
-    }
-
-    private function respond(int $code, string $message): array
-    {
-        http_response_code($code);
-        header('Content-Type: application/json');
-        return ['status' => $code, 'message' => $message];
     }
 }
