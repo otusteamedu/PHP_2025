@@ -1,22 +1,17 @@
 <?php
 namespace App\Controllers;
 
-use App\Services\MongoService;
-use App\Services\RedisService;
+use App\Services\ServiceInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class HomeController
 {
-    private $service;
 
-    public function __construct()
-    {
-        $driver = getenv('DRIVER');
-        $this->service = $driver == 'redis' ? new RedisService() : new MongoService();
-    }
+    public function __construct(private ServiceInterface $service)
+    {}
 
-    public function add(Request $request, Response $response, $args)
+    public function add(Request $request, Response $response, $args): Response
     {
         $body = file_get_contents('php://input');
         $data = json_decode($body, true);
@@ -37,7 +32,7 @@ class HomeController
         return $response;
     }
 
-    public function answer(Request $request, Response $response, $args)
+    public function answer(Request $request, Response $response, $args): Response
     {
         $body = file_get_contents('php://input');
         $data = json_decode($body, true);
@@ -55,14 +50,14 @@ class HomeController
         return $response;
     }
 
-    public function events(Request $request, Response $response, $args)
+    public function events(Request $request, Response $response, $args): Response
     {
         $message = $this->service->getEvents();
         $response->getBody()->write($message);
         return $response;
     }
 
-    public function clear(Request $request, Response $response, $args)
+    public function clear(Request $request, Response $response, $args): Response
     {
         $result = $this->service->clear();
         $message = $result ? 'Хранилище событий очищено' : 'Не удалось очистить хранилище';

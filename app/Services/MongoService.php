@@ -7,7 +7,7 @@ use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Query;
 use MongoDB\Driver\Command;
 
-class MongoService
+class MongoService implements ServiceInterface
 {
     const MONGO_DB = 'analytics';
     const MONGO_COLLECTION = 'events';
@@ -19,7 +19,7 @@ class MongoService
         $this->mongo = new Manager('mongodb://root:example@mongo:27017');
     }
 
-    public function add($event, $priority, $conditions)
+    public function add(string $event, int $priority, array $conditions): string
     {
         $document = [
             'event' => $event,
@@ -40,7 +40,7 @@ class MongoService
         return $message;
     }
 
-    public function answer($parameters)
+    public function answer(array $parameters): string
     {
         $filter = [];
         foreach ($parameters as $key => $val) {
@@ -61,14 +61,14 @@ class MongoService
         return $message;
     }
 
-    public function clear()
+    public function clear(): bool
     {
         $command = new Command(['drop' => self::MONGO_COLLECTION]);
         $this->mongo->executeCommand(self::MONGO_DB, $command);
         return true;
     }
 
-    public function getEvents()
+    public function getEvents(): string
     {
         $query = new Query([]);
         $namespace = self::MONGO_DB . '.' . self::MONGO_COLLECTION;

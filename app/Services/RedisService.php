@@ -2,17 +2,19 @@
 
 namespace App\Services;
 
-class RedisService
+use Redis;
+
+class RedisService implements ServiceInterface
 {
     private $redis;
 
     public function __construct()
     {
-        $this->redis = new \Redis();
+        $this->redis = new Redis();
         $this->redis->connect('redis', 6379);
     }
 
-    public function add($event, $priority, $conditions)
+    public function add(string $event, int $priority, array $conditions):string
     {
         $conditions1 = [];
         foreach ($conditions as $key => $val) {
@@ -27,7 +29,7 @@ class RedisService
         return $message;
     }
 
-    public function answer($parameters)
+    public function answer(array $parameters): string
     {
         $params = [];
         foreach ($parameters as $par => $val) {
@@ -67,7 +69,7 @@ class RedisService
         return $event;
     }
 
-    public function getEvents()
+    public function getEvents(): string
     {
         $events = $this->redis->hGetAll('events');
         $priorities = $this->redis->zRevRange('priorities', 0, -1, ['WITHSCORES' => true]);
@@ -89,7 +91,7 @@ class RedisService
         return $message;
     }
 
-    public function clear()
+    public function clear(): bool
     {
         $this->redis->del('events');
         $this->redis->del('priorities');
