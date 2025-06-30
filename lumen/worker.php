@@ -6,7 +6,6 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-// Настраиваем Eloquent Capsule вручную для MySQL
 $capsule = new Capsule;
 
 $capsule->addConnection([
@@ -20,11 +19,9 @@ $capsule->addConnection([
     'prefix'    => '',
 ]);
 
-// Делаем Capsule доступным глобально и запускаем Eloquent
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
-// Определяем модель (поставь namespace если надо)
 class Request extends Illuminate\Database\Eloquent\Model {
     protected $table = 'requests';
     protected $primaryKey = 'id';
