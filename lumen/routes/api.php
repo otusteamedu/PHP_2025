@@ -1,4 +1,4 @@
 <?php
 
-$router->post('/requests', 'RequestController@create');
-$router->get('/requests/{id}', 'RequestController@status');
+$router->post('api/requests', 'RequestController@create');
+$router->get('api/requests/{id}', 'RequestController@status');

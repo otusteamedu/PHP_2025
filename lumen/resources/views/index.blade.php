@@ -38,7 +38,7 @@
     const checkStatusBtn = document.getElementById('checkStatusBtn');
     const statusResult = document.getElementById('statusResult');
 
-    const API_BASE = '/';
+    const API_BASE = 'api/';
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
