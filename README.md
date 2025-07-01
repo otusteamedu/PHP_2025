@@ -1,3 +1,5 @@
 # PHP_2025
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+php bin/console event add event.json - добавление событий через файл json
+php bin/console event clear - очистка
+php bin/console event find search.json - поиск наиболее подходящего события
