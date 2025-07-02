@@ -66,7 +66,7 @@ class Solution
 				$currentPointerList1 = $currentPointerList1->next;
 			}
 
-		} while (!($currentPointerList1 === null && $currentPointerList2 === null));
+		} while ($currentPointerList1 !== null || $currentPointerList2 !== null);
 
 		return $this->resultList->getHead();
 	}

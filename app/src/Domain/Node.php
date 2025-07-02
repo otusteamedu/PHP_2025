@@ -7,7 +7,7 @@ namespace SergeyGolovanov\Php2025Hw7\Domain;
 class Node
 {
 	public int $val = 0;
-	public mixed $next = null;
+	public $next = null;
 
 	public function __construct($val = 0, $next = null)
 	{
