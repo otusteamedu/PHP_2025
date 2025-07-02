@@ -1,0 +1,16 @@
+{
+    "name": "sergey-golovanov/php_2025_hw7",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "SergeyGolovanov\\Php2025Hw7\\": "app/src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Голованов Сергей",
+            "email": "golovanovsv16071975@yandex.ru"
+        }
+    ],
+    "require": {}
+}
