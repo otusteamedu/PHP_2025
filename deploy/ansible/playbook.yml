@@ -1,0 +1,8 @@
+---
+- name: Развертывание FastFood приложения
+  hosts: production
+  become: yes
+  vars_files:
+    - roles/fastfood/vars/main.yml
+  roles:
+    - fastfood

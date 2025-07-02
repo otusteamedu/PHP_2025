@@ -1,0 +1,61 @@
+---
+- name: Установка необходимых пакетов
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - docker.io
+    - docker-compose
+    - git
+
+- name: Создание директории приложения
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Копирование .env файла
+  template:
+    src: "{{ env_file }}"
+    dest: "{{ app_dir }}/.env"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Клонирование репозитория
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ app_dir }}"
+    version: "{{ git_branch }}"
+    force: yes
+
+- name: Копирование docker-compose.yml
+  template:
+    src: "templates/docker-compose.yml.j2"
+    dest: "{{ app_dir }}/docker-compose.yml"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Копирование конфига Nginx
+  template:
+    src: "templates/nginx.conf.j2"
+    dest: "/etc/nginx/sites-available/fastfood"
+    owner: root
+    group: root
+
+- name: Создание символической ссылки Nginx
+  file:
+    src: "/etc/nginx/sites-available/fastfood"
+    dest: "/etc/nginx/sites-enabled/fastfood"
+    state: link
+
+- name: Перезапуск Nginx
+  service:
+    name: nginx
+    state: restarted
+
+- name: Запуск контейнеров
+  command: docker-compose up -d --build
+  args:
+    chdir: "{{ app_dir }}"
