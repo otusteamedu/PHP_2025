@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: Report Generator API
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+paths:
+  /report:
+    post:
+      summary: "Create report generation request"
+      responses:
+        "200":
+          description: "Report request accepted"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+  /report/{id}:
+    get:
+      summary: "Get report status"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: "Report status"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  status:
+                    type: string
+        "404":
+          description: "Report not found"
