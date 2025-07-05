@@ -1,16 +1,13 @@
 <?php declare(strict_types=1);
 
 use App\App;
+use App\Core\FoodType;
 
 require(__DIR__ . '/../vendor/autoload.php');
 
 $app = new App();
 
-$burger = $app->cookBurger();
-echo "Заказ завершен, мы приготовили: " . $burger->getName() . PHP_EOL . PHP_EOL;
-
-$sandwich = $app->cookSandwich();
-echo "Заказ завершен, мы приготовили: " . $sandwich->getName() . PHP_EOL . PHP_EOL;
-
-$hotDog = $app->cookHotDog();
-echo "Заказ завершен, мы приготовили: " . $hotDog->getName() . PHP_EOL . PHP_EOL;
+foreach ([FoodType::BURGER, FoodType::SANDWICH, FoodType::HOT_DOG] as $type) {
+    $product = $app->cook($type);
+    echo "Заказ завершён, мы приготовили: " . $product->getName() . PHP_EOL . PHP_EOL;
+}
