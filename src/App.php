@@ -21,14 +21,12 @@ class App
 {
     public function cook(FoodType $type): FoodProductInterface
     {
-        $product = match ($type) {
+        return match ($type) {
             FoodType::BURGER => $this->cookBurger(),
             FoodType::SANDWICH => $this->cookSandwich(),
             FoodType::HOT_DOG => $this->cookHotDog(),
             default => throw new \Exception("Unsupported type"),
         };
-
-        return $product;
     }
 
     public function cookBurger (): FoodProductInterface
