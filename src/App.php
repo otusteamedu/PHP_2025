@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+use App\Controller\EmailValidatorController;
 use App\Controller\StringController;
 use App\Exception\IApplicationException;
 use App\Http\Request;
@@ -12,7 +13,11 @@ class App
         '/' => [
             'METHOD' => 'POST',
             'CONTROLLER' => StringController::class,
-        ]
+        ],
+        '/emails/validate' => [
+            'METHOD' => 'POST',
+            'CONTROLLER' => EmailValidatorController::class,
+        ],
     ];
     public function run(): string
     {
