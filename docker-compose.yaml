@@ -1,0 +1,16 @@
+services:
+  db:
+    build:
+      dockerfile: ./Dockerfile
+    working_dir: /var/lib/postgresql
+    volumes:
+      - db_pgdata:/var/lib/postgresql/data:rw
+      - db_wal:/var/lib/postgresql/wal:rw
+    environment:
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+    ports:
+      - "5432:5432"
+volumes:
+  db_pgdata:
+  db_wal:
