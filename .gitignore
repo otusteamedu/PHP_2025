@@ -3,3 +3,6 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+.env
+composer.lock
+/docker/mysql/data

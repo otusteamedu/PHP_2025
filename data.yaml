@@ -1,0 +1,111 @@
+openapi: 3.0.0
+info:
+  title: 'Контроллер событий'
+  version: '0.1'
+paths:
+  /event:
+    get:
+      tags:
+        - Events
+      summary: 'Получить список Событий'
+      operationId: 0d00a42eafa21d206f5e139193bdaa9a
+      responses:
+        '200':
+          description: 'Список Событий'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: /components/schemas/Event
+    post:
+      tags:
+        - Events
+      summary: 'Создать Событие'
+      operationId: 3562899d58870cdb0cd1ffc0624e6a13
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {  }
+            examples:
+              PostEventCreation:
+                summary: 'Данные для создания События'
+                value:
+                  type: create
+                  title: 'Какой-то тайтл'
+                  priority: 33
+                  comment: 'Какой-то коммент'
+      responses:
+        '201':
+          description: 'Событие cоздано'
+          content:
+            application/json:
+              schema:
+                $ref: /components/schemas/Event
+    delete:
+      tags:
+        - Events
+      summary: 'Удалить Событие'
+      operationId: 5c1d3a39d00b9728d2475443294d5dd7
+      parameters:
+        -
+          name: id
+          in: query
+          description: 'ID события для удаления строки из таблицы События'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Событие удалено'
+          content:
+            application/json:
+              schema:
+                $ref: /components/schemas/Event
+  /event/one:
+    get:
+      tags:
+        - Events
+      summary: 'Получить Событие'
+      operationId: 52df6e64790b0880aa1cdadb8e943faa
+      parameters:
+        -
+          name: id
+          in: query
+          description: 'ID события для выдачи строки из таблицы События'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Событие по id'
+          content:
+            application/json:
+              schema:
+                $ref: /components/schemas/Event
+components:
+  schemas:
+    Event:
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        priority:
+          type: string
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+      type: object
+tags:
+  -
+    name: Events
+    description: Events
