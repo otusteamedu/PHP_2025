@@ -47,6 +47,8 @@ CREATE TABLE films_attribute_values (
                                         film_id INT REFERENCES films(id),
                                         attribute_id INT REFERENCES attributes(id),
 
+                                        value_int integer,
+                                        value_float DOUBLE PRECISION,
                                         value_text TEXT,
                                         value_boolean BOOLEAN,
                                         value_date DATE
@@ -102,6 +104,8 @@ SELECT
     t.name AS тип_атрибута,
     a.name AS атрибут,
     COALESCE(
+            CAST(v.value_int AS TEXT),
+            TO_CHAR(v.value_float, 'FM999999.00'),
             CAST(v.value_text AS TEXT),
             TO_CHAR(v.value_date, 'YYYY-MM-DD'),
             CAST(v.value_boolean AS TEXT)
