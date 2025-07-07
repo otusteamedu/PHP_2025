@@ -8,11 +8,20 @@ use InvalidArgumentException;
 
 class MovieMapper
 {
-    public function __construct(private StorageAdapter $adapter){}
+    public function __construct(
+        private StorageAdapter $adapter,
+        private IdentityMap $identityMap = new IdentityMap()
+    ) {
+    }
 
-    
+
     public function findById(int $id): Movie
     {
+        $cachedMovie = $this->identityMap->get(Movie::class, $id);
+        if ($cachedMovie !== null) {
+            return $cachedMovie;
+        }
+
         $result = $this->adapter->find($id);
 
         if ($result === null) {
@@ -37,8 +46,34 @@ class MovieMapper
         return $movies;
     }
 
+    
     private function mapRowToMovie(array $row): Movie
     {
-        return Movie::fromState($row);
+        $id = $row['id'];
+        
+        $cachedMovie = $this->identityMap->get(Movie::class, $id);
+        if ($cachedMovie !== null) {
+            return $cachedMovie;
+        }
+
+        $movie = Movie::fromState($row);
+        
+        $this->identityMap->set(Movie::class, $id, $movie);
+        
+        return $movie;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public function getIdentityMapStats(): array
+    {
+        return $this->identityMap->getStats();
+    }
+
+    
+    public function clearIdentityMap(): void
+    {
+        $this->identityMap->clear();
     }
 } 
