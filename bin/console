@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use EManager\ConsoleApp;
+
+try {
+    // Создаем приложение с хранилищем по умолчанию (Redis)
+    $app = new ConsoleApp('redis');
+    // Передаем все аргументы командной строки
+    $app->run($argv);
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+    exit(1);
+}
