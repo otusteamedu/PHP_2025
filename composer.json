@@ -1,0 +1,18 @@
+{
+    "name": "otus/hweleven",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "DMapper\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Artem Plekhanov",
+            "email": "liveevil94@gmail.com"
+        }
+    ],
+  "require": {
+    "ext-pdo": "*"
+  }
+}
