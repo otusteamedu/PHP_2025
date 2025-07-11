@@ -1,0 +1,165 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Camal\AppDataMapperLocal\Infrastructure;
+
+use Camal\AppDataMapperLocal\Domain\Entities\Task;
+use Camal\AppDataMapperLocal\Domain\Entities\TaskPriority;
+use Camal\AppDataMapperLocal\Domain\Entities\TaskStatus;
+use Camal\AppDataMapperLocal\Domain\Entities\TaskDateTime;
+
+use Pdo;
+
+class TaskMapper
+{
+    public function __construct(private Pdo $pdo) {}
+
+    public function findAll(): array
+    {
+        $statement = $this->pdo->query(
+            "SELECT
+                        *
+                    FROM
+                        `tasks`
+                        JOIN `priorites` ON `priorites`.`priorityCode` = `tasks`.`taskPriority`
+                        JOIN `statuses` ON `statuses`.`statusCode` = `tasks`.`taskStatus`"
+        );
+
+        $raw = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $tasks = [];
+
+        foreach ($raw as $item) {
+            $tasks[] = new Task(
+                $item["taskId"],
+                $item["taskTitle"],
+                $item["taskText"],
+                new TaskPriority($item["priorityCode"], $item["priorityTitle"]),
+                new TaskStatus($item["statusCode"], $item["statusTitle"]),
+                new TaskDateTime($item["taskCreated"]),
+                new TaskDateTime($item["taskCompleted"]),
+                new TaskDateTime($item["taskCompleteBefore"])
+            );
+        }
+        return $tasks;
+    }
+    
+    /**
+     * Найти задачу по Id в базе данных
+     * @param int $id
+     * @return Task
+     */
+    public function findById(int $id): ?Task
+    {
+        // Нет ответсвенности создавать новые объекты!? Как понимать
+        $statement = $this->pdo->prepare(
+            "SELECT
+                        *
+                    FROM
+                        `tasks`
+                        JOIN `priorites` ON `priorites`.`priorityCode` = `tasks`.`taskPriority`
+                        JOIN `statuses` ON `statuses`.`statusCode` = `tasks`.`taskStatus`
+                    WHERE
+                        `taskId` = ?;"
+        );
+        $statement->execute([$id]);
+
+        $raw = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return new Task(
+            $raw["taskId"],
+            $raw["taskTitle"],
+            $raw["taskText"],
+            new TaskPriority($raw["priorityCode"], $raw["priorityTitle"]),
+            new TaskStatus($raw["statusCode"], $raw["statusTitle"]),
+            new TaskDateTime($raw["taskCreated"]),
+            new TaskDateTime($raw["taskCompleted"]),
+            new TaskDateTime($raw["taskCompleteBefore"])
+        );
+    }
+
+    /**
+     * Создать новую задачу в базе данных
+     * @param \Camal\AppDataMapperLocal\Domain\Entities\Task $task
+     * @return bool
+     */
+    public function insert(Task $task): bool
+    {
+        $statement = $this->pdo->prepare(
+            "INSERT INTO
+                        `tasks`(
+                            `taskTitle`,
+                            `taskText`,
+                            `taskPriority`,
+                            `taskStatus`,
+                            `taskCreated`
+                        )
+                    VALUES
+                        (?, ?, ?, ?, ?);"
+        );
+
+        return $statement->execute([
+            $task->getTitle(),
+            $task->getText(),
+            $task->getPriority()->getCode(),
+            $task->getStatus()->getCode(),
+            $task->getCreated()->toString()
+        ]);
+    }
+
+    /**
+     * Обновить обновляемые данные задачи в базе данных
+     * @param \Camal\AppDataMapperLocal\Domain\Entities\Task $task
+     * @return bool
+     */
+    public function update(Task $task): bool
+    {
+        $title = $task->getTitle();
+        $text =    $task->getText();
+        $priority =  $task->getPriority()->getCode();
+        $status =   $task->getStatus()->getCode();
+        $completed = ($task->getCompleted() !== null) ?  $task->getCompleted()->toString() : null;
+        $completeBefore = ($task->getCompleteBefore() !== null) ? $task->getCompleteBefore()->toString() : null;
+        $id =  $task->getId();
+
+        $statement = $this->pdo->prepare(
+            "UPDATE
+                        `tasks`
+                    SET
+                        `taskTitle` = ?,
+                        `taskText` = ?,
+                        `taskPriority` = ?,
+                        `taskStatus` = ?,
+                        `taskCompleted` = ?,
+                        `taskCompleteBefore` = ?
+                    WHERE
+                        `taskId` = ?;"
+        );
+
+        return $statement->execute([
+            $title,
+            $text,
+            $priority,
+            $status,
+            $completed,
+            $completeBefore,
+            $id
+        ]);
+    }
+
+    /**
+     * Удалить задачу из базы данных
+     * @param \Camal\AppDataMapperLocal\Domain\Entities\Task $task
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        $statement = $this->pdo->prepare(
+            "DELETE FROM
+                        `tasks`
+                    WHERE
+                        `taskId` = ?;"
+        );
+        return $statement->execute([$id]);
+    }
+}
