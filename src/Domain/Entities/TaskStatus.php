@@ -16,7 +16,9 @@ class TaskStatus
 
     public function __construct(
         private string $code
-    ) {}
+    ) {
+        $this->changeStatus($this->code);
+    }
 
     public function getCode()
     {

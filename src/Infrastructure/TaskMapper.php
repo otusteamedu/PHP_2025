@@ -15,17 +15,29 @@ class TaskMapper
 {
     public function __construct(private Pdo $pdo) {}
 
-    public function findAll(): array
+    public function findAll(int $limit, int $offset): array
     {
-        $statement = $this->pdo->query(
+        $statement = $this->pdo->prepare(
             "SELECT
-                        *
+                        `taskId`,
+                        `taskTitle`,
+                        `taskText`,
+                        `priorityCode`,
+                        `priorityTitle`,
+                        `statusCode`,
+                        `statusTitle`,
+                        `taskCreated`,
+                        `taskCompleted`,
+                        `taskCompleteBefore`
                     FROM
                         `tasks`
                         JOIN `priorites` ON `priorites`.`priorityCode` = `tasks`.`taskPriority`
-                        JOIN `statuses` ON `statuses`.`statusCode` = `tasks`.`taskStatus`"
+                        JOIN `statuses` ON `statuses`.`statusCode` = `tasks`.`taskStatus`
+                    ORDER BY `taskCreated`
+                    LIMIT ?, ?;"
         );
 
+        $statement->execute([$offset, $limit]);
         $raw = $statement->fetchAll(PDO::FETCH_ASSOC);
         $tasks = [];
 
@@ -51,17 +63,26 @@ class TaskMapper
      */
     public function findById(int $id): ?Task
     {
-        // Нет ответсвенности создавать новые объекты!? Как понимать
-        $statement = $this->pdo->prepare(
+       $statement = $this->pdo->prepare(
             "SELECT
-                        *
+                        `taskId`,
+                        `taskTitle`,
+                        `taskText`,
+                        `priorityCode`,
+                        `priorityTitle`,
+                        `statusCode`,
+                        `statusTitle`,
+                        `taskCreated`,
+                        `taskCompleted`,
+                        `taskCompleteBefore`
                     FROM
                         `tasks`
                         JOIN `priorites` ON `priorites`.`priorityCode` = `tasks`.`taskPriority`
                         JOIN `statuses` ON `statuses`.`statusCode` = `tasks`.`taskStatus`
                     WHERE
-                        `taskId` = ?;"
+                        `taskId` = ?"
         );
+
         $statement->execute([$id]);
 
         $raw = $statement->fetch(PDO::FETCH_ASSOC);
