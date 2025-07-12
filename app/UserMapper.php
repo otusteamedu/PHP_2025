@@ -41,9 +41,47 @@ class UserMapper
 	}
 
 	// Получить всех пользователей
-	public function findAll(): array
+	public function findAll(?int $limit = 100, int $offset = 0, string $orderBy = 'id', string $orderDir = 'ASC'): array
 	{
-		$stmt = $this->pdo->query("SELECT * FROM users");
+		$sql = "SELECT * FROM users ORDER BY " . $orderBy . " " . $orderDir;
+
+		// Валидация параметров
+		$allowedColumns = ['id', 'name', 'email', 'created_at'];
+		if (!in_array($orderBy, $allowedColumns))
+		{
+			throw new \InvalidArgumentException('Invalid order by column');
+		}
+
+		if (!in_array(strtoupper($orderDir), ['ASC', 'DESC']))
+		{
+			throw new \InvalidArgumentException('Order direction must be ASC or DESC');
+		}
+
+		if ($limit !== null && $limit < 1)
+		{
+			throw new \InvalidArgumentException('Limit must be positive');
+		}
+
+		if ($offset < 0)
+		{
+			throw new \InvalidArgumentException('Offset cannot be negative');
+		}
+
+		// Добавляем ограничения если они заданы
+		if ($limit !== null)
+		{
+			$sql .= " LIMIT :limit OFFSET :offset";
+		}
+
+		$stmt = $this->pdo->prepare($sql);
+
+		if ($limit !== null)
+		{
+			$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+			$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+		}
+
+		$stmt->execute();
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		$users = [];
