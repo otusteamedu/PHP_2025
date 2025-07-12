@@ -97,24 +97,18 @@ function findMaxK($nums)
 // Задача 5
 function smallerNumbersThanCurrent($nums)
 {
-    $ans = [];
-    $temp = [];
+    $sorted = $nums;
+    $hash = [];
 
-    foreach ($nums as $num) {
-        $temp[] = $num;
+    sort($sorted);
+
+    foreach (array_unique($sorted) as $key => $num) {
+        $hash[$num] = $key;
     }
 
-    usort($temp, function ($a, $b) {
-            return $a <=> $b;
-    });
-
-    foreach (array_unique($temp) as $index => $num) {
-        $hash[$num] = $index;
+    foreach ($nums as $key => $num) {
+        $nums[$key] = $hash[$num];
     }
 
-    foreach($nums as $num){
-        $ans[] = $hash[$num];
-    }
-
-    return $ans;
+    return $nums;
 }
