@@ -4,7 +4,8 @@ namespace Elisad5791\Phpapp;
 
 use Elastic\Elasticsearch\Client;
 
-class Subject {
+class Subject 
+{
     const INDEX_NAME = 'subjects';
     
     private $elasticClient;
@@ -12,6 +13,13 @@ class Subject {
     public function __construct(Client $elasticClient) 
     {
         $this->elasticClient = $elasticClient;
+    }
+
+    public function getById(string $id): array
+    {
+        $params = ['index' => self::INDEX_NAME, 'id' => $id];
+        $result = $this->elasticClient->get($params)->asArray();
+        return $result;
     }
 
     public function add(array $data):void 
@@ -26,5 +34,11 @@ class Subject {
         }
 
         $this->elasticClient->bulk($params);
+    }
+
+    public function delete(string $id): void
+    {
+        $params = ['index' => self::INDEX_NAME, 'id' => $id];
+        $this->elasticClient->delete($params);
     }
 }
