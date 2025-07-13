@@ -33,7 +33,7 @@ class TaskMapper
                         `tasks`
                         JOIN `priorites` ON `priorites`.`priorityCode` = `tasks`.`taskPriority`
                         JOIN `statuses` ON `statuses`.`statusCode` = `tasks`.`taskStatus`
-                    ORDER BY `taskCreated`
+                    ORDER BY `taskCreated` DESC
                     LIMIT ?, ?;"
         );
 
@@ -46,11 +46,11 @@ class TaskMapper
                 $item["taskId"],
                 $item["taskTitle"],
                 $item["taskText"],
-                new TaskPriority($item["priorityCode"], $item["priorityTitle"]),
-                new TaskStatus($item["statusCode"], $item["statusTitle"]),
+                new TaskPriority($item["priorityCode"]),
+                new TaskStatus($item["statusCode"]),
                 new TaskDateTime($item["taskCreated"]),
-                new TaskDateTime($item["taskCompleted"]),
-                new TaskDateTime($item["taskCompleteBefore"])
+                isset($item["taskCompleted"])? new TaskDateTime($item["taskCompleted"]) : null,
+                isset($item["taskCompleteBefore"])? new TaskDateTime($item["taskCompleteBefore"]): null
             );
         }
         return $tasks;
@@ -91,11 +91,11 @@ class TaskMapper
             $raw["taskId"],
             $raw["taskTitle"],
             $raw["taskText"],
-            new TaskPriority($raw["priorityCode"], $raw["priorityTitle"]),
-            new TaskStatus($raw["statusCode"], $raw["statusTitle"]),
+            new TaskPriority($raw["priorityCode"]),
+            new TaskStatus($raw["statusCode"]),
             new TaskDateTime($raw["taskCreated"]),
-            new TaskDateTime($raw["taskCompleted"]),
-            new TaskDateTime($raw["taskCompleteBefore"])
+            isset($raw["taskCompleted"])? new TaskDateTime($raw["taskCompleted"]): null,
+            isset($raw["taskCompleteBefore"])? new TaskDateTime($raw["taskCompleteBefore"]) : null
         );
     }
 
