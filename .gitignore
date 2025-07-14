@@ -1,5 +1,52 @@
-.idea/
+# ▶️ Composer
 /vendor/
+/.composer/cache/
+
+# ▶️ Docker
+/docker/*.log
+*.pid
+
+# ▶️ IDE / Редакторы
+.idea/
+.vscode/
+
+# ▶️ Файлы Junie
+.junie/
+
+# ▶️ PHPUnit
+.phpunit.result.cache
+coverage/
+
+# ▶️ Node.js / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.npm
+.eslintcache
+
+# ▶️ Логи и временные файлы
+*.log
+*.cache
+*.tmp
+*.old
+
+# ▶️ MacOS
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# ▶️ Linux
+*~
+
+# ▶️ Windows
+Thumbs.db
+desktop.ini
+
+# ▶️ Персональные и секретные конфиги
+env/.env
+.env.*
+!env/.env.prod.example
+!.env.prod.example
