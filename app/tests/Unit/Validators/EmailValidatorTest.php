@@ -51,9 +51,9 @@ class EmailValidatorTest extends TestCase
             $this->markTestSkipped('intl extension is not available');
         }
 
-        $validator = new EmailValidator(false, true);
         $this->expectNotToPerformAssertions();
 
+        $validator = new EmailValidator(false, true);
         $validator->validate('тест@абракадабра.рус');
     }
 
@@ -80,9 +80,9 @@ class EmailValidatorTest extends TestCase
             $this->markTestSkipped('intl extension is not available');
         }
 
-        $validator = new EmailValidator(true, true);
         $this->expectNotToPerformAssertions();
 
+        $validator = new EmailValidator(true, true);
         $validator->validate('тест@почта.рус');
     }
 
