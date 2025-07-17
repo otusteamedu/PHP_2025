@@ -9,10 +9,10 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
     zlib1g-dev \
-    libssl-dev\
+    libssl-dev \
     libmcrypt-dev \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install -j$(nproc) intl \
+    && docker-php-ext-install -j$(nproc) intl zip \
     && docker-php-ext-enable intl
 
 # Composer
