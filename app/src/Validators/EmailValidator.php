@@ -95,7 +95,7 @@ class EmailValidator
     private function normalizeEmail(string $email): string
     {
         if (!str_contains($email, '@')) {
-            return $this->idnToAscii($email);
+            throw new ValidationException('Invalid format');
         }
 
         [$local, $domain] = explode('@', $email);
