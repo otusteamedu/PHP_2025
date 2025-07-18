@@ -30,44 +30,6 @@ create table public.halls
 alter table public.halls
     owner to otus_cinema;
 
-create table public.hall_layouts
-(
-    layout_id     serial
-        primary key,
-    hall_id       integer
-        references public.halls,
-    rows_count    integer not null,
-    seats_per_row integer not null,
-    layout_json   jsonb   not null,
-    created_at    timestamp default CURRENT_TIMESTAMP
-);
-
-alter table public.hall_layouts
-    owner to otus_cinema;
-
-create table public.seats
-(
-    seat_id     serial
-        primary key,
-    hall_id     integer
-        references public.halls,
-    row_letter  char        not null,
-    seat_number integer     not null,
-    seat_type   varchar(20) not null
-        constraint seats_seat_type_check
-            check ((seat_type)::text = ANY
-                   ((ARRAY ['standard'::character varying, 'vip'::character varying, 'sofa'::character varying, 'disabled'::character varying])::text[])),
-    zone        varchar(20),
-    created_at  timestamp default CURRENT_TIMESTAMP,
-    unique (hall_id, row_letter, seat_number)
-);
-
-alter table public.seats
-    owner to otus_cinema;
-
-create index idx_seats_hall
-    on public.seats (hall_id);
-
 create table public.screenings
 (
     screening_id serial
@@ -134,8 +96,7 @@ create table public.tickets
         primary key,
     screening_id  integer
         references public.screenings,
-    seat_id       integer
-        references public.seats,
+    seat_id       integer,
     customer_id   integer
         references public.customers,
     price         numeric(10, 2) not null,
@@ -171,3 +132,58 @@ create table public.staff
 
 alter table public.staff
     owner to otus_cinema;
+
+create table public.hall_layouts
+(
+    layout_id     serial
+        primary key,
+    hall_id       integer not null
+        references public.halls
+            on delete cascade,
+    name          varchar(100),
+    description   text,
+    total_seats   integer not null,
+    total_rows    integer not null,
+    layout_schema jsonb   not null,
+    created_at    timestamp default CURRENT_TIMESTAMP,
+    updated_at    timestamp default CURRENT_TIMESTAMP
+);
+
+alter table public.hall_layouts
+    owner to otus_cinema;
+
+create index idx_hall_layouts_hall
+    on public.hall_layouts (hall_id);
+
+create table public.seats
+(
+    seat_id     serial
+        primary key,
+    hall_id     integer     not null
+        references public.halls
+            on delete cascade,
+    layout_id   integer     not null
+        references public.hall_layouts
+            on delete cascade,
+    row_id      varchar(10) not null,
+    seat_number integer     not null,
+    seat_type   varchar(20) not null
+        constraint seats_seat_type_check
+            check ((seat_type)::text = ANY
+                   ((ARRAY ['standard'::character varying, 'vip'::character varying, 'sofa'::character varying, 'disabled'::character varying])::text[])),
+    zone        varchar(50),
+    is_active   boolean   default true,
+    created_at  timestamp default CURRENT_TIMESTAMP,
+    updated_at  timestamp default CURRENT_TIMESTAMP,
+    unique (hall_id, row_id, seat_number)
+);
+
+alter table public.seats
+    owner to otus_cinema;
+
+create index idx_seats_hall
+    on public.seats (hall_id);
+
+create index idx_seats_layout
+    on public.seats (layout_id);
+
