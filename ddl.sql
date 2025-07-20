@@ -1,4 +1,4 @@
--- Создание таблицы залов
+    -- Создание таблицы залов
 CREATE TABLE hall (
    id SERIAL PRIMARY KEY,
    num INTEGER NOT NULL
@@ -7,7 +7,7 @@ CREATE TABLE hall (
 -- Создание таблицы типов мест
 CREATE TABLE type_place (
     id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL CHECK (status IN ('STANDARD', 'VIP', 'PREMIUM')
+    name VARCHAR NOT NULL
 );
 
 -- Создание таблицы фильмов
@@ -15,7 +15,7 @@ CREATE TABLE movie (
    id SERIAL PRIMARY KEY,
    name VARCHAR NOT NULL,
    release_date DATE NOT NULL,
-   duration INTERVAL NOT NULL  -- Длительность фильма
+   duration INTERVAL NOT NULL,  -- Длительность фильма
    description TEXT
 );
 
@@ -62,3 +62,30 @@ CREATE TABLE ticket (
     schema_id INTEGER NOT NULL REFERENCES schema_room(id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE "type_attribute" (
+      "id" integer PRIMARY KEY,
+      "name" varchar NOT NULL,
+      "data_type" ENUM('text', 'boolean', 'date', 'image') NOT NULL
+);
+
+CREATE TABLE "attribute" (
+     "id" integer PRIMARY KEY,
+     "name" varchar NOT NULL,
+     "id_type_attribute" int NOT NULL REFERENCES type_attribute(id)
+);
+
+CREATE TABLE "movie_props_value" (
+     "id" integer PRIMARY KEY,
+     "attribute_id" integer NOT NULL REFERENCES attribute(id),
+     "movie_id" integer NOT NULL REFERENCES movie(id),
+     "value_string" text,
+     "value_float" double precision,
+     "value_integer" int,
+     "value_date" date,
+     "value_boolean" boolean,
+);
+
+CREATE INDEX idx_type_attribute ON "attribute" (id_type_attribute);
+CREATE INDEX idx_movie_props_value_attribute ON "movie_props_value" (attribute_id);
+CREATE INDEX idx_movie_props_value_movie ON "movie_props_value" (movie_id);
