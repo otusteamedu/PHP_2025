@@ -43,8 +43,6 @@ class UserMapper
 	// Получить всех пользователей
 	public function findAll(?int $limit = 100, int $offset = 0, string $orderBy = 'id', string $orderDir = 'ASC'): array
 	{
-		$sql = "SELECT * FROM users ORDER BY " . $orderBy . " " . $orderDir;
-
 		// Валидация параметров
 		$allowedColumns = ['id', 'name', 'email', 'created_at'];
 		if (!in_array($orderBy, $allowedColumns))
@@ -67,10 +65,14 @@ class UserMapper
 			throw new \InvalidArgumentException('Offset cannot be negative');
 		}
 
-		// Добавляем ограничения если они заданы
+		// Добавляем ограничения и сортировку если они заданы
+		$sql = "SELECT u.* FROM users u ";
+
 		if ($limit !== null)
 		{
-			$sql .= " LIMIT :limit OFFSET :offset";
+			// Используем подзапрос для оптимизации
+			$sql .= "JOIN (SELECT id FROM users ORDER BY $orderBy $orderDir LIMIT :limit OFFSET :offset) AS tmp ";
+			$sql .= "ON u.id = tmp.id";
 		}
 
 		$stmt = $this->pdo->prepare($sql);
