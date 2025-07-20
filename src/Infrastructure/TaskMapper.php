@@ -15,8 +15,16 @@ class TaskMapper
 {
     public function __construct(private Pdo $pdo) {}
 
+    /**
+     * Найти задачи в базе данных
+     * @param int $limit   Максимальное количество элементов, которые нужно вернуть. По умолчанию 12
+     * @param int $offset  Количество элементов, которые нужно пропустить перед началом возврата результатов. 
+     *                     Используется для пагинации.
+     * @return array<Task> Массив экземпляров класса Task, соответствующих заданным параметрам, или пустой массив
+     */
     public function findAll(int $limit, int $offset): array
     {
+
         $statement = $this->pdo->prepare(
             "SELECT
                         `taskId`,
@@ -31,10 +39,18 @@ class TaskMapper
                         `taskCompleteBefore`
                     FROM
                         `tasks`
+                    JOIN (
+                        SELECT
+                            `taskId` AS `id`
+                        FROM
+                            `tasks`
+                        ORDER BY
+                            `taskCreated` DESC
+                        LIMIT
+                            ?, ?
+                    ) AS `t` ON `t`.`id` = `tasks`.`taskId`
                         JOIN `priorites` ON `priorites`.`priorityCode` = `tasks`.`taskPriority`
-                        JOIN `statuses` ON `statuses`.`statusCode` = `tasks`.`taskStatus`
-                    ORDER BY `taskCreated` DESC
-                    LIMIT ?, ?;"
+                        JOIN `statuses` ON `statuses`.`statusCode` = `tasks`.`taskStatus`;"
         );
 
         $statement->execute([$offset, $limit]);
