@@ -25,6 +25,7 @@ CREATE TABLE schema_room (
     row INTEGER NOT NULL, --ряд
     place INTEGER NOT NULL, --место
     type_id INTEGER NOT NULL REFERENCES type_place(id)
+    room_id INTEGER NOT NULL REFERENCES room(id)
 );
 
 -- Создание таблицы помещений, где проходят сеансы
@@ -32,10 +33,8 @@ CREATE TABLE room (
   id SERIAL PRIMARY KEY,
   num INTEGER NOT NULL,
   hall_id INTEGER NOT NULL REFERENCES hall(id),
-  schema_id INTEGER NOT NULL REFERENCES schema_room(id),
   effect_type VARCHAR NOT NULL
 );
-
 
 -- Создание таблицы сеансов
 CREATE TABLE session_movie (
@@ -66,7 +65,7 @@ CREATE TABLE ticket (
 CREATE TABLE "type_attribute" (
       "id" integer PRIMARY KEY,
       "name" varchar NOT NULL,
-      "data_type" ENUM('text', 'boolean', 'date', 'image') NOT NULL
+      "data_type" VARCHAR NOT NULL CHECK (status IN ('float', 'int', 'string', 'date', 'bool'))
 );
 
 CREATE TABLE "attribute" (
