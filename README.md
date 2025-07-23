@@ -1,3 +1,19 @@
-# PHP_2025
+# Верификация строки со скобками
+Docker сборка для балансируемого кластера на основе двух nginx/php-fpm. Сессии PHP хранятся в Redis.
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+В приложении реализован валидатор строк со скобками на корректность открытых/закрытх скобок.
+
+## Пример запроса:
+
+```
+curl -d "string=(()()()()))((((()()()))(()()()(((()))))))" -X POST http://localhost:8080/index_validator.php
+
+POST http://localhost:8080/index_validator.php
+Content-Type: application/x-www-form-urlencoded
+
+string=(()()()()))((((()()()))(()()()(((()))))))
+```
+
+string - это POST-параметр, который проверяется:
+* На не пустоту
+* На корректность количества открытых и закрытых скобок

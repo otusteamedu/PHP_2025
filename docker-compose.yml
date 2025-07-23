@@ -1,0 +1,81 @@
+services:
+  composer:
+    image: composer:latest
+    container_name: composer-installer
+    working_dir: /app
+    volumes:
+      - app:/app
+    command: ["composer", "install"]
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - app:/var/www/html
+    networks:
+      - app-network
+
+  nginx1:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - app:/var/www/html
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
+
+  nginx2:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - app:/var/www/html
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
+
+  app1:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    volumes:
+      - app:/var/www/html
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    networks:
+      - app-network
+
+  app2:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    volumes:
+      - app:/var/www/html
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - app-network
+
+volumes:
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./app
+      o: bind
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
