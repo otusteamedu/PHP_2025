@@ -27,7 +27,7 @@ class Response
         return $this;
     }
 
-    public function send(): void
+    public function send(): string
     {
         http_response_code($this->statusCode);
 
@@ -35,6 +35,6 @@ class Response
             header("$name: $value");
         }
 
-        echo $this->content;
+        return $this->content;
     }
 }

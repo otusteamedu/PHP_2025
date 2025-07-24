@@ -6,14 +6,14 @@ Docker сборка для балансируемого кластера на о
 ## Пример запроса:
 
 ```
-curl -d "string=(()()()()))((((()()()))(()()()(((()))))))" -X POST http://localhost:8080/index_validator.php
+curl -d "string=(()()()()))((((()()()))(()()()(((()))))))" -X POST http://localhost:8080
 
-POST http://localhost:8080/index_validator.php
+POST http://localhost:8080
 Content-Type: application/x-www-form-urlencoded
 
 string=(()()()()))((((()()()))(()()()(((()))))))
 ```
 
 string - это POST-параметр, который проверяется:
-* На не пустоту
-* На корректность количества открытых и закрытых скобок
+* на не пустоту
+* на корректность количества открытых и закрытых скобок
