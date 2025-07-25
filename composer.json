@@ -1,0 +1,29 @@
+{
+    "name": "otus/hw10",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "EManager\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Plekhanov Artem",
+            "email": "liveevil94@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "ext-mbstring": "*",
+        "ext-redis": "*",
+        "ext-mongodb": "^2.1",
+        "predis/predis": "^3.0",
+        "mongodb/mongodb": "^2.1",
+        "elasticsearch/elasticsearch": "^9.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}

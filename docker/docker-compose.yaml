@@ -1,0 +1,84 @@
+services:
+  php:
+    container_name: PHP-FPM
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    image: em-php:fpm-alpine
+    volumes:
+      - ../app:/var/www/app
+      - ../bin:/var/www/bin
+      - ../vendor:/var/www/vendor
+      - ../composer.json:/var/www/composer.json
+      - ../composer.lock:/var/www/composer.lock
+      - ../docker/php/conf/php.ini:/usr/local/etc/php/php.ini:ro
+      - ../docker/php/conf/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ../docker/php/conf/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+      - ../docker/_logs/php:/var/log/php
+    networks:
+      otus_hw:
+        ipv4_address: 172.30.0.1
+
+  redis:
+    container_name: Redis
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: em-redis:7.4-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../docker/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ../docker/_data/redis:/data
+      - ../docker/_logs/redis:/var/log/redis
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      otus_hw:
+        ipv4_address: 172.30.0.2
+
+  mongodb:
+    container_name: MongoDB
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile
+    image: em-mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ../docker/_data/mongodb/db:/data/db
+      - ../docker/_logs/mongodb/configdb:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      otus_hw:
+        ipv4_address: 172.30.0.3
+
+  elasticsearch:
+    container_name: Elasticsearch
+    build:
+      context: ./elasticsearch
+      dockerfile: Dockerfile
+    image: em-elasticsearch:9.0.2
+    ports:
+      - "9200:9200"
+    volumes:
+      - ../docker/_data/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    networks:
+      otus_hw:
+        ipv4_address: 172.30.0.4
+
+# Настроим общую сеть для контейнеров
+networks:
+  otus_hw:
+    name: "otus_em"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/16
+          ip_range: 172.30.5.0/24
+          gateway: 172.30.5.254
