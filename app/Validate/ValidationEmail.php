@@ -19,5 +19,4 @@ class ValidationEmail
         http_response_code(200);
         return null;
     }
-
 }

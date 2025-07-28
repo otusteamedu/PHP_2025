@@ -8,5 +8,4 @@ class ValidationEmailMessage implements MessageInterface
     {
         return 'This email is not valid.';
     }
-
 }

@@ -19,5 +19,4 @@ class MinLength
         http_response_code(200);
         return null;
     }
-
 }
