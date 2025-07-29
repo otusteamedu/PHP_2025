@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\Validate;
+namespace User\Php2025\src\Validate;
 
-use User\Php2025\Validate\Message\ValidationEmailMessage;
+use User\Php2025\src\Validate\Message\ValidationEmailMessage;
 
 class ValidationEmail
 {
     public function validate(string $email): ?string
     {
+        $responseCode = new ResponseCode();
+
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            http_response_code(400);
+            $responseCode->getHttpCode(400);
             $message = new ValidationEmailMessage();
             return json_encode($message->getMessage());
         }
 
-        http_response_code(200);
+        $responseCode->getHttpCode(200);
         return null;
     }
 }

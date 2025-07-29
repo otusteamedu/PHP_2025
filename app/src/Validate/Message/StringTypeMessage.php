@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\Validate\Message;
+namespace User\Php2025\src\Validate\Message;
 
 class StringTypeMessage implements MessageInterface
 {

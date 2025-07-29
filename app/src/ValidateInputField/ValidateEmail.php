@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025;
+namespace User\Php2025\src\ValidateInputField;
 
-use User\Php2025\Validate\MaxLength;
-use User\Php2025\Validate\MinLength;
-use User\Php2025\Validate\NotBlank;
-use User\Php2025\Validate\StringType;
-use User\Php2025\Validate\ValidationEmail;
+use User\Php2025\src\Validate\MaxLength;
+use User\Php2025\src\Validate\MinLength;
+use User\Php2025\src\Validate\NotBlank;
+use User\Php2025\src\Validate\StringType;
+use User\Php2025\src\Validate\ValidationEmail;
 
 class ValidateEmail
 {

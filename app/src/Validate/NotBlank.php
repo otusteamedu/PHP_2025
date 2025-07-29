@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\Validate;
+namespace User\Php2025\src\Validate;
 
-use User\Php2025\Validate\Message\NotBlankMessage;
+use User\Php2025\src\Validate\Message\NotBlankMessage;
 
 class NotBlank
 {
     public function validate(mixed $value): ?string
     {
+        $responseCode = new ResponseCode();
+
         if (!isset($value)) {
-            http_response_code(422);
+            $responseCode->getHttpCode(422);
             $message = new NotBlankMessage();
             return json_encode($message->getMessage());
         }
 
-        http_response_code(200);
+        $responseCode->getHttpCode(200);
         return null;
     }
 }

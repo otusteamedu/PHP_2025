@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\Validate;
+namespace User\Php2025\src\Validate;
 
-use User\Php2025\Validate\Message\RequestMethodMessage;
+use User\Php2025\src\Validate\Message\RequestMethodMessage;
 
 class RequestMethod
 {
     public function validate(string $method): ?string
     {
+        $responseCode = new ResponseCode();
+
         if ($_SERVER['REQUEST_METHOD'] !== $method) {
-            http_response_code(405);
+            $responseCode->getHttpCode(405);
             $message = new RequestMethodMessage($method);
             return json_encode($message->getMessage());
         }
-        http_response_code(200);
+        $responseCode->getHttpCode(200);
         return null;
     }
 }
