@@ -3,19 +3,50 @@ services:
     build:
       context: .
       dockerfile: /docker/nginx/Dockerfile
-    image: balancer/nginx
     container_name: balancer-webserver
     ports:
       - "80:80"
     volumes:
        - ./src:/data/src
-    restart: always
+    depends_on:
+      - app-a
+      - app-b
+    networks:
+      - balancer-network
    
-  app:
+  app-a:
     build:
       context: .
       dockerfile: /docker/php/Dockerfile
-    image: balancer/php # имя будущего образа
-    container_name: balancer
+    container_name: balancer-a
     volumes:
        - ./src:/data/src
+    depends_on:
+      - redis
+    networks:
+      - balancer-network
+
+  app-b:
+    build:
+      context: .
+      dockerfile: /docker/php/Dockerfile
+    container_name: balancer-b
+    volumes:
+       - ./src:/data/src
+    depends_on:
+      - redis
+    networks:
+      - balancer-network
+
+  redis:
+    image: redis:latest
+    container_name: balancer-redis
+    volumes:
+      - ./redis:/data
+    restart: always
+    networks:
+      - balancer-network
+
+networks:
+  balancer-network:
+    driver: bridge

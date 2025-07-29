@@ -30,7 +30,7 @@ class Validator
                 $closedBracketsCount--;
                 break;
             }
-            
+
             if ($value[$i] === ')') {
                 $closedBracketsCount--;
             }

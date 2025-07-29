@@ -2,22 +2,12 @@
 FROM php:8.4-fpm
 
 # Устанавливаем необходимые для нормальной работы модули
-RUN apt-get update && apt-get install -y \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev \
-    libonig-dev \
-    libzip-dev \
-    libssl-dev \
-    curl \
-    git \
-    libmemcached-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) iconv mbstring mysqli pdo_mysql zip gd \
-    && pecl install memcached \
-    && docker-php-ext-enable memcached \
+RUN pecl install redis \
+    && docker-php-ext-enable redis \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /data
+
+COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/php-custom.ini
 
 CMD ["php-fpm"]

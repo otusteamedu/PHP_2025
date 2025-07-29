@@ -6,4 +6,8 @@ require_once __DIR__ . '/App/Handler.php';
 
 $handler = new Handler();
 
-$handler->handle(file_get_contents('php://input'));
+$handler->handle(
+    $_SERVER['REQUEST_METHOD'],
+    file_get_contents('php://input')
+);
+
