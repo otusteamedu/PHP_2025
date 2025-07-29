@@ -45,14 +45,10 @@ services:
   redis:
     image: redis:alpine
     container_name: first-proj-redis
-    ports:
-      - "6379:6379"
 
   memcached:
     image: memcached:alpine
     container_name: first-proj-memcached
-    ports:
-      - "11211:11211"
 
 volumes:
   db_data: 
