@@ -1,0 +1,21 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: /docker/nginx/Dockerfile
+    image: balancer/nginx
+    container_name: balancer-webserver
+    ports:
+      - "80:80"
+    volumes:
+       - ./src:/data/src
+    restart: always
+   
+  app:
+    build:
+      context: .
+      dockerfile: /docker/php/Dockerfile
+    image: balancer/php # имя будущего образа
+    container_name: balancer
+    volumes:
+       - ./src:/data/src
