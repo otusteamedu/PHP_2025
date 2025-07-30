@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/App/Handler.php';
+namespace Kamalo\Balancer;
 
-$handler = new Handler();
+require '../vendor/autoload.php';
 
-$handler->handle(
-    $_SERVER['REQUEST_METHOD'],
-    file_get_contents('php://input')
-);
+use Kamalo\Balancer\Class\App;
 
+(new App())->start();
