@@ -1,10 +1,10 @@
 <?php
 
 //Test DB connection
-$servername = 'mysql';
-$username = 'learning';
-$dbname = 'learning';
-$password = 'learning';
+$servername = getenv('DB_SERVER');
+$username = getenv('MYSQL_USER');
+$dbname = getenv('MYSQL_DATABASE');
+$password = getenv('MYSQL_PASSWORD');
 
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);

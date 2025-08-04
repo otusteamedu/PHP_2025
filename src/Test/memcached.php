@@ -1,5 +1,5 @@
 <?php
-$server = 'memcached';
+$server = getenv('MEMCACHED_CONTAINER');
 
 $memcache = new Memcache;
 $isMemcacheAvailable = $memcache->connect($server);
