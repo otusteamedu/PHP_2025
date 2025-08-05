@@ -1,0 +1,70 @@
+# в этом блоке мы описываем контейнеры, которые будут запускаться
+services:
+  #контейнер с Nginx
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: "${CONTAINER_NAME}"
+    # проброс портов
+    ports:
+      - "80:80"
+    volumes:
+       - ./src:/data/mysite.local
+       - phpsocket:/var/run/
+    depends_on:
+      - app
+
+
+  #Контейнер с PHP-FPM, назовём его app
+  app:
+    # Если нет секции build, то система будет искать образ в репозиториях
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php # имя будущего образа
+    container_name: app # имя контейнера после запуска
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - REDIS_CONTAINER=${REDIS_CONTAINER}
+      - MEMCACHED_CONTAINER=${MEMCACHED_CONTAINER}
+      - DB_SERVER=${DB_SERVER}
+    volumes:
+       - ./src:/data/mysite.local
+       - phpsocket:/var/run/ # volume с сокетом
+    # мы можем создать для контейнеров внутреннюю сеть
+    depends_on:
+      - memcached
+      - redis
+      - mysql
+
+
+  memcached:
+    container_name: ${MEMCACHED_CONTAINER}
+    image: 'memcached:alpine'
+
+
+  redis:
+    container_name: ${REDIS_CONTAINER}
+    image: 'redis:alpine'
+
+  mysql:
+    container_name: ${DB_SERVER}
+    image: 'mysql:8.0'
+    volumes:
+        - db:/var/lib/mysql
+    environment:
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    #Для подключения снаружи
+    ports:
+        - '36002:3306'
+
+volumes:
+    phpsocket:
+    db:
