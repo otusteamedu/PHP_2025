@@ -1,0 +1,75 @@
+services:
+  nginx:
+    container_name: ${CONTAINER_NAME_NGINX}
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: lessonapp/nginx
+    ports:
+      - "2020:80"
+    volumes:
+      - ${PATH_WWW}:/var/www
+    networks:
+      - network_course
+    depends_on:
+      - php
+    env_file:
+      - .env
+
+
+  php:
+    container_name: ${CONTAINER_NAME_PHP}
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    image: lessonapp/php
+    volumes:
+      - ${PATH_WWW}:/var/www
+    networks:
+      - network_course
+    env_file:
+      - .env
+
+
+  redis:
+    container_name: ${CONTAINER_NAME_REDIS}
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: lessonapp/redis
+    networks:
+      - network_course
+    env_file:
+      - .env
+
+  memcached:
+    container_name: ${CONTAINER_NAME_MEMCACHED}
+    build:
+      context: ./memcached
+      dockerfile: Dockerfile
+    image: lessonapp/memcached
+    networks:
+      - network_course
+    env_file:
+      - .env
+
+
+  postgres:
+    container_name: ${CONTAINER_NAME_POSTGRES}
+    image: postgres:14
+    env_file:
+      - .env
+    volumes:
+      - db_course:/var/lib/postgresql/data
+    networks:
+      - network_course
+
+volumes:
+  db_course:
+
+
+networks:
+  network_course:
+    driver: bridge
+    name: network_course
+    external: true
