@@ -1,0 +1,40 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: lesson_1_dz/nginx
+    container_name: l1_nginx
+    ports:
+      - "888:80"
+    volumes:
+      - ./code:/data/mysite.local
+    depends_on:
+      - app
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: lesson_1_dz/php
+    container_name: l1_app
+    volumes:
+      - ./code:/data/mysite.local
+    depends_on:
+      - redis
+      - mysql
+
+  redis:
+    image: redis
+    container_name: l1_redis
+
+  mysql:
+    image: mysql
+    container_name: l1_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+
+  memcached:
+    image: memcached
+    container_name: l1_memcached
+    ports:
+      - "11212:11211"
