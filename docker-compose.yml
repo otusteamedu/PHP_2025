@@ -30,16 +30,10 @@ services:
   memcached:
     image: memcached:alpine
     restart: always
-    ports:
-      - "11211:11211"
 
   postgres:
     image: postgres:17-alpine
     restart: always
-    environment:
-      POSTGRES_DB: myapp_db
-      POSTGRES_USER: myapp_user
-      POSTGRES_PASSWORD: myapp_pass
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
