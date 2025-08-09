@@ -31,10 +31,10 @@ services:
     image: mysql
     container_name: l1_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    volumes:
+      - ./mysql:/var/lib/mysql
 
   memcached:
     image: memcached
     container_name: l1_memcached
-    ports:
-      - "11212:11211"
