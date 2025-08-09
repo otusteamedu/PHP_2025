@@ -53,10 +53,9 @@ CREATE TABLE Tickets (
     ticket_id SERIAL PRIMARY KEY,
     session_id INT NOT NULL,
     seat_id INT NOT NULL,
-    price_id INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
     purchase_time TIMESTAMP NOT NULL,
     CONSTRAINT fk_ticket_session FOREIGN KEY (session_id) REFERENCES Sessions(session_id),
     CONSTRAINT fk_ticket_seat FOREIGN KEY (seat_id) REFERENCES Seats(seat_id),
-    CONSTRAINT fk_ticket_price FOREIGN KEY (price_id) REFERENCES TicketPrices(price_id),
     CONSTRAINT uq_session_seat UNIQUE (session_id, seat_id)
 );
