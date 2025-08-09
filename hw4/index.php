@@ -1,10 +1,9 @@
 <?php
 
-echo "
-<form method='post' action='./checker.php'>
+use Dkopasov\Hw4\App;
 
-<input type='text' name='string' placeholder='Name'>
+require './vendor/autoload.php';
 
-<button type='submit'>submit</button>
+$app = new App();
+echo $app->run();
 
-</form>";
