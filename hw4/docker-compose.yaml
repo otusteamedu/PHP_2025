@@ -1,0 +1,74 @@
+
+services:
+
+  balancer:
+    container_name: hw4-balancer
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/balancer:/etc/nginx/conf.d
+
+    depends_on:
+      - nginx-1
+      - nginx-2
+
+    networks:
+      - app
+
+  nginx-1:
+    container_name: hw4-nginx-1
+    image: nginx:latest
+    volumes:
+      - ./docker/nginx-1:/etc/nginx/conf.d
+      - ./:/var/www/html
+
+    depends_on:
+      - php-1
+
+    networks:
+      - app
+
+  php-1:
+    container_name: hw4-php1
+    build:
+      context: ./docker
+    volumes:
+      - ./:/var/www/html
+
+    networks:
+      - app
+
+  nginx-2:
+    container_name: hw4-nginx-2
+    image: nginx:latest
+    volumes:
+      - ./docker/nginx-2:/etc/nginx/conf.d
+      - ./:/var/www/html
+
+    depends_on:
+      - php-2
+
+    networks:
+      - app
+
+  php-2:
+    container_name: hw4-php2
+    build:
+      context: ./docker
+    volumes:
+      - ./:/var/www/html
+
+    networks:
+      - app
+
+  redis:
+    container_name: hw4-redis
+    image: redis:latest
+
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
