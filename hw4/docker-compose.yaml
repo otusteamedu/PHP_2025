@@ -1,0 +1,31 @@
+
+services:
+
+  nginx:
+    container_name: hw4-nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker:/etc/nginx/conf.d
+      - ./:/var/www/html
+
+    depends_on:
+      - php-1
+
+    networks:
+      - app
+
+  php-1:
+    container_name: hw4-php1
+    build:
+      context: ./docker
+    volumes:
+      - ./:/var/www/html
+
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
