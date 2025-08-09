@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     pkg-config \
     libcurl4-openssl-dev \
-    default.conf-mysql-client \
+    default-mysql-client \
     && docker-php-ext-install pdo_mysql
 
 # Установка расширений через PECL
