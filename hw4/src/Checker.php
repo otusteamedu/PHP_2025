@@ -9,17 +9,14 @@ class Checker
 
     public function check(string $string): string
     {
-
-        $string = $_POST['string'];
-
-        if (strlen($string) === 0) {
+        if (mb_strlen($string) === 0) {
             http_response_code(400);
             throw new RuntimeException('String cannot be empty.');
         }
 
         $balance = 0;
 
-        for ($i = 0; $i < strlen($string); $i++) {
+        for ($i = 0; $i < mb_strlen($string); $i++) {
             $char = $string[$i];
 
             if ($char === '(') {
