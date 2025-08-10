@@ -7,7 +7,9 @@ class App
 
     public function run(): string {
 
-        if (isset($_POST['string'])) {
+        if (isset($_POST['string']) &&
+            !empty($_POST['string']) &&
+            mb_strlen($_POST['string']) > 0) {
             $checker = new Checker();
             return $checker->check($_POST['string']);
         }
