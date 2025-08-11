@@ -17,6 +17,16 @@ try {
         ['type' => 'pizza', 'additives' => ['pepperoni', 'mushrooms']]
     ]);
 
+    $items = $order->getItems();
+    foreach ($items as $item) {
+        echo $item->getName() . PHP_EOL;
+        echo $item->getName() . PHP_EOL;
+        echo $item->getPrice() . PHP_EOL;
+        echo $item->getPrice() . PHP_EOL;
+        print_r($item->getIngredients());
+        print_r($item->getIngredients());
+    }
+
     $iterator = new OrderIterator($order);
     foreach ($iterator as $status) {
         echo "Статус заказа: $status\n";

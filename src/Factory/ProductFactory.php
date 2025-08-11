@@ -12,12 +12,17 @@ class ProductFactory
     public function create(string $type, array $additives = []): Product 
     {
         $product = $this->builder->build($type);
+
+        $oldProductName = 'product';
         foreach ($additives as $additive) {
             $decoratorClass = 'App\\Decorator\\' . ucfirst($additive) . 'Decorator';
             if (class_exists($decoratorClass)) {
-                $product = new $decoratorClass($product);
+                $newProductName = $additive . ucfirst($oldProductName);
+                $$newProductName = new $decoratorClass($$oldProductName);
+                $oldProductName = $newProductName;
             }
         }
-        return $product;
+
+        return $$oldProductName;
     }
 }
