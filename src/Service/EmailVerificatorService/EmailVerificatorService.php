@@ -6,6 +6,9 @@ namespace Kamalo\Verificator\Service\EmailVerificatorService;
 
 class EmailVerificatorService
 {
+    private array $emails = [];
+    private string $errorMessage = 'Некорректный формат Email';
+
     public function verifyPacket(string ...$strings): array
     {
         $result = [];
@@ -18,49 +21,37 @@ class EmailVerificatorService
     }
     public function verify(string $string): EmailVerificatorResponse
     {
-        $emails = $this->parseEmails($string);
-
-        if ($emails === []) {
+        if (
+            $this->avalibleParse($string)
+            && $this->isValidEmailDomain($this->emails[0])
+        ) {
             return new EmailVerificatorResponse(
-                success: false,
-                email: $string,
-                message: "Неверный формат Email"
+                true,
+                $this->emails[0],
+                "Email валидный"
             );
         }
 
-        foreach ($emails as $email) {
-            if (!$this->isValidEmailDomain($email)) {
-                return new EmailVerificatorResponse(
-                    success: false,
-                    email: $string,
-                    message: "Email не содержит существующий домен"
-                );
-            }
-        }
         return new EmailVerificatorResponse(
-            success: true,
-            email: $string,
-            message: "Email валидный"
+            false,
+            $string,
+            $this->errorMessage
         );
     }
 
-    private function parseEmails(string $string): array
+    private function avalibleParse(string $string): bool
     {
-        if (
-            preg_match(
-                '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
-                $string,
-                $matches
-            )
-        ) {
-            return $matches;
-        }
-
-        return [];
+        return (bool) preg_match(
+            '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+            $string,
+            $this->emails
+        );
     }
 
     private function isValidEmailDomain(string $email): bool
     {
+        $this->errorMessage = 'Email не содержит существующий домен';
+
         $domain = strtolower(
             substr(
                 strrchr(
