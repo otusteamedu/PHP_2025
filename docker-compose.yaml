@@ -1,0 +1,20 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: /docker/nginx/Dockerfile
+    container_name: verificator-webserver
+    ports:
+      - "80:80"
+    volumes:
+       - ./src:/data/src
+    depends_on:
+      - app
+   
+  app:
+    build:
+      context: .
+      dockerfile: /docker/php/Dockerfile
+    container_name: verificator
+    volumes:
+       - ./src:/data/src
