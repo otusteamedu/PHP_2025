@@ -25,7 +25,9 @@ class CreateNewsHandler
         $this->repository->persist($news);
         $this->repository->flush();
 
-        return new CreateNewsOutput($news->getId());
+        $id = $this->repository->getLastInsertId($news);
+
+        return new CreateNewsOutput($id);
     }
 
     private function getTitle(string $url): ?string

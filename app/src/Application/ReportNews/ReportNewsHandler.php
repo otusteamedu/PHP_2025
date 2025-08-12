@@ -19,7 +19,7 @@ class ReportNewsHandler
     public function __invoke(ReportNewsQuery $query): ReportNewsOutput
     {
         $ids = $query->ids;
-        $news = $this->repository->findBy(['id' => $ids]);
+        $news = $this->repository->findByIds($ids);
 
         $newsResult = [];
         foreach ($news as $new) {

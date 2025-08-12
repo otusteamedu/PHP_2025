@@ -13,8 +13,8 @@ class News
     private DateTimeImmutable $createdAt;
 
     public function __construct(
-        string $url,
-        string $title,
+        private string  $url,
+        private ?string $title,
     )
     {
         $this->createdAt = new DateTimeImmutable();
@@ -30,7 +30,7 @@ class News
         return $this->url;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }

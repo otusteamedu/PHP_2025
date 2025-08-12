@@ -20,7 +20,23 @@ class NewsRepository extends ServiceEntityRepository implements NewsRepositoryIn
 
     public function persist(News $entity): void
     {
+        $entity = EntityNews::fromDomain($entity);
         $this->entityManager->persist($entity);
+    }
+
+    public function getLastInsertId(News $entity): int
+    {
+        return (int)$this->entityManager->getConnection()->lastInsertId();
+    }
+
+    public function findListNews($limit, $offset): array
+    {
+        return $this->entityManager->getRepository(EntityNews::class)->findBy([], ['id' => 'ASC'], $limit, $offset);
+    }
+
+    public function findByIds(array $ids): array
+    {
+        return  $this->entityManager->getRepository(EntityNews::class)->findBy(['id' => $ids]);
     }
 
     public function flush(): void

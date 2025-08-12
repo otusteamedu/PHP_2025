@@ -21,7 +21,7 @@ class ListNewsHandler
 
         $offset = (int)ceil(($page - 1) * $limit);
 
-        $news = $this->repository->findBy([], ['id' => 'ASC'], $limit, $offset);
+        $news = $this->repository->findListNews($limit, $offset);
 
         $responseNews = [];
         foreach ($news as $new) {

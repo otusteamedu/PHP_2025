@@ -25,16 +25,15 @@ class News
     private string $title;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: false)]
-    private ?\DateTimeImmutable $createdAt;
+    private DateTimeImmutable $createdAt;
 
-    public function __construct(
-        string $url,
-        string $title,
-    )
+    public static function fromDomain($domain): self
     {
-        $this->url = $url;
-        $this->title = $title;
-        $this->createdAt = new DateTimeImmutable();
+        $entity = new self();
+        $entity->url = $domain->getUrl();
+        $entity->title = $domain->getTitle();
+        $entity->createdAt = $domain->getCreatedAt();
+        return $entity;
     }
 
     public function getId(): int
