@@ -6,7 +6,7 @@ class EventName
 {
     public function __construct(private string $value) {}
 
-    public function toString()
+    public function toString(): string
     {
         return $this->value;
     }
