@@ -1,19 +1,20 @@
 <?php
-use App\Services\ServiceInterface;
+use App\Application\EventRepositoryInterface;
+use App\Infrastructure\Repositories\MongoEventRepository;
+use App\Infrastructure\Repositories\RedisEventRepository;
 use Slim\Factory\AppFactory;
-use App\Controllers\HomeController;
+use App\Infrastructure\Controllers\HomeController;
 use DI\Container;
 use Psr\Container\ContainerInterface;
-use App\Services\RedisService;
-use App\Services\MongoService;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 $container = new Container();
-$container->set(ServiceInterface ::class, function (ContainerInterface $container) {
+$container->set(EventRepositoryInterface::class, function (ContainerInterface $container) {
     $driver = getenv('DRIVER');
-    return $driver == 'redis' ? new RedisService() : new MongoService();
+    return $driver == 'redis' ? new RedisEventRepository() : new MongoEventRepository();
 });
+
 $app = AppFactory::createFromContainer($container);
 
 $app->post('/api/add', [HomeController::class, 'add']);
