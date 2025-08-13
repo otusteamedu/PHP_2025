@@ -1,0 +1,36 @@
+services:
+  php:
+    image: hw14-php:8.4-fpm-alpine
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: app
+    working_dir: /app
+    volumes:
+      - ../src:/app/src
+      - ../vendor:/app/vendor
+      - ../composer.json:/app/composer.json
+      - ../composer.lock:/app/composer.lock
+      - ../docker/_logs/php:/var/log/php
+    depends_on:
+      - elasticsearch
+    networks:
+      - app_network
+
+  elasticsearch:
+    image: elasticsearch:9.1.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - ../docker/_data/es:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
