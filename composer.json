@@ -11,5 +11,9 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
+    },
+    "require-dev": {
+        "codeception/codeception": "^5.3",
+        "codeception/module-asserts": "*"
     }
 }
