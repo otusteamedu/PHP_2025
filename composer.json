@@ -1,0 +1,23 @@
+{
+  "name": "app/project",
+  "autoload": {
+    "psr-4": {
+      "User\\Php2025\\": "app/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Марина Лубник",
+      "email": "m.kalinina@21vek.by"
+    }
+  ],
+  "require": {
+    "elasticsearch/elasticsearch": "^8.11",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  }
+}
