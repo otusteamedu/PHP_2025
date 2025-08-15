@@ -5,10 +5,12 @@ namespace Elisad5791\Phpapp;
 class OpenLibrary
 {
     const BASE_URL = 'https://openlibrary.org';
+
+    public function __construct(private HttpClientInterface $httpClient) {}
     
     public function getSubject(string $subject): array
     {
-        $response = file_get_contents(self::BASE_URL . '/subjects/' . $subject . '.json?limit=100');
+        $response = $this->httpClient->get(self::BASE_URL . '/subjects/' . $subject . '.json?limit=100');
         $data = json_decode($response, true);
 
         $subject = [
@@ -39,7 +41,7 @@ class OpenLibrary
 
     public function getDescription(string $bookId): string
     {
-        $response = file_get_contents(self::BASE_URL . $bookId . '.json');
+        $response = $this->httpClient->get(self::BASE_URL . $bookId . '.json');
         $data = json_decode($response, true);
         $description = $data['description']['value'] ?? '';
 
@@ -48,7 +50,7 @@ class OpenLibrary
 
     public function getRating(string $bookId): float
     {
-        $response = file_get_contents(self::BASE_URL . $bookId . '/ratings.json');
+        $response = $this->httpClient->get(self::BASE_URL . $bookId . '/ratings.json');
         $data = json_decode($response, true);
         $rating = round($data['summary']['average'] ?? 0, 2);
 
@@ -57,7 +59,7 @@ class OpenLibrary
 
     public function getPageCount(string $bookId): int
     {
-        $response = file_get_contents(self::BASE_URL . $bookId . '/editions.json');
+        $response = $this->httpClient->get(self::BASE_URL . $bookId . '/editions.json');
         $data = json_decode($response, true);
         $entries = $data['entries'];
 

@@ -2,6 +2,7 @@
 
 use Elastic\Elasticsearch\ClientBuilder;
 use Elisad5791\Phpapp\Book;
+use Elisad5791\Phpapp\NativeHttpClient;
 use Elisad5791\Phpapp\Subject;
 
 set_time_limit(0);
@@ -38,7 +39,7 @@ try {
     $params = ['index' => 'books'];
     $client->indices()->create($params);
     
-    $library = new OpenLibrary();
+    $library = new OpenLibrary(new NativeHttpClient());
     $subjectHandler = new Subject($client);
     $bookHandler = new Book($client);
 
