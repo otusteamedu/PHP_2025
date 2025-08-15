@@ -1,0 +1,6 @@
+"Таблица","Индекс","Количество сканирований"
+"orders","idx_brin_order_payment_time","0"
+"movie_rooms","idx_mr_type","0"
+"movie_sessions","movie_sessions_ms_movie_room_ms_movie_ms_start_time_key","0"
+"movies_genres","movies_genres_pkey","0"
+"tickets","idx_ticket_seat","0"
