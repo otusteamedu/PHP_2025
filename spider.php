@@ -2,6 +2,7 @@
 
 use Elastic\Elasticsearch\ClientBuilder;
 use Elisad5791\Phpapp\Book;
+use Elisad5791\Phpapp\ElasticsearchWrapper;
 use Elisad5791\Phpapp\NativeHttpClient;
 use Elisad5791\Phpapp\Subject;
 
@@ -33,6 +34,7 @@ $subjectNames = [
 
 try {
     $client = ClientBuilder::create()->setHosts(['http://localhost:9200'])->build();
+    $clientWrapper = new ElasticsearchWrapper($client);
     
     $params = ['index' => 'subjects'];
     $client->indices()->create($params);
@@ -40,8 +42,8 @@ try {
     $client->indices()->create($params);
     
     $library = new OpenLibrary(new NativeHttpClient());
-    $subjectHandler = new Subject($client);
-    $bookHandler = new Book($client);
+    $subjectHandler = new Subject($clientWrapper);
+    $bookHandler = new Book($clientWrapper);
 
     foreach ($subjectNames as $key => $subject) {
         $result = $library->getSubject($subject);

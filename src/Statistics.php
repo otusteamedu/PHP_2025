@@ -2,17 +2,13 @@
 
 namespace Elisad5791\Phpapp;
 
-use Elastic\Elasticsearch\Client;
-
 class Statistics 
 {
     const INDEX_NAME = 'books';
 
-    private $elasticClient;
-
-    public function __construct(Client $elasticClient) {
-        $this->elasticClient = $elasticClient;
-    }
+    public function __construct(
+        private ElasticSearchClientInterface $elasticClient
+    ) {}
 
     public function getAverageRatingBySubject() {
         $query = [
@@ -27,7 +23,7 @@ class Statistics
             ]
         ];
 
-        $result = $this->elasticClient->search($query)->asArray();
+        $result = $this->elasticClient->search($query);
         return $result;
     }
 
@@ -40,7 +36,7 @@ class Statistics
             ]
         ];
 
-        $result = $this->elasticClient->search($query)->asArray();
+        $result = $this->elasticClient->search($query);
         return $result;
     }
 }

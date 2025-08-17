@@ -1,21 +1,12 @@
 namespace: Tests
 support_namespace: Support
-suites:
-    unit:
-        path: .
-        actor: UnitTester
-        modules:
-            enabled:
-                # add more modules here
-                - Asserts
-        step_decorators: ~
-
-settings:
-    shuffle: true
-    lint: true
 paths:
     tests: tests
     output: tests/_output
-    support: tests/Support
     data: tests/Support/Data
-     
+    support: tests/Support
+    envs: tests/_envs
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed

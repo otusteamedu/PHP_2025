@@ -2,23 +2,19 @@
 
 namespace Elisad5791\Phpapp;
 
-use Elastic\Elasticsearch\Client;
-
 class Subject 
 {
     const INDEX_NAME = 'subjects';
     
-    private $elasticClient;
 
-    public function __construct(Client $elasticClient) 
-    {
-        $this->elasticClient = $elasticClient;
-    }
+    public function __construct(
+        private ElasticSearchClientInterface $elasticClient
+    ) {}
 
     public function getById(string $id): array
     {
         $params = ['index' => self::INDEX_NAME, 'id' => $id];
-        $result = $this->elasticClient->get($params)->asArray();
+        $result = $this->elasticClient->get($params);
         return $result;
     }
 
