@@ -2,17 +2,13 @@
 
 namespace Elisad5791\Phpapp;
 
-use Elastic\Elasticsearch\Client;
-
 class Statistics 
 {
     const INDEX_NAME = 'books';
 
-    private $elasticClient;
-
-    public function __construct(Client $elasticClient) {
-        $this->elasticClient = $elasticClient;
-    }
+    public function __construct(
+        private ElasticSearchClientInterface $elasticClient
+    ) {}
 
     public function getAverageRatingBySubject() {
         $query = [
@@ -20,17 +16,17 @@ class Statistics
             'body' => [
                 'aggs' => [
                     'subjects' => [
-                        'terms' => ['field' => 'subject_id.keyword'],
+                        'terms' => ['field' => 'subject_id.keyword', 'size' => 1000],
                         'aggs' => ['avg_rating' => ['avg' => ['field' => 'rating']]]
                     ]
                 ]
             ]
         ];
 
-        $result = $this->elasticClient->search($query)->asArray();
+        $result = $this->elasticClient->search($query);
         return $result;
     }
-
+    
     public function getLongestBooks(int $limit = 5) {
         $query = [
             'index' => self::INDEX_NAME,
@@ -40,7 +36,7 @@ class Statistics
             ]
         ];
 
-        $result = $this->elasticClient->search($query)->asArray();
+        $result = $this->elasticClient->search($query);
         return $result;
     }
 }
