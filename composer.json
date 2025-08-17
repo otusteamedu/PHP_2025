@@ -1,0 +1,17 @@
+{
+    "name": "dinargab/hello-world",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Dinargab\\HelloWorld\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DinarGab"
+        }
+    ],
+    "require": {
+        "dinargab/otusapp": "^1.0"
+    }
+}

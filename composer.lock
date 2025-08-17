@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "fdf88971b7357093764772546ad21520",
+    "packages": [
+        {
+            "name": "dinargab/otusapp",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DInarGab/otusapp.git",
+                "reference": "3287e7001c5cfc4b2a4f1368172970aabd0c766e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DInarGab/otusapp/zipball/3287e7001c5cfc4b2a4f1368172970aabd0c766e",
+                "reference": "3287e7001c5cfc4b2a4f1368172970aabd0c766e",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dinargab\\Otusapp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "DinarGab",
+                    "email": "Dinar@reaspekt.ru"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/DInarGab/otusapp/issues",
+                "source": "https://github.com/DInarGab/otusapp/tree/1.0.0"
+            },
+            "time": "2025-08-17T15:34:31+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
