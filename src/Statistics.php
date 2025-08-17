@@ -16,7 +16,7 @@ class Statistics
             'body' => [
                 'aggs' => [
                     'subjects' => [
-                        'terms' => ['field' => 'subject_id.keyword'],
+                        'terms' => ['field' => 'subject_id.keyword', 'size' => 1000],
                         'aggs' => ['avg_rating' => ['avg' => ['field' => 'rating']]]
                     ]
                 ]
@@ -26,7 +26,7 @@ class Statistics
         $result = $this->elasticClient->search($query);
         return $result;
     }
-
+    
     public function getLongestBooks(int $limit = 5) {
         $query = [
             'index' => self::INDEX_NAME,

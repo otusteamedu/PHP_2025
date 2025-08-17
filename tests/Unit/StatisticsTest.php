@@ -24,7 +24,7 @@ class StatisticsTest extends \Codeception\Test\Unit
             'body' => [
                 'aggs' => [
                     'subjects' => [
-                        'terms' => ['field' => 'subject_id.keyword'],
+                        'terms' => ['field' => 'subject_id.keyword', 'size' => 1000],
                         'aggs' => ['avg_rating' => ['avg' => ['field' => 'rating']]]
                     ]
                 ]
