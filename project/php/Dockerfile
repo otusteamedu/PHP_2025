@@ -5,3 +5,5 @@ RUN pecl install redis && docker-php-ext-enable redis
 
 COPY index.php /var/www/html/index.php
 COPY src/ /var/www/html/src/
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
