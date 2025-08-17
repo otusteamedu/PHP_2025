@@ -1,8 +1,8 @@
 <?php
 
-namespace src;
+namespace App;
 
-use InvalidCharacterException;
+use App\Exceptions\InvalidCharacterException;
 
 class Validator
 {

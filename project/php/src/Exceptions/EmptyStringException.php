@@ -1,6 +1,8 @@
 <?php
 
-class EmptyStringException extends Exception
+namespace App\Exceptions;
+
+class EmptyStringException extends \Exception
 {
 
 }

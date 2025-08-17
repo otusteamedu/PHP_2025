@@ -1,7 +1,12 @@
 <?php
 
-use src\Auth;
-use src\Validator;
+namespace App;
+
+use App\Auth;
+use App\Exceptions\EmptyStringException;
+use App\Validator;
+use App\Response;
+
 
 class App {
     private Auth $auth;
@@ -37,7 +42,7 @@ class App {
             $statusCode = $result['is_valid'] ? 200 : 400;
             return $this->response->createResponse($statusCode, $result['message']);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->response->createResponse(400, 'Bad request: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
         }
     }

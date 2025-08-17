@@ -1,5 +1,7 @@
 <?php
 
+namespace App;
+
 class Response {
     private string $containerName;
 

@@ -1,6 +1,8 @@
 <?php
 
-class InvalidCharacterException extends Exception
+namespace App\Exceptions;
+
+class InvalidCharacterException extends \Exception
 {
 
 }
