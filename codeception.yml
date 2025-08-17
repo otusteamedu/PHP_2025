@@ -10,3 +10,16 @@ actor_suffix: Tester
 extensions:
     enabled:
         - Codeception\Extension\RunFailed
+coverage:
+    enabled: true
+    include:
+        - src/*
+    driver:
+        name: pcov
+    reporter:
+        html:
+            target: tests/_output/coverage
+        clover:
+            target: tests/_output/coverage.xml
+        text:
+            target: tests/_output/coverage.txt
