@@ -1,0 +1,47 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "f77bd0807ed96284e2f5f20bbbff1d1c",
+    "packages": [
+        {
+            "name": "ziyodulloxon/string-helper",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "../lesson_4_dz",
+                "reference": "977708f3f3771c221844513fcc726b2ab9acc4e4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ziyodulloxon\\StringHelper\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Ziyodulloxon Ubaydullayev",
+                    "email": "ziyodulloxon@gmail.com"
+                }
+            ],
+            "description": "Do something with your strings",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "ziyodulloxon/string-helper": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}

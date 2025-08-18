@@ -1,0 +1,24 @@
+{
+    "name": "ziyodulloxon/otus-php-2025",
+    "description": "Homework project for PHP Professional course at Otus",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Ziyodulloxon Ubaydullayev",
+            "email": "ziyodulloxon@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../lesson_4_dz",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "ziyodulloxon/string-helper": "dev-master"
+    }
+}
