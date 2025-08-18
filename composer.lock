@@ -4,15 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f77bd0807ed96284e2f5f20bbbff1d1c",
+    "content-hash": "6dff9dff0ffe45eb0989de584e818e2b",
     "packages": [
         {
             "name": "ziyodulloxon/string-helper",
-            "version": "dev-master",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ziyodulloxon/string-helper.git",
+                "reference": "6db784227558c4d8a13e5a2504b297934156dfb4"
+            },
             "dist": {
-                "type": "path",
-                "url": "../lesson_4_dz",
-                "reference": "977708f3f3771c221844513fcc726b2ab9acc4e4"
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ziyodulloxon/string-helper/zipball/6db784227558c4d8a13e5a2504b297934156dfb4",
+                "reference": "6db784227558c4d8a13e5a2504b297934156dfb4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*"
             },
             "type": "library",
             "autoload": {
@@ -20,6 +29,7 @@
                     "Ziyodulloxon\\StringHelper\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "authors": [
                 {
                     "name": "Ziyodulloxon Ubaydullayev",
@@ -27,18 +37,17 @@
                 }
             ],
             "description": "Do something with your strings",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/Ziyodulloxon/string-helper/issues",
+                "source": "https://github.com/Ziyodulloxon/string-helper/tree/1.0.0"
+            },
+            "time": "2025-08-18T10:13:59+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ziyodulloxon/string-helper": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

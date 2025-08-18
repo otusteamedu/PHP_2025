@@ -9,16 +9,7 @@
         }
     ],
     "minimum-stability": "stable",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../lesson_4_dz",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "require": {
-        "ziyodulloxon/string-helper": "dev-master"
+        "ziyodulloxon/string-helper": "^1.0"
     }
 }
