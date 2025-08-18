@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "ziyodulloxon/string-helper",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ziyodulloxon/string-helper.git",
-                "reference": "6db784227558c4d8a13e5a2504b297934156dfb4"
+                "reference": "4789ff17e5d6a304d255c8acf69f6cfcb618fda4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ziyodulloxon/string-helper/zipball/6db784227558c4d8a13e5a2504b297934156dfb4",
-                "reference": "6db784227558c4d8a13e5a2504b297934156dfb4",
+                "url": "https://api.github.com/repos/Ziyodulloxon/string-helper/zipball/4789ff17e5d6a304d255c8acf69f6cfcb618fda4",
+                "reference": "4789ff17e5d6a304d255c8acf69f6cfcb618fda4",
                 "shasum": ""
             },
             "require": {
@@ -39,9 +39,9 @@
             "description": "Do something with your strings",
             "support": {
                 "issues": "https://github.com/Ziyodulloxon/string-helper/issues",
-                "source": "https://github.com/Ziyodulloxon/string-helper/tree/1.0.0"
+                "source": "https://github.com/Ziyodulloxon/string-helper/tree/1.0.1"
             },
-            "time": "2025-08-18T10:13:59+00:00"
+            "time": "2025-08-18T10:38:58+00:00"
         }
     ],
     "packages-dev": [],
