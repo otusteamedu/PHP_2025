@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "9ac730d52dd6a351f69e55219febe60d",
+    "packages": [
+        {
+            "name": "larkinov/random",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Larkinov/random.git",
+                "reference": "71febb1c931529b3567518e83fcefbfd14731754"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Larkinov/random/zipball/71febb1c931529b3567518e83fcefbfd14731754",
+                "reference": "71febb1c931529b3567518e83fcefbfd14731754",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Larkinov\\Random\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Larkinov",
+                    "email": "buyantolarkinov@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/Larkinov/random/issues",
+                "source": "https://github.com/Larkinov/random/tree/1.1.0"
+            },
+            "time": "2025-08-17T11:42:47+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}
