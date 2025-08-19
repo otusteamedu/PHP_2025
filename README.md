@@ -1,3 +1,20 @@
-# PHP_2025
+# Рандомайзер
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Рандомайзер для ваших услуг
+
+## Требования
+
+- PHP ">=7.0"
+
+## Установка
+
+composer require larkinov/random
+
+## Использование
+
+```php
+<?php
+
+$rand = new Random();
+$rand->fiftyFifty();
+```
