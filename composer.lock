@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "dinargab/otusapp",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DInarGab/otusapp.git",
-                "reference": "3287e7001c5cfc4b2a4f1368172970aabd0c766e"
+                "reference": "c96c9723a0f296857a4596b1e90a3ce638bfbf04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DInarGab/otusapp/zipball/3287e7001c5cfc4b2a4f1368172970aabd0c766e",
-                "reference": "3287e7001c5cfc4b2a4f1368172970aabd0c766e",
+                "url": "https://api.github.com/repos/DInarGab/otusapp/zipball/c96c9723a0f296857a4596b1e90a3ce638bfbf04",
+                "reference": "c96c9723a0f296857a4596b1e90a3ce638bfbf04",
                 "shasum": ""
             },
             "type": "library",
@@ -35,9 +35,9 @@
             ],
             "support": {
                 "issues": "https://github.com/DInarGab/otusapp/issues",
-                "source": "https://github.com/DInarGab/otusapp/tree/1.0.0"
+                "source": "https://github.com/DInarGab/otusapp/tree/1.0.1"
             },
-            "time": "2025-08-17T15:34:31+00:00"
+            "time": "2025-08-19T07:04:35+00:00"
         }
     ],
     "packages-dev": [],
