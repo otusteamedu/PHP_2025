@@ -1,0 +1,38 @@
+# в этом блоке мы описываем контейнеры, которые будут запускаться
+services:
+  #контейнер с Nginx
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: "nginxhw4"
+    # проброс портов
+    ports:
+      - "80:80"
+    volumes:
+       - ./code:/var/www/data/homework
+    depends_on:
+      - phpfpm1
+    networks:
+      - nginx-balancer
+
+
+  #Контейнер с PHP-FPM, назовём его app
+  phpfpm1:
+    # Если нет секции build, то система будет искать образ в репозиториях
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    image: myapp/php # имя будущего образа
+    container_name: phpfpm1 # имя контейнера после запуска
+    volumes:
+       - ./code:/var/www/data/homework
+    # мы можем создать для контейнеров внутреннюю сеть
+    networks:
+      - nginx-balancer
+
+
+networks:
+  nginx-balancer:
+    driver: bridge
