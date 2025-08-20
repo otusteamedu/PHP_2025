@@ -1,0 +1,73 @@
+version: '0.7'
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: "${CONTAINER_NAME}"
+    ports:
+      - "80:80"
+    volumes:
+       - ./code:/data/homework.local
+    depends_on:
+      - app
+    networks:
+      - homeworkNet
+
+
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: app
+    volumes:
+       - ./code:/data/homework.local
+    depends_on:
+      - redis
+      - memcached
+      - db
+    networks:
+      - homeworkNet
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - homeworkNet
+
+
+  memcached:
+    image: memcached
+    container_name: memcached
+    ports:
+      - "11211:11211"
+    networks:
+      - homeworkNet
+
+
+  db:
+    image: mysql:5.7 
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - homeworkNet
+
+networks:
+  homeworkNet:
+    driver: bridge
+
