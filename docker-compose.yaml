@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     image: myapp/nginx
     container_name: "${CONTAINER_NAME}"
+    ports:
+      - "80:80"
     volumes:
        - ./code:/data/homework.local
     depends_on:
@@ -42,8 +44,6 @@ services:
   memcached:
     image: memcached
     container_name: memcached
-    ports:
-      - "11211:11211"
     networks:
       - homeworkNet
 
@@ -56,8 +56,6 @@ services:
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
       MYSQL_USER: "${MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-    ports:
-      - "3306:3306"
     volumes:
       - ./mysql_data:/var/lib/mysql
     networks:
