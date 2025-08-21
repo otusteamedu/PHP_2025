@@ -1,6 +1,6 @@
 FROM nginx:latest
 
-COPY ./hosts/slave.conf /etc/nginx/conf.d/default.conf
+COPY ./hosts/balancer.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /var/www/data
 

@@ -14,13 +14,18 @@ RUN apt-get update && apt-get install -y \
         && pecl install redis-6.2.0
 
 COPY ./php.ini /usr/local/etc/php/conf.d/php-custom.ini
-
 #Устанавливаем composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Add Composer to the PATH
 ENV PATH="$PATH:/usr/local/bin"
 
-WORKDIR /var/www/data
+WORKDIR /var/www/data/homework
+
+COPY ./entrypoint.sh /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
 
 CMD ["php-fpm"]

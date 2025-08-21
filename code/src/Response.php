@@ -35,6 +35,8 @@ class Response
             header("{$name}: {$value}");
         }
 
+        header("X-PHP-Container: $_SERVER[HOSTNAME]");
+
         echo $this->content;
     }
 }
