@@ -29,16 +29,16 @@ get_number() {
 get_number "Введите первое число: " first
 
 while true; do
-    read -p "Введите действие (сложить(s) или вычесть (d)): " action
+    read -p "Введите действие (сложить(s/+) или вычесть (d/-)): " action
     
     if [ -z "$action" ]; then
         echo "Вы ничего не ввели. Попробуйте еще раз."
         continue
-    elif [[ "$action" == "s" ]] then
+    elif [[ "$action" == "s" || "$action" == "+" ]] then
         frendly_action="Сумма: "
         real_action="+"
         break
-    elif [[ "$action" == "d" ]]; then
+    elif [[ "$action" == "d" || "$action" == "-" ]]; then
         frendly_action="Разность: "
         real_action="-"
         break
