@@ -1,7 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../utils/auth.php';
-require_once __DIR__ . '/../utils/validate.php';
+namespace Larkinov\Myapp\Class;
 
 class App
 {
