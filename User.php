@@ -35,15 +35,18 @@ class User {
         return null;
     }
 
-    public static function all() {
+    public static function all($limit = 100, $offset = 0) {
         $db = Database::getConnection();
-        $stmt = $db->query("SELECT * FROM users");
+        $stmt = $db->prepare("SELECT * FROM users LIMIT :limit OFFSET :offset");
+        $stmt->bindParam(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, \PDO::PARAM_INT);
+        $stmt->execute();
+        
         $users = [];
-
         while ($data = $stmt->fetch()) {
-            $users[] = self::find($data['id']);
+            $users[] = new self($data['id'], $data['name'], $data['email']);
         }
-
+    
         return $users;
     }
 
@@ -59,3 +62,4 @@ class User {
         return $this->email;
     }
 }
+
