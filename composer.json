@@ -1,0 +1,19 @@
+{
+    "name": "andrey-yurchuk/fast-food-restaurant",
+    "description": "Fast food restaurant with design patterns implementation",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.4"
+    },
+    "authors": [
+        {
+            "name": "Andrey Yurchuk",
+            "email": "a.yurchuk1430@gmail.com"
+        }
+    ]
+}
