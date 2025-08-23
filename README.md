@@ -55,3 +55,49 @@ docker-compose exec php php console.php search \
 | `--category` | Категория книг | `"Исторический роман"` |
 | `--max-price` | Максимальная цена | `2000` |
 | `--in-stock` | Только в наличии | (флаг) |
+
+### Тестирование
+
+Приложение покрыто Юнит, Интеграционными и Функциональными тестами с общим покрытием кода **87.12%**
+
+#### Запуск всех тестов
+
+```bash
+docker-compose exec php composer test
+```
+
+#### Запуск тестов с покрытием кода
+
+```bash
+docker-compose exec php composer test-coverage
+```
+
+#### Запуск отдельных типов тестов
+
+##### Юнит-тесты
+```bash
+docker-compose exec php composer test -- --testsuite Unit
+```
+
+##### Интеграционные тесты
+```bash
+docker-compose exec php composer test -- --testsuite Integration
+```
+
+##### Функциональные тесты
+```bash
+docker-compose exec php composer test -- --testsuite Functional
+```
+
+Для быстрого просмотра покрытия тестами:
+```bash
+docker-compose exec php cat coverage.txt
+```
+
+#### Статистика покрытия
+
+| Метрика | Значение |
+|---------|----------|
+| **Строки кода** | 87.12% (257/295) |
+| **Методы** | 92.98% (53/57) |
+| **Классы** | 60.00% (6/10) |
