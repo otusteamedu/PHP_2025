@@ -9,9 +9,12 @@ RUN apk add --no-cache \
       gcc \
       g++ \
       make \
+      linux-headers \
   && docker-php-ext-install \
       zip \
       opcache \
+  && pecl install xdebug \
+  && docker-php-ext-enable xdebug \
   && curl -sS https://getcomposer.org/installer | php -- \
        --install-dir=/usr/local/bin --filename=composer \
   && composer --version \
