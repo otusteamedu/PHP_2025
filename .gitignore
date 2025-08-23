@@ -1,4 +1,7 @@
 /.phpunit.cache
+/coverage
+/coverage.txt
+/phpunit.xml.bak
 /node_modules
 /public/build
 /public/hot
