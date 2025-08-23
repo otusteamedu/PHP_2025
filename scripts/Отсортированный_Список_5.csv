@@ -1,0 +1,6 @@
+schema_name,table_name,index_name,index_scans,tuples_read,tuples_fetched,index_size
+public,room,room_pkey,2400,2400,2388,896 kB
+public,movie,movie_pkey,2169,2169,2127,240 kB
+public,hall,hall_pkey,193,193,193,16 kB
+public,ticket,idx_ticket_session_movie_id,43,56,18,113 MB
+public,session_movie,idx_ticket_session_movie_movie_id,42,42,0,66 MB
