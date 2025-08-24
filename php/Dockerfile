@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pecl install redis && docker-php-ext-enable redis
 
-WORKDIR /var/www
+WORKDIR /var/www/public
 
 EXPOSE 9000
 

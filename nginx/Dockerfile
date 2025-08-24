@@ -1,6 +1,6 @@
 FROM nginx:latest
 
-WORKDIR /var/www
+WORKDIR /var/www/public
 
 EXPOSE 80
 
