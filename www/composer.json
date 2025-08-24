@@ -3,8 +3,7 @@
     "type": "project",
     "autoload": {
         "files": [
-            "src/utils/auth.php",
-            "src/utils/validate.php"
+            "src/utils/auth.php"
         ],
         "psr-4": {
             "Larkinov\\Myapp\\": "src/"

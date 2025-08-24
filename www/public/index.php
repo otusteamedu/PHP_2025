@@ -1,8 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../app/vendor/autoload.php';
+declare(strict_types=1);
 
-use Larkinov\Myapp\Class\App;
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Larkinov\Myapp\Classes\App;
 
 $app = new App();
 
