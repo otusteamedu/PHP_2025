@@ -1,5 +1,5 @@
 .idea/
-/www/app/vendor/
+/www/vendor/
 .DS_Store
 .AppleDouble
 .LSOverride
