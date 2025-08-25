@@ -2,9 +2,6 @@
     "name": "larkinov/myapp",
     "type": "project",
     "autoload": {
-        "files": [
-            "src/utils/auth.php"
-        ],
         "psr-4": {
             "Larkinov\\Myapp\\": "src/"
         }

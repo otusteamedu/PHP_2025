@@ -2,16 +2,17 @@
 
 namespace Larkinov\Myapp\Classes;
 
-use Larkinov\Myapp\Services\EmailValidation;
-
 class App
 {
-    public function run():bool
+    private RequestHandle $requestHandle;
+
+    public function __construct()
     {
-        auth();
+        $this->requestHandle = new RequestHandle();
+    }
 
-        $email = new Email($_POST['email']);
-
-        return (new EmailValidation($email))->validate();
+    public function run(): void
+    {
+        $this->requestHandle->handle();
     }
 }
