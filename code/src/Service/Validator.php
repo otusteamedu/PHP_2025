@@ -26,8 +26,6 @@ class Validator
                 $bracketSum++;
             } elseif ($char === self::CLOSING_BRACKET) {
                 $bracketSum--;
-            } else {
-                throw new InvalidArgumentException("Invalid symbol in string");
             }
 
             if ($bracketSum < 0) {
