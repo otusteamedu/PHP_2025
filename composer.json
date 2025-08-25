@@ -1,0 +1,5 @@
+{
+    "require": {
+        "dkeruntu/composer_pakage_if_five": "^1.0"
+    }
+}

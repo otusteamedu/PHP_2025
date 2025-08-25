@@ -1,0 +1,55 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "8dd9a285b2dee2a9cc8790d6fa794759",
+    "packages": [
+        {
+            "name": "dkeruntu/composer_pakage_if_five",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Dikaz01/if_five.git",
+                "reference": "18007f5146eb928aa169800921f08e7c124d5075"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Dikaz01/if_five/zipball/18007f5146eb928aa169800921f08e7c124d5075",
+                "reference": "18007f5146eb928aa169800921f08e7c124d5075",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dkeruntu\\ComposerPackageIfFive\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Dikaz01",
+                    "email": "dima.konserv@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/Dikaz01/if_five/issues",
+                "source": "https://github.com/Dikaz01/if_five/tree/1.0.3"
+            },
+            "time": "2025-08-25T19:35:26+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}
