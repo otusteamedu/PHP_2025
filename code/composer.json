@@ -1,0 +1,14 @@
+{
+    "name": "dinargab/homework4",
+    "autoload": {
+        "psr-4": {
+            "Dinargab\\Homework4\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DinarGab",
+            "email": "dinar@reaspekt.ru"
+        }
+    ]
+}
