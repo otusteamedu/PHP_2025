@@ -1,0 +1,41 @@
+services:
+  nginx:
+    build:
+      context: .docker/nginx
+      dockerfile: Dockerfile
+    image: igainutdinov/nginx
+    ports:
+      - "80:80"
+    volumes:
+      - php-fpm-sock:/var/run/php
+      - ./application:/var/www/html
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      context: .docker/php-fpm
+      dockerfile: Dockerfile
+    image: igainutdinov/php-fpm
+    volumes:
+      - php-fpm-sock:/var/run/php
+      - ./application:/var/www/html
+    depends_on:
+      - memcached
+      - redis
+
+  memcached:
+    image: memcached:alpine
+    command: memcached -m 64 -p 11211 -u memcache
+
+  redis:
+    image: redis:alpine
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+
+
+
+volumes:
+  php-fpm-sock:
+  redis-data:
