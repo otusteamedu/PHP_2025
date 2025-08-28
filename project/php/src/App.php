@@ -4,6 +4,7 @@ namespace App;
 
 use App\Auth;
 use App\Exceptions\EmptyStringException;
+use App\Exceptions\InvalidCharacterException;
 use App\Validator;
 use App\Response;
 
@@ -42,7 +43,8 @@ class App {
             $statusCode = $result['is_valid'] ? 200 : 400;
             return $this->response->createResponse($statusCode, $result['message']);
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return $this->response->createResponse(400, 'Bad request: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
         }
     }

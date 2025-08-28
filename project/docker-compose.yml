@@ -10,18 +10,24 @@ services:
       - php2
 
   php1:
-    build: ./php
+    build:
+      context: .
+      dockerfile: php/Dockerfile
     depends_on:
       - redis
     volumes:
-      - ./php:/var/www/html
+      - ./public:/var/www/html/public
+      - ./php/composer.json:/var/www/html/composer.json
 
   php2:
-    build: ./php
+    build:
+      context: .
+      dockerfile: php/Dockerfile
     depends_on:
       - redis
     volumes:
-      - ./php:/var/www/html
+      - ./public:/var/www/html/public
+      - ./php/composer.json:/var/www/html/composer.json
 
   redis:
     build: ./redis
