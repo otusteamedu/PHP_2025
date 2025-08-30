@@ -1,8 +1,7 @@
 FROM nginx:alpine
 
-COPY ./conf.d /etc/nginx/conf.d
-
-WORKDIR /var/www/html
+COPY ./.docker/nginx/conf.d /etc/nginx/conf.d
+COPY ./application /var/www/html
 
 EXPOSE 80
 

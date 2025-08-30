@@ -1,7 +1,7 @@
 FROM php:8.4-fpm-alpine
 
-COPY ./conf.d "$PHP_INI_DIR/conf.d"
-COPY ./zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
+COPY ./.docker/php-fpm/conf.d "$PHP_INI_DIR/conf.d"
+COPY ./.docker/php-fpm/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime  \
     && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
@@ -32,7 +32,11 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/bin \
     && php -r "unlink('composer-setup.php');"
 
+COPY ./application /var/www/html
+
 WORKDIR /var/www/html
+
+RUN composer.phar install
 
 EXPOSE 9000
 
