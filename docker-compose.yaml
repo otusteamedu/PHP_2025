@@ -1,0 +1,80 @@
+
+services:
+  nginx-balancer:
+    build:
+      context: ./nginx-upstream
+      dockerfile: Dockerfile
+    container_name: "nginx-balancer"
+    ports:
+      - "80:80"
+    depends_on:
+      - nginx_b1
+      - nginx_b2
+    networks:
+      - homeworkNet
+
+  nginx_b1:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: "nginx_b1"
+    volumes:
+      - ./code:/var/www/html
+    depends_on:
+      - app_1
+    environment:
+      - PHP_FPM_HOST=app_1:9000 
+    networks:
+      - homeworkNet
+
+  nginx_b2:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: "nginx_b2"
+    volumes:
+      - ./code:/var/www/html
+    depends_on:
+      - app_2
+    environment:
+      - PHP_FPM_HOST=app_2:9000 
+    networks:
+      - homeworkNet
+
+
+  app_1:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    container_name: app_1
+    volumes:
+      - ./code:/var/www/html
+    depends_on:
+      - redis
+    networks:
+      - homeworkNet
+
+  app_2:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    container_name: app_2
+    volumes:
+      - ./code:/var/www/html
+    depends_on:
+      - redis
+    networks:
+      - homeworkNet
+
+  redis:
+    image: redis
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - homeworkNet
+
+
+networks:
+  homeworkNet:
+    driver: bridge
+
