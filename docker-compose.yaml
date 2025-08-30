@@ -16,6 +16,7 @@ services:
     build:
       context: .docker/php-fpm
       dockerfile: Dockerfile
+    env_file: .env
     image: igainutdinov/php-fpm
     volumes:
       - php-fpm-sock:/var/run/php
@@ -23,6 +24,7 @@ services:
     depends_on:
       - memcached
       - redis
+      - database
 
   memcached:
     image: memcached:alpine
@@ -34,8 +36,18 @@ services:
     volumes:
       - redis-data:/data
 
+  database:
+    image: mariadb:12-ubi
+    volumes:
+      - database-data:/var/lib/mysql
+    environment:
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+
 
 
 volumes:
   php-fpm-sock:
   redis-data:
+  database-data:

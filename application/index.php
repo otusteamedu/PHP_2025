@@ -13,6 +13,18 @@ $CACHE_KEY = "{$sessionId}_LAST_VISIT";
 $lastVisitFromMemcached = $memcached->get($CACHE_KEY);
 $memcached->set($CACHE_KEY, $_SESSION['LAST_VISIT']);
 
+$dbInfo = null;
+try {
+    $db = new PDO('mysql:host=database;port=3306', getenv('DB_USER'), getenv('DB_PASSWORD'));
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmt = $db->query('SELECT VERSION();');
+    $stmt->execute();
+    $dbInfo = $stmt->fetchColumn();
+} catch (PDOException $e) {
+    $dbInfo = "Failed to connect to database: " . $e->getMessage();
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -33,5 +45,8 @@ if ($lastVisitFromMemcached): ?>
     <p>Your last visit from memcached <?= $lastVisitFromMemcached ?></p>
 <?php
 endif; ?>
+<p>
+    DB Version: <?= $dbInfo ?>
+</p>
 </body>
 </html>
