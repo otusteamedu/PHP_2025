@@ -37,6 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
 
     if($arError['bError']){
         $sResult = "Ошибка: " .  $arError["bErrorDiscription"];
+    }else{
+        $sResult = "Адрес корректен";
     }
 
 }
