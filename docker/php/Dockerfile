@@ -1,33 +1,29 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.4-fpm
 
-RUN apk add --no-cache \
-    libzip \
+RUN apt-get update && apt-get install -y \
     git \
     curl \
     wget \
     nano \
-    rabbitmq-c \
-    && apk add --no-cache --virtual .build-deps \
-    oniguruma-dev \
+    librabbitmq-dev \
     libzip-dev \
-    autoconf \
-    gcc \
-    g++ \
-    make \
-    rabbitmq-c-dev \
-    linux-headers \
-    && docker-php-ext-install \
+    libonig-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-install \
     opcache \
     zip \
     bcmath \
-    sockets \
-    && pecl install amqp \
-    && docker-php-ext-enable amqp \
-    && apk del .build-deps
+    sockets
 
-RUN curl -sS https://getcomposer.org/installer | php -- \
-    --install-dir=/usr/local/bin --filename=composer \
-    && composer --version
+RUN pecl install amqp && docker-php-ext-enable amqp
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
+
+RUN mkdir -p /var/www/html/storage && \
+    chown -R www-data:www-data /var/www/html
 
 WORKDIR /var/www/html
 
