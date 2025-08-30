@@ -28,6 +28,8 @@ services:
     command: >
       sh -c "
         mkdir -p /var/www/html/storage &&
+        sleep 10 &&
+        php /var/www/html/config/telegram-webhook-setup.php &&
         php-fpm
       "
 
@@ -40,25 +42,6 @@ services:
       - "${RABBITMQ_AMQP_PORT}:5672"
     env_file:
       - .env
-
-  telegram_bot:
-    build:
-      context: ./docker/php
-      dockerfile: Dockerfile
-    container_name: telegram-bot
-    volumes:
-      - .:/var/www/html
-    depends_on:
-      - rabbit_mq
-    env_file:
-      - .env
-    user: "1000:1000"
-    command: >
-      sh -c "
-        mkdir -p /var/www/html/storage &&
-        php /var/www/html/config/telegram-bot.php
-      "
-    restart: unless-stopped
 
   statement_worker:
     build:
@@ -90,6 +73,7 @@ services:
     depends_on:
       - nginx
     restart: unless-stopped
+
 networks:
   default:
     driver: bridge
