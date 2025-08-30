@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use IGainutdinov\HelloWorld;
+
 session_start();
 $sessionId = session_id();
 
@@ -25,6 +29,7 @@ try {
 }
 
 
+$helloWorld = new HelloWorld();
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -48,5 +53,16 @@ endif; ?>
 <p>
     DB Version: <?= $dbInfo ?>
 </p>
+<?php
+$name = '';
+if ($_GET['name'] ?? false) {
+    $name = htmlentities($_GET['name']);
+    echo '<p>' . $helloWorld->getHelloString($name) . '</p>';
+}
+?>
+<form method="get" action="/">
+    <label>Your name: <input name="name" value="<?= $name ?>" type="text" max="16"/></label>
+    <button type="submit">Submit</button>
+</form>
 </body>
 </html>
