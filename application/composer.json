@@ -1,0 +1,15 @@
+{
+  "name": "igainutdinov/hw3",
+  "version": "0.0.1",
+  "require": {
+    "igainutdinov/my-package-example": "*"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/gainutdinov-ilya/my-package-example.git"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
