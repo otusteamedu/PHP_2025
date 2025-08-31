@@ -4,3 +4,5 @@
 .AppleDouble
 .LSOverride
 .env
+storage/requests.json
+storage/logs/
