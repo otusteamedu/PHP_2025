@@ -1,0 +1,11 @@
+CREATE TABLE
+    film_session (
+        id INT PRIMARY KEY auto_increment,
+        id_room INT NOT NULL,
+        id_film INT NOT NULL,
+        start DATETIME NOT NULL,
+        end DATETIME NOT NULL,
+        extra_price FLOAT NOT NULL,
+        FOREIGN KEY (id_room) REFERENCES room (id),
+        FOREIGN KEY (id_film) REFERENCES film (id)
+    );
