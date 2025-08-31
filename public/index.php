@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use Dinargab\Homework5\Service\EmailValidator;
 
-require './vendor/autoload.php';
+require '../vendor/autoload.php';
 
 
 $emailValidator = new EmailValidator;
 
-echo $emailValidator->verifyEmail("dinar@reaspekt.ru");
+var_dump($emailValidator->verifyEmail("dinar@reaspekt.ru")->isValid());
 
 
 $emailsToCheck = [
@@ -25,4 +25,10 @@ $emailsToCheck = [
     'mymail@yourdomain.com'
 ];
 
-var_dump($emailValidator->verifyEmails($emailsToCheck));
+$validationResults = $emailValidator->verifyEmails($emailsToCheck);
+foreach ($validationResults as $result) {
+    echo $result->getEmail() . "is " . ($result->isValid() ? "valid" : "invalid");
+    if (!$result->isValid()) {
+        echo "Error" . $result->getError();
+    }
+}
