@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_2025">
+    <description>PHP CodeSniffer ruleset for PHP_2025 project</description>
+
+    <rule ref="PSR12"/>
+
+    <file>src/</file>
+    <file>public/</file>
+    <file>config/</file>
+
+    <exclude-pattern>vendor/</exclude-pattern>
+    <exclude-pattern>storage/</exclude-pattern>
+
+    <arg name="colors"/>
+    <arg name="parallel" value="75"/>
+    <arg name="extensions" value="php"/>
+    <arg name="ignore" value="vendor/,storage/"/>
+
+    <rule ref="PSR12.Classes.OpeningBraceSpace">
+        <exclude name="PSR12.Classes.OpeningBraceSpace"/>
+    </rule>
+
+    <rule ref="PSR12.Properties.ConstantVisibility">
+        <exclude name="PSR12.Properties.ConstantVisibility"/>
+    </rule>
+</ruleset>
