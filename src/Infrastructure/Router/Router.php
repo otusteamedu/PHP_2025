@@ -32,7 +32,6 @@ final class Router
             'get_chat_id' => $this->telegramController->getChatId(),
             'webhook' => $this->webhookController->handleWebhook(),
             'set_webhook' => $this->webhookController->setWebhook(),
-            'confirmation' => $this->statementController->confirmation(),
             default => $this->handleNotFound($uri, $method)
         };
     }
@@ -64,10 +63,6 @@ final class Router
 
         if ($uri === '/api/telegram/set-webhook' && $method === 'POST') {
             return 'set_webhook';
-        }
-
-        if ($uri === '/confirmation') {
-            return 'confirmation';
         }
 
         return 'not_found';
