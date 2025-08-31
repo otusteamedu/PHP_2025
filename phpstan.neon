@@ -1,0 +1,14 @@
+parameters:
+    level: 5
+    
+    paths:
+        - src/
+        - public/
+        - config/
+    
+    excludePaths:
+        - vendor/
+        - storage/
+    
+    ignoreErrors:
+        - '#Property .* is never read, only written#'
