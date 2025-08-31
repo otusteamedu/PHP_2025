@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Dinargab\Homework5\Service;
 
-use Dinargab\Homework5\Result\EmailValidationResult;
+use Dinargab\Homework5\Result\ValidationResult;
+use Dinargab\Homework5\Result\ResultInterface;
 
 class EmailValidator
 {
@@ -18,28 +19,28 @@ class EmailValidator
      * Проверяет email на корректность синтаксиса и наличие MX записей
      *
      * @param string $email Email адрес для проверки
-     * @return EmailValidationResult Результат проверки email
+     * @return ValidationResult Результат проверки email
      */
-    public function verifyEmail(string $email): EmailValidationResult
+    public function verifyEmail(string $email): ResultInterface
     {
         $inputEmail = trim($email);
         if (empty($inputEmail)) {
-            return new EmailValidationResult($email, false, "Email is empty");
+            return new ValidationResult($email, false, "Email is empty");
         }
 
         if (!$this->checkLength($inputEmail)) {
-            return new EmailValidationResult($email, false, "Email is longer than " . self::EMAIL_MAX_LENGTH . " characters");
+            return new ValidationResult($email, false, "Email is longer than " . self::EMAIL_MAX_LENGTH . " characters");
         }
 
         if (filter_var($inputEmail, FILTER_VALIDATE_EMAIL) === false) {
-            return new EmailValidationResult($email, false, "Invalid email format");
+            return new ValidationResult($email, false, "Invalid email format");
         }
 
-        if ($this->verifyMxRecords($email)) {
-            return new EmailValidationResult($email, false, 'No MX records found for email domain');
+        if (!$this->verifyMxRecords($email)) {
+            return new ValidationResult($email, false, 'No MX records found for email domain');
         }
 
-        return new EmailValidationResult($email, true);
+        return new ValidationResult($email, true);
     }
 
     /**
@@ -58,7 +59,7 @@ class EmailValidator
     /**
      * Проверяет длину строки с Email адресом
      * 
-     * @praram string $email Email адрес для проверки длины
+     * @param string $email Email адрес для проверки длины
      * @return bool true если длина не превышает макс длину email 
      */
 
@@ -72,7 +73,7 @@ class EmailValidator
      * Проверяет массив email адресов на валидность
      * 
      * @param array $emailsArray Массив email адресов для проверки
-     * @return array<EmailValidationResult> Массив результатов проверки email
+     * @return array<ValidationResult> Массив результатов проверки email
      */
     public function verifyEmails(array $emailsArray): array
     {

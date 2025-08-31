@@ -13,21 +13,18 @@ var_dump($emailValidator->verifyEmail("dinar@reaspekt.ru")->isValid());
 
 
 $emailsToCheck = [
-    'dinar@reaspekt.ru',
     'help@otus.ru',
     'test@example.com',
-    'тест@проверка.рф',
-    'mailbox@domrf.ru',
-    'test@дом.рф',
-    '.test.ru',
-    '123@otus.ru',
-    '221@222@example.com',
-    'mymail@yourdomain.com'
+    'test',
+    'invalid.email',
+    'no-mx@example.org',
+    'test@..gmail.com',
+    'check@дом.рф',
 ];
 
 $validationResults = $emailValidator->verifyEmails($emailsToCheck);
 foreach ($validationResults as $result) {
-    echo $result->getEmail() . "is " . ($result->isValid() ? "valid" : "invalid");
+    echo $result->getInputValue() . "is " . ($result->isValid() ? "valid" : "invalid") . "\n";
     if (!$result->isValid()) {
         echo "Error" . $result->getError();
     }
