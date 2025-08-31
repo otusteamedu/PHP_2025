@@ -28,6 +28,8 @@ final class FileStatementRequestRepository implements StatementRequestRepository
         $logger = Logger::getInstance();
         $logger->info('Saving statement request', ['id' => $request->id()]);
 
+        $this->ensureStorageDirectory();
+
         $requests = $this->loadRequests();
         $requestData = $this->entityToArray($request);
         $requests[$request->id()] = $requestData;
