@@ -22,8 +22,11 @@ final class Logger
             self::$instance = new MonologLogger('php_2025');
 
             $logDir = __DIR__ . '/../../../storage/logs';
-            if (!mkdir($logDir, 0755, true) && !is_dir($logDir)) {
-                throw new RuntimeException('Failed to create directory for logs: ' . $logDir);
+
+            if (!is_dir($logDir)) {
+                if (!mkdir($logDir, 0755, true) && !is_dir($logDir)) {
+                    throw new RuntimeException('Failed to create directory for logs: ' . $logDir);
+                }
             }
 
             $fileHandler = new StreamHandler($logDir . '/app.log', MonologLogger::INFO);

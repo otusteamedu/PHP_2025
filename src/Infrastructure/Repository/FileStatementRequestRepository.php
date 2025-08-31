@@ -156,8 +156,11 @@ final class FileStatementRequestRepository implements StatementRequestRepository
     private function ensureStorageDirectory(): void
     {
         $directory = dirname($this->storageFile);
-        if (!mkdir($directory, 0755, true) && !is_dir($directory)) {
-            throw new RuntimeException('Failed to create storage directory: ' . $directory);
+
+        if (!is_dir($directory)) {
+            if (!mkdir($directory, 0755, true) && !is_dir($directory)) {
+                throw new RuntimeException('Failed to create storage directory: ' . $directory);
+            }
         }
     }
 }
