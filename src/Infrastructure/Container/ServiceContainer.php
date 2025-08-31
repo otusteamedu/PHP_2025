@@ -11,7 +11,6 @@ use App\Infrastructure\Notification\TelegramNotificationService;
 use App\Application\UseCase\CreateStatementRequestUseCase;
 use App\Application\UseCase\ProcessStatementRequestUseCase;
 use App\Presentation\Controller\StatementRequestController;
-use App\Presentation\Controller\TelegramController;
 use App\Presentation\Controller\TelegramWebhookController;
 use App\Infrastructure\Router\Router;
 use App\Infrastructure\Config\AppConfig;
@@ -70,15 +69,11 @@ final class ServiceContainer
             $this->services['createUseCase'],
             $this->services['processUseCase']
         );
-        $this->services['telegramController'] = new TelegramController(
-            $this->services['telegramService']
-        );
         $this->services['webhookController'] = new TelegramWebhookController();
 
         // Router
         $this->services['router'] = new Router(
             $this->services['statementController'],
-            $this->services['telegramController'],
             $this->services['webhookController']
         );
     }

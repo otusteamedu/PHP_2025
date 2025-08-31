@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Router;
 
 use App\Presentation\Controller\StatementRequestController;
-use App\Presentation\Controller\TelegramController;
 use App\Presentation\Controller\TelegramWebhookController;
 use App\Infrastructure\Logging\Logger;
 
@@ -13,7 +12,6 @@ final class Router
 {
     public function __construct(
         private StatementRequestController $statementController,
-        private TelegramController $telegramController,
         private TelegramWebhookController $webhookController
     ) {
     }
@@ -29,7 +27,6 @@ final class Router
             'home' => $this->statementController->showForm(),
             'telegram_form' => $this->handleTelegramForm(),
             'create_statement' => $this->statementController->create(),
-            'get_chat_id' => $this->telegramController->getChatId(),
             'webhook' => $this->webhookController->handleWebhook(),
             'set_webhook' => $this->webhookController->setWebhook(),
             default => $this->handleNotFound($uri, $method)
@@ -51,10 +48,6 @@ final class Router
 
         if ($uri === '/api/statement-request' && $method === 'POST') {
             return 'create_statement';
-        }
-
-        if ($uri === '/api/telegram/get-chat-id' && $method === 'POST') {
-            return 'get_chat_id';
         }
 
         if ($uri === '/api/telegram/webhook' && $method === 'POST') {
