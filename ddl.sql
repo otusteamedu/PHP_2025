@@ -1,7 +1,7 @@
 CREATE TABLE `theatre` (
     `theatre_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(200) NOT NULL,
-    `location` TEXT NOT NULL
+    `location` TEXT
 );
 
 CREATE TABLE `room` (
@@ -14,10 +14,10 @@ CREATE TABLE `room` (
 CREATE TABLE `movie` (
     `movie_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `movie_name` VARCHAR(255) NOT NULL,
-    `duration` INTEGER NOT NULL,
-    `movie_description` TEXT NOT NULL,
-    `release_date` DATE NOT NULL,
-    `rating` FLOAT NOT NULL
+    `duration` INTEGER,
+    `movie_description` TEXT,
+    `release_date` DATE,
+    `rating` FLOAT
 );
 
 CREATE TABLE `session` (
@@ -50,7 +50,7 @@ CREATE TABLE `seat` (
 CREATE TABLE `user` (
     `user_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
-    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `email` VARCHAR(255) UNIQUE,
     `phone` VARCHAR(25) NOT NULL UNIQUE,
     `registration_date` DATETIME NOT NULL
 );
@@ -64,7 +64,7 @@ CREATE TABLE `order` (
     `order_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `created_at` DATETIME NOT NULL,
-    status INTEGER NOT NULL,
+    `status` INTEGER NOT NULL,
     FOREIGN KEY (`user_id`) REFERENCES user(`user_id`),
     FOREIGN KEY (`status`) REFERENCES order_status(`status_id`)
 );

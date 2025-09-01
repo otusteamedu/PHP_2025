@@ -23,13 +23,15 @@ erDiagram
 		integer theatre_id FK ""  
 		varchar(100) name  ""  
 	}
+
 	user {
 		integer user_id PK ""  
 		varchar(255) name  ""  
-		varchar(255) email UK  ""  
+		varchar(255) email UK ""  
 		varchar(25) phone UK ""  
 		datetime registration_date  ""  
 	}
+
 	session {
 		integer session_id PK ""  
 		integer room_id FK ""  
@@ -37,20 +39,24 @@ erDiagram
 		datetime end_time  ""  
 		integer movie_id FK ""  
 	}
+
 	theatre {
 		integer theatre_id PK ""  
 		varchar(200) name  ""  
 		text location  ""  
 	}
+
 	order_status {
 		integer status_id  ""  
 		varchar(100) status_name  ""  
 	}
+
 	seat_type {
 		integer seat_type_id PK ""  
 		varchar(100) name  ""  
 		decimal price  ""  
 	}
+
 	movie {
 		integer movie_id PK ""  
 		varchar(255) movie_name  ""  
@@ -59,33 +65,38 @@ erDiagram
 		date release_date  ""  
 		float rating  ""  
 	}
+
 	order {
 		integer order_id PK ""  
 		integer user_id FK ""  
 		datetime created_at  ""  
 		integer status FK ""  
 	}
+
 	booking {
 		integer booking_id PK ""  
 		integer order_id FK ""  
 		integer session_id FK ""  
 		integer seat_id FK ""  
 	}
+
 	seat {
-		integer seat_id  ""  
+		integer seat_id PK ""  
 		integer room_id FK ""  
 		integer row_number  ""  
 		integer seat_number  ""  
 		integer seat_type_id FK ""  
 	}
-    user||--|{order:"  "
-    order||--|{booking:" "
-    order}|--||order_status:"  "
-    session}o--||room:"  "
+
+	user||--|{order:"  "
+	order||--|{booking:" "
+	order}|--||order_status:"  "
+	session}o--||room:"  "
 	session||--o{booking:"  "
 	booking}o--||seat:" "
-	seat}|--|{seat_type:"  "
+	seat}|--||seat_type:"  "
 	seat}|--||room:"  "
-	theatre}|--||room:"  "
+	theatre||--|{room:"  "
 	movie||--|{session:"  "
+
 ```
