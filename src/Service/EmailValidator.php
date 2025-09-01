@@ -16,7 +16,7 @@ class EmailValidator
     private const EMAIL_MAX_LENGTH = 254;
 
     /**
-     * Проверяет email на корректность синтаксиса и наличие MX записей
+     * Проверяет email на корректность формата, длину и наличие MX записей
      *
      * @param string $email Email адрес для проверки
      * @return ValidationResult Результат проверки email
@@ -28,6 +28,7 @@ class EmailValidator
             return new ValidationResult($email, false, "Email is empty");
         }
 
+        //Не обязательно, но зато ошибка будет читаемая
         if (!$this->checkLength($inputEmail)) {
             return new ValidationResult($email, false, "Email is longer than " . self::EMAIL_MAX_LENGTH . " characters");
         }
