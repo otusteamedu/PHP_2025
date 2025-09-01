@@ -71,7 +71,7 @@ erDiagram
 		integer session_id FK ""  
 		integer seat_id FK ""  
 	}
-	rowseat {
+	seat {
 		integer seat_id  ""  
 		integer room_id FK ""  
 		integer row_number  ""  
@@ -83,9 +83,9 @@ erDiagram
     order}|--||order_status:"  "
     session}o--||room:"  "
 	session||--o{booking:"  "
-	booking}o--||rowseat:" "
-	rowseat}|--|{seat_type:"  "
-	rowseat}|--||room:"  "
+	booking}o--||seat:" "
+	seat}|--|{seat_type:"  "
+	seat}|--||room:"  "
 	theatre}|--||room:"  "
 	movie||--|{session:"  "
 ```

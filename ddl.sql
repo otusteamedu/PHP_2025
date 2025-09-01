@@ -36,7 +36,7 @@ CREATE TABLE `seat_type` (
     `price` DECIMAL NOT NULL
 );
 
-CREATE TABLE `rowseat` (
+CREATE TABLE `seat` (
     `seat_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `room_id` INTEGER NOT NULL,
     `row_number` INTEGER NOT NULL,
@@ -76,6 +76,6 @@ CREATE TABLE `booking` (
     `seat_id` INTEGER NOT NULL,
     FOREIGN KEY (`order_id`) REFERENCES `order`(`order_id`) ON DELETE CASCADE,
     FOREIGN KEY (`session_id`) REFERENCES `session`(`session_id`),
-    FOREIGN KEY (`seat_id`) REFERENCES `rowseat`(`seat_id`),
-    UNIQUE (`session_id`, `seat_id`) -- Ограничение: одно место не может быть забронировано дважды
+    FOREIGN KEY (`seat_id`) REFERENCES `seat`(`seat_id`),
+    UNIQUE (`session_id`, `seat_id`)
 );

@@ -3,8 +3,8 @@ LEFT JOIN `session` ON movie.movie_id = session.movie_id
 
 LEFT JOIN (
 	SELECT booking.session_id, SUM(seat_type.price) AS session_proceedings FROM booking
-		LEFT JOIN rowseat ON rowseat.seat_id = booking.seat_id
-		LEFT JOIN seat_type ON seat_type.seat_type_id = rowseat.seat_type_id
+		LEFT JOIN seat ON seat.seat_id = booking.seat_id
+		LEFT JOIN seat_type ON seat_type.seat_type_id = seat.seat_type_id
 		LEFT JOIN `order` ON `order`.order_id = booking.order_id
 	WHERE `order`.`status` = 2
 	GROUP BY session_id
