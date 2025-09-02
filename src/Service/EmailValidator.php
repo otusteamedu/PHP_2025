@@ -15,6 +15,12 @@ class EmailValidator
      */
     private const EMAIL_MAX_LENGTH = 254;
 
+    private FormatterInterface $formatter;
+
+    public function __construct() {
+        $this->formatter = new EmailResultFormatter();
+    }
+
     /**
      * Проверяет email на корректность формата, длину и наличие MX записей
      *
@@ -74,9 +80,11 @@ class EmailValidator
      * Проверяет массив email адресов на валидность
      * 
      * @param array $emailsArray Массив email адресов для проверки
-     * @return array<ValidationResult> Массив результатов проверки email
+     * @param bool $formatResult Переменная определяющая в каком виде возвращать результат - массив ValidationResult или отформатированная строка готовая к выводу с результатами валидации
+     * @return array|ResultInterface[]|string Массив ValidationResult или отформатированная строка. Тип зависит от значения $formatResult.
+     *
      */
-    public function verifyEmails(array $emailsArray): array
+    public function verifyEmails(array $emailsArray, bool $formatResult = false): array|string
     {
 
         if (empty($emailsArray)) {
@@ -88,6 +96,25 @@ class EmailValidator
             $returnArray[] = $this->verifyEmail($email);
         }
 
+        if ($formatResult) {
+            return $this->format($returnArray);
+        }
+
         return $returnArray;
+    }
+
+    private function format(array $array): string 
+    {
+        return $this->formatter->format($array);
+    }
+
+
+    /**
+     * @param FormatterInterface $formatter Экземпляр класса, реализующего FormatterInterface
+     * @return void
+     */
+    public function setFormatter(FormatterInterface $formatter): void
+    {
+        $this->formatter = $formatter;
     }
 }

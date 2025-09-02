@@ -21,12 +21,5 @@ $emailsToCheck = [
     'test@..gmail.com',
 ];
 
-$validationResults = $emailValidator->verifyEmails($emailsToCheck);
-foreach ($validationResults as $result) {
-    echo $result->getInputValue() . " is " . ($result->isValid() ? "valid" : "invalid");
-    if (!$result->isValid()) {
-        echo ", Error message:" . $result->getError();
-    }
-    echo "<br>";
-}
+echo $validationResults = $emailValidator->verifyEmails($emailsToCheck, true);
 
