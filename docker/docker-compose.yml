@@ -20,11 +20,9 @@ services:
   elasticsearch:
     image: elasticsearch:9.1.0
     container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms1g -Xmx1g
     volumes:
+      - ../docker/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ../docker/es/config/jvm.options:/usr/share/elasticsearch/config/jvm.options
       - ../docker/_data/es:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
