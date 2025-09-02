@@ -37,15 +37,6 @@ $emails = [
     'invalid.email', //Invalid Email - Invalid email format
     'no-mx@nomxdomain.org' // Invalid Email - No MX records found for email domain
 ];
-$results = $validator->verifyEmails($emails);
-
-$validationResults = $validator->verifyEmails($emailsToCheck);
-foreach ($validationResults as $result) {
-    echo $result->getInputValue() . " is " . ($result->isValid() ? "valid" : "invalid");
-    if (!$result->isValid()) {
-        echo ", Error message:" . $result->getError();
-    }
-    echo "\n";
-}
-
+//Передача второго параметра в значении true, приведет к выводу html разметки (поведение по умолчанию)
+echo $validationResults = $validator->verifyEmails($emailsToCheck, true);
 ```
