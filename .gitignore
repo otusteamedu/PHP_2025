@@ -5,4 +5,4 @@
 .LSOverride
 
 /docker/_data/
-/docker/_log/
+/docker/_logs/

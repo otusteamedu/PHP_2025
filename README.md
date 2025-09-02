@@ -17,17 +17,21 @@
 1. Сначала создайте индекс и загрузите данные
 
 ```bash
-docker exec app php src/init
+docker exec app php src/console.php --init
 ```
+> Можно задать имя индекса через опцию *--index-name*:
+> ```bash
+> docker exec app php src/console.php --init --index-name "myindexname"
+> ```
 
 2. Для поиска книг используйте команду
 
 ```bash
-docker exec app php src/console -q "<запрос>" -c "<категория>" -p <цена>
+docker exec app php src/console.php --search -q "<запрос>" -c "<категория>" -p <цена>
 ```
 или
 ```bash
-docker exec app php src/console --query "<запрос>" --category "<категория>" --price <цена>
+docker exec app php src/console.php --search --query "<запрос>" --category "<категория>" --price <цена>
 ```
 
 ### Примеры использования:
@@ -35,17 +39,17 @@ docker exec app php src/console --query "<запрос>" --category "<катег
 - Поиск всех исторических романов дешевле 2000 рублей по запросу "рыцОри":
 
 ```bash
-docker exec app php src/console -q "рыцОри" -c "Исторический роман" -p 2000
+docker exec app php src/console.php --search -q "рыцОри" -c "Исторический роман" -p 2000
 ```
 
 - Поиск всех книг о рептилоидах:
 
 ```bash
-docker exec app php src/console -q "рептилоиды"
+docker exec app php src/console.php --search -q "рептилоиды"
 ```
 
 - Поиск детективов с наличием не менее 5 экземпляров:
 
 ```bash
-docker exec app php src/console -q "преступления" -c "Детектив" -m 5
+docker exec app php src/console.php --search -q "преступления" -c "Детектив" -m 5
 ```
