@@ -1,15 +1,11 @@
-SELECT movie.movie_id, movie.movie_name, SUM(sum_by_session.session_proceedings) AS movie_total FROM movie
-LEFT JOIN `session` ON movie.movie_id = session.movie_id
-
-LEFT JOIN (
-	SELECT booking.session_id, SUM(seat_type.price) AS session_proceedings FROM booking
-		LEFT JOIN seat ON seat.seat_id = booking.seat_id
-		LEFT JOIN seat_type ON seat_type.seat_type_id = seat.seat_type_id
-		LEFT JOIN `order` ON `order`.order_id = booking.order_id
-	WHERE `order`.`status` = 2
-	GROUP BY session_id
-) sum_by_session ON sum_by_session.session_id = session.session_id
-
+SELECT movie.movie_name, SUM(booking.booking_price) AS movie_proceedings FROM `booking`
+	LEFT JOIN `session` ON `booking`.session_id = `session`.session_id
+	LEFT JOIN `movie` ON `session`.movie_id = `movie`.movie_id
+	RIGHT JOIN (
+		SELECT `order`.order_id as order_id FROM `order`
+		LEFT JOIN order_status ON order_status.order_status_id = `order`.order_status_id
+		WHERE order_status.status_name = 'Оплачен'
+	) as payed_orders ON payed_orders.order_id = booking.order_id
 GROUP BY movie.movie_id
-ORDER BY movie_total DESC
+ORDER BY movie_proceedings DESC
 LIMIT 1

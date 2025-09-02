@@ -26,6 +26,7 @@ CREATE TABLE `session` (
     `movie_id` INTEGER NOT NULL,
     `start_time` DATETIME NOT NULL,
     `end_time` DATETIME NOT NULL,
+    `base_price` DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (`room_id`) REFERENCES `room`(`room_id`),
     FOREIGN KEY (`movie_id`) REFERENCES `movie`(`movie_id`)
 );
@@ -33,7 +34,7 @@ CREATE TABLE `session` (
 CREATE TABLE `seat_type` (
     `seat_type_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
-    `price` DECIMAL NOT NULL
+    `price_modifier` DECIMAL(4,2) NOT NULL
 );
 
 CREATE TABLE `seat` (
@@ -56,7 +57,7 @@ CREATE TABLE `user` (
 );
 
 CREATE TABLE `order_status` (
-    `status_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `order_status_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `status_name` VARCHAR(100) NOT NULL
 );
 
@@ -64,9 +65,10 @@ CREATE TABLE `order` (
     `order_id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `created_at` DATETIME NOT NULL,
-    `status` INTEGER NOT NULL,
+    `order_status_id` INTEGER NOT NULL,
+    `order_total_price` DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (`user_id`) REFERENCES user(`user_id`),
-    FOREIGN KEY (`status`) REFERENCES order_status(`status_id`)
+    FOREIGN KEY (`order_status_id`) REFERENCES order_status(`order_status_id`)
 );
 
 CREATE TABLE `booking` (
@@ -74,6 +76,7 @@ CREATE TABLE `booking` (
     `order_id` INTEGER NOT NULL,
     `session_id` INTEGER NOT NULL,
     `seat_id` INTEGER NOT NULL,
+    `booking_price` DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (`order_id`) REFERENCES `order`(`order_id`) ON DELETE CASCADE,
     FOREIGN KEY (`session_id`) REFERENCES `session`(`session_id`),
     FOREIGN KEY (`seat_id`) REFERENCES `seat`(`seat_id`),

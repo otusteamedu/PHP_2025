@@ -38,6 +38,7 @@ erDiagram
 		datetime start_time  ""  
 		datetime end_time  ""  
 		integer movie_id FK ""  
+		decimal(10, 2) base_price
 	}
 
 	theatre {
@@ -47,14 +48,14 @@ erDiagram
 	}
 
 	order_status {
-		integer status_id  ""  
+		integer order_status_id PK ""  
 		varchar(100) status_name  ""  
 	}
 
 	seat_type {
 		integer seat_type_id PK ""  
 		varchar(100) name  ""  
-		decimal price  ""  
+		decimal (10,2) price_modifier 
 	}
 
 	movie {
@@ -70,7 +71,8 @@ erDiagram
 		integer order_id PK ""  
 		integer user_id FK ""  
 		datetime created_at  ""  
-		integer status FK ""  
+		integer order_status_id FK ""  
+		decimal(10,2) order_total_price 
 	}
 
 	booking {
@@ -78,6 +80,7 @@ erDiagram
 		integer order_id FK ""  
 		integer session_id FK ""  
 		integer seat_id FK ""  
+		decimal(10,2) booking_price 
 	}
 
 	seat {
