@@ -1,3 +1,38 @@
-# PHP_2025
+# Работа с очередью
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+## Инструкция по запуску
+
+1. Клонировать проект 
+```
+git clone ...
+```
+
+2. Перейти в директорию проекта
+```
+cd <директория проекта>
+```
+
+3. Установить зависимости
+```
+composer install
+```
+
+4. Поднять в докере php-fpm, nginx, rabbitmq
+```
+docker compose up -d
+```
+
+5. В браузере зайти на localhost, заполнить и отправить форму (электронное письмо придет на введенный email)
+
+6. Зайти в контейнер php и запустить скрипт-ресивер: 
+``` 
+docker exec -it php-phpapp bash  
+php receive.php
+```
+
+7. После отработки ресивера на введенный email придет сообщение
+
+8. Остановить и удалить контейнеры
+```
+docker compose down
+```
