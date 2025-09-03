@@ -21,11 +21,11 @@ class CheckBracket
             $arResult["bError"] = false;
             $arResult["iCharQuantity"] = $iSmileQuantity;
 
+
         }else{
             $arResult["bError"] = true;
             $arResult["bErrorDescription"] = "Колличество '(' и ')' разное";
         }
-
 
         return $arResult;
 
