@@ -24,6 +24,23 @@ try {
     $dbInfo = "Failed to connect to database: " . $e->getMessage();
 }
 
+function validate_brackets(string $brackets): bool
+{
+    $countOpenBrackets = preg_match_all("/\(/u", $brackets);
+    $countCloseBrackets = preg_match_all("/\)/u", $brackets);
+    return $countOpenBrackets === $countCloseBrackets;
+}
+
+$string = $_POST['string'] ?? false;
+$stringValidationMessage = null;
+if ($string) {
+    if (!validate_brackets($string)) {
+        http_response_code(400);
+        $stringValidationMessage = "Invalid string value";
+    }else {
+        $stringValidationMessage = "Success";
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -48,5 +65,10 @@ endif; ?>
 <p>
     DB Version: <?= $dbInfo ?>
 </p>
+<form method="post">
+    <label>String: <input type="text" value="<?=htmlentities($string)?>" name="string"></label>
+    <button type="submit">Submit</button>
+</form>
+<?=$stringValidationMessage?>
 </body>
 </html>
