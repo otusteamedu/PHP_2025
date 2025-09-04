@@ -22,11 +22,23 @@ class PostRequestValidator implements RequestValidatorInterface {
             return ['error' => 'Invalid CSRF token', 'status' => 403];
         }
 
-        $emails = $_POST['emails'] ?? [];
+        $emails = $this->parseEmails($_POST['emails']) ?? [];
+
         if (!is_array($emails) || empty($emails)) {
             return ['error' => 'No emails provided', 'status' => 400];
         }
 
         return ['emails' => $emails, 'status' => 200];
+    }
+
+    function parseEmails(string $input): array
+    {
+        // Разбиваем по переводам строки
+        $lines = preg_split('/\r\n|\r|\n/', $input);
+
+        // Чистим пробелы и фильтруем пустые
+        return array_filter(array_map('trim', $lines), function ($email) {
+            return !empty($email);
+        });
     }
 }
