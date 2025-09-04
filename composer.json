@@ -1,0 +1,9 @@
+{
+  "autoload": {
+    "psr-4": {"project\\": "app/"}
+  },
+  "require": {
+    "predis/predis": "^3.2",
+    "vlucas/phpdotenv": "^1."
+  }
+}
