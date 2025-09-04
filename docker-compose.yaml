@@ -1,25 +1,60 @@
 services:
-  nginx:
+
+  nginx-load-balancer:
+    build:
+      context: .docker/nginx-load-balancer
+      dockerfile: Dockerfile
+    image: igainutdinov/nginx-load-balancer
+    ports:
+      - "80:80"
+    depends_on:
+      - nginx-1
+      - nginx-2
+
+  nginx-1:
     build:
       context: .docker/nginx
       dockerfile: Dockerfile
-    image: igainutdinov/nginx
-    ports:
-      - "80:80"
+    image: igainutdinov/nginx-worker-1
+    environment:
+      FPM_HOST: "php-fpm-1"
     volumes:
-      - php-fpm-sock:/var/run/php
       - ./application:/var/www/html
     depends_on:
-      - php-fpm
+      - php-fpm-1
 
-  php-fpm:
+  php-fpm-1:
     build:
       context: .docker/php-fpm
       dockerfile: Dockerfile
     env_file: .env
     image: igainutdinov/php-fpm
     volumes:
-      - php-fpm-sock:/var/run/php
+      - ./application:/var/www/html
+    depends_on:
+      - memcached
+      - redis
+      - database
+
+  nginx-2:
+    build:
+      context: .docker/nginx
+      dockerfile: Dockerfile
+    image: igainutdinov/nginx
+    volumes:
+      - ./application:/var/www/html
+    environment:
+      FPM_HOST: "php-fpm-2"
+    depends_on:
+      - php-fpm-2
+
+  php-fpm-2:
+    build:
+      context: .docker/php-fpm
+      dockerfile: Dockerfile
+    env_file: .env
+    image: igainutdinov/php-fpm
+    volumes:
       - ./application:/var/www/html
     depends_on:
       - memcached
@@ -48,6 +83,5 @@ services:
 
 
 volumes:
-  php-fpm-sock:
   redis-data:
   database-data:

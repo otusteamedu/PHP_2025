@@ -1,7 +1,6 @@
 FROM php:8.4-fpm-alpine
 
 COPY ./conf.d "$PHP_INI_DIR/conf.d"
-COPY ./zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime  \
     && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"

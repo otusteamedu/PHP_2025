@@ -1,7 +1,7 @@
 FROM nginx:alpine
 
 RUN rm /etc/nginx/conf.d/default.conf
-COPY template-conf.d /etc/nginx/templates
+COPY ./conf.d /etc/nginx/conf.d
 
 WORKDIR /var/www/html
 
