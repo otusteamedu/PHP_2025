@@ -1,0 +1,7 @@
+services:
+  redis:
+    image: redis:latest
+    volumes:
+      - .:/data
+    ports:
+      - "6379:6379"
