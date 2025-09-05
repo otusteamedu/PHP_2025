@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  php-fpm:
+    image: php:8.2-fpm
+    container_name: php-phpapp
+    env_file: .env
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-phpapp
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php-fpm
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0.15
+    env_file: .env
+    command: 
+      --init-file /init.sql
+    volumes:
+      - data:/var/lib/mysql
+      - ./init.sql:/init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data:

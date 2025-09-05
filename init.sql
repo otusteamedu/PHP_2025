@@ -1,0 +1,16 @@
+CREATE database api;
+USE api;
+
+CREATE TABLE users ( 
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	email VARCHAR(100) NOT NULL,
+	password VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE todos ( 
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+	content VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT todos_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id)
+) ENGINE=InnoDB;
