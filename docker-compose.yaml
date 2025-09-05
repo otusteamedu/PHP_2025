@@ -1,0 +1,87 @@
+services:
+
+  nginx-load-balancer:
+    build:
+      context: .docker/nginx-load-balancer
+      dockerfile: Dockerfile
+    image: igainutdinov/nginx-load-balancer
+    ports:
+      - "80:80"
+    depends_on:
+      - nginx-1
+      - nginx-2
+
+  nginx-1:
+    build:
+      context: .docker/nginx
+      dockerfile: Dockerfile
+    image: igainutdinov/nginx-worker-1
+    environment:
+      FPM_HOST: "php-fpm-1"
+    volumes:
+      - ./application:/var/www/html
+    depends_on:
+      - php-fpm-1
+
+  php-fpm-1:
+    build:
+      context: .docker/php-fpm
+      dockerfile: Dockerfile
+    env_file: .env
+    image: igainutdinov/php-fpm
+    volumes:
+      - ./application:/var/www/html
+    depends_on:
+      - memcached
+      - redis
+      - database
+
+  nginx-2:
+    build:
+      context: .docker/nginx
+      dockerfile: Dockerfile
+    image: igainutdinov/nginx
+    volumes:
+      - ./application:/var/www/html
+    environment:
+      FPM_HOST: "php-fpm-2"
+    depends_on:
+      - php-fpm-2
+
+  php-fpm-2:
+    build:
+      context: .docker/php-fpm
+      dockerfile: Dockerfile
+    env_file: .env
+    image: igainutdinov/php-fpm
+    volumes:
+      - ./application:/var/www/html
+    depends_on:
+      - memcached
+      - redis
+      - database
+
+  memcached:
+    image: memcached:alpine
+    command: memcached -m 64 -p 11211 -u memcache
+
+  redis:
+    image: redis:alpine
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+
+  database:
+    image: mariadb:12-ubi
+    volumes:
+      - database-data:/var/lib/mysql
+    environment:
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+
+
+
+volumes:
+  redis-data:
+  database-data:
