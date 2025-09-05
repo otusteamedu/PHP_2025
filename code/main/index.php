@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/App.php';
-
+require_once __DIR__ . '/../App.php';
 
 use Dkeruntu\OtusHomeWorkFourCheckBracket\App;
 

@@ -2,7 +2,7 @@ server {
     listen 80;
     server_name localhost;
 
-    root /var/www/html;
+    root /var/www/html/main;
     index index.php index.html;
 
     location ~* \.(jpg|jpeg|gif|css|png|js|ico|html)$ {
@@ -21,7 +21,7 @@ server {
         try_files $uri = 404;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         fastcgi_pass  ${PHP_FPM_HOST};
-        fastcgi_index index.php;
+        fastcgi_index /index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         
         fastcgi_param HTTP_X_BALANCER_CONTAINER $http_x_balancer_container;
