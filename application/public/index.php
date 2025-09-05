@@ -1,7 +1,11 @@
 <?php
 
-session_start();
-$sessionId = session_id();
+use App\Base\Application;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$app = Application::getInstance();
+$app->run();
 
 $lastVisit = $_SESSION['LAST_VISIT'] ?? null;
 $_SESSION['LAST_VISIT'] = date(DATE_ATOM);
@@ -37,7 +41,7 @@ if ($string) {
     if (!validate_brackets($string)) {
         http_response_code(400);
         $stringValidationMessage = "Invalid string value";
-    }else {
+    } else {
         $stringValidationMessage = "Success";
     }
 }
@@ -47,7 +51,7 @@ if ($string) {
 <html lang="ru">
 <head>
     <title><?= "Hello World!" ?></title>
-    <link rel="icon" type="image/i-icon" href="images/favicon.svg">
+    <link rel="icon" type="image/i-icon" href="favicon.svg">
 </head>
 <body>
 <h1>Hello World!</h1>
@@ -66,9 +70,9 @@ endif; ?>
     DB Version: <?= $dbInfo ?>
 </p>
 <form method="post">
-    <label>String: <input type="text" value="<?=htmlentities($string)?>" name="string"></label>
+    <label>String: <input type="text" value="<?= htmlentities($string) ?>" name="string"></label>
     <button type="submit">Submit</button>
 </form>
-<?=$stringValidationMessage?>
+<?= $stringValidationMessage ?>
 </body>
 </html>

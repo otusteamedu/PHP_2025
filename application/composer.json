@@ -1,0 +1,16 @@
+{
+  "name": "igainutdinov/example-application",
+  "version": "0.0.1",
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "App\\Base\\": "base/"
+    }
+  },
+  "require": {
+    "psr/container": "@stable",
+    "psr/cache": "@stable",
+    "psr/log": "@stable",
+    "ext-pdo": "*"
+  }
+}
