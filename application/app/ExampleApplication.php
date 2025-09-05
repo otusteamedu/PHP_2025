@@ -31,4 +31,8 @@ class ExampleApplication implements ApplicationInterface
             },
         ];
     }
+
+    public function boot(): void
+    {
+    }
 }

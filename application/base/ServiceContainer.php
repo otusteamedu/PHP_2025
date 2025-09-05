@@ -2,8 +2,8 @@
 
 namespace App\Base;
 
-use App\Base\Exceptions\NotFoundException;
 use App\Base\Exceptions\ServiceContainerException;
+use App\Base\Exceptions\ServiceContainerNotFoundException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -53,7 +53,7 @@ final class ServiceContainer implements ContainerInterface
     public function get(string $id): object
     {
         if (!$this->has($id)) {
-            throw new NotFoundException("Service '$id' not found");
+            throw new ServiceContainerNotFoundException("Service '$id' not found");
         }
         $instance = $this->instances[$id] ?? false;
         if (!$instance) {
@@ -114,13 +114,11 @@ final class ServiceContainer implements ContainerInterface
 
         $params = [];
         foreach ($reflectionCallable->getParameters() as $param) {
-            if ($param->getType()->isBuiltin() && $param->isDefaultValueAvailable()) {
+            if ($param->isDefaultValueAvailable()) {
                 continue;
-            }
-            $typeName = $param->getType()->getName();
-            if ((!$this->has($typeName) && !$param->isDefaultValueAvailable()) || !class_exists($typeName)) {
+            } elseif ($param->getType()->isBuiltin()) {
                 throw new ServiceContainerException(
-                    "Can't resolve the parameter '{$param->getName()}' of '{$callable}'"
+                    "Can't resolve the parameter '{$param->getType()} {$param->getName()}' of '{$callable}'"
                 );
             }
             $params[$param->getName()] = $param->getType()->getName();
@@ -131,6 +129,7 @@ final class ServiceContainer implements ContainerInterface
 
     /**
      * @param class-string $class
+     * @return object $class
      */
     public function make(string $class): object
     {

@@ -2,19 +2,25 @@
 
 namespace App\Controllers;
 
-use App\Database;
-use PDOException;
+use App\Base\Views\ViewManager;
+use App\Services\ValidateBracketService;
 
 class IndexController
 {
-    public function index(Database $database): void
+    public function __construct(
+        protected ValidateBracketService $bracketService,
+        protected ViewManager $viewManager,
+    ) {
+    }
+
+    public function index(): void
     {
-        try {
-            $queryResult = $database->query('SELECT VERSION();');
-            $dbInfo = var_export($queryResult, true);
-        } catch (PDOException $e) {
-            $dbInfo = $e->getMessage();
+        $string = $_POST['string'] ?? '';
+        $message = '';
+        if (!$this->bracketService->validate($string)) {
+            http_response_code(400);
+            $message = 'Скобки не валидны.';
         }
-        echo "hello";
+        $this->viewManager->renderTemplate('index.html', compact('string', 'message'));
     }
 }

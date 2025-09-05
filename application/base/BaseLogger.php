@@ -1,55 +1,34 @@
 <?php
 
-use Psr\Log\LoggerInterface;
+namespace App\Base;
 
-class BaseLogger implements LoggerInterface
+use Psr\Log\AbstractLogger;
+use Stringable;
+
+class BaseLogger extends AbstractLogger
 {
-    public function __construct(string $path)
+    public function __construct(protected ?string $path = null)
     {
-    }
-
-    public function emergency(Stringable|string $message, array $context = []): void
-    {
-        // TODO: Implement emergency() method.
-    }
-
-    public function alert(Stringable|string $message, array $context = []): void
-    {
-        // TODO: Implement alert() method.
-    }
-
-    public function critical(Stringable|string $message, array $context = []): void
-    {
-        // TODO: Implement critical() method.
-    }
-
-    public function error(Stringable|string $message, array $context = []): void
-    {
-        // TODO: Implement error() method.
-    }
-
-    public function warning(Stringable|string $message, array $context = []): void
-    {
-        // TODO: Implement warning() method.
-    }
-
-    public function notice(Stringable|string $message, array $context = []): void
-    {
-        // TODO: Implement notice() method.
-    }
-
-    public function info(Stringable|string $message, array $context = []): void
-    {
-        // TODO: Implement info() method.
-    }
-
-    public function debug(Stringable|string $message, array $context = []): void
-    {
-        // TODO: Implement debug() method.
+        if (!$this->path) {
+            $this->path = __DIR__ . '/../logs/application.log';
+        }
     }
 
     public function log($level, Stringable|string $message, array $context = []): void
     {
+        $message = $this->interpolate($message, $context);
+        $messageString = '[' . date(DATE_RFC3339) . '] ' . strtoupper($level) . ': ' . $message . PHP_EOL;
+        file_put_contents($this->path, $messageString, FILE_APPEND);
+    }
 
+    private function interpolate(string $message, array $context = []): string
+    {
+        $replace = [];
+        foreach ($context as $key => $val) {
+            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
+                $replace['{' . $key . '}'] = $val;
+            }
+        }
+        return strtr($message, $replace);
     }
 }

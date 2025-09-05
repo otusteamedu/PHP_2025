@@ -32,9 +32,6 @@ final class Routing
         $this->routes[$path] = $callback;
     }
 
-    /**
-     * @throws ReflectionException
-     */
     public function dispatch(): void
     {
         $action = $this->getAction();
@@ -54,7 +51,12 @@ final class Routing
             }
             $action = [$object, $method];
         }
-        ServiceContainer::getInstance()->call($action);
+        try {
+            ServiceContainer::getInstance()->call($action);
+        } catch (ReflectionException $e) {
+            $serviceContainer->make(BaseLogger::class)->error($e);
+            http_response_code(500);
+        }
     }
 
     public function getAction(?string $path = null): callable|string|array|null

@@ -3,9 +3,8 @@
 namespace App\Base;
 
 use InvalidArgumentException;
-use ReflectionException;
 
-final class Application
+final class BaseApplication
 {
     private static ?self $app = null;
     private Routing $routing;
@@ -19,22 +18,25 @@ final class Application
         $this->routing = new Routing();
     }
 
-
-    /**
-     * @throws ReflectionException
-     */
-    public function run(): never
+    public function run(): void
     {
         $this->boot();
         $this->routing->dispatch();
-        exit();
     }
+
 
     private function boot(): void
     {
+        $this->setErrorHandling();
         $this->bootApplications();
         $this->bootServiceContainer();
         $this->bootRoutes();
+    }
+
+    private function setErrorHandling(): void
+    {
+        set_error_handler([ErrorHandler::class, 'handleError']);
+        set_exception_handler([ErrorHandler::class, 'handleException']);
     }
 
     private function bootApplications(): void
@@ -44,7 +46,9 @@ final class Application
             if (!is_a($application, ApplicationInterface::class, true)) {
                 throw new InvalidArgumentException('Application class must implement ' . ApplicationInterface::class);
             }
-            $this->applications[] = new $application();
+            $applicationObject = new $application();
+            $applicationObject->boot();
+            $this->applications[] = $applicationObject;
         }
     }
 
@@ -62,7 +66,7 @@ final class Application
     public static function getInstance(): self
     {
         if (!self::$app) {
-            self::$app = new Application();
+            self::$app = new BaseApplication();
         }
 
         return self::$app;

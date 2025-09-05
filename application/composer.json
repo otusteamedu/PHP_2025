@@ -10,7 +10,9 @@
   "require": {
     "psr/container": "@stable",
     "psr/cache": "@stable",
+    "psr/http-message": "@stable",
     "psr/log": "@stable",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-mbstring": "*"
   }
 }
