@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Helpers\HttpHelper;
 use App\Services\UserService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -16,22 +17,38 @@ class AuthController
 
         $email = filter_var($parsedBody['email'], FILTER_VALIDATE_EMAIL);
         if ($email === false) {
-            $payload = json_encode(['message' => 'Невалидный email']);
-            $response->getBody()->write($payload);
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+            return HttpHelper::send400Error('Невалидный email', $response);
         }
 
         $password = htmlspecialchars($parsedBody['password']);
         if (strlen($password) < 3) {
-            $payload = json_encode(['message' => 'Пароль должен быть не менее 3 символов']);
-            $response->getBody()->write($payload);
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+            return HttpHelper::send400Error('Пароль должен быть не менее 3 символов', $response);
         }
 
         $jwt = $this->userService->registerUser($email, $password);
 
-        $payload = json_encode(['jwt' => $jwt]);
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
+        return HttpHelper::sendData(['jwt' => $jwt], $response);
+    }
+
+    public function login(Request $request, Response $response, $args)
+    {
+        $parsedBody = $request->getParsedBody();
+
+        $email = filter_var($parsedBody['email'], FILTER_VALIDATE_EMAIL);
+        if ($email === false) {
+            return HttpHelper::send400Error('Невалидный email', $response);
+        }
+
+        $password = htmlspecialchars($parsedBody['password']);
+        if (strlen($password) < 3) {
+            return HttpHelper::send400Error('Пароль должен быть не менее 3 символов', $response);
+        }
+
+        $jwt = $this->userService->loginUser($email, $password);
+        if ($jwt === '') {
+            return HttpHelper::send400Error('Неверные email/пароль', $response);
+        }
+
+        return HttpHelper::sendData(['jwt' => $jwt], $response);
     }
 }

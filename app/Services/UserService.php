@@ -3,33 +3,36 @@
 namespace App\Services;
 
 use App\Repositories\UserRepository;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 class UserService
 {
-    public function __construct(private UserRepository $repository) {}
+    public function __construct(
+        private UserRepository $repository,
+        private JwtService $jwtService
+    ) {}
 
     public function registerUser(string $email, string $password): string
     {
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);;
-        $userId = $this->repository->saveUser($email, $passwordHash);
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $userId = $this->repository->save($email, $passwordHash);
 
-        $jwt = $this->getJwt($userId);
+        $jwt = $this->jwtService->getJwt($userId);
         return $jwt;
     }
 
-    private function getJwt(int $userId): string
+    public function loginUser(string $email, string $password): string
     {
-        $key = getenv('JWT_KEY');
-        $url = getenv('APP_URL');
+        $user = $this->repository->getByEmail($email);
 
-        $payload = [
-            'iss' => $url,
-            'userId' => $userId,
-        ];
+        if (!$user) {
+            return '';
+        }
 
-        $jwt = JWT::encode($payload, $key, 'HS256');
+        if (!password_verify($password, $user['password'])) {
+            return '';
+        }
+
+        $jwt = $this->jwtService->getJwt($user['id']);
         return $jwt;
     }
 }

@@ -3,7 +3,11 @@
 use App\Controllers\AuthController;
 use App\Controllers\TodoController;
 use App\Middlewares\JsonBodyParserMiddleware;
+use App\Middlewares\JwtMiddleware;
+use App\Repositories\TodoRepository;
 use App\Repositories\UserRepository;
+use App\Services\JwtService;
+use App\Services\TodoService;
 use App\Services\UserService;
 use DI\Container;
 use Psr\Container\ContainerInterface;
@@ -35,13 +39,28 @@ $container->set(PDO::class, function () {
 $container->set(UserRepository::class, function (ContainerInterface $container) {
     return new UserRepository($container->get(PDO::class));
 });
+$container->set(TodoRepository::class, function (ContainerInterface $container) {
+    return new TodoRepository($container->get(PDO::class));
+});
+$container->set(JwtService::class, function (ContainerInterface $container) {
+    return new JwtService();
+});
 $container->set(UserService::class, function (ContainerInterface $container) {
-    return new UserService($container->get(UserRepository::class));
+    return new UserService($container->get(UserRepository::class), $container->get(JwtService::class));
+});
+$container->set(TodoService::class, function (ContainerInterface $container) {
+    return new TodoService($container->get(TodoRepository::class));
 });
 
 $app->add(JsonBodyParserMiddleware::class);
 
-$app->get('/todos', [TodoController::class, 'index']);
 $app->post('/register', [AuthController::class, 'register']);
+$app->post('/login', [AuthController::class, 'login']);
+
+$app->get('/todos', [TodoController::class, 'index'])->add(JwtMiddleware::class);
+$app->get('/todos/{id}', [TodoController::class, 'show'])->add(JwtMiddleware::class);
+$app->post('/todos', [TodoController::class, 'store'])->add(JwtMiddleware::class);
+$app->patch('/todos/{id}', [TodoController::class, 'update'])->add(JwtMiddleware::class);
+$app->delete('/todos/{id}', [TodoController::class, 'delete'])->add(JwtMiddleware::class);
 
 $app->run();
