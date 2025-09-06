@@ -20,6 +20,7 @@ final class RequestProcessingService
         sleep($processingTime);
 
         // генерируем результат
+        $processedAt = (new DateTimeImmutable())->format('Y-m-d H:i:s');
         $result = sprintf(
             "Request processed successfully\n" .
             "ID: %s\n" .
@@ -31,7 +32,7 @@ final class RequestProcessingService
             $request->data(),
             $request->priority()->value(),
             $processingTime,
-            new DateTimeImmutable()->format('Y-m-d H:i:s')
+            $processedAt
         );
 
         return $result;
