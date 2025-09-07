@@ -1,0 +1,300 @@
+openapi: 3.0.0
+info:
+  title: 'Todo API'
+  version: '1.0'
+paths:
+  /api/v1/register:
+    post:
+      tags:
+        - Auth
+      description: 'Register new user'
+      operationId: bd446f7535b190c5b961da849c9cdf3e
+      requestBody:
+        description: 'User registration data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: secret123
+              type: object
+      responses:
+        '200':
+          description: 'Registration successful'
+          content:
+            application/json:
+              schema:
+                properties:
+                  jwt: { type: string, example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9... }
+                type: object
+        '400':
+          description: 'Validation error'
+          content:
+            application/json:
+              schema:
+                properties:
+                  error: { type: string, example: 'Невалидный email' }
+                type: object
+  /api/v1/login:
+    post:
+      tags:
+        - Auth
+      description: 'User login'
+      operationId: 1085c0d328f1bd27eb9114d103f19135
+      requestBody:
+        description: 'User login credentials'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: secret123
+              type: object
+      responses:
+        '200':
+          description: 'Login successful'
+          content:
+            application/json:
+              schema:
+                properties:
+                  jwt: { type: string, example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9... }
+                type: object
+        '400':
+          description: 'Invalid credentials'
+          content:
+            application/json:
+              schema:
+                properties:
+                  error: { type: string, example: 'Неверные email/пароль' }
+                type: object
+  '/api/v1/tasks/{id}':
+    get:
+      tags:
+        - Check
+      description: 'Check task status by ID'
+      operationId: 7cf009b3e8050c532d3dca83b384ed19
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Task ID'
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: 'Task status information'
+          content:
+            application/json:
+              schema:
+                properties:
+                  task_id: { type: integer, example: 123 }
+                  status: { type: string, example: completed }
+                type: object
+        '404':
+          description: 'Task not found'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Not Found' }
+                type: object
+      security:
+        -
+          BearerAuth: []
+  /api/v1/todos:
+    get:
+      tags:
+        - Todos
+      description: 'Get all todos for user'
+      operationId: 1bb8285c49d422127370aecbdd241de6
+      responses:
+        '200':
+          description: 'List of todos'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { id: { type: integer, example: 1 }, user_id: { type: integer, example: 123 }, content: { type: string, example: 'Купить молоко' }, created_at: { type: string, example: '2024-01-15 10:30:00' } }
+                  type: object
+      security:
+        -
+          BearerAuth: []
+    post:
+      tags:
+        - Todos
+      description: 'Add todo'
+      operationId: d5b4ebd6e07503cfc8ac99ef14229c27
+      requestBody:
+        description: 'Todo data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  example: 'Новая задача'
+              type: object
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Задание добавлено в очередь' }
+                  task_id: { type: integer, example: 1 }
+                type: object
+        '400':
+          description: 'Input data error'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Текст должен содержать не менее 3 символов' }
+                type: object
+      security:
+        -
+          BearerAuth: []
+  '/api/v1/todos/{id}':
+    get:
+      tags:
+        - Todos
+      description: 'Get todo by id'
+      operationId: 5f060b4868440f95a835e70fe679e9a6
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Todo details'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id: { type: integer, example: 1 }
+                  user_id: { type: integer, example: 123 }
+                  content: { type: string, example: 'Купить молоко' }
+                  created_at: { type: string, example: '2024-01-15 10:30:00' }
+                type: object
+        '404':
+          description: 'Todo not found'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Not found' }
+                type: object
+      security:
+        -
+          BearerAuth: []
+    delete:
+      tags:
+        - Todos
+      description: 'Delete todo'
+      operationId: b71a0e2421f41af51d5c404866f813f9
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Задание добавлено в очередь' }
+                  task_id: { type: integer, example: 1 }
+                type: object
+      security:
+        -
+          BearerAuth: []
+    patch:
+      tags:
+        - Todos
+      description: 'Update todo'
+      operationId: 5d7426e916732b15d0207e47478e5919
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: 'Todo data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  example: 'Обновленная задача'
+              type: object
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Задание добавлено в очередь' }
+                  task_id: { type: integer, example: 1 }
+                type: object
+        '400':
+          description: 'Input data error'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Текст должен содержать не менее 3 символов' }
+                type: object
+      security:
+        -
+          BearerAuth: []
+tags:
+  -
+    name: Auth
+    description: Auth
+  -
+    name: Check
+    description: Check
+  -
+    name: Todos
+    description: Todos

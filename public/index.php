@@ -14,15 +14,15 @@ $app = AppFactory::create();
 
 $app->add(JsonBodyParserMiddleware::class);
 
-$app->post('/register', [AuthController::class, 'register']);
-$app->post('/login', [AuthController::class, 'login']);
+$app->post('/api/v1/register', [AuthController::class, 'register']);
+$app->post('/api/v1/login', [AuthController::class, 'login']);
 
-$app->get('/todos', [TodoController::class, 'index'])->add(JwtMiddleware::class);
-$app->get('/todos/{id}', [TodoController::class, 'show'])->add(JwtMiddleware::class);
-$app->post('/todos', [TodoController::class, 'store'])->add(JwtMiddleware::class);
-$app->patch('/todos/{id}', [TodoController::class, 'update'])->add(JwtMiddleware::class);
-$app->delete('/todos/{id}', [TodoController::class, 'delete'])->add(JwtMiddleware::class);
+$app->get('/api/v1/todos', [TodoController::class, 'index'])->add(JwtMiddleware::class);
+$app->get('/api/v1/todos/{id}', [TodoController::class, 'show'])->add(JwtMiddleware::class);
+$app->post('/api/v1/todos', [TodoController::class, 'store'])->add(JwtMiddleware::class);
+$app->patch('/api/v1/todos/{id}', [TodoController::class, 'update'])->add(JwtMiddleware::class);
+$app->delete('/api/v1/todos/{id}', [TodoController::class, 'delete'])->add(JwtMiddleware::class);
 
-$app->get('/check/{id}', [TaskController::class, 'check'])->add(JwtMiddleware::class);
+$app->get('/api/v1/check/{id}', [TaskController::class, 'check'])->add(JwtMiddleware::class);
 
 $app->run();
