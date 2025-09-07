@@ -12,6 +12,7 @@ services:
     working_dir: /var/www/html
     depends_on:
       - mysql
+      - rabbitmq
     networks:
       - app-network
 
@@ -30,6 +31,7 @@ services:
 
   mysql:
     image: mysql:8.0.15
+    container_name: mysql-phpapp
     env_file: .env
     command: 
       --init-file /init.sql
@@ -38,6 +40,18 @@ services:
       - ./_docker/init.sql:/init.sql
     ports:
       - "3306:3306"
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-phpapp
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     networks:
       - app-network
 
