@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Infrastructure\Controllers;
 
 use App\Helpers\HttpHelper;
-use App\Services\UserService;
+use App\Application\Services\UserService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Application\Services;
 
-use App\Repositories\TodoRepository;
+use App\Infrastructure\Repositories\TodoRepository;
 
 class TodoService
 {

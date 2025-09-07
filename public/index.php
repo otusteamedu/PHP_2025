@@ -1,14 +1,14 @@
 <?php
 
-use App\Controllers\AuthController;
-use App\Controllers\TodoController;
-use App\Middlewares\JsonBodyParserMiddleware;
-use App\Middlewares\JwtMiddleware;
-use App\Repositories\TodoRepository;
-use App\Repositories\UserRepository;
-use App\Services\JwtService;
-use App\Services\TodoService;
-use App\Services\UserService;
+use App\Infrastructure\Controllers\AuthController;
+use App\Infrastructure\Controllers\TodoController;
+use App\Infrastructure\Middlewares\JsonBodyParserMiddleware;
+use App\Infrastructure\Middlewares\JwtMiddleware;
+use App\Infrastructure\Repositories\TodoRepository;
+use App\Infrastructure\Repositories\UserRepository;
+use App\Application\Services\JwtService;
+use App\Application\Services\TodoService;
+use App\Application\Services\UserService;
 use DI\Container;
 use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;

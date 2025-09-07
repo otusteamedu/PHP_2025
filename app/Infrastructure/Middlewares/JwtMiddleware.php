@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Middlewares;
+namespace App\Infrastructure\Middlewares;
 
 use App\Helpers\HttpHelper;
-use App\Services\JwtService;
+use App\Application\Services\JwtService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Psr7\Response as SlimResponse;
 use Psr\Http\Message\ServerRequestInterface as Request;
