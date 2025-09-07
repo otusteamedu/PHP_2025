@@ -14,3 +14,11 @@ CREATE TABLE todos (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT todos_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE tasks ( 
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+	status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT tasks_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id)
+) ENGINE=InnoDB;
