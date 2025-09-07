@@ -37,4 +37,18 @@ class TaskRepository
         ]);
 
     }
+
+    public function getStatusById(int $taskId, int $userId): ?string
+    {
+        $sql = "SELECT status FROM tasks WHERE id = :id AND user_id = :user_id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id' => $taskId, 'user_id' => $userId]);
+        $taskData = $stmt->fetch();
+        
+        if (empty($taskData) || empty($taskData['status'])) {
+            return null;
+        }
+
+        return $taskData['status'];
+    }
 }

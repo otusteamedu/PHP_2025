@@ -1,5 +1,6 @@
 <?php
 use App\Infrastructure\Controllers\AuthController;
+use App\Infrastructure\Controllers\TaskController;
 use App\Infrastructure\Controllers\TodoController;
 use App\Infrastructure\Middlewares\JsonBodyParserMiddleware;
 use App\Infrastructure\Middlewares\JwtMiddleware;
@@ -21,5 +22,7 @@ $app->get('/todos/{id}', [TodoController::class, 'show'])->add(JwtMiddleware::cl
 $app->post('/todos', [TodoController::class, 'store'])->add(JwtMiddleware::class);
 $app->patch('/todos/{id}', [TodoController::class, 'update'])->add(JwtMiddleware::class);
 $app->delete('/todos/{id}', [TodoController::class, 'delete'])->add(JwtMiddleware::class);
+
+$app->get('/check/{id}', [TaskController::class, 'check'])->add(JwtMiddleware::class);
 
 $app->run();

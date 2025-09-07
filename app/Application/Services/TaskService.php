@@ -27,4 +27,10 @@ class TaskService
     {
         $this->repository->complete($taskId, $userId);
     }
+
+    public function getStatusById(int $taskId, int $userId): ?string
+    {
+        $status = $this->repository->getStatusById($taskId, $userId);
+        return $status;
+    }
 }
