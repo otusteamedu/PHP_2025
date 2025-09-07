@@ -1,3 +1,7 @@
-# PHP_2025
+# API
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Чтобы посмотреть полное описание API, можно загрузить файл openapi.yaml, например, на [redocly](https://redocly.github.io/redoc/)
+
+## Список эндпойнтов
+
+![API](./api.png)
