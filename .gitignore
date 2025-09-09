@@ -3,4 +3,4 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-.redis_data/
+/redis_data/
