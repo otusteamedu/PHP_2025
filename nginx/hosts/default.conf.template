@@ -1,0 +1,32 @@
+server {
+    listen 80;
+    server_name localhost;
+
+    root /var/www/html/main;
+    index index.php index.html;
+
+    location ~* \.(jpg|jpeg|gif|css|png|js|ico|html)$ {
+        access_log off;
+        expires max;
+    }
+
+    location / {
+        add_header X-Backend-Container $hostname always;
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~* \.php$ {
+        add_header X-Backend-Container $hostname always;
+        
+        try_files $uri = 404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass  ${PHP_FPM_HOST};
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        
+        fastcgi_param HTTP_X_BALANCER_CONTAINER $http_x_balancer_container;
+        fastcgi_param HTTP_X_BACKEND_CONTAINER $hostname;
+        
+        include fastcgi_params;
+    }
+}
