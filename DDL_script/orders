@@ -1,0 +1,10 @@
+CREATE TABLE
+    orders (
+        id INT PRIMARY KEY auto_increment,
+        id_client INT NOT NULL,
+        id_room_place INT NOT NULL,
+        id_film_session INT NOT NULL,
+        FOREIGN KEY (id_client) REFERENCES client (id),
+        FOREIGN KEY (id_room_place) REFERENCES room_place (id),
+        FOREIGN KEY (id_film_session) REFERENCES film_session (id)
+    );
