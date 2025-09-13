@@ -2,8 +2,8 @@
 
 namespace App\Base;
 
-use App\Base\Exceptions\ServiceContainerException;
-use App\Base\Exceptions\ServiceContainerNotFoundException;
+use App\Base\Exceptions\ServiceContainer\ServiceContainerException;
+use App\Base\Exceptions\ServiceContainer\ServiceContainerNotFoundException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
