@@ -3,24 +3,20 @@
 namespace App\Controllers;
 
 use App\Base\Views\ViewManager;
-use App\Services\ValidateBracketService;
+use App\Services\EmailService;
 
 class IndexController
 {
     public function __construct(
-        protected ValidateBracketService $bracketService,
         protected ViewManager $viewManager,
+        protected EmailService $emailService,
     ) {
     }
 
     public function index(): void
     {
-        $string = $_POST['string'] ?? '';
-        $message = '';
-        if (!$this->bracketService->validate($string)) {
-            http_response_code(400);
-            $message = 'Скобки не валидны.';
-        }
-        $this->viewManager->renderTemplate('index.html', compact('string', 'message'));
+        $string = $_POST['emails'] ?? '';
+        $validEmails = $this->emailService->parseEmails($string);
+        $this->viewManager->renderTemplate('index.html', compact('string', 'validEmails'));
     }
 }

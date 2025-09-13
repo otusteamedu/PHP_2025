@@ -1,6 +1,6 @@
 <?php
 /**
- * @var string $message
+ * @var string[] $validEmails
  * @var string $string
  */
 
@@ -13,9 +13,26 @@
 </head>
 <body>
 <form method="post">
-    <label>String: <input type="text" value="<?= htmlentities($string) ?>" name="string"></label>
+    <label>Emails: <textarea name="emails"><?= htmlentities($string) ?></textarea></label>
     <button type="submit">Submit</button>
 </form>
-<?= $message ?>
+<table>
+    <thead>
+    <tr>
+        <th><?= "Valid Emails" ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php
+    foreach ($validEmails as $email):
+        ?>
+        <tr>
+            <td><?= $email ?></td>
+        </tr>
+    <?php
+    endforeach;
+    ?>
+    </tbody>
+</table>
 </body>
 </html>
