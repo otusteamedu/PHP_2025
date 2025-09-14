@@ -1,0 +1,31 @@
+services:
+  web:
+    build:
+      dockerfile: ./docker/franken/Dockerfile
+    volumes:
+      - ./app/:/var/www/html/app
+      - ./docker/franken/config/Caddyfile:/etc/caddy/Caddyfile:ro
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: blog
+    ports:
+      - "8080:80"
+
+  db:
+    build:
+      dockerfile: ./docker/posgres/Dockerfile
+    working_dir: /var/lib/postgresql
+    volumes:
+      - db_pgdata:/var/lib/postgresql/data:rw
+      - db_wal:/var/lib/postgresql/wal:rw
+    environment:
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: '${POSTGRES_DB}'
+    ports:
+      - "5432:5432"
+
+volumes:
+  db_pgdata:
+  db_wal:
