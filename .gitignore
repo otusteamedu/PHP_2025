@@ -3,3 +3,9 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+/_docker/.env
+/_docker/_logs
+/_docker/_data
+
+/.phpunit.result.cache
