@@ -17,14 +17,11 @@ final readonly class FindUserHandler
      */
     public function __invoke(FindUserQuery $query): FindUserOutput
     {
-        $user = $this->repository->find($query->id);
+        $user = $this->repository->findById($query->id);
 
         if ($user === null) {
             throw new \HttpResponseException('User not found', 404);
         }
-
-        //здесь проверяется что точно вызывается тот же объект при identityMap
-        $this->repository->findById($query->id);
 
         return new FindUserOutput(
             id: $user->id,

@@ -69,7 +69,7 @@ final readonly class UserMapper
         $statement->execute();
     }
 
-    public function find(int $id): ?User
+    public function findById(int $id): ?User
     {
         $user = $this->identityMap->get($id);
         if ($user !== null) {
@@ -100,10 +100,5 @@ final readonly class UserMapper
         $this->identityMap->add($user);
 
         return $user;
-    }
-
-    public function findById($id): void
-    {
-        var_dump($this->identityMap->get($id));
     }
 }

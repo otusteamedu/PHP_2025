@@ -30,13 +30,8 @@ readonly class UserRepository implements UserRepositoryInterface
         $this->userMapper->deleteById($id);
     }
 
-    public function find(int $id): ?User
+    public function findById(int $id): ?User
     {
-        return $this->userMapper->find($id);
-    }
-
-    public function findById($id): void
-    {
-        $this->userMapper->findById($id);
+        return $this->userMapper->findById($id);
     }
 }
