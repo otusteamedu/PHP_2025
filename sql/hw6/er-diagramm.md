@@ -15,18 +15,30 @@ erDiagram
         timestamp(0) created_at
         bigint client_id FK
     }
+    
+    hall_type {
+        smallint id PK
+        varchar(50) type_name
+        numeric price_modifier
+    }
 
     hall {
         integer id PK
         varchar(255) name
-        varchar(50) type
+        smallint hall_type_id FK
+    }
+    
+    seat_type {
+        smallint id PK
+        varchar(50) type_name
+        numeric price_modifier
     }
     
     seat {
         integer id PK
         integer row_number
         integer seat_number
-        varchar(50) type
+        smallint seat_type_id FK
         integer hall_id FK
     }
 
@@ -38,6 +50,12 @@ erDiagram
         real rating
         date release_date
     }
+    
+    session_period {
+        smallint id PK
+        varchar(50) period_name
+        numeric price_modifier
+    }
 
     session {
         bigint id PK
@@ -45,6 +63,14 @@ erDiagram
         timestamp(0) end_time
         bigint movie_id FK
         integer hall_id FK
+        smallint session_period_id FK
+    }
+    
+    session_price {
+        bigint id PK
+        numeric price
+        bigint session_id FK
+        integer seat_id FK
     }
 
     ticket {
@@ -62,3 +88,8 @@ erDiagram
     movie ||--|{ session : shown
     session ||--|{ ticket : belongs
     seat ||--|{ ticket : matches
+    session ||--|{ session_price : has
+    seat ||--|| session_price : matches
+    hall_type ||--|{ hall : belongs
+    seat_type ||--|{ seat : belongs
+    session_period ||--|{ session : matches
