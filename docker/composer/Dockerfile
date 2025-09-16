@@ -1,0 +1,1 @@
+COPY composer.json /etc/nginx/nginx.conf
