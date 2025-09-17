@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "365961ea7b40d830dd40abb70f236a71",
+    "packages": [
+        {
+            "name": "dbykov/schemasync",
+            "version": "v0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DmitryBykov/schemasync.git",
+                "reference": "e3518153e224184b66ef4e05abd569c976998d17"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DmitryBykov/schemasync/zipball/e3518153e224184b66ef4e05abd569c976998d17",
+                "reference": "e3518153e224184b66ef4e05abd569c976998d17",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "bin": [
+                "bin/schemasync"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DBykov\\Examples\\": "examples/",
+                    "DBykov\\SchemaSync\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Bykov",
+                    "email": "dmitrybykov05@gmail.com"
+                }
+            ],
+            "description": "SchemaSync: generate SQL migrations from DTOs (MySQL/Postgres) and warn about destructive changes.",
+            "support": {
+                "issues": "https://github.com/DmitryBykov/schemasync/issues",
+                "source": "https://github.com/DmitryBykov/schemasync/tree/v0.0.2"
+            },
+            "time": "2025-09-17T12:58:35+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}
