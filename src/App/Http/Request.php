@@ -14,4 +14,10 @@ class Request
     {
         return $_POST[$key] ?? $default;
     }
+
+    public function getRawInput(): string
+    {
+        return file_get_contents('php://input');
+    }
+
 }

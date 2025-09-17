@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Exceptions\EmptyStringException;
-use App\Exceptions\InvalidBracketsException;
 use App\Http\Request;
 use App\Http\Response;
-use App\Services\BracketsValidator;
+use App\Services\EmailValidator;
 
 class App
 {
@@ -15,37 +13,34 @@ class App
     {
         $request = new Request();
         $response = new Response();
-        $validator = new BracketsValidator();
+
+        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $method = $_SERVER['REQUEST_METHOD'];
+
+        $response->addHeader('Content-Type', 'application/json');
+
+        if ($method !== 'POST') {
+            return $response->setStatusCode(405)
+                ->setContent('Method Not Allowed')
+                ->send();
+        }
+
+        if ($path !== '/validate-emails') {
+            return $response->setStatusCode(404)
+                ->setContent('Not Found')
+                ->send();
+        }
 
         try {
-            $response->addHeader('Content-Type', 'text/plain');
-
-            if ($request->getMethod() !== 'POST') {
-                return $response->setStatusCode(405)
-                    ->setContent('Method Not Allowed')
-                    ->send();
-            }
-
-            $inputString = (string)$request->getPostParam('string', '');
-            $isValid = $validator->validate($inputString);
-
-            if (!$isValid) {
-                return $response->setStatusCode(400)
-                    ->setContent('Failed: The brackets are not balanced')
-                    ->send();
-            }
-
+            $validator = new EmailValidator();
+            $emails = json_decode($request->getRawInput(), true);
+            $validationResult = $validator->validate($emails);
             return $response->setStatusCode(200)
-                ->setContent('OK: The brackets are balanced')
+                ->setContent(json_encode($validationResult))
                 ->send();
-
-        } catch (EmptyStringException|InvalidBracketsException $e) {
-            return $response->setStatusCode(400)
-                ->setContent('Bad Request: ' . $e->getMessage())
-                ->send();
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             return $response->setStatusCode(500)
-                ->setContent('Internal Server Error')
+                ->setContent('Internal Server Error. Details: ' . $e->getMessage())
                 ->send();
         }
     }
