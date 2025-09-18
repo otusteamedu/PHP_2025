@@ -5,5 +5,5 @@ namespace App\Interfaces;
 
 interface EmailValidatorInterface
 {
-    public function validate(array $emails, bool $checkDns = true): array;
+    public function validate(array $emails): array;
 }

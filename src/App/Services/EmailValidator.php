@@ -9,27 +9,31 @@ use App\Interfaces\EmailValidatorInterface;
 class EmailValidator implements EmailValidatorInterface
 {
     /**
+     * @var array Массив для сохранения результатов проверок наличия MX записи
+     */
+    private array $mxCheckResult = [];
+
+    /**
      * @param string[] $emails Список email-адресов для проверки
-     * @param bool $checkDns Выполнять ли проверку DNS MX записей
      * @return array Результаты проверки для каждого email
      */
-    public function validate(array $emails, bool $checkDns = true): array
+    public function validate(array $emails): array
     {
         $results = [];
 
         foreach ($emails as $email) {
-            $results[$email] = $this->verifyEmail($email, $checkDns);
+            $results[$email] = $this->verifyEmail($email);
         }
 
         return $results;
     }
 
-    private function verifyEmail(string $email, bool $checkDns = true): array
+    private function verifyEmail(string $email): array
     {
         $result = [
+            'is_valid' => false,
             'is_valid_format' => false,
             'is_valid_dns' => null,
-            'is_valid' => false,
             'errors' => []
         ];
 
@@ -40,18 +44,15 @@ class EmailValidator implements EmailValidatorInterface
 
         $result['is_valid_format'] = true;
 
-        if ($checkDns) {
-            $domain = $this->extractDomain($email);
+        $domain = $this->extractDomain($email);
 
-            if (!$this->checkDnsMx($domain)) {
-                $result['errors'][] = 'No MX records found for domain';
-                $result['is_valid_dns'] = false;
-                return $result;
-            }
-
-            $result['is_valid_dns'] = true;
+        if (!$this->checkDnsMx($domain)) {
+            $result['errors'][] = 'No MX records found for domain';
+            $result['is_valid_dns'] = false;
+            return $result;
         }
 
+        $result['is_valid_dns'] = true;
         $result['is_valid'] = true;
         return $result;
     }
@@ -77,6 +78,10 @@ class EmailValidator implements EmailValidatorInterface
             return false;
         }
 
-        return checkdnsrr($domain, 'MX');
+        if (!array_key_exists($domain, $this->mxCheckResult)) {
+            $this->mxCheckResult[$domain] = checkdnsrr($domain);
+        }
+
+        return checkdnsrr($domain);
     }
 }
