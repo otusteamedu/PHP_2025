@@ -1,38 +1,60 @@
 <?php
 
-echo "Проверка подключений" . "<br>";
-echo "mysql: ";
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    echo "Проверка подключений" . "<br>";
+    echo $_SERVER['SERVER_ADDR'] . "<br>" . $_SERVER['HOSTNAME'] . "<br>";
 
-try {
-    $conn = new mysqli(getenv('MYSQL_HOST'), getenv('MYSQL_USER'), getenv('MYSQL_PASSWORD'));
-    $message = $conn->connect_error ? "Не удалось подключиться" : "Успешно подключено";
-
-    echo $message  . "<br>";
-} catch (Throwable $e) {
-    echo "Ошибка подключения: " . $e->getMessage()  . "<br>";
+    return;
 }
 
-echo "memcached: ";
-try {
-    $memcached = new Memcached();
-    $memcached->addServer(getenv('MEMCACHED_HOST'), getenv('MEMCACHED_PORT'));
-    $memcached->set("test_memcached_key", "Успешно подключено");
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    response('Method not allowed', 400);
 
-    echo $memcached->get("test_memcached_key") ?? "Не удалось подключиться";
-    echo "<br>";
-} catch (Throwable $e) {
-    echo "Ошибка подключения: " . $e->getMessage() . "<br>";
+    return;
 }
 
-echo "redis: ";
 try {
-    $redis = new Redis();
+    $rawData = file_get_contents('php://input');
+    $data = json_decode($rawData, true, 512, JSON_THROW_ON_ERROR);
+    $string = $data['string'] ?? '';
+} catch (Exception $e) {
+    $string = '';
+}
 
-    $redis->connect(getenv('REDIS_HOST'), getenv('REDIS_PORT'));
-    $redis->set("test_redis_key", "Успешно подключено");
+if (empty($string)) {
+    response('Invalid body', 400);
 
-    echo $redis->get("test_redis_key") ?? "Не удалось подключиться";
-    echo "<br>";
-} catch (Throwable $e) {
-    echo "Ошибка подключения: " . $e->getMessage() . "<br>";
+    return;
+}
+
+if (checkString($string) === true) {
+    response('The string is correct');
+
+    return;
+}
+
+response('Invalid string', 400);
+
+function response(string $message, int $statusCode = 200): void {
+    http_response_code($statusCode);
+    echo $message;
+}
+
+function checkString(string $string): bool {
+    $counter = 0;
+    $len = strlen($string);
+
+    for ($i = 0; $i < $len; $i++) {
+        if ($string[$i] === '(') {
+            $counter++;
+        } elseif ($string[$i] === ')') {
+            $counter--;
+
+            if ($counter < 0) {
+                return false;
+            }
+        }
+    }
+
+    return $counter === 0;
 }

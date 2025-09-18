@@ -12,10 +12,10 @@ RUN apt-get update && apt-get install -y \
         && docker-php-ext-configure gd --with-freetype --with-jpeg \
         && docker-php-ext-install -j$(nproc) gd
 
-RUN pecl install memcached redis && \
-    docker-php-ext-enable memcached redis
+RUN pecl install redis && \
+    docker-php-ext-enable redis
 
-COPY zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
+COPY php.ini /usr/local/etc/php/conf.d/php-custom.ini
 
 WORKDIR /data
 
