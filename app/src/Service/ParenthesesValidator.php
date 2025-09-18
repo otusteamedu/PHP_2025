@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
-final class ParenthesesValidator
+final readonly class ParenthesesValidator
 {
     public function isBalanced(string $s): bool
     {
