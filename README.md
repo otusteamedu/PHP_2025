@@ -1,7 +1,7 @@
 ## Описание выполненного домашнего задания №21
 
-Система автоматического деплоя PHP приложения [media-monitoring-system](https://github.com/Andrey-Yurchuk/media-monitoring-system) 
-с использованием GitHub Actions и Self-hosted Runner
+Система автоматического деплоя PHP приложения [media-monitoring-system](https://github.com/Andrey-Yurchuk/media-monitoring-system)
+с использованием GitHub Actions, Self-hosted Runner и Blue-Green Deployment
 
 ### Основной файл системы деплоя
 
@@ -9,20 +9,24 @@
 
 ### Как это работает
 
-#### 1. Автоматический деплой
+#### 1. Blue-Green Deployment (Zero-Downtime)
 - **Триггер:** Push в ветку `main`
 - **Процесс:**
     1. GitHub Actions запускается автоматически
     2. Self-hosted Runner получает задачу
-    3. Останавливаются старые контейнеры
-    4. Копируется новый код в продакшн папку
-    5. Запускаются новые контейнеры
-    6. Выполняется health check
-    7. Очищаются старые Docker образы
+    3. Определяется текущее активное окружение (Blue или Green)
+    4. Запускается Load Balancer (если не запущен)
+    5. Останавливается старое окружение
+    6. Запускается новое окружение в неактивном слоте
+    7. Выполняется health check нового окружения
+    8. Load Balancer переключается на новое окружение
+    9. Очищаются старые Docker образы
 
 #### 2. Конфигурация сред
 - **Разработка:** `docker-compose.yml`
-- **Продакшн:** `docker-compose.prod.yml`
+- **Blue окружение:** `docker-compose.blue.yml`
+- **Green окружение:** `docker-compose.green.yml`
+- **Load Balancer:** `docker-compose.lb.yml`
 
 ### Структура деплоя
 ```
