@@ -73,4 +73,3 @@ create table booking (
     unique(session_id, seat_id)
 );
 
-
