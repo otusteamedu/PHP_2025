@@ -38,6 +38,7 @@ $$ language plpgsql;
 create or replace function fill_movies(num integer) returns void as
 $$
 begin 
+raise notice 'Filling movies';
 insert into movie (movie_name, duration, movie_description, release_date, rating)
 select
     random_string(20),
@@ -54,6 +55,7 @@ $$ language plpgsql;
 create or replace function fill_theatres(num integer) returns void as 
 $$ 
 begin 
+raise notice 'Filling theatres';
 insert into theatre (name, location)
 select 
     random_string(20),
@@ -66,6 +68,8 @@ $$ language plpgsql;
 create or replace function fill_rooms(num integer) returns void as
 $$
 begin
+raise notice 'Filling rooms';
+
 insert into room (theatre_id, name)
 select 
     gs.id,
@@ -80,7 +84,7 @@ $$ language plpgsql;
 create or replace function fill_seats(num integer, divider decimal) returns void as
 $$
 begin
-
+raise notice 'Filling seats';
 insert into seat(seat_id, room_id, row_number, seat_number, seat_type_id)
 select 
     gs.id,
@@ -99,6 +103,7 @@ $$ language plpgsql;
 create or replace function fill_users(num integer) returns void as
 $$
 begin
+raise notice 'Filling users';
 
 insert into "user" (user_id, name, email, phone, registration_date)
 select 
@@ -119,7 +124,7 @@ create or replace function fill_sessions(num integer, divider numeric) returns v
 $$
 begin
 
-
+raise notice 'Filling Sessions';
 insert into "session"(session_id, room_id, movie_id, start_time, end_time, base_price)
 select 
     gs.id,
@@ -138,7 +143,7 @@ $$ language plpgsql;
 create or replace function fill_orders(num integer, divider numeric) returns void as
 $$
 begin
-
+raise notice 'Filling Orders';
 insert into "order"(order_id, user_id, created_at, order_status_id, order_total_price)
 select 
     gs.id,
@@ -156,19 +161,30 @@ create or replace function fill_bookings(num integer, divider decimal) returns v
 $$
 
 begin
+raise notice 'Filling Bookings';
 
-insert into booking(order_id, session_id, seat_id, booking_price)
-select 
-	1 + round(random() * "session".session_id),
-	"session".session_id,
-	seat.seat_id,
-    round(400 + (random() * (1000 - 400))) + (num / divider / "session".session_id)
+for i in 1..divider loop
+    raise notice 'Current counter value: %', i;
+    insert into booking(order_id, session_id, seat_id, booking_price)
+        select 
+             1 + floor(random() * "session".session_id),
+            "session".session_id, 
+            (select (("session".room_id - 1) * 1000.00) + ceil(random() * divider)),
+            round(400 + (random() * (1000 - 400)))
+        from "session" 
+        order by random()
+        limit round (num / divider)
+    on conflict do nothing;
+end loop; 
+-- insert into booking(order_id, session_id, seat_id, booking_price)
+-- select 
+--     gs.id,
+--     gs.id,
+--     gs.id,
+--     round(400 + (random() * (1000 - 400)))
 
-	from seat
-	right join "session" on "session".room_id = seat.room_id
-	order by random()
-	limit num
-    on conflict(session_id, seat_id) do nothing;
+--     from generate_series(1, num) as gs(id)
+--     on conflict do nothing;
 end
 $$ language plpgsql;
 
