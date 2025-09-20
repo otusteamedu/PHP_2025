@@ -1,0 +1,62 @@
+image: php:8.2
+
+stages:
+  - deploy_app
+  - deploy_config
+
+variables:
+  SSH_USER: "root"
+  SSH_HOST: "82.146.57.208"
+  DEPLOY_PATH: "/var/www/elisad5791.fvds.ru"
+  RELEASES_DIR: "$DEPLOY_PATH/releases"
+  CURRENT_LINK: "$DEPLOY_PATH/current"
+  KEEP_RELEASES: 3
+  CONFIG_REPO: "git@gitlab.com:elisad5791/test-env.git"
+  CONFIG_BRANCH: "main"
+  RELEASE_DIR: "$RELEASES_DIR/${CI_PIPELINE_IID}"
+
+before_script:
+  - apt-get update -yq && apt-get install -yqq openssh-client rsync git
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+
+  - cp $SSH_PRIVATE_KEY_FILE ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - echo -e "Host $SSH_HOST\n\tIdentityFile ~/.ssh/id_rsa\n" >> ~/.ssh/config
+
+  - cp $CONFIG_REPO_SSH_KEY ~/.ssh/config_key
+  - chmod 600 ~/.ssh/config_key
+  - echo -e "Host gitlab.com\n\tIdentityFile ~/.ssh/config_key\n" >> ~/.ssh/config
+
+deploy_app:
+  stage: deploy_app
+  script:
+    - ssh $SSH_USER@$SSH_HOST "mkdir -p $RELEASES_DIR"
+    
+    - rsync -avz -e "ssh -i ~/.ssh/id_rsa" --exclude='.git/' --exclude='.gitlab-ci.yml' ./ $SSH_USER@$SSH_HOST:$RELEASE_DIR/
+
+    - ssh $SSH_USER@$SSH_HOST "
+        cd $RELEASE_DIR &&
+        composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+      "
+    
+    - ssh $SSH_USER@$SSH_HOST "ln -sfn $RELEASE_DIR $CURRENT_LINK"
+    
+    - ssh $SSH_USER@$SSH_HOST "
+        cd $RELEASES_DIR &&
+        ls -1t | tail -n +$(($KEEP_RELEASES + 1)) | xargs -I {} rm -rf {}
+      "
+    - echo "Application deployed successfully"
+  only:
+    - main
+ 
+deploy_config:
+  stage: deploy_config
+  script:
+    - git clone -b $CONFIG_BRANCH $CONFIG_REPO /tmp/test-env
+    - cd /tmp/test-env
+    - rsync -avz -e "ssh -i ~/.ssh/id_rsa" environments/production/.env $SSH_USER@$SSH_HOST:$RELEASE_DIR/.env
+    - echo "Configuration deployed successfully"
+  only:
+    - main
