@@ -1,19 +1,19 @@
 create table movie(
     movie_id serial primary key,
-    name varchar(255),
+    name varchar(255) not null,
     description text
 );
 
 
 create table attribute_type(
     id serial primary key,
-    name varchar(255)
+    name varchar(255) not null
 );
 
 create table attribute(
     id serial primary key,
     attribute_type_id int references attribute_type(id),
-    name varchar(255)
+    name varchar(255) not null
 );
 
 create table value(
