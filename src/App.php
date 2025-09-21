@@ -7,18 +7,55 @@ namespace Dinargab\Homework12;
 
 use Dinargab\Homework12\Mapper\MovieMapper;
 use Dinargab\Homework12\Model\Movie;
+use Dinargab\Homework12\Render\MovieRenderer;
 
 class App
 {
 
     public MovieMapper $movieMapper;
 
-    public function __construct()
+
+    public function renderTest(): void
     {
         $this->init();
+
+        $movie = $this->movieMapper->getById(3);
+
+        echo MovieRenderer::render($movie);
+
+
+        $moviesList = $this->movieMapper->getList(15, 0);
+
+        echo "<h2>Movie List Before deletion</h2>";
+        echo MovieRenderer::renderList($moviesList);
+
+        $this->movieMapper->delete($movie);
+
+        $movie = new Movie(
+            "Eraser",
+            "A Witness Protection specialist becomes suspicious of his co-workers when dealing with a case involving high-tech weapons.",
+            new \DateTime("1996-12-25"),
+            115,
+            6.2,
+        );
+        $this->movieMapper->save($movie);
+
+        $moviesList[0]->setTitle("Updated title");
+
+        $this->movieMapper->save($moviesList[0]);
+        $moviesList = $this->movieMapper->getList(15, 0);
+
+        echo "<h2>Movie List after deletion of movie id 3 and adding new movie, and udpdating first movie</h2>";
+        echo MovieRenderer::renderList($moviesList);
+
+
+        echo "<h2>Total Recall Movies</h2>";
+        $totalRecallMovies = $this->movieMapper->getByMovieTitle("Total Recall");
+
+        echo MovieRenderer::renderList($totalRecallMovies);
     }
 
-    public function init(): void 
+    private function init(): void
     {
         $pdo = $this->initDatabase();
         $this->movieMapper = new MovieMapper($pdo);
@@ -36,12 +73,9 @@ class App
         $dsn = "pgsql:host={$dbHost};port={$dbPort};dbname={$dbName}";
         $pdo = new \PDO($dsn, $dbUser, $dbPass);
 
-        // Set PDO error mode to exception for robust error handling
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
-
-
     }
 
     private function initTestTable(\Pdo $pdo)
@@ -59,7 +93,7 @@ class App
         )';
         $sth = $pdo->prepare($sql);
         $sth->execute();
-;    }
+    }
 
     private function initTestData($pdo)
     {
@@ -145,8 +179,7 @@ class App
         ];
 
         foreach ($testMovies as $movie) {
-            $savedMovie = $this->movieMapper->save($movie);
+            $this->movieMapper->save($movie);
         }
     }
-
 }
