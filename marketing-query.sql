@@ -8,7 +8,7 @@ create view marketing as
         cast(value.bool_value as text),
         cast(value.decimal_value as text)
     ) as attribute_value
-        from movie
-        left join value on movie.movie_id = value.entity_id
-        left join attribute on value.attribute_id = attribute.id
-        left join attribute_type on attribute.attribute_type_id = attribute_type.id;
+    from movie
+    left join value on movie.movie_id = value.entity_id
+    left join attribute on value.attribute_id = attribute.id
+    left join attribute_type on attribute.attribute_type_id = attribute_type.id;
