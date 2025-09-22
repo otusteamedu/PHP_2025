@@ -10,19 +10,33 @@ use App\View\Renderer;
 
 final readonly class App
 {
-    public function __construct(
-        private ParenthesesValidator $validator,
-        private Renderer $renderer,
-        private LastCheckService $lastCheckService
-    ) {}
+    private ParenthesesValidator $validator;
+    private Renderer $renderer;
+    private LastCheckService $lastCheckService;
+
+    public function __construct()
+    {
+        $this->validator = new ParenthesesValidator();
+        $this->renderer = new Renderer();
+        $this->lastCheckService = new LastCheckService();
+    }
 
     public function run(): Response
     {
+        $this->ensureSessionStarted();
+
         if ($this->isPostRequest()) {
             return $this->handlePostRequest();
         }
 
         return $this->handleGetRequest();
+    }
+
+    private function ensureSessionStarted(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE && !headers_sent()) {
+            session_start();
+        }
     }
 
     private function isPostRequest(): bool
