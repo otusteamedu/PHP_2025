@@ -5,8 +5,7 @@ create view marketing as
         cast(value.int_value as text),
         cast(value.float_value as text),
         cast(value.date_value as text),
-        cast(value.bool_value as text),
-        cast(value.decimal_value as text)
+        cast(value.bool_value as text)
     ) as attribute_value
     from movie
     left join value on movie.movie_id = value.entity_id

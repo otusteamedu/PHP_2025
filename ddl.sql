@@ -21,11 +21,10 @@ create table value(
     entity_id int references movie(movie_id),
     attribute_id int references attribute(id),
     string_value text,
-    int_value int,
+    int_value bigint,
     float_value real,
     date_value timestamp,
-    bool_value boolean,
-    decimal_value decimal(12,2)
+    bool_value boolean
 );
 
 

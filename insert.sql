@@ -17,7 +17,6 @@ values  ('Рецензии'),
 
 
 insert into attribute(attribute_type_id, name)
-
 values  (1, 'Отзыв критика'),
         (1, 'Пользовательский отзыв'),
         (1, 'Отзыв киноакадемии'),
@@ -42,112 +41,112 @@ values  (1, 'Отзыв критика'),
         (8, 'Сборы в России');
 
 
-insert into value(entity_id, attribute_id, string_value, int_value, float_value, date_value, bool_value, decimal_value) values
+insert into value(entity_id, attribute_id, string_value, int_value, float_value, date_value, bool_value) values
 -- Отзывы
-(1, 1, 'Шедевр Нолана', NULL, NULL, NULL, NULL, NULL),
-(1, 2, 'Отличный фильм для просмотра', NULL, NULL, NULL, NULL, NULL),
-(1, 3, 'Лучший сценарий года', NULL, NULL, NULL, NULL, NULL),
+(1, 1, 'Шедевр Нолана', NULL, NULL, NULL, NULL),
+(1, 2, 'Отличный фильм для просмотра', NULL, NULL, NULL, NULL),
+(1, 3, 'Лучший сценарий года', NULL, NULL, NULL, NULL),
 -- Премии
-(1, 4, NULL, NULL, NULL, NULL, TRUE, NULL),
-(1, 5, NULL, NULL, NULL, NULL, FALSE, NULL),
-(1, 6, NULL, NULL, NULL, NULL, TRUE, NULL), 
+(1, 4, NULL, NULL, NULL, NULL, TRUE),
+(1, 5, NULL, NULL, NULL, NULL, FALSE),
+(1, 6, NULL, NULL, NULL, NULL, TRUE), 
 -- Даты
-(1, 7, NULL, NULL, NULL, '2010-07-16', NULL, NULL), 
-(1, 8, NULL, NULL, NULL, '2010-08-26', NULL, NULL), 
+(1, 7, NULL, NULL, NULL, '2010-07-16', NULL), 
+(1, 8, NULL, NULL, NULL, '2010-08-26', NULL), 
 -- Служебные даты
-(1, 9, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '40 days', NULL, NULL), 
-(1, 10, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '25 days', NULL, NULL),
-(1, 11, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '10 days', NULL, NULL),
-(1, 12, NULL, NULL, NULL, CURRENT_DATE, NULL, NULL), 
-(1, 13, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '20 days', NULL, NULL), 
+(1, 9, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '40 days', NULL), 
+(1, 10, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '25 days', NULL),
+(1, 11, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '10 days', NULL),
+(1, 12, NULL, NULL, NULL, CURRENT_DATE, NULL), 
+(1, 13, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '20 days', NULL), 
 
 -- Бюджет
-(1, 14, NULL, NULL, NULL, NULL, NULL, 160000000.00),
+(1, 14, NULL, 16000000000, NULL, NULL, NULL),
 -- Оценки
-(1, 16, NULL, NULL, 8.8, NULL, NULL, NULL),
-(1, 17, NULL, NULL, 8.7, NULL, NULL, NULL),
+(1, 16, NULL, NULL, 8.8, NULL, NULL),
+(1, 17, NULL, NULL, 8.7, NULL, NULL),
 -- Место в рейтинге
-(1, 19, NULL, 10, NULL, NULL, NULL, NULL),
-(1, 20, NULL, 8, NULL, NULL, NULL, NULL),
+(1, 19, NULL, 10, NULL, NULL, NULL),
+(1, 20, NULL, 8, NULL, NULL, NULL),
 -- Сборы
-(1, 21, NULL, NULL, NULL, NULL, NULL, 836800000.00);
+(1, 21, NULL, 83680000000, NULL, NULL, NULL);
 
 --  'Интерстеллар'
-insert into value(entity_id, attribute_id, string_value, int_value, float_value, date_value, bool_value, decimal_value) values
+insert into value(entity_id, attribute_id, string_value, int_value, float_value, date_value, bool_value) values
 -- Отзывы
-(2, 1, 'Визуальный шедевр', NULL, NULL, NULL, NULL, NULL),
-(2, 2, 'Сложный, но интересный фильм', NULL, NULL, NULL, NULL, NULL),
+(2, 1, 'Визуальный шедевр', NULL, NULL, NULL, NULL),
+(2, 2, 'Сложный, но интересный фильм', NULL, NULL, NULL, NULL),
 -- Премии
-(2, 4, NULL, NULL, NULL, NULL, TRUE, NULL),
-(2, 6, NULL, NULL, NULL, NULL, TRUE, NULL),
+(2, 4, NULL, NULL, NULL, NULL, TRUE),
+(2, 6, NULL, NULL, NULL, NULL, TRUE),
 
 --Служебные даты
-(2, 9, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '80 days', NULL, NULL),
-(2, 10, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '90 days', NULL, NULL),
-(2, 11, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '19 days', NULL, NULL),
-(2, 12, NULL, NULL, NULL, CURRENT_DATE, NULL, NULL),
-(2, 13, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '25 days', NULL, NULL),
+(2, 9, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '80 days', NULL),
+(2, 10, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '90 days', NULL),
+(2, 11, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '19 days', NULL),
+(2, 12, NULL, NULL, NULL, CURRENT_DATE, NULL),
+(2, 13, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '25 days', NULL),
 
 -- Даты
-(2, 7, NULL, NULL, NULL, '2014-10-26', NULL, NULL),
-(2, 8, NULL, NULL, NULL, '2014-11-06', NULL, NULL),
+(2, 7, NULL, NULL, NULL, '2014-10-26', NULL),
+(2, 8, NULL, NULL, NULL, '2014-11-06', NULL),
 -- Бюджет
-(2, 14, NULL, NULL, NULL, NULL, NULL, 165000000.00),
+(2, 14, NULL, 16500000000, NULL, NULL, NULL),
 -- Оценки
-(2, 16, NULL, NULL, 8.6, NULL, NULL, NULL),
-(2, 17, NULL, NULL, 8.6, NULL, NULL, NULL),
+(2, 16, NULL, NULL, 8.6, NULL, NULL),
+(2, 17, NULL, NULL, 8.6, NULL, NULL),
 -- Место в рейтинге
-(2, 19, NULL, 15, NULL, NULL, NULL, NULL),
+(2, 19, NULL, 15, NULL, NULL, NULL),
 -- Сборы
-(2, 21, NULL, NULL, NULL, NULL, NULL, 677500000.00);
+(2, 21, NULL, 67750000000, NULL, NULL, NULL);
 
 -- 'Побег из Шоушенка'
-insert into value(entity_id, attribute_id, string_value, int_value, float_value, date_value, bool_value, decimal_value) values
+insert into value(entity_id, attribute_id, string_value, int_value, float_value, date_value, bool_value) values
 -- Отзывы
-(3, 1, 'Лучший фильм всех времен', NULL, NULL, NULL, NULL, NULL),
-(3, 2, 'Трогательная история о надежде', NULL, NULL, NULL, NULL, NULL),
+(3, 1, 'Лучший фильм всех времен', NULL, NULL, NULL, NULL),
+(3, 2, 'Трогательная история о надежде', NULL, NULL, NULL, NULL),
 -- Премии
-(3, 4, NULL, NULL, NULL, NULL, FALSE, NULL),
-(3, 5, NULL, NULL, NULL, NULL, TRUE, NULL),
+(3, 4, NULL, NULL, NULL, NULL, FALSE),
+(3, 5, NULL, NULL, NULL, NULL, TRUE),
 
-(3, 9, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '15 days', NULL, NULL),
-(3, 10, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '10 days', NULL, NULL),
-(3, 11, NULL, NULL, NULL, CURRENT_DATE - INTERVAL '40 days', NULL, NULL),
-(3, 12, NULL, NULL, NULL, CURRENT_DATE - INTERVAL '60 days', NULL, NULL),
-(3, 13, NULL, NULL, NULL, CURRENT_DATE, NULL, NULL),
+(3, 9, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '15 days', NULL),
+(3, 10, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '10 days', NULL),
+(3, 11, NULL, NULL, NULL, CURRENT_DATE - INTERVAL '40 days', NULL),
+(3, 12, NULL, NULL, NULL, CURRENT_DATE - INTERVAL '60 days', NULL),
+(3, 13, NULL, NULL, NULL, CURRENT_DATE, NULL),
 
 -- Даты
-(3, 7, NULL, NULL, NULL, '1994-09-23', NULL, NULL),
-(3, 8, NULL, NULL, NULL, '1995-04-06', NULL, NULL),
+(3, 7, NULL, NULL, NULL, '1994-09-23', NULL),
+(3, 8, NULL, NULL, NULL, '1995-04-06', NULL),
 -- Оценки
-(3, 16, NULL, NULL, 9.3, NULL, NULL, NULL),
-(3, 17, NULL, NULL, 9.1, NULL, NULL, NULL),
+(3, 16, NULL, NULL, 9.3, NULL, NULL),
+(3, 17, NULL, NULL, 9.1, NULL, NULL),
 -- Место в рейтинге
-(3, 19, NULL, 1, NULL, NULL, NULL, NULL),
-(3, 20, NULL, 1, NULL, NULL, NULL, NULL),
+(3, 19, NULL, 1, NULL, NULL, NULL),
+(3, 20, NULL, 1, NULL, NULL, NULL),
 -- Сборы
-(3, 21, NULL, NULL, NULL, NULL, NULL, 16000000.00);
+(3, 21, NULL, 1600000000, NULL, NULL, NULL);
 
 -- 'Джентльмены' 
-insert into value(entity_id, attribute_id, string_value, int_value, float_value, date_value, bool_value, decimal_value) values
+insert into value(entity_id, attribute_id, string_value, int_value, float_value, date_value, bool_value) values
 -- Отзывы
-(4, 1, 'Отличная экшен-комедия', NULL, NULL, NULL, NULL, NULL),
-(4, 2, 'Гай Ричи не подвел', NULL, NULL, NULL, NULL, NULL),
+(4, 1, 'Отличная экшен-комедия', NULL, NULL, NULL, NULL),
+(4, 2, 'Гай Ричи не подвел', NULL, NULL, NULL, NULL),
 
 --Служебные даты
-(4, 9, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '10 days', NULL, NULL),
-(4, 10, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '15 days', NULL, NULL),
-(4, 11, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '20 days', NULL, NULL),
-(4, 12, NULL, NULL, NULL, CURRENT_DATE, NULL, NULL),
-(4, 13, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '20 days', NULL, NULL),
+(4, 9, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '10 days', NULL),
+(4, 10, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '15 days', NULL),
+(4, 11, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '20 days', NULL),
+(4, 12, NULL, NULL, NULL, CURRENT_DATE, NULL),
+(4, 13, NULL, NULL, NULL, CURRENT_DATE + INTERVAL '20 days', NULL),
 
 -- Даты
-(4, 7, NULL, NULL, NULL, '2019-12-03', NULL, NULL),
-(4, 8, NULL, NULL, NULL, '2020-02-13', NULL, NULL),
+(4, 7, NULL, NULL, NULL, '2019-12-03', NULL),
+(4, 8, NULL, NULL, NULL, '2020-02-13', NULL),
 -- Бюджет
-(4, 14, NULL, NULL, NULL, NULL, NULL, 22000000.00),
+(4, 14, NULL, 2200000000, NULL, NULL, NULL),
 -- Оценки
-(4, 16, NULL, NULL, 7.8, NULL, NULL, NULL),
-(4, 17, NULL, NULL, 8.5, NULL, NULL, NULL),
+(4, 16, NULL, NULL, 7.8, NULL, NULL),
+(4, 17, NULL, NULL, 8.5, NULL, NULL),
 -- Сборы
-(4, 21, NULL, NULL, NULL, NULL, NULL, 112000000.00);
+(4, 21, NULL, 11200000000, NULL, NULL, NULL);
