@@ -1,0 +1,49 @@
+### Очистить список событий
+DELETE 127.0.0.1/events
+
+### Добавить событие
+POST 127.0.0.1/events
+Content-Type: application/json
+
+{
+  "priority": 1000,
+  "conditions": {
+    "param1": 1
+  },
+  "event": {
+    "data": "test event"
+  }
+}
+
+### Добавить событие
+POST 127.0.0.1/events
+Content-Type: application/json
+
+{
+  "priority": 2000,
+  "conditions": {
+    "param1": 1,
+    "param2": 2
+  },
+  "event": {
+    "data": "test event 2"
+  }
+}
+
+### Добавить событие
+POST 127.0.0.1/events
+Content-Type: application/json
+
+{
+  "priority": 3000,
+  "conditions": {
+    "param1": 1,
+    "param2": 2
+  },
+  "event": {
+    "data": "test event 3"
+  }
+}
+
+### Найти подходящее событие
+GET 127.0.0.1/events?params[param1]=1&params[param2]=2

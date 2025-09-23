@@ -1,0 +1,41 @@
+services:
+  nginx:
+    image: nginx:1.28-alpine
+    depends_on:
+      - php
+    volumes:
+      - ./app:/app
+      - ./.docker-data/nginx/logs:/var/log/nginx
+      - ./.infrastructure/nginx/configs/backend.conf:/etc/nginx/conf.d/default.conf
+      - php-socket:/var/run/php
+    ports:
+      - ${APP_PORT}:80
+    networks:
+      - app_network
+  php:
+    build:
+      context: ./.infrastructure/php
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+    env_file: ./.env
+    volumes:
+      - ./app:/app
+      - ./.docker-data/php/logs:/var/log/php
+      - ./.infrastructure/php/configs/php.ini:/usr/local/etc/php/php.ini
+      - ./.infrastructure/php/configs/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+      - ./.infrastructure/php/configs/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - php-socket:/var/run/php
+    networks:
+      - app_network
+  redis:
+    image: redis:7.4.3-alpine
+    networks:
+      - app_network
+
+volumes:
+  php-socket:
+
+networks:
+  app_network:
+    driver: bridge
