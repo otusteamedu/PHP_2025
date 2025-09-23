@@ -9,28 +9,34 @@ class IdentityMap
     private array $objects = [];
 
 
-    public function setObject($id, $object): void
+    public function setObject($object, $id): void
     {
-        $this->objects[$id] = $object;
+        $this->objects[$this->getObjectKey($object, $id)] = $object;
     }
 
-    public function hasId($id)
+    public function hasId($className, $id)
     {
-        return isset($this->objects[$id]);
+        return isset($this->objects[$className . $id]);
     }
 
-    public function getObject($id)
+    public function getObject($className, $id)
     {
-        if ($this->hasId($id)) {
-            return $this->objects[$id];
+        if ($this->hasId($className, $id)) {
+            return $this->objects[$className . $id];
         }
         return null;
     }
 
-    public function deleteObject($id)
+    public function deleteObject($className, $id)
     {
-        if (in_array($id ,array_keys($this->objects))) {
-            unset($this->objects[$id]);
+        if (in_array($className . $id, array_keys($this->objects))) {
+            unset($this->objects[$className . $id]);
         }
     }
+
+    private function getObjectKey($object, $id)
+    {
+        return get_class($object) . $id;
+    }
+
 }

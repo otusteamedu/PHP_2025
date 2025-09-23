@@ -6,7 +6,7 @@ namespace Dinargab\Homework12\Mapper;
 
 use Dinargab\Homework12\Mapper\IdentityMap;
 use Dinargab\Homework12\Model\Movie;
-
+use InvalidArgumentException;
 
 class MovieMapper
 {
@@ -16,10 +16,10 @@ class MovieMapper
     private IdentityMap $identityMap;
 
 
-    public function __construct(\PDO $connection, $identityMap = null)
+    public function __construct(\PDO $connection)
     {
         $this->connection = $connection;
-        $this->identityMap = $identityMap ?? new IdentityMap();
+        $this->identityMap = new IdentityMap();
     }
 
     /**
@@ -31,25 +31,11 @@ class MovieMapper
     public function save(Movie $movie): Movie
     {
         if (is_null($movie->getId()) || $movie->getId() < 1) {
-            $sql = 'insert into movie (title, overview, release_date, duration, rating) 
-            values(:title, :overview, :release_date, :duration, :rating)
-            returning movie_id;';
-            $sth = $this->connection->prepare($sql);
-            $sth->execute($this->entityToDb($movie, true));
-            $movieId = $sth->fetch(\PDO::FETCH_COLUMN);
+            $returnMovie = $this->insert($movie);
         } else {
-            $this->update($movie);
-            $movieId = $movie->getId();
+            $returnMovie = $this->update($movie);
         }
-        $returnMovie = new Movie(
-            $movie->getTitle(),
-            $movie->getOverview(),
-            $movie->getReleaseDate(),
-            $movie->getDuration(),
-            $movie->getRating(),
-            $movieId
-        );
-        $this->identityMap->setObject($movieId, $returnMovie);
+        $this->identityMap->setObject($returnMovie, $returnMovie->getId());
         return $returnMovie;
     }
 
@@ -61,12 +47,10 @@ class MovieMapper
      */
     public function getById(int $movieId): Movie|null
     {
-        if ($this->identityMap->hasId($movieId)) {
-            return $this->identityMap->getObject($movieId);
+        if ($this->identityMap->hasId(Movie::class, $movieId)) {
+            return $this->identityMap->getObject(Movie::class, $movieId);
         }
-        $sql = 'select movie_id, title, duration, overview, release_date, rating 
-        from movie
-        where movie_id = :movie_id;';
+        $sql = 'SELECT movie_id, title, duration, overview, release_date, rating FROM movie WHERE movie_id = :movie_id;';
         $sth = $this->connection->prepare($sql);
         $sth->execute(["movie_id" => $movieId]);
         $result = $sth->fetch(\PDO::FETCH_ASSOC);
@@ -74,6 +58,28 @@ class MovieMapper
             return null;
         }
         return $this->dbToEntity($result);
+    }
+    /**
+     * Insert new movie into DB
+     * 
+     * @param Movie $movie Movie object to insert
+     * @return Movie inserted movie object
+     */
+
+    private function insert(Movie $movie): Movie
+    {
+        $sql = 'INSERT INTO movie (title, overview, release_date, duration, rating) VALUES(:title, :overview, :release_date, :duration, :rating);';
+        $sth = $this->connection->prepare($sql);
+        $sth->execute($this->entityToDb($movie, true));
+
+        return new Movie(
+            $movie->getTitle(),
+            $movie->getOverview(),
+            $movie->getReleaseDate(),
+            $movie->getDuration(),
+            $movie->getRating(),
+            (int) $this->connection->lastInsertId()
+        );
     }
 
 
@@ -85,33 +91,32 @@ class MovieMapper
      */
     private function update(Movie $movie): Movie
     {
-        $sql = 'update movie 
-            set title = :title, overview = :overview, release_date = :release_date, duration = :duration, rating = :rating
-            where movie_id = :movie_id';
+        $sql = 'UPDATE movie SET title = :title, overview = :overview, release_date = :release_date, duration = :duration, rating = :rating WHERE movie_id = :movie_id';
         $sth = $this->connection->prepare($sql);
         $sth->execute($this->entityToDb($movie));
-
-        $this->identityMap->setObject($movie->getId(), $movie);
         return $movie;
     }
 
     /**
      * Delete movie from database
      * 
-     * @param Movie $movie Movie object to delete
+     * @param Movie|int $movie Movie object to delete or id of movie to delete
      * @return bool True if deletion was successful
      */
-    public function delete(Movie $movie): bool
+    public function delete(Movie|int $movie): bool
     {
-        if (is_null($movie->getId()) || $movie->getId() < 1) {
+        $movieId = $movie;
+        if (is_object($movie) && get_class($movie) == Movie::class) {
+            $movieId = $movie->getId();
+        }
+        if (is_null($movieId)) {
             return false;
         }
-        $sql = 'delete from movie
-        where movie_id = :movie_id;';
+        $sql = 'DELETE from movie WHERE movie_id = :movie_id;';
         $sth = $this->connection->prepare($sql);
-        $result = $sth->execute(["movie_id" => $movie->getId()]);
+        $result = $sth->execute(["movie_id" => $movieId]);
         if ($result) {
-            $this->identityMap->deleteObject($movie->getId());
+            $this->identityMap->deleteObject(Movie::class, $movieId);
         }
         return $result;
     }
@@ -128,9 +133,7 @@ class MovieMapper
         if (empty(trim($title))) {
             return [];
         }
-        $sql = 'select movie_id, title, duration, overview, release_date, rating 
-            from movie
-            where title = :title;';
+        $sql = 'SELECT movie_id, title, duration, overview, release_date, rating FROM movie WHERE title = :title;';
         $sth = $this->connection->prepare($sql);
         $sth->execute([
             'title' => trim($title)
@@ -149,10 +152,13 @@ class MovieMapper
      */
     public function getList(int $limit = 10, int $offset = 0)
     {
-        $sql = 'select movie_id, title, duration, overview, release_date, rating
-        from movie
-        limit :limit
-        offset :offset';
+        if ($limit < 1) {
+            throw new InvalidArgumentException("Limit must be greater than zero");
+        }
+        if ($offset < 0) {
+            throw new InvalidArgumentException("Offset can not be negative");
+        }
+        $sql = 'SELECT movie_id, title, duration, overview, release_date, rating FROM movie LIMIT :limit OFFSET :offset;';
         $sth = $this->connection->prepare($sql);
         $sth->execute([
             'limit' => $limit,
@@ -174,11 +180,11 @@ class MovieMapper
     {
         $resultArray = [];
         foreach ($dbValues as $movieItem) {
-            $newMovie = $this->dbToEntity($movieItem);
-            if (!$this->identityMap->hasId($newMovie->getId())) {
-                $this->identityMap->setObject($newMovie->getId(), $newMovie);
+            if (!$this->identityMap->hasId(Movie::class, $movieItem['movie_id'])) {
+                $newMovie = $this->dbToEntity($movieItem);
+                $this->identityMap->setObject($newMovie, $newMovie->getId());
             }
-            $resultArray[] = $newMovie;
+            $resultArray[] = $this->identityMap->getObject(Movie::class, $movieItem['movie_id']);
         }
         return $resultArray;
     }
@@ -187,13 +193,13 @@ class MovieMapper
     private function dbToEntity(array $dbData)
     {
         return new Movie(
-                $dbData["title"],
-                $dbData["overview"],
-                new \DateTime($dbData['release_date']),
-                (int) $dbData["duration"],
-                (float) $dbData["rating"],
-                (int) $dbData["movie_id"]
-            );
+            $dbData["title"],
+            $dbData["overview"],
+            new \DateTime($dbData['release_date']),
+            (int) $dbData["duration"],
+            (float) $dbData["rating"],
+            (int) $dbData["movie_id"]
+        );
     }
 
     private function entityToDb(Movie $movie, $noMovieId = false)

@@ -14,6 +14,8 @@ class Movie
     private ?\DateTime $releaseDate = null;
     private int $duration = 0;
     private float $rating = 0.0;
+
+    //Id can only be set on object instantiation
     private ?int $id = null;
 
 

@@ -15,22 +15,29 @@ class App
     public MovieMapper $movieMapper;
 
 
-    public function renderTest(): void
+    public function __construct()
     {
         $this->init();
+        $this->renderTest();
+    }
 
+    private function renderTest(): void
+    {
+        //Get Movie with ID 3;
         $movie = $this->movieMapper->getById(3);
-
         echo MovieRenderer::render($movie);
 
-
+        //Get 15 movies (pretty much all movies)
         $moviesList = $this->movieMapper->getList(15, 0);
-
         echo "<h2>Movie List Before deletion</h2>";
         echo MovieRenderer::renderList($moviesList);
 
+        //Delete movie With ID 3
         $this->movieMapper->delete($movie);
+        //Delete movie with ID 6
+        $this->movieMapper->delete(6);
 
+        //Add new Movie
         $movie = new Movie(
             "Eraser",
             "A Witness Protection specialist becomes suspicious of his co-workers when dealing with a case involving high-tech weapons.",
@@ -40,18 +47,18 @@ class App
         );
         $this->movieMapper->save($movie);
 
+        //Update movie title of first movie in list
         $moviesList[0]->setTitle("Updated title");
-
         $this->movieMapper->save($moviesList[0]);
-        $moviesList = $this->movieMapper->getList(15, 0);
 
-        echo "<h2>Movie List after deletion of movie id 3 and adding new movie, and udpdating first movie</h2>";
+        //Again get 15 movies from DB and render them
+        $moviesList = $this->movieMapper->getList(15, 0);
+        echo "<h2>Movie List after deletion of movie id 3, adding new movie and udpdating first movie</h2>";
         echo MovieRenderer::renderList($moviesList);
 
-
+        //Get Movies by title;
         echo "<h2>Total Recall Movies</h2>";
         $totalRecallMovies = $this->movieMapper->getByMovieTitle("Total Recall");
-
         echo MovieRenderer::renderList($totalRecallMovies);
     }
 
@@ -80,10 +87,10 @@ class App
 
     private function initTestTable(\Pdo $pdo)
     {
-        $sql = 'truncate table movie restart identity;';
+        $sql = 'TRUNCATE TABLE movie RESTART IDENTITY;';
         $sth = $pdo->prepare($sql);
         $sth->execute();
-        $sql = 'create table if not exists movie(
+        $sql = 'CREATE TABLE IF NOT EXISTS movie(
             movie_id serial primary key,
             title varchar(255) not null,
             overview text,
@@ -95,7 +102,7 @@ class App
         $sth->execute();
     }
 
-    private function initTestData($pdo)
+    private function initTestData()
     {
 
         $testMovies = [
