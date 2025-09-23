@@ -10,6 +10,7 @@ interface Database {
     public function commit(): bool;
     public function begin(): bool;
     public function fetchAll(string $sqlText, ?array $bindings = []): array;
+    public function yieldArray(string $sqlText, ?array $bindings = []): iterable;
     public function fetch(string $sqlText, ?array $bindings = []): ?array;
     public function fetchValue(string $sqlText, ?array $bindings = []): ?string;
 }

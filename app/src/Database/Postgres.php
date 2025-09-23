@@ -98,6 +98,18 @@ final class Postgres implements Database
         }
     }
 
+    public function yieldArray(string $sqlText, ?array $bindings = []): iterable
+    {
+        $this->query($sqlText, $bindings);
+        try {
+            while ($row = $this->statement->fetch(PDO::FETCH_ASSOC)) {
+                yield $row;
+            }
+        } finally {
+            $this->statement->closeCursor();
+        }
+    }
+
     public function fetch(string $sqlText, ?array $bindings = []): ?array
     {
         $this->query($sqlText, $bindings);

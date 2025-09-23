@@ -35,8 +35,17 @@ final class PostsRepository
     }
 
     /** @return Post[] */
-    public function findAll(): array
+    public function findAll(?int $userId = null): array
     {
+        $where = null;
+        $bindings = null;
+
+        if ($userId !== null) {
+            $where = 'WHERE user_id = :0';
+            $bindings = [ $userId ];
+        }
+
+
         $sql = <<<SQL
           SELECT
             id,
@@ -44,12 +53,17 @@ final class PostsRepository
             title,
             body
           FROM posts
+          $where
           ORDER BY id
         SQL;
 
-        $rows = $this->db->fetchAll($sql);
+        $rows = $this->db->yieldArray($sql, $bindings);
+        $result = [];
+        foreach($rows as $row) {
+            $result[] = $this->mapRow($row);
+        }
 
-        return array_map(fn(array $row): Post => $this->mapRow($row), $rows);
+        return $result;
     }
 
     /**
@@ -57,18 +71,7 @@ final class PostsRepository
      */
     public function findByUserId(int $userId): array
     {
-        $sql = <<<SQL
-          SELECT
-            id,
-            user_id,
-            title,
-            body
-          FROM posts 
-          WHERE user_id = :0
-        SQL;
-
-        $rows = $this->db->fetchAll($sql, [$userId]);
-        return array_map(fn(array $row): Post => $this->mapRow($row), $rows);
+        return $this->findAll($userId);
     }
 
     private function mapRow(array $row): Post

@@ -26,7 +26,7 @@ final class UsersListCommand extends Command
             return self::SUCCESS;
         }
 
-        foreach ($list as $user) {``
+        foreach ($list as $user) {
             assert($user instanceof User);
             $postsCount = $user->posts()->count();;
             $output->writeln(sprintf('#%d: %s <%s> have %d posts', $user->id, $user->name, $user->email, $postsCount));
