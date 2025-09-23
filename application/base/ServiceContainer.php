@@ -4,6 +4,7 @@ namespace App\Base;
 
 use App\Base\Exceptions\ServiceContainer\ServiceContainerException;
 use App\Base\Exceptions\ServiceContainer\ServiceContainerNotFoundException;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -75,16 +76,17 @@ final class ServiceContainer implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function call(callable $callable): mixed
+    public function call(callable $callable, array $parameters = []): mixed
     {
+        $passedParameters = array_keys($parameters);
         try {
-            $params = $this->getParams($callable);
+            $params = $this->getParams($callable, $passedParameters);
             foreach ($params as $paramName => $param) {
                 $params[$paramName] = $this->make($param);
             }
         } catch (Throwable $e) {
             $callableString = var_export($callable, true);
-            throw new ServiceContainerException("Failed to build arguments for '$callableString'.", 0, $e);
+            throw new ServiceContainerException("Failed to build arguments for '$callableString'.", 500, $e);
         }
         return call_user_func($callable, ...$params);
     }
@@ -93,7 +95,7 @@ final class ServiceContainer implements ContainerInterface
      * @return array<string, class-string>
      * @throws ReflectionException
      */
-    private function getParams(string|callable $callable): array
+    private function getParams(string|callable $callable, array $passedParameters = []): array
     {
         if (is_string($callable)) {
             $reflectionClass = new ReflectionClass($callable);
@@ -114,14 +116,22 @@ final class ServiceContainer implements ContainerInterface
 
         $params = [];
         foreach ($reflectionCallable->getParameters() as $param) {
-            if ($param->isDefaultValueAvailable()) {
+            $paramName = $param->getName();
+            if (in_array($paramName, $passedParameters)) {
+                $params[$paramName] = $passedParameters;
+                unset($passedParameters[$paramName]);
+                continue;
+            } elseif ($param->isDefaultValueAvailable()) {
                 continue;
             } elseif ($param->getType()->isBuiltin()) {
                 throw new ServiceContainerException(
-                    "Can't resolve the parameter '{$param->getType()} {$param->getName()}' of '{$callable}'"
+                    "Can't resolve the parameter '{$param->getType()} {$paramName}' of '{$callable}'"
                 );
             }
-            $params[$param->getName()] = $param->getType()->getName();
+            $params[$paramName] = $param->getType()->getName();
+        }
+        if ($passedParameters) {
+            throw new InvalidArgumentException("Invalid parameters (" . implode(', ', $passedParameters) . ") passed");
         }
 
         return $params;

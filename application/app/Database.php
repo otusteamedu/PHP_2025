@@ -11,17 +11,21 @@ readonly class Database
 
 
     public function __construct(
+        string $connection,
         #[SensitiveParameter]
         string $host,
         #[SensitiveParameter]
         string $username,
         #[SensitiveParameter]
         string $password,
+        #[SensitiveParameter]
+        string $database,
         string $charset = 'utf8mb4',
     ) {
         $dsn = sprintf(
-            "mysql:host=%s;charset=%s",
+            "$connection:host=%s;database=%s;charset=%s",
             $host,
+            $database,
             $charset,
         );
 

@@ -2,11 +2,15 @@
 
 namespace App\Base;
 
+use App\Base\Routers\Routing;
 use InvalidArgumentException;
+
+use const PHP_SAPI;
 
 final class BaseApplication
 {
     private static ?self $app = null;
+    private ?bool $inConsole = null;
     private Routing $routing;
     /**
      * @var array<int, class-string<ApplicationInterface>>
@@ -16,6 +20,15 @@ final class BaseApplication
     private function __construct()
     {
         $this->routing = new Routing();
+    }
+
+    public function runningInConsole(): bool
+    {
+        if (is_null($this->inConsole)) {
+            $this->inConsole = PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg';
+        }
+
+        return $this->inConsole;
     }
 
     public function run(): void

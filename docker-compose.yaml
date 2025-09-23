@@ -72,13 +72,13 @@ services:
       - redis-data:/data
 
   database:
-    image: mariadb:12-ubi
+    image: postgres:17.6-alpine
     volumes:
-      - database-data:/var/lib/mysql
+      - database-data:/var/lib/postgresql
     environment:
-      MARIADB_USER: ${DB_USER}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DATABASE: ${DB_DATABASE}
 
 
 
