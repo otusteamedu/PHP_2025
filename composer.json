@@ -1,0 +1,15 @@
+{
+  "name": "bookstore-app/patterns",
+  "description": "Bookstore application demonstrating various data access patterns",
+  "type": "project",
+  "require": {
+    "php": ">=8.2",
+    "ext-pdo": "*",
+    "ext-pdo_pgsql": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "BookstoreApp\\": "src/"
+    }
+  }
+}

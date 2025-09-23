@@ -1,3 +1,9 @@
-# PHP_2025
+# Реализация паттернов доступа к данным RawGateway, TableGateway, ActiveRecode, DataMapper, IdentityMap
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Репозиторий содержит пример реализации основных паттернов доступа к данным. Демонстрация 
+работы и использования выполнена с использованием консольных команд.
+
+Запуск и вывод информации о командах:
+```php
+php console.php
+```
