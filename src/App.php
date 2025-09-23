@@ -53,7 +53,7 @@ class App
 
         //Again get 15 movies from DB and render them
         $moviesList = $this->movieMapper->getList(15, 0);
-        echo "<h2>Movie List after deletion of movie id 3, adding new movie and udpdating first movie</h2>";
+        echo "<h2>Movie List after deletion of movie id 3 and 6, adding new movie and udpdating first movie</h2>";
         echo MovieRenderer::renderList($moviesList);
 
         //Get Movies by title;
@@ -91,12 +91,12 @@ class App
         $sth = $pdo->prepare($sql);
         $sth->execute();
         $sql = 'CREATE TABLE IF NOT EXISTS movie(
-            movie_id serial primary key,
-            title varchar(255) not null,
-            overview text,
-            release_date timestamp,
-            duration integer,
-            rating real
+            movie_id SERIAL PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            overview TEXT,
+            release_date TIMESTAMP,
+            duration INTEGER,
+            rating REAL
         )';
         $sth = $pdo->prepare($sql);
         $sth->execute();

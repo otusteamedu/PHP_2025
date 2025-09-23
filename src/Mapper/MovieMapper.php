@@ -30,7 +30,7 @@ class MovieMapper
      */
     public function save(Movie $movie): Movie
     {
-        if (is_null($movie->getId()) || $movie->getId() < 1) {
+        if (is_null($movie->getId())) {
             $returnMovie = $this->insert($movie);
         } else {
             $returnMovie = $this->update($movie);
