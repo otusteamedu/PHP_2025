@@ -1,0 +1,27 @@
+{
+  "name": "app/validator",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "App\\Validator\\": "src/",
+      "Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Artem Plekhanov"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^12.2",
+    "codeception/codeception": "^5.3",
+    "codeception/module-webdriver": "^4.0",
+    "codeception/module-asserts": "^3.2",
+    "codeception/module-phpbrowser": "^3.0",
+    "codeception/module-rest": "^3.4",
+    "codeception/module-symfony": "^3.7"
+  },
+  "require": {
+    "symfony/dotenv": "^7.3"
+  }
+}
