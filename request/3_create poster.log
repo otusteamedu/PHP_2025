@@ -1,0 +1,105 @@
+SELECT
+    film.id,
+    film.name,
+    film_session.date_start
+FROM
+    film_session
+    join film on film.id = film_session.id_film
+    where film_session.date_start::date = now()::date;
+
+
+1. 10_000 data
+
+QUERY PLAN
+--------------------------------------------------------------------
+ Hash Join  (cost=3.27..38.29 rows=5 width=35)
+   Hash Cond: (film_session.id_film = film.id)
+   ->  Seq Scan on film_session  (cost=0.00..35.00 rows=5 width=12)
+         Filter: ((date_start)::date = (now())::date)
+   ->  Hash  (cost=2.01..2.01 rows=101 width=27)
+         ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27)
+(6 rows)
+
+
+QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.15..2766.93 rows=500 width=35) (actual time=0.056..10.148 rows=46 loops=1)
+   ->  Seq Scan on film_session  (cost=0.00..2736.00 rows=500 width=12) (actual time=0.049..10.038 rows=46 loops=1)
+         Filter: ((date_start)::date = (now())::date)
+         Rows Removed by Filter: 99954
+   ->  Memoize  (cost=0.15..0.19 rows=1 width=27) (actual time=0.002..0.002 rows=1 loops=46)
+         Cache Key: film_session.id_film
+         Cache Mode: logical
+         Hits: 5  Misses: 41  Evictions: 0  Overflows: 0  Memory Usage: 6kB
+         ->  Index Scan using film_pkey on film  (cost=0.14..0.18 rows=1 
+width=27) (actual time=0.001..0.001 rows=1 loops=41)
+               Index Cond: (id = film_session.id_film)
+ Planning Time: 0.173 ms
+ Execution Time: 10.169 ms
+(12 rows)
+
+
+
+2. 10_000_000 data
+
+QUERY PLAN
+-----------------------------------------------------------------------------------
+ Nested Loop  (cost=0.15..2766.93 rows=500 width=35)
+   ->  Seq Scan on film_session  (cost=0.00..2736.00 rows=500 width=12)  
+         Filter: ((date_start)::date = (now())::date)
+   ->  Memoize  (cost=0.15..0.19 rows=1 width=27)
+         Cache Key: film_session.id_film
+         Cache Mode: logical
+         ->  Index Scan using film_pkey on film  (cost=0.14..0.18 rows=1 
+width=27)
+               Index Cond: (id = film_session.id_film)
+(8 rows)
+
+
+QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.15..2766.93 rows=500 width=35) (actual time=0.059..10.183 rows=46 loops=1)
+   ->  Seq Scan on film_session  (cost=0.00..2736.00 rows=500 width=12) (actual time=0.052..10.076 rows=46 loops=1)
+         Filter: ((date_start)::date = (now())::date)
+         Rows Removed by Filter: 99954
+   ->  Memoize  (cost=0.15..0.19 rows=1 width=27) (actual time=0.002..0.002 rows=1 loops=46)
+         Cache Key: film_session.id_film
+         Cache Mode: logical
+         Hits: 5  Misses: 41  Evictions: 0  Overflows: 0  Memory Usage: 6kB
+         ->  Index Scan using film_pkey on film  (cost=0.14..0.18 rows=1 
+width=27) (actual time=0.001..0.001 rows=1 loops=41)
+               Index Cond: (id = film_session.id_film)
+ Planning Time: 0.144 ms
+ Execution Time: 10.208 ms
+(12 rows)
+
+3. 10_000_000 data with index
+
+QUERY PLAN
+------------------------------------------------------------------------------------------------   
+ Hash Join  (cost=7.92..152.66 rows=45 width=35)
+   Hash Cond: (film_session.id_film = film.id)
+   ->  Bitmap Heap Scan on film_session  (cost=4.65..149.27 rows=45 width=12)
+         Recheck Cond: ((date_start)::date = (now())::date)
+         ->  Bitmap Index Scan on id_film_session_date_start  (cost=0.00..4.64 rows=45 width=0)    
+               Index Cond: ((date_start)::date = (now())::date)
+   ->  Hash  (cost=2.01..2.01 rows=101 width=27)
+         ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27)
+(8 rows)
+
+
+QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=7.92..152.66 rows=45 width=35) (actual time=0.064..0.116 rows=46 loops=1)        
+   Hash Cond: (film_session.id_film = film.id)
+   ->  Bitmap Heap Scan on film_session  (cost=4.65..149.27 rows=45 width=12) (actual time=0.037..0.080 rows=46 loops=1)
+         Recheck Cond: ((date_start)::date = (now())::date)
+         Heap Blocks: exact=45
+         ->  Bitmap Index Scan on id_film_session_date_start  (cost=0.00..4.64 rows=45 width=0) (actual time=0.030..0.031 rows=46 loops=1)
+               Index Cond: ((date_start)::date = (now())::date)
+   ->  Hash  (cost=2.01..2.01 rows=101 width=27) (actual time=0.023..0.023 rows=101 loops=1)       
+         Buckets: 1024  Batches: 1  Memory Usage: 14kB
+         ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27) (actual time=0.006..0.011 rows=101 loops=1)
+ Planning Time: 0.207 ms
+ Execution Time: 0.142 ms
+(12 rows)

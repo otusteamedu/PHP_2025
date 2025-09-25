@@ -1,0 +1,80 @@
+SELECT
+    max(price) as max_price, min(price) as min_price
+FROM
+    ticket
+WHERE
+    id_session = 40000;
+
+1. 10_000 data
+
+QUERY PLAN
+---------------------------------------------------------------
+ Aggregate  (cost=151.18..151.19 rows=1 width=64)
+   ->  Seq Scan on ticket  (cost=0.00..151.00 rows=35 width=5)
+         Filter: (id_session = 4)
+(3 rows)
+
+
+QUERY PLAN
+---------------------------------------------------------------------------------------------------------   
+ Aggregate  (cost=151.18..151.19 rows=1 width=64) (actual time=0.353..0.353 rows=1 loops=1)
+   ->  Seq Scan on ticket  (cost=0.00..151.00 rows=35 width=5) (actual time=0.351..0.351 rows=0 loops=1)    
+         Filter: (id_session = 4)
+         Rows Removed by Filter: 8000
+ Planning Time: 0.069 ms
+ Execution Time: 0.370 ms
+(6 rows)
+
+
+
+
+2. 10_000_000 data
+
+QUERY PLAN
+--------------------------------------------------------------------------------
+ Aggregate  (cost=579889.31..579889.32 rows=1 width=64)
+   ->  Gather  (cost=1000.00..579889.31 rows=1 width=5)
+         Workers Planned: 2
+         ->  Parallel Seq Scan on ticket  (cost=0.00..578889.21 rows=1 width=5)
+               Filter: (id_session = 40000)
+ JIT:
+   Functions: 6
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+(8 rows)
+
+
+QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=579889.31..579889.32 rows=1 width=64) (actual time=732.301..736.617 rows=1 loops=1)
+   ->  Gather  (cost=1000.00..579889.31 rows=1 width=5) (actual time=732.247..736.562 rows=0 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Parallel Seq Scan on ticket  (cost=0.00..578889.21 rows=1 width=5) (actual time=696.175..696.176 rows=0 loops=3)
+               Filter: (id_session = 40000)
+               Rows Removed by Filter: 16666667
+ Planning Time: 0.094 ms
+ JIT:
+   Functions: 14
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 1.035 ms (Deform 0.423 ms), Inlining 127.600 ms, Optimization 47.592 ms, Emission 34.290 ms, Total 210.517 ms
+ Execution Time: 737.104 ms
+(13 rows)
+
+3. 10_000_000 data with index
+
+QUERY PLAN
+-----------------------------------------------------------------------------------------
+ Aggregate  (cost=8.59..8.60 rows=1 width=64)
+   ->  Index Scan using id_ticket_by_session on ticket  (cost=0.56..8.58 rows=1 width=5)
+         Index Cond: (id_session = 40000)
+(3 rows)
+
+
+QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=8.59..8.60 rows=1 width=64) (actual time=0.071..0.072 rows=1 loops=1)
+   ->  Index Scan using id_ticket_by_session on ticket  (cost=0.56..8.58 rows=1 width=5) (actual time=0.068..0.069 rows=0 loops=1)
+         Index Cond: (id_session = 40000)
+ Planning Time: 0.101 ms
+ Execution Time: 0.089 ms
+(5 rows)
