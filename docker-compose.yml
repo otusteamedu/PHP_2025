@@ -1,0 +1,131 @@
+services:
+  # Балансировщик
+  nginx-lb:
+    image: nginx:alpine
+    container_name: nginx_lb
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/lb.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend1
+      - backend2
+    networks:
+      - app-network
+
+  backend1:
+    image: nginx:alpine
+    container_name: backend1_web
+    volumes:
+      - ./src:/var/www/html/src
+      - ./nginx/backend1.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php1
+    networks:
+      - app-network
+
+  php1:
+    build:
+      context: ./php
+    container_name: backend1_php
+    volumes:
+      - ./src:/var/www/html/src
+    networks:
+      - app-network
+
+  backend2:
+    image: nginx:alpine
+    container_name: backend2_web
+    volumes:
+      - ./src:/var/www/html/src
+      - ./nginx/backend2.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php2
+    networks:
+      - app-network
+
+  php2:
+    build:
+      context: ./php
+    container_name: backend2_php
+    volumes:
+      - ./src:/var/www/html/src
+    networks:
+      - app-network
+
+  redis-1:
+    image: redis:alpine
+    container_name: redis-1
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+
+  redis-2:
+    image: redis:alpine
+    container_name: redis-2
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+
+  redis-3:
+    image: redis:alpine
+    container_name: redis-3
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+
+  redis-4:
+    image: redis:alpine
+    container_name: redis-4
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+
+  redis-5:
+    image: redis:alpine
+    container_name: redis-5
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+
+  redis-6:
+    image: redis:alpine
+    container_name: redis-6
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+
+  redis-cluster-creator:
+    image: redis:alpine
+    container_name: redis-cluster-creator
+    command:
+      [
+        "sh",
+        "-c",
+        "sleep 10 && echo 'yes' | redis-cli --cluster create redis-1:6379 redis-2:6379 redis-3:6379 redis-4:6379 redis-5:6379 redis-6:6379 --cluster-replicas 1",
+      ]
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-4
+      - redis-5
+      - redis-6
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
