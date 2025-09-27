@@ -31,5 +31,3 @@ abstract class ProductDecorator implements Product
         return array_merge($this->product->getIngredients(), [$this->ingredientLabel]);
     }
 }
-
-
