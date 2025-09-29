@@ -5,6 +5,9 @@ FROM
 left join
     ticket on  room_place.id = ticket.id_room_place and ticket.id_session = 1;
 
+5. Сформировать схему зала и показать на ней свободные и занятые места на конкретный сеанс - запрос стал быстрее:
+поиск id_ticket_by_session значительно быстрее за счет индексов (вместо параллельного сканирования идет поиск по индексу)
+
 1. 10_000 data
 
 QUERY PLAN

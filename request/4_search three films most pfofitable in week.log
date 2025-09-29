@@ -17,6 +17,9 @@ group by film_weeks.id, film_weeks.name
 order by profit_week desc
 limit 3;
 
+4. Поиск 3 самых прибыльных фильмов за неделю - запрос стал немного быстрее:
+более эффективная фильтрация film_session, хеш-соединение вместо полного параллельного сканирования film_session
+
 
 1. 10_000 data
 

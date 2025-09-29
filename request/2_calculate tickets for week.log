@@ -5,6 +5,9 @@ FROM
     where date_buy::date > now()::date - INTERVAL '1 weeks' and date_buy::date <= now()::date;
     
 
+2. Подсчёт проданных билетов за неделю - запрос стал быстрее:
+вместо параллельного полного сканирования используется сканирование по индексу
+
 1. 10_000 data
 
 QUERY PLAN
