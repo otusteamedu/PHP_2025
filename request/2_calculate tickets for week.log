@@ -1,0 +1,83 @@
+SELECT
+    count(date_buy) as tickets_week
+FROM
+    client
+    where date_buy::date > now()::date - INTERVAL '1 weeks' and date_buy::date <= now()::date;
+    
+
+2. Подсчёт проданных билетов за неделю - запрос стал быстрее:
+вместо параллельного полного сканирования используется сканирование по индексу
+
+1. 10_000 data
+
+QUERY PLAN
+------------------------------------------------------------------------------------------------------------1---------
+ Aggregate  (cost=304.10..304.11 rows=1 width=8)
+   ->  Seq Scan on client  (cost=0.00..304.00 rows=40 width=8)
+         Filter: (((date_buy)::date <= (now())::date) AND ((date_buy)::date > ((now())::date - '7 days'::interval)))
+(3 rows)
+
+
+
+QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=304.10..304.11 rows=1 width=8) (actual time=3.560..3.562 rows=1 loops=1)
+   ->  Seq Scan on client  (cost=0.00..304.00 rows=40 width=8) (actual time=0.726..3.549 rows=16 loops=1)   
+         Filter: (((date_buy)::date <= (now())::date) AND ((date_buy)::date > ((now())::date - '7 days'::interval)))
+         Rows Removed by Filter: 7984
+ Planning Time: 0.076 ms
+ Execution Time: 3.589 ms
+(6 rows)
+
+
+2. 10_000_000 data
+
+QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=95762.59..95762.60 rows=1 width=8)
+   ->  Gather  (cost=95762.38..95762.59 rows=2 width=8)
+         Workers Planned: 2
+         ->  Partial Aggregate  (cost=94762.38..94762.39 rows=1 width=8) 
+               ->  Parallel Seq Scan on client  (cost=0.00..94736.33 rows=10417 width=8)
+                     Filter: (((date_buy)::date <= (now())::date) AND ((date_buy)::date > ((now())::date - '7 days'::interval)))
+(6 rows)
+
+
+QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=95762.59..95762.60 rows=1 width=8) (actual time=527.682..540.775 rows=1 loops=1)
+   ->  Gather  (cost=95762.38..95762.59 rows=2 width=8) (actual time=527.577..540.766 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Partial Aggregate  (cost=94762.38..94762.39 rows=1 width=8) 
+(actual time=490.849..490.850 rows=1 loops=3)
+               ->  Parallel Seq Scan on client  (cost=0.00..94736.33 rows=10417 width=8) (actual time=0.130..490.264 rows=5517 loops=3)
+                     Filter: (((date_buy)::date <= (now())::date) AND ((date_buy)::date > ((now())::date - '7 days'::interval)))
+                     Rows Removed by Filter: 1661150
+ Planning Time: 0.114 ms
+ Execution Time: 540.804 ms
+(10 rows)
+
+
+3. 10_000_000 data with index
+
+QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=25619.84..25619.85 rows=1 width=8)
+   ->  Bitmap Heap Scan on client  (cost=232.81..25577.80 rows=16816 width=8)
+         Recheck Cond: (((date_buy)::date > ((now())::date - '7 days'::interval)) AND ((date_buy)::date <= (now())::date))
+         ->  Bitmap Index Scan on id_client_date_buy  (cost=0.00..228.61 rows=16816 width=0)       
+               Index Cond: (((date_buy)::date > ((now())::date - '7 days'::interval)) AND ((date_buy)::date <= (now())::date))
+(5 rows)
+
+QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=25619.84..25619.85 rows=1 width=8) (actual time=14.417..14.419 rows=1 loops=1)   
+   ->  Bitmap Heap Scan on client  (cost=232.81..25577.80 rows=16816 width=8) (actual time=2.315..13.633 rows=16550 loops=1)
+         Recheck Cond: (((date_buy)::date > ((now())::date - '7 days'::interval)) AND ((date_buy)::date <= (now())::date))
+         Heap Blocks: exact=12493
+         ->  Bitmap Index Scan on id_client_date_buy  (cost=0.00..228.61 rows=16816 width=0) (actual time=0.905..0.906 rows=16550 loops=1)
+               Index Cond: (((date_buy)::date > ((now())::date - '7 days'::interval)) AND ((date_buy)::date <= (now())::date))
+ Planning Time: 0.086 ms
+ Execution Time: 14.447 ms
+(8 rows)

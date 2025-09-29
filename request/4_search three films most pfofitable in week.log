@@ -1,0 +1,227 @@
+SELECT
+    film_weeks.id, film_weeks.name, sum(ticket.price) as profit_week
+FROM
+    ticket
+join
+   (
+    SELECT
+        film_session.id as id, film.name as name, film.price as price, film_session.date_start as date_start
+    FROM 
+        film
+    join
+        film_session on film.id = film_session.id_film
+    where
+        film_session.date_start::date > now()::date - INTERVAL '20 weeks' and film_session.date_start::date <= now()::date
+    ) as film_weeks on film_weeks.id = ticket.id_session
+group by film_weeks.id, film_weeks.name
+order by profit_week desc
+limit 3;
+
+4. Поиск 3 самых прибыльных фильмов за неделю - запрос стал немного быстрее:
+более эффективная фильтрация film_session, хеш-соединение вместо полного параллельного сканирования film_session
+
+
+1. 10_000 data
+
+QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=205.51..205.52 rows=3 width=59)
+   ->  Sort  (cost=205.51..205.61 rows=40 width=59)
+         Sort Key: (sum(ticket.price)) DESC
+         ->  GroupAggregate  (cost=204.09..204.99 rows=40 width=59)
+               Group Key: film_session.id, film.name
+               ->  Sort  (cost=204.09..204.19 rows=40 width=32)
+                     Sort Key: film_session.id, film.name
+                     ->  Hash Join  (cost=50.84..203.03 rows=40 width=32)
+                           Hash Cond: (film_session.id_film = film.id)
+                           ->  Hash Join  (cost=47.56..199.65 rows=40 width=13)
+                                 Hash Cond: (ticket.id_session = film_session.id)
+                                 ->  Seq Scan on ticket  (cost=0.00..131.00 rows=8000 width=9)
+                                 ->  Hash  (cost=47.50..47.50 rows=5 width=8)
+                                       ->  Seq Scan on film_session  (cost=0.00..47.50 rows=5 width=8)      
+                                             Filter: (((date_start)::date <= (now())::date) AND ((date_start)::date > ((now())::date - '7 days'::interval)))
+                           ->  Hash  (cost=2.01..2.01 rows=101 width=27)
+                                 ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27)
+(17 rows)
+
+
+QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=205.51..205.52 rows=3 width=59) (actual time=5.072..5.074 rows=0 loops=1)
+   ->  Sort  (cost=205.51..205.61 rows=40 width=59) (actual time=5.071..5.073 rows=0 loops=1)
+         Sort Key: (sum(ticket.price)) DESC
+         Sort Method: quicksort  Memory: 25kB
+         ->  GroupAggregate  (cost=204.09..204.99 rows=40 width=59) (actual time=3.263..3.265 rows=0 loops=1)
+               Group Key: film_session.id, film.name
+               ->  Sort  (cost=204.09..204.19 rows=40 width=32) (actual time=3.261..3.263 rows=0 loops=1)   
+                     Sort Key: film_session.id, film.name
+                     Sort Method: quicksort  Memory: 25kB
+                     ->  Hash Join  (cost=50.84..203.03 rows=40 width=32) (actual time=3.216..3.218 rows=0 loops=1)
+                           Hash Cond: (film_session.id_film = film.id)
+                           ->  Hash Join  (cost=47.56..199.65 rows=40 width=13) (actual time=3.170..3.171 rows=0 loops=1)
+                                 Hash Cond: (ticket.id_session = film_session.id)
+                                 ->  Seq Scan on ticket  (cost=0.00..131.00 rows=8000 width=9) (actual time=0.888..2.499 rows=8000 loops=1)
+                                 ->  Hash  (cost=47.50..47.50 rows=5 width=8) (actual time=0.248..0.249 rows=2 loops=1)
+                                       Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                       ->  Seq Scan on film_session  (cost=0.00..47.50 rows=5 width=8) (actual time=0.016..0.245 rows=2 loops=1)
+                                             Filter: (((date_start)::date <= (now())::date) AND ((date_start)::date > ((now())::date - '7 days'::interval)))
+                                             Rows Removed by Filter: 998
+                           ->  Hash  (cost=2.01..2.01 rows=101 width=27) (actual time=0.037..0.037 rows=101 
+loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                                 ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27) (actual time=0.009..0.014 rows=101 loops=1)
+ Planning Time: 0.297 ms
+ Execution Time: 5.101 ms
+(24 rows)
+
+
+
+
+2. 10_000_000 data
+
+QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=613289.21..613289.22 rows=3 width=59)
+   ->  Sort  (cost=613289.21..613412.96 rows=49500 width=59)
+         Sort Key: (sum(ticket.price)) DESC
+         ->  Finalize GroupAggregate  (cost=597953.21..612649.43 rows=49500 width=59)
+               Group Key: film_session.id, film.name
+               ->  Gather Merge  (cost=597953.21..611040.68 rows=99000 width=59)
+                     Workers Planned: 2
+                     ->  Partial GroupAggregate  (cost=596953.18..598613.60 rows=49500 width=59)
+                           Group Key: film_session.id, film.name
+                           ->  Sort  (cost=596953.18..597213.60 rows=104167 width=32)
+                                 Sort Key: film_session.id, film.name    
+                                 ->  Hash Join  (cost=3995.52..585776.13 
+rows=104167 width=32)
+                                       Hash Cond: (film_session.id_film = film.id)
+                                       ->  Hash Join  (cost=3992.25..585487.95 rows=104167 width=13)
+                                             Hash Cond: (ticket.id_session = film_session.id)
+                                             ->  Parallel Seq Scan on ticket  (cost=0.00..526805.77 rows=20833377 width=9)
+                                             ->  Hash  (cost=3986.00..3986.00 rows=500 width=8)
+                                                   ->  Seq Scan on film_session  (cost=0.00..3986.00 rows=500 width=8)
+                                                         Filter: (((date_start)::date <= (now())::date) AND ((date_start)::date > ((now())::date - '140 days'::interval)))
+                                       ->  Hash  (cost=2.01..2.01 rows=101 width=27)
+                                             ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27)
+ JIT:
+   Functions: 30
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+(24 rows)
+
+
+
+QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=613289.21..613289.22 rows=3 width=59) (actual time=3383.867..3389.316 rows=0 loops=1)
+   ->  Sort  (cost=613289.21..613412.96 rows=49500 width=59) (actual time=3212.024..3217.473 rows=0 loops=1)
+         Sort Key: (sum(ticket.price)) DESC
+         Sort Method: quicksort  Memory: 25kB
+         ->  Finalize GroupAggregate  (cost=597953.21..612649.43 rows=49500 width=59) (actual time=3212.011..3217.459 rows=0 loops=1)
+               Group Key: film_session.id, film.name
+               ->  Gather Merge  (cost=597953.21..611040.68 rows=99000 width=59) (actual time=3212.010..3217.457 rows=0 loops=1)
+                     Workers Planned: 2
+                     Workers Launched: 2
+                     ->  Partial GroupAggregate  (cost=596953.18..598613.60 rows=49500 width=59) (actual time=3197.380..3197.383 rows=0 loops=3)  
+                           Group Key: film_session.id, film.name
+                           ->  Sort  (cost=596953.18..597213.60 rows=104167 width=32) (actual time=3197.379..3197.382 rows=0 loops=3)
+                                 Sort Key: film_session.id, film.name    
+                                 Sort Method: quicksort  Memory: 25kB    
+                                 Worker 0:  Sort Method: quicksort  Memory: 25kB
+                                 Worker 1:  Sort Method: quicksort  Memory: 25kB
+                                 ->  Hash Join  (cost=3995.52..585776.13 
+rows=104167 width=32) (actual time=3197.323..3197.326 rows=0 loops=3)    
+                                       Hash Cond: (film_session.id_film = film.id)
+                                       ->  Hash Join  (cost=3992.25..585487.95 rows=104167 width=13) (actual time=3065.311..3065.313 rows=0 loops=3)
+                                             Hash Cond: (ticket.id_session = film_session.id)
+                                             ->  Parallel Seq Scan on ticket  (cost=0.00..526805.77 rows=20833377 width=9) (actual time=0.708..2204.895 rows=16666667 loops=3)
+                                             ->  Hash  (cost=3986.00..3986.00 rows=500 width=8) (actual time=18.353..18.354 rows=6398 loops=3)    
+                                                   Buckets: 8192 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 314kB
+                                                   ->  Seq Scan on film_session  (cost=0.00..3986.00 rows=500 width=8) (actual time=0.032..17.717 
+rows=6398 loops=3)
+                                                         Filter: (((date_start)::date <= (now())::date) AND ((date_start)::date > ((now())::date - '140 days'::interval)))
+                                                         Rows Removed by 
+Filter: 93602
+                                       ->  Hash  (cost=2.01..2.01 rows=101 width=27) (actual time=131.983..131.983 rows=101 loops=3)
+                                             Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                                             ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27) (actual time=131.951..131.957 rows=101 loops=3)
+ Planning Time: 0.248 ms
+ JIT:
+   Functions: 82
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 3.445 ms (Deform 1.463 ms), Inlining 155.251 ms, Optimization 234.957 ms, Emission 177.507 ms, Total 571.160 ms
+ Execution Time: 3390.623 ms
+(35 rows)
+
+3. 10_000_000 data with index
+
+
+QUERY PLAN 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=971502.81..971502.82 rows=3 width=59)
+   ->  Sort  (cost=971502.81..973042.26 rows=615780 width=59)
+         Sort Key: (sum(ticket.price)) DESC
+         ->  Finalize GroupAggregate  (cost=780722.93..963543.97 rows=615780 width=59)
+               Group Key: film_session.id, film.name
+               ->  Gather Merge  (cost=780722.93..943531.12 rows=1231560 width=59)
+                     Workers Planned: 2
+                     ->  Partial GroupAggregate  (cost=779722.91..800378.52 rows=615780 width=59)  
+                           Group Key: film_session.id, film.name
+                           ->  Sort  (cost=779722.91..782962.50 rows=1295836 width=32)
+                                 Sort Key: film_session.id, film.name
+                                 ->  Hash Join  (cost=1107.23..586147.23 rows=1295836 width=32)    
+                                       Hash Cond: (film_session.id_film = film.id)
+                                       ->  Hash Join  (cost=1103.96..582599.66 rows=1295836 width=13)
+                                             Hash Cond: (ticket.id_session = film_session.id)      
+                                             ->  Parallel Seq Scan on ticket  (cost=0.00..526805.77 rows=20833377 width=9)
+                                             ->  Hash  (cost=1026.21..1026.21 rows=6220 width=8)   
+                                                   ->  Bitmap Heap Scan on film_session  (cost=88.06..1026.21 rows=6220 width=8)
+                                                         Recheck Cond: (((date_start)::date > ((now())::date - '140 days'::interval)) AND ((date_start)::date <= (now())::date))
+                                                         ->  Bitmap Index Scan on id_film_session_date_start  (cost=0.00..86.51 rows=6220 width=0)
+                                                               Index Cond: (((date_start)::date > ((now())::date - '140 days'::interval)) AND ((date_start)::date <= (now())::date))
+                                       ->  Hash  (cost=2.01..2.01 rows=101 width=27)
+                                             ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27)
+ JIT:
+   Functions: 30
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+(26 rows)
+
+
+QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------      
+ Limit  (cost=971502.81..971502.82 rows=3 width=59) (actual time=2232.257..2237.165 rows=0 loops=1)   ->  Sort  (cost=971502.81..973042.26 rows=615780 width=59) (actual time=2055.196..2060.104 rows=0 loops=1)
+         Sort Key: (sum(ticket.price)) DESC
+         Sort Method: quicksort  Memory: 25kB
+         ->  Finalize GroupAggregate  (cost=780722.93..963543.97 rows=615780 width=59) (actual time=2055.119..2060.027 rows=0 loops=1)
+               Group Key: film_session.id, film.name
+               ->  Gather Merge  (cost=780722.93..943531.12 rows=1231560 width=59) (actual time=2055.118..2060.024 rows=0 loops=1)
+                     Workers Planned: 2
+                     Workers Launched: 2
+                     ->  Partial GroupAggregate  (cost=779722.91..800378.52 rows=615780 width=59) (actual time=2041.091..2041.096 rows=0 loops=3)
+                           Group Key: film_session.id, film.name
+                           ->  Sort  (cost=779722.91..782962.50 rows=1295836 width=32) (actual time=2041.090..2041.094 rows=0 loops=3)
+                                 Sort Key: film_session.id, film.name
+                                 Sort Method: quicksort  Memory: 25kB
+                                 Worker 0:  Sort Method: quicksort  Memory: 25kB
+                                 Worker 1:  Sort Method: quicksort  Memory: 25kB
+                                 ->  Hash Join  (cost=1107.23..586147.23 rows=1295836 width=32) (actual time=2041.056..2041.061 rows=0 loops=3)
+                                       Hash Cond: (film_session.id_film = film.id)
+                                       ->  Hash Join  (cost=1103.96..582599.66 rows=1295836 width=13) (actual time=1907.261..1907.263 rows=0 loops=3)
+                                             Hash Cond: (ticket.id_session = film_session.id)      
+                                             ->  Parallel Seq Scan on ticket  (cost=0.00..526805.77 rows=20833377 width=9) (actual time=0.039..897.303 rows=16666667 loops=3)
+                                             ->  Hash  (cost=1026.21..1026.21 rows=6220 width=8) (actual time=2.440..2.441 rows=6398 loops=3)
+                                                   Buckets: 8192  Batches: 1  Memory Usage: 314kB  
+                                                   ->  Bitmap Heap Scan on film_session  (cost=88.06..1026.21 rows=6220 width=8) (actual time=0.309..1.903 rows=6398 loops=3)
+                                                         Recheck Cond: (((date_start)::date > ((now())::date - '140 days'::interval)) AND ((date_start)::date <= (now())::date))
+                                                         Heap Blocks: exact=736
+                                                         ->  Bitmap Index Scan on id_film_session_date_start  (cost=0.00..86.51 rows=6220 width=0) (actual time=0.237..0.237 rows=6398 loops=3)       
+                                                               Index Cond: (((date_start)::date > ((now())::date - '140 days'::interval)) AND ((date_start)::date <= (now())::date))
+                                       ->  Hash  (cost=2.01..2.01 rows=101 width=27) (actual time=133.740..133.741 rows=101 loops=3)
+                                             Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                                             ->  Seq Scan on film  (cost=0.00..2.01 rows=101 width=27) (actual time=133.708..133.715 rows=101 loops=3)
+ Planning Time: 0.301 ms
+ JIT:
+   Functions: 88
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 3.490 ms (Deform 1.366 ms), Inlining 136.828 ms, Optimization 241.814 ms, Emission 199.538 ms, Total 581.669 ms
+ Execution Time: 2238.396 ms
+(37 rows)
