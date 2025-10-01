@@ -3,12 +3,13 @@
 namespace App\Repositories;
 
 use App\Interfaces\UserRepositoryInterface;
+use App\Interfaces\DatabaseInterface;
 use App\Entities\User;
 
 class UserRepository implements UserRepositoryInterface {
     private $db;
     
-    public function __construct(\mysqli $db) {
+    public function __construct(DatabaseInterface $db) {
         $this->db = $db;
     }
     
@@ -25,4 +26,5 @@ class UserRepository implements UserRepositoryInterface {
         $stmt->bind_param("si", $subscriptionType, $userId);
         $stmt->execute();
     }
+
 }
