@@ -9,7 +9,7 @@ CREATE TABLE movies (
 CREATE TABLE attribute_types (
     id SERIAL PRIMARY KEY,
     type_name VARCHAR(100) NOT NULL,
-    data_type VARCHAR(20) NOT NULL CHECK (data_type IN ('TEXT', 'BOOLEAN', 'DATE', 'NUMERIC'))
+    data_type VARCHAR(20) NOT NULL CHECK (data_type IN ('TEXT', 'BOOLEAN', 'DATE', 'NUMERIC', 'FLOAT'))
 );
 
 -- Таблица атрибутов
@@ -27,18 +27,21 @@ CREATE TABLE attribute_values (
     value_text TEXT,
     value_boolean BOOLEAN,
     value_date DATE,
-    value_numeric NUMERIC(10, 2), -- Для хранения чисел с фиксированной точностью
+    value_numeric NUMERIC(10, 2), -- Для чисел с фиксированной точностью (например, рейтинг)
+    value_float DOUBLE PRECISION, -- Для чисел с плавающей точкой
     CONSTRAINT check_value_type CHECK (
-        (value_text IS NOT NULL AND value_boolean IS NULL AND value_date IS NULL AND value_numeric IS NULL) OR
-        (value_text IS NULL AND value_boolean IS NOT NULL AND value_date IS NULL AND value_numeric IS NULL) OR
-        (value_text IS NULL AND value_boolean IS NULL AND value_date IS NOT NULL AND value_numeric IS NULL) OR
-        (value_text IS NULL AND value_boolean IS NULL AND value_date IS NULL AND value_numeric IS NOT NULL)
+        (value_text IS NOT NULL AND value_boolean IS NULL AND value_date IS NULL AND value_numeric IS NULL AND value_float IS NULL) OR
+        (value_text IS NULL AND value_boolean IS NOT NULL AND value_date IS NULL AND value_numeric IS NULL AND value_float IS NULL) OR
+        (value_text IS NULL AND value_boolean IS NULL AND value_date IS NOT NULL AND value_numeric IS NULL AND value_float IS NULL) OR
+        (value_text IS NULL AND value_boolean IS NULL AND value_date IS NULL AND value_numeric IS NOT NULL AND value_float IS NULL) OR
+        (value_text IS NULL AND value_boolean IS NULL AND value_date IS NULL AND value_numeric IS NULL AND value_float IS NOT NULL)
     )
 );
 
 CREATE INDEX idx_attribute_values_movie_id ON attribute_values (movie_id);
 CREATE INDEX idx_attribute_values_attribute_id ON attribute_values (attribute_id);
 CREATE INDEX idx_attribute_values_date ON attribute_values (value_date);
+CREATE INDEX idx_attribute_values_float ON attribute_values (value_float);
 
 CREATE VIEW service_data AS
 SELECT
@@ -57,7 +60,7 @@ JOIN attribute_types at ON a.type_id = at.id
 WHERE at.type_name = 'служебные даты'
 AND (av.value_date = CURRENT_DATE OR av.value_date = CURRENT_DATE + INTERVAL '20 days');
 
-CREATE VIEW marketing_data AS
+CREATE OR REPLACE VIEW marketing_data AS
 SELECT
     m.title AS movie_title,
     at.type_name AS attribute_type,
@@ -66,9 +69,10 @@ SELECT
             av.value_text,
             CAST(av.value_boolean AS TEXT),
             CAST(av.value_date AS TEXT),
-            CAST(av.value_numeric AS TEXT)
+            CAST(av.value_numeric AS TEXT),
+            CAST(av.value_float AS TEXT)
     ) AS value
 FROM movies m
-JOIN attribute_values av ON m.id = av.movie_id
-JOIN attributes a ON av.attribute_id = a.id
-JOIN attribute_types at ON a.type_id = at.id;
+    JOIN attribute_values av ON m.id = av.movie_id
+    JOIN attributes a ON av.attribute_id = a.id
+    JOIN attribute_types at ON a.type_id = at.id;
