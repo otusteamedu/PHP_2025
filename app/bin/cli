@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+use App\Application\Application;
+use Symfony\Component\Console\Application AS CliApplication;
+
+$root = dirname(__DIR__);
+require "$root/vendor/autoload.php";
+
+$container = Application::initialize();
+$application = $container->get(CliApplication::class);
+$application->run();

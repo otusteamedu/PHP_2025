@@ -1,0 +1,17 @@
+services:
+  php:
+    build:
+      context: ./.infrastructure/php
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app
+      - ./.docker-data/php/logs:/var/log/php
+      - ./.infrastructure/php/configs/php.ini:/usr/local/etc/php/php.ini
+      - ./.infrastructure/php/configs/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+      - ./.infrastructure/php/configs/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

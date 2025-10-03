@@ -1,0 +1,31 @@
+{
+  "name": "dbykov/otus-app",
+  "version": "1.0.0",
+  "description": "Otus homework 2-6",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "Dmitry Bykov",
+      "homepage": "https://github.com/DmitryBykov",
+      "email": "mail@dbykov.ru"
+    }
+  ],
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist"
+  },
+  "require": {
+    "php": "8.4.13",
+    "php-di/php-di": "^7.1",
+    "symfony/console": "^7.3"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest",
+    "phpunit/phpunit": "^12.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}
