@@ -35,16 +35,27 @@ final class PostsRepository
     }
 
     /** @return Post[] */
-    public function findAll(?int $userId = null): array
+    public function findAll(?int $userId = null, ?int $limit = null, int $offset = 0): array
     {
         $where = null;
-        $bindings = null;
+        $limitSql = null;
+        $offsetSql = null;
+        $bindings = [];
 
         if ($userId !== null) {
-            $where = 'WHERE user_id = :0';
-            $bindings = [ $userId ];
+            $where = 'WHERE user_id = :user_id';
+            $bindings['user_id'] = $userId;
         }
 
+        if ($limit !== null) {
+            $limitSql = 'LIMIT :limit';
+            $bindings['limit'] = $limit;
+        }
+
+        if ($offset > 0) {
+            $offsetSql = 'OFFSET :offset';
+            $bindings['offset'] = $offset;
+        }
 
         $sql = <<<SQL
           SELECT
@@ -55,6 +66,8 @@ final class PostsRepository
           FROM posts
           $where
           ORDER BY id
+          $limitSql
+          $offsetSql
         SQL;
 
         $rows = $this->db->yieldArray($sql, $bindings);
@@ -69,9 +82,9 @@ final class PostsRepository
     /**
      * @return Post[]
      */
-    public function findByUserId(int $userId): array
+    public function findByUserId(int $userId, ?int $limit = null, int $offset = 0): array
     {
-        return $this->findAll($userId);
+        return $this->findAll($userId, $limit, $offset);
     }
 
     private function mapRow(array $row): Post
