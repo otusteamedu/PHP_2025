@@ -1,0 +1,13 @@
+{
+  "name": "app/event-system",
+  "description": "Event matching system with Redis storage",
+  "type": "project",
+  "require": {
+    "php": ">=8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}

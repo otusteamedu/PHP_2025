@@ -1,0 +1,49 @@
+services:
+  app:
+    build:
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - src:/var/www/html
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - src:/var/www/html
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  redis:
+    image: redis:alpine
+    networks:
+      - app-network
+
+  composer:
+    image: composer:latest
+    container_name: composer-installer
+    working_dir: /src
+    volumes:
+      - src:/src
+    command: ["composer", "install"]
+
+volumes:
+  src:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./src
+      o: bind
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
