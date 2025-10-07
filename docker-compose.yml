@@ -1,0 +1,24 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bookstore-app-php
+    working_dir: /app
+    volumes:
+      - app_src:/app
+    restart: unless-stopped
+    networks:
+      - bookstore-network
+
+volumes:
+  app_src:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: .
+
+networks:
+  bookstore-network:
+    driver: bridge
