@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'host' => '127.0.0.1',
+    'host' => 'host.docker.internal',
     'port' => 5432,
-    'dbname' => 'otus_bookstore',
+    'dbname' => 'databasename',
     'user' => 'postgres',
     'password' => '',
     'charset' => 'utf8'

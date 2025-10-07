@@ -1,26 +1,23 @@
-version: '3.8'
-
 services:
-  php-app:
+  php:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bookstore-php-app
-    volumes:
-      - app:/app
+    container_name: bookstore-app-php
     working_dir: /app
-    tty: true
+    volumes:
+      - app_src:/app
+    restart: unless-stopped
     networks:
       - bookstore-network
 
 volumes:
-  app:
+  app_src:
     driver: local
     driver_opts:
       type: none
-      device: .
       o: bind
-  redis_data:
+      device: .
 
 networks:
   bookstore-network:

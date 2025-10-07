@@ -55,11 +55,12 @@ class ActiveRecordCommand implements CommandInterface
 
     private function listAll(): void
     {
+        $count = BookstoreActiveRecord::countAll();
         echo "=== Все книжные магазины (Active Record) ===" . PHP_EOL;
-        $bookstores = BookstoreActiveRecord::findAll();
-
+        echo "Всего магазинов: $count" . PHP_EOL;
+        $bookstores = BookstoreActiveRecord::findAllPaginated(1000);
         $this->displayBookstores($bookstores);
-        echo "Итого: " . count($bookstores) . " магазинов" . PHP_EOL;
+        echo "Показано " . min($count, 1000) . " из " . $count;
     }
 
     private function listByCity(string $city): void

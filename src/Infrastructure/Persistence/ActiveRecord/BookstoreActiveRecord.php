@@ -51,20 +51,36 @@ class BookstoreActiveRecord extends Bookstore
         return $data ? new static($data) : null;
     }
 
-    public static function findAll(): array
+    public static function findAllPaginated(int $limit = 100, int $offset = 0): array
     {
         if (!self::$connection) {
             throw new \RuntimeException("Database connection not initialized. Call initConnection() first.");
         }
 
-        $stmt = self::$connection->query("SELECT * FROM bookstores ORDER BY id");
-        $results = [];
+        $limit = max(1, min($limit, 10000));
+        $offset = max(0, $offset);
 
+        $sql = "SELECT id, name, city, address, phone, email, established_year, square_meters, has_cafe, rating, created_at, updated_at
+            FROM bookstores
+            ORDER BY id
+            LIMIT :limit OFFSET :offset";
+
+        $stmt = self::$connection->prepare($sql);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        $results = [];
         while ($data = $stmt->fetch()) {
             $results[] = new static($data);
         }
-
         return $results;
+    }
+
+    public static function countAll(): int
+    {
+        $stmt = self::$connection->query('SELECT COUNT(*) FROM bookstores');
+        return (int)$stmt->fetchColumn();
     }
 
     public static function findByCity(string $city): array
