@@ -5,6 +5,6 @@ return [
     'port' => 5432,
     'dbname' => 'otus_bookstore',
     'user' => 'postgres',
-    'password' => 'Za71UCd8LyuT34fgs',
+    'password' => '',
     'charset' => 'utf8'
 ];
