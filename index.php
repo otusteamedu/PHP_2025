@@ -9,40 +9,28 @@ use App\Observers\KitchenObserver;
 use App\Observers\CustomerObserver;
 use App\Decorators\SaladDecorator;
 use App\Decorators\OnionDecorator;
-use App\Decorators\PepperDecorator;
-use App\Adapters\PizzaAdapter;
-use App\Products\Pizza;
 
-// Инициализация зависимостей через DI
+// Инициализация
 $kitchen = new Kitchen();
 $factory = new ProductFactory();
 $order = new Order($kitchen, $factory);
 
-// Добавляем наблюдателей 
-$kitchenObserver = new KitchenObserver();
-$customerObserver = new CustomerObserver();
-$kitchen->addObserver($kitchenObserver);
-$kitchen->addObserver($customerObserver);
+// Наблюдатели
+$kitchen->addObserver(new KitchenObserver());
+$kitchen->addObserver(new CustomerObserver());
 
-// Пример заказа бургера с добавками
-echo "=== Order 1: Custom Burger ===\n";
-$order->createOrder('burger', [
+// Пицца полностью интегрирована в систему
+echo "=== Order: Pizza with toppings ===\n";
+$order->createOrder('pizza', [
     new SaladDecorator(),
-    new OnionDecorator(),
-    new PepperDecorator()
+    new OnionDecorator()
 ]);
 
-echo "\nProduct: " . $kitchen->getCurrentProduct()->getDescription() . "\n";
+echo "Product: " . $kitchen->getCurrentProduct()->getDescription() . "\n";
+echo "Status: " . $kitchen->getCurrentProduct()->getStatus() . "\n";
+echo "Ingredients: " . implode(', ', $kitchen->getCurrentProduct()->getIngredients()) . "\n";
 
-// Пример заказа сэндвича
-echo "\n=== Order 2: Simple Sandwich ===\n";
-$order->createOrder('sandwich');
-
-echo "\nProduct: " . $kitchen->getCurrentProduct()->getDescription() . "\n";
-
-// Пример с адаптером пиццы
-echo "\n=== Order 3: Pizza (via Adapter) ===\n";
-$pizza = new Pizza('Margherita');
-$pizzaAdapter = new PizzaAdapter($pizza);
-echo $pizzaAdapter->prepare() . "\n";
-echo "Ingredients: " . implode(', ', $pizzaAdapter->getIngredients()) . "\n";
+// Все продукты работают одинаково
+echo "\n=== Order: Burger ===\n";
+$order->createOrder('burger', [new OnionDecorator()]);
+echo "Product: " . $kitchen->getCurrentProduct()->getDescription() . "\n";
