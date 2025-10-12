@@ -2,6 +2,7 @@
 
 namespace App\Products;
 
+// Внешний класс пиццы с несовместимым интерфейсом
 class Pizza
 {
     private string $type;
@@ -30,6 +31,6 @@ class Pizza
 
     public function bake(): string
     {
-        return "Baking {$this->type} pizza with toppings: " . implode(', ', $this->toppings);
+        return "Baking {$this->type} pizza";
     }
 }
