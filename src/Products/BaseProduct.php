@@ -2,7 +2,7 @@
 
 namespace App\Products;
 
-abstract class BaseProduct
+abstract class BaseProduct implements ProductInterface
 {
     protected string $name;
     protected array $ingredients = [];
