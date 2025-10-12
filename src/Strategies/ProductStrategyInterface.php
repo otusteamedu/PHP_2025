@@ -2,9 +2,9 @@
 
 namespace App\Strategies;
 
-use App\Products\BaseProduct;
+use App\Products\ProductInterface;
 
 interface ProductStrategyInterface
 {
-    public function createBaseProduct(): BaseProduct;
+    public function createBaseProduct(): ProductInterface;
 }
