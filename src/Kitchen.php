@@ -2,16 +2,16 @@
 
 namespace App;
 
-use App\Products\BaseProduct;
+use App\Products\ProductInterface;
 use App\Observers\CookingObserverInterface;
 use App\Decorators\ProductDecoratorInterface;
 
 class Kitchen
 {
     private array $observers = [];
-    private BaseProduct $currentProduct;
+    private ProductInterface $currentProduct;
 
-    public function setProduct(BaseProduct $product): void
+    public function setProduct(ProductInterface $product): void
     {
         $this->currentProduct = $product;
     }
@@ -25,7 +25,7 @@ class Kitchen
     {
         $this->observers = array_filter($this->observers, function ($obs) use ($observer) {
             return $obs !== $observer;
-        }); 
+        });
     }
 
     public function changeStatus(string $newStatus): void
@@ -47,8 +47,28 @@ class Kitchen
         }
     }
 
-    public function getCurrentProduct(): BaseProduct
+    public function getCurrentProduct(): ProductInterface
     {
         return $this->currentProduct;
+    }
+
+    public function getObserversCount(): int
+    {
+        return count($this->observers);
+    }
+
+    public function getCurrentStatus(): string
+    {
+        return $this->currentProduct->getStatus();
+    }
+
+    public function getProductDescription(): string
+    {
+        return $this->currentProduct->getDescription();
+    }
+
+    public function getProductIngredients(): array
+    {
+        return $this->currentProduct->getIngredients();
     }
 }
