@@ -1,0 +1,11 @@
+{
+    "name": "app/fastfood-restaurant",
+    "description": "Fast Food Restaurant System",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {}
+}
