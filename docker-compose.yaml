@@ -1,0 +1,13 @@
+services:
+  web:
+    build:
+      dockerfile: ./docker/franken/Dockerfile
+    volumes:
+      - ./app/:/var/www/html/app
+      - ./docker/franken/config/Caddyfile:/etc/caddy/Caddyfile:ro
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: blog
+    ports:
+      - "8080:80"
