@@ -2,11 +2,11 @@
 
 namespace App\Factories;
 
-use App\Products\BaseProduct;
+use App\Products\ProductInterface;
 use App\Strategies\BurgerStrategy;
 use App\Strategies\SandwichStrategy;
 use App\Strategies\HotDogStrategy;
-use App\Strategies\ProductStrategyInterface;
+use App\Strategies\PizzaStrategy;
 
 class ProductFactory implements ProductFactoryInterface
 {
@@ -18,10 +18,11 @@ class ProductFactory implements ProductFactoryInterface
             'burger' => new BurgerStrategy(),
             'sandwich' => new SandwichStrategy(),
             'hotdog' => new HotDogStrategy(),
+            'pizza' => new PizzaStrategy(),
         ];
     }
 
-    public function createProduct(string $type): BaseProduct
+    public function createProduct(string $type): ProductInterface
     {
         if (!isset($this->strategies[$type])) {
             throw new \InvalidArgumentException("Unknown product type: {$type}");
