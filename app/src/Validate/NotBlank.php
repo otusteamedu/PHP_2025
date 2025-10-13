@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\src\Validate;
+namespace App\Validate;
 
-use User\Php2025\src\Validate\Message\NotBlankMessage;
+use App\Validate\Message\NotBlankMessage;
 
 class NotBlank
 {

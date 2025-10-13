@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\src\Validate;
+namespace App\Validate;
 
 class ResponseCode
 {

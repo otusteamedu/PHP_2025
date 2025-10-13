@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\src\Validate;
+namespace App\Validate;
 
-use User\Php2025\src\Validate\Message\MinLengthMessage;
+use App\Validate\Message\MinLengthMessage;
 
 class MinLength
 {

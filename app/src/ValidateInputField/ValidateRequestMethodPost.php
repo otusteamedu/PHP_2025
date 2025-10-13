@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\src\ValidateInputField;
+namespace App\ValidateInputField;
 
-use User\Php2025\src\Validate\RequestMethod;
+use App\Validate\RequestMethod;
 
 class ValidateRequestMethodPost
 {

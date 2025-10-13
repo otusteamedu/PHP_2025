@@ -1,0 +1,6 @@
+actor: UnitTester
+modules:
+  enabled:
+    - Asserts
+    - \App\Tests\Module\Unit
+    - \App\Tests\Module\Reflection

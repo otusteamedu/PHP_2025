@@ -1,6 +1,6 @@
 <?php
 
-namespace User\Php2025\src\Validate\Message;
+namespace App\Validate\Message;
 
 class ValidationEmailMessage implements MessageInterface
 {

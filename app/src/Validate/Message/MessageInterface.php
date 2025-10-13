@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\src\Validate\Message;
+namespace App\Validate\Message;
 
 interface MessageInterface
 {

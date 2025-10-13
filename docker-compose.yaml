@@ -3,6 +3,7 @@ services:
     build:
       dockerfile: ./docker/franken/Dockerfile
     volumes:
-      - ./:/var/www/html/app
+      - ./app/:/var/www/html/app
+      - ./docker/franken/config/Caddyfile:/etc/caddy/Caddyfile:ro
     ports:
-      - "8080:8080"
+      - "8080:80"

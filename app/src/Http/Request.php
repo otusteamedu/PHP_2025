@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace User\Php2025\src\Http;
+namespace App\Http;
 
 class Request
 {
