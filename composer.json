@@ -1,0 +1,36 @@
+{
+  "name": "otus/hw30-queue-api",
+  "description": "Slim-based REST API with RabbitMQ and PostgreSQL",
+  "type": "project",
+  "require": {
+    "php": ">=8.2",
+    "slim/slim": "^4.13",
+    "nyholm/psr7": "^1.8",
+    "php-di/php-di": "^7.0",
+    "vlucas/phpdotenv": "^5.6",
+    "php-amqplib/php-amqplib": "^3.5",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "slim/psr7": "^1.7",
+    "nyholm/psr7-server": "^1.1",
+    "laminas/laminas-diactoros": "^3.6",
+    "ramsey/uuid": "^4.9"
+  },
+  "require-dev": {
+    "zircote/swagger-php": "^4.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "scripts": {
+    "start": "php -S 0.0.0.0:8080 -t public",
+    "post-install-cmd": [
+      "@composer dump-autoload"
+    ],
+    "post-update-cmd": [
+      "@composer dump-autoload"
+    ]
+  }
+}
