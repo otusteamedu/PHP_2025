@@ -15,11 +15,11 @@ class JsonResponse
         $data,
         int $statusCode = 200,
         array $headers = [],
-        int $encodingOptions = 0
+        int $encodingOptions = JSON_UNESCAPED_UNICODE
     ) {
         $this->data = $data;
         $this->statusCode = $statusCode;
-        $this->headers = array_merge(['Content-Type' => 'application/json'], $headers);
+        $this->headers = array_merge(['Content-Type' => 'application/json; charset=utf-8'], $headers);
         $this->encodingOptions = $encodingOptions;
     }
 
