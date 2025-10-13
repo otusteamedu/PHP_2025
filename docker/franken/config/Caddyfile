@@ -1,0 +1,19 @@
+:80 {
+	root * /var/www/html/app/public
+
+	encode gzip br zstd {
+		minimum_length 50
+	}
+
+	{$CADDY_SERVER_EXTRA_DIRECTIVES}
+
+	php_server {
+		resolve_root_symlink false
+		file_server off
+	}
+
+	header /* {
+		-Server
+		-X-Powered-By
+	}
+}
