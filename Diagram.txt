@@ -1,7 +1,7 @@
 erDiagram
     direction TB
     movies {
-        BIGINT id PK "SEQUENCE"
+        BIGINT id PK ""
         NVARCHAR TITLE  NOT NULL
         TEXT DESCRIPTION NOT NULL
         DATE GLOBAL_RELEASE_DATE  NOT NULL
@@ -28,7 +28,7 @@ erDiagram
     }
 
     movie_sessions {
-        BIGINT id PK "SEQUENCE"
+        BIGINT id PK ""
         INTEGER MOVIES_ID  "REFERENCES movies(id)"  
         INTEGER HALS_ID  "REFERENCES hals(id)"  
         TIMESTAMP START_SESSION  NOT NULL  
@@ -37,7 +37,7 @@ erDiagram
     }
 
     hals {
-        BIGINT id PK "SEQUENCE"
+        BIGINT id PK ""
         NVARCHAR HALS_NAME  NOT NULL
         INTEGER CAPACITY   NOT NULL
         INTEGER AMOUNT_ROW   NOT NULL 
@@ -45,7 +45,7 @@ erDiagram
     }
 
     tickets {
-        BIGINT id PK "SEQUENCE"
+        BIGINT id PK ""
         INTEGER CLIENT_ID "REFERENCES customers(id)"  
         INTEGER SESSION_ID "REFERENCES movie_sessions(id)"  
         NUMERIC TICKET_COST ""  
