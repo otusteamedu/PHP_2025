@@ -1,0 +1,19 @@
+{
+  "name": "otus/hw29-php-2025-delayed-requests",
+  "description": "Приложение обработки отложенных запросов (банковская выписка) на Slim 4, RabbitMQ, PostgreSQL",
+  "type": "project",
+  "require": {
+    "php": ">=8.2",
+    "slim/slim": "^4.13",
+    "slim/psr7": "^1.6",
+    "php-di/php-di": "^7.0",
+    "php-amqplib/php-amqplib": "^3.5",
+    "vlucas/phpdotenv": "^5.6",
+    "phpmailer/phpmailer": "^6.9"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}
