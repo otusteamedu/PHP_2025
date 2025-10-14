@@ -11,19 +11,19 @@ erDiagram
     direction TB
     movies {
         BIGINT id PK "SEQUENCE"
-        NVARCHAR TITLE  NOT NULL
-        TEXT DESCRIPTION NOT NULL
-        DATE GLOBAL_RELEASE_DATE  NOT NULL
+        NVARCHAR TITLE 
+        TEXT DESCRIPTION
+        DATE GLOBAL_RELEASE_DATE 
         DATE GLOBAL_END_DATE  ""  
-        INTEGER DURATION_MINUTES NOT NULL 
+        INTEGER DURATION_MINUTES 
         NUMERIC BASE_COST
         INTEGER AGE_RESTRICTION  ""
     }
 
     customers {
         SEQUENCE id PK ""  
-        NVARCHAR FIRST_NAME  NOT NULL
-        NVARCHAR SURNAME NOT NULL 
+        NVARCHAR FIRST_NAME 
+        NVARCHAR SURNAME 
         VARCHAR MAIL  ""  
         VARCHAR PHONE  ""  
     }
@@ -40,16 +40,16 @@ erDiagram
         BIGINT id PK "SEQUENCE"
         INTEGER MOVIES_ID  "REFERENCES movies(id)"  
         INTEGER HALS_ID  "REFERENCES hals(id)"  
-        TIMESTAMP START_SESSION  NOT NULL  
-        TIMESTAMP END_SESSION NOT NULL  
+        TIMESTAMP START_SESSION   
+        TIMESTAMP END_SESSION  
         INTEGER COST_MODIFIER  ""  
     }
 
     hals {
         BIGINT id PK "SEQUENCE"
-        NVARCHAR HALS_NAME  NOT NULL
-        INTEGER CAPACITY   NOT NULL
-        INTEGER AMOUNT_ROW   NOT NULL 
+        NVARCHAR HALS_NAME 
+        INTEGER CAPACITY  
+        INTEGER AMOUNT_ROW   
         INTEGER COST_MODIFIER  
     }
 
@@ -69,7 +69,5 @@ erDiagram
     movie_sessions}|--|{hals:"  "
     tickets}|--||customers:"  "
     tickets}|--||movie_sessions:"  "
-
-
 
 
