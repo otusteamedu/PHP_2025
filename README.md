@@ -5,6 +5,7 @@
 В рамках ДЗ выполнена DDL базы данных, учитывающая разные залы, разные фильмы
 
 
+
 ```mermaid
 erDiagram
 	direction TB
@@ -15,7 +16,8 @@ erDiagram
 		DATE GLOBAL_RELEASE_DATE  ""  
 		DATE GLOBAL_END_DATE  ""  
 		INTEGER DURATION_MINUTES  ""  
-		NUMERIC BASE_COST  ""  
+		NUMERIC BASE_COST  ""
+		NUMERIC AGE RESTRICTION	
 	}
 
 	customers {
