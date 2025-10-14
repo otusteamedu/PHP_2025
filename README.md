@@ -8,63 +8,68 @@
 
 ```mermaid
 erDiagram
-	direction TB
-	movies {
-		SEQUENCE id PK ""  
-		NVARCHAR TITLE  ""  
-		TEXT DESCRIPTION  ""  
-		DATE GLOBAL_RELEASE_DATE  ""  
-		DATE GLOBAL_END_DATE  ""  
-		INTEGER DURATION_MINUTES  ""  
-		NUMERIC BASE_COST  ""
-		NUMERIC AGE RESTRICTION	 ""
-	}
+    direction TB
+    movies {
+        BIGINT id PK "SEQUENCE"
+        NVARCHAR TITLE  NOT NULL
+        TEXT DESCRIPTION NOT NULL
+        DATE GLOBAL_RELEASE_DATE  NOT NULL
+        DATE GLOBAL_END_DATE  ""  
+        INTEGER DURATION_MINUTES NOT NULL 
+        NUMERIC BASE_COST
+        INTEGER AGE_RESTRICTION  ""
+    }
 
-	customers {
-		SEQUENCE id PK ""  
-		NVARCHAR FIRST_NAME  ""  
-		NVARCHAR SURNAME  ""  
-		VARCHAR MAIL  ""  
-		VARCHAR PHONE  ""  
-	}
+    customers {
+        SEQUENCE id PK ""  
+        NVARCHAR FIRST_NAME  NOT NULL
+        NVARCHAR SURNAME NOT NULL 
+        VARCHAR MAIL  ""  
+        VARCHAR PHONE  ""  
+    }
 
-	places {
-		SEQUENCE id PK ""  
-		INTEGER HALS_ID  ""  
-		INTEGER ROW_ID  ""  
-		INTEGER POSITION  ""  
-		INTEGER COST_MODIFIER  ""  
-	}
+    places {
+        SEQUENCE id PK ""  
+        INTEGER HALS_ID  "REFERENCES hals(id)"  
+        INTEGER ROW_ID  ""  
+        INTEGER POSITION  ""  
+        INTEGER COST_MODIFIER  ""  
+    }
 
-	session {
-		SEQUENCE id PK ""  
-		INTEGER FILM_ID  ""  
-		INTEGER HALS_ID  ""  
-		TIMESTRAMP START_SESSION  ""  
-		TIMESTRAMP END_SESSION  ""  
-		INTEGER COST_MODIFIER  ""  
-	}
+    movie_sessions {
+        BIGINT id PK "SEQUENCE"
+        INTEGER MOVIES_ID  "REFERENCES movies(id)"  
+        INTEGER HALS_ID  "REFERENCES hals(id)"  
+        TIMESTAMP START_SESSION  NOT NULL  
+        TIMESTAMP END_SESSION NOT NULL  
+        INTEGER COST_MODIFIER  ""  
+    }
 
-	hals {
-		SEQUENCE id PK ""  
-		NVARCHAR HALS_NAME  ""  
-		INTEGER CAPACITY  ""  
-		INTEGER AMOUNT_ROW  ""  
-		INTEGER COST_MODIFIER  ""  
-	}
+    hals {
+        BIGINT id PK "SEQUENCE"
+        NVARCHAR HALS_NAME  NOT NULL
+        INTEGER CAPACITY   NOT NULL
+        INTEGER AMOUNT_ROW   NOT NULL 
+        INTEGER COST_MODIFIER  
+    }
 
-	tickets {
-		SEQUENCE id PK ""  
-		INTEGER CLIENT_ID  ""  
-		INTEGER SESSION_ID  ""  
-		NUMERIC TICKET_COST  ""  
-	}
+    tickets {
+        BIGINT id PK "SEQUENCE"
+        INTEGER CLIENT_ID "REFERENCES customers(id)"  
+        INTEGER SESSION_ID "REFERENCES movie_sessions(id)"  
+        NUMERIC TICKET_COST ""  
+        TIMESTAMP TIME_OF_BUY "" 
+        BIGINT place_id FK "REFERENCES places(id)"
 
-	places}|--||hals:"  "
-	session}|--|{movies:"  "
-	session}|--|{hals:"  "
-	tickets}|--||customers:"  "
-	tickets}|--||session:"  "
+
+    }
+
+    places}|--||hals:"  "
+    movie_sessions}|--|{movies:"  "
+    movie_sessions}|--|{hals:"  "
+    tickets}|--||customers:"  "
+    tickets}|--||movie_sessions:"  "
+
 
 
 
