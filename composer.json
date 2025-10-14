@@ -1,0 +1,14 @@
+{
+  "name": "restaurant/fastfood-app",
+  "description": "Учебное приложение интернет-ресторана с паттернами проектирования",
+  "type": "project",
+  "require": {
+    "php": ">=8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Restaurant\\": "src/"
+    }
+  },
+  "license": "MIT"
+}
