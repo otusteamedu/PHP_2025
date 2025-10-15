@@ -1,0 +1,181 @@
+name: Deploy to WSL
+
+on:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:  # Разрешаем ручной запуск
+
+env:
+  WSL_HOST: "172.23.198.70"  # или IP из hostname -I
+  WSL_USER: "deployer"  # замените на ваш username в WSL
+  WSL_SSH_PORT: 2222    # Порт для SSH форвардинга
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, ctype, curl
+
+      - name: Validate composer
+        run: composer validate
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run tests
+        run: |
+          # Создаем простой тест если нет PHPUnit
+          php -r "if (version_compare(PHP_VERSION, '8.1.0') >= 0) { echo 'PHP version OK'; } else { throw new Exception('PHP version too low'); }"
+
+  deploy-staging:
+    needs: test
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: wsl-staging
+
+    steps:
+      - name: Checkout application
+        uses: actions/checkout@v4
+
+      - name: Checkout deployment configs
+        uses: actions/checkout@v4
+        with:
+          repository: your-username/deploy-configs
+          token: ${{ secrets.CONFIG_REPO_TOKEN }}
+          path: deploy-configs
+
+      - name: Setup SSH for WSL
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.WSL_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+          # Добавляем WSL хост в known_hosts
+          ssh-keyscan -p ${{ env.WSL_SSH_PORT }} ${{ env.WSL_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Prepare deployment package
+        run: |
+          mkdir -p deployment-package
+          # Копируем файлы приложения
+          cp -r src/ public/ composer.json composer.lock deployment-package/
+          
+          # Копируем конфиги для WSL staging
+          cp deploy-configs/wsl-staging/.env deployment-package/
+          cp deploy-configs/wsl-staging/staging.conf deployment-package/
+          
+          # Создаем архив
+          tar -czf deployment.tar.gz deployment-package/
+          ls -la deployment.tar.gz
+
+      - name: Deploy to WSL Staging
+        run: |
+          # Копируем архив в WSL
+          scp -P ${{ env.WSL_SSH_PORT }} deployment.tar.gz ${{ env.WSL_USER }}@${{ env.WSL_HOST }}:/tmp/
+          
+          # Выполняем деплой в WSL
+          ssh -p ${{ env.WSL_SSH_PORT }} ${{ env.WSL_USER }}@${{ env.WSL_HOST }} "
+            set -e  # Выход при ошибке
+          
+            # Создаем timestamp для нового релиза
+            TIMESTAMP=\$(date +%Y%m%d%H%M%S)
+            RELEASE_DIR=\"/var/www/staging/releases/\$TIMESTAMP\"
+            echo \"Releasing to: \$RELEASE_DIR\"
+          
+            # Создаем директорию и распаковываем
+            sudo mkdir -p \$RELEASE_DIR
+            sudo tar -xzf /tmp/deployment.tar.gz -C \$RELEASE_DIR
+            sudo rm /tmp/deployment.tar.gz
+          
+            # Настраиваем владельца
+            sudo chown -R ${{ env.WSL_USER }}:www-data \$RELEASE_DIR
+          
+            # Создаем симлинки
+            sudo ln -nfs /var/www/staging/shared/.env \$RELEASE_DIR/.env
+            sudo ln -nfs /var/www/staging/shared/storage \$RELEASE_DIR/storage
+          
+            # Устанавливаем зависимости
+            cd \$RELEASE_DIR
+            composer install --no-dev --optimize-autoloader --no-interaction
+          
+            # Активируем новый релиз
+            sudo ln -nfs \$RELEASE_DIR /var/www/staging/current
+          
+            # Перезагружаем сервисы
+            sudo service php8.1-fpm reload
+            sudo service nginx reload
+          
+            # Очищаем старые релизы
+            sudo ls -dt /var/www/staging/releases/* | tail -n +6 | sudo xargs -r rm -rf
+          
+            echo \"✅ WSL Staging deployment completed: \$TIMESTAMP\"
+          "
+
+      - name: Health check WSL Staging
+        run: |
+          # Проверяем доступность приложения
+          for i in {1..10}; do
+            if curl -f http://${{ env.WSL_HOST }}:8080 > /dev/null 2>&1; then
+              echo "✅ WSL Staging application is healthy"
+              exit 0
+            fi
+            echo "⏳ Waiting for WSL application to start... ($i/10)"
+            sleep 3
+          done
+          echo "❌ WSL Staging health check failed"
+          exit 1
+
+  deploy-production:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: wsl-production
+
+    steps:
+      # Аналогично staging, но для production
+      - name: Deploy to WSL Production
+        run: |
+          scp -P ${{ env.WSL_SSH_PORT }} deployment.tar.gz ${{ env.WSL_USER }}@${{ env.WSL_HOST }}:/tmp/
+          
+          ssh -p ${{ env.WSL_SSH_PORT }} ${{ env.WSL_USER }}@${{ env.WSL_HOST }} "
+            set -e
+            TIMESTAMP=\$(date +%Y%m%d%H%M%S)
+            RELEASE_DIR=\"/var/www/production/releases/\$TIMESTAMP\"
+          
+            sudo mkdir -p \$RELEASE_DIR
+            sudo tar -xzf /tmp/deployment.tar.gz -C \$RELEASE_DIR
+            sudo rm /tmp/deployment.tar.gz
+          
+            sudo chown -R ${{ env.WSL_USER }}:www-data \$RELEASE_DIR
+          
+            sudo ln -nfs /var/www/production/shared/.env \$RELEASE_DIR/.env
+            sudo ln -nfs /var/www/production/shared/storage \$RELEASE_DIR/storage
+          
+            cd \$RELEASE_DIR
+            composer install --no-dev --optimize-autoloader --no-interaction
+          
+            sudo ln -nfs \$RELEASE_DIR /var/www/production/current
+            sudo service php8.1-fpm reload
+            sudo service nginx reload
+          
+            sudo ls -dt /var/www/production/releases/* | tail -n +6 | sudo xargs -r rm -rf
+          
+            echo \"✅ WSL Production deployment completed: \$TIMESTAMP\"
+          "
+
+      - name: Health check WSL Production
+        run: |
+          for i in {1..10}; do
+            if curl -f http://${{ env.WSL_HOST }} > /dev/null 2>&1; then
+              echo "✅ WSL Production application is healthy"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "❌ WSL Production health check failed"
+          exit 1
