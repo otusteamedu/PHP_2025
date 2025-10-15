@@ -1,3 +1,72 @@
-# PHP_2025
+# Приложение для верификации списка email адресов
+Docker сборка для балансируемого кластера на основе двух nginx/php-fpm. Сессии PHP хранятся в Redis.
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Приложение верификации email для верификации списка email адресов - Валидация по регулярным выражениям 
+и проверке DNS mx записи, без полноценной отправки письма-подтверждения.
+
+## Пример запроса:
+
+```bash
+curl --location 'http://localhost:8080/validate-emails' \
+--header 'Content-Type: application/json' \
+--data-raw '["fakemail@fake.tz", "real@email.com", "somewrongstring"]'
+```
+
+## Пример ответа:
+```json
+{
+    "fakemail@fake.tz": {
+        "is_valid_format": true,
+        "is_valid_dns": false,
+        "is_valid": false,
+        "errors": [
+            "No MX records found for domain"
+        ]
+    },
+    "real@email.com": {
+        "is_valid_format": true,
+        "is_valid_dns": true,
+        "is_valid": true,
+        "errors": []
+    },
+    "somewrongstring": {
+        "is_valid_format": false,
+        "is_valid_dns": null,
+        "is_valid": false,
+        "errors": [
+            "Invalid email format"
+        ]
+    }
+}
+```
+
+## Тестирование (unit-тесты)
+
+Для запуска unit-тестов требуется PHP 8.0+ и Composer.
+
+1. Установите зависимости:
+   - Если Composer ещё не запускался: `composer install`
+   - Если зависимости уже установлены: `composer dump-autoload`
+
+2. Запустите тесты:
+   - Все тесты: `composer test`
+   - Тесты с покрытием в консоли: `composer test:coverage`
+   - Один набор тестов: `docker exec -it app1 vendor/bin/phpunit tests/Services/EmailValidatorTest.php`
+
+Файлы тестов находятся в каталоге `tests/`. Конфигурация PHPUnit — `phpunit.xml.dist`. Покрытие собирается по каталогу `src/`. Целевое покрытие — не менее 65% по строкам.
+
+## Дополнительные тесты для реализации в будущем
+
+### Unit‑тесты 
+- Граничные кейсы формата e‑mail: IDN (юникодные домены), очень длинные локальные части/домены, плюсы/точки/кавычки, quoted‑local, поддомены, TLD из 1–63 символов, отсутствующие TLD, спецсимволы и экранирование, комментарии `(...)` (если допустимы), адреса вида `"Name" <user@host>` (если недопустимы — явные негативные кейсы).
+- Потенциальный ReDoS: тесты на «патологические» строки для регулярного выражения (катастрофический бэктрекинг) и проверка ограничений по длине входа.
+- Разделение ответственности: вынести DNS‑проверку в абстракцию (интерфейс `DnsResolver`) и покрыть логику EmailValidator через заглушки (mock/stub) — так вы протестируете ветвление ошибок без реальной сети.
+### Компонентные тесты (service‑level)
+- Идея: тестируем `EmailValidator` целиком, но с подменой DNS‑слоя (фейковый `DnsResolver`) без HTTP и без Redis.
+- Что проверить:
+    - Карта ошибок: корректные сообщения для разных сценариев (нет MX, NXDOMAIN, таймаут, временная ошибка сервера DNS).
+    - Обработка списков: корректная агрегация результатов по входному массиву, стабильность порядка, идемпотентность.
+### Интеграционные тесты
+- Идея: поднимаем приложение (PHP‑FPM + Nginx) в Docker и бьём в реальный HTTP API, но внешние зависимости контролируем.
+- Что проверить:
+    - Корректность JSON‑контракта `POST /validate-emails`: коды статуса, заголовки, `Content-Type`, схема ответа, обработка невалидного JSON, пустого массива, больших списков, дубликатов, лимитов размера.
