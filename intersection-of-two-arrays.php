@@ -2,33 +2,32 @@
 
 /**
  * 
- * Сначала идет фильтрация по уникальным элементам массивов. Сложность O(n) и O(m)
+ * Заполняем хеш-таблицу для первого массива - O(n)
  * 
- * Затем проход по обоим массивам с операциями удаления O(1) и вставки O(1). Сложность O(n+m)
+ * Проходим по второму массиву и ищем в хеше элементы из второго массива. Если есть, то меняем флаг. O(n).
  * 
- * Проход по хешу - Сложность O(n) если все элементы пересекаются
+ * Проход по хешу и проверка флагов для элементов - O(n).
  * 
- * В итоге: Сложность линейная O(n) (опускаем константы)
+ * В итоге: Сложность линейная O(n)
  */
 
 
 
 function intersection($nums1, $nums2)
 {
-    $nums1 = array_unique($nums1);
-    $nums2 = array_unique($nums2);
-
     $hash = [];
 
-    while ($nums1 || $nums2) {
-        $nums1 && $hash[array_pop($nums1)]++;
-        $nums2 && $hash[array_pop($nums2)]++;
-    }
+    for ($i = 0; $i < count($nums1); $i++)
+        $hash[$nums1[$i]] = false;
+
+    for ($i = 0; $i < count($nums2); $i++)
+        if (isset($hash[$nums2[$i]]))
+            $hash[$nums2[$i]] = true;
 
     $arr = [];
 
-    foreach ($hash as $key => $count) {
-        $count > 1 && $arr[] = $key;
+    foreach ($hash as $key => $val) {
+        $val && $arr[] = $key;
     }
 
     return $arr;
