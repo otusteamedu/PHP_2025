@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/App.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/../src/App.php';
 
 $app = new App;
 

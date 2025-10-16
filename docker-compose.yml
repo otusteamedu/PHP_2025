@@ -17,7 +17,7 @@ services:
     image: nginx:alpine
     container_name: backend1_web
     volumes:
-      - ./src:/var/www/html/src
+      - ./:/var/www/html
       - ./nginx/backend1.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php1
@@ -29,7 +29,7 @@ services:
       context: ./php
     container_name: backend1_php
     volumes:
-      - ./src:/var/www/html/src
+      - ./:/var/www/html
     networks:
       - app-network
 
@@ -37,7 +37,7 @@ services:
     image: nginx:alpine
     container_name: backend2_web
     volumes:
-      - ./src:/var/www/html/src
+      - ./:/var/www/html
       - ./nginx/backend2.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php2
@@ -49,7 +49,7 @@ services:
       context: ./php
     container_name: backend2_php
     volumes:
-      - ./src:/var/www/html/src
+      - ./:/var/www/html
     networks:
       - app-network
 
