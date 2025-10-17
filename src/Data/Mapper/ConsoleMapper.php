@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Dinargab\Homework12\Mapper;
+namespace Dinargab\Homework12\Data\Mapper;
 
-use Dinargab\Homework12\Model\Book;
+use Dinargab\Homework12\Data\Model\Book;
 
 class ConsoleMapper
 {

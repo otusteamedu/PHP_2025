@@ -19,6 +19,12 @@ class IndexManager
         $this->config = $config;
     }
 
+    /**
+     * Create ElasticSearch index with mapping
+     * 
+     * @param bool $recreate Whether to recreate index if it exists
+     * @return void
+     */
     public function createIndex(bool $recreate = false): void
     {
         $indexName = $this->config->getIndexName();

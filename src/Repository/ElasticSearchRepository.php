@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Dinargab\Homework12\Mapper;
+namespace Dinargab\Homework12\Repository;
 
 use Dinargab\Homework12\Configuration;
-use Dinargab\Homework12\Model\Book;
+use Dinargab\Homework12\Data\Mapper\BookMapper;
+use Dinargab\Homework12\Data\Model\Book;
 use Elastic\Elasticsearch\Client;
 
-class BookMapper
+class ElasticSearchRepository implements RepositoryInterface
 {
+
     private Client $client;
     private Configuration $config;
 
@@ -19,8 +21,16 @@ class BookMapper
         $this->config = $config;
     }
 
-
-    public function search(?string $searchQuery, array $price, ?string $category = "", bool $inStock = false)
+    /**
+     * Search for books with various filters
+     * 
+     * @param string $searchQuery Search query for book titles
+     * @param array $price Price range filter
+     * @param string|null $category Category filter
+     * @param bool $inStock Whether to filter only books in stock
+     * @return Book[] Array of Book objects matching the search criteria
+     */
+    public function search(string $searchQuery, array $price, ?string $category = "", bool $inStock = false): array
     {
 
         $params = [
@@ -37,7 +47,7 @@ class BookMapper
                             ]
                         ],
                     ]
-                    
+
                 ]
             ]
         ];
@@ -88,13 +98,17 @@ class BookMapper
         $result = $this->client->search($params)->asArray();
         $resultBooks = [];
         foreach ($result["hits"]["hits"] as $bookDbItem) {
-            $resultBooks[] = $this->dbToBook($bookDbItem["_source"]);
+            $resultBooks[] = BookMapper::dbToBook($bookDbItem["_source"]);
         }
         return $resultBooks;
-
     }
 
-
+    /**
+     * Get a book by its SKU
+     * 
+     * @param string $sku Book SKU identifier
+     * @return Book Book object
+     */
     public function getBySku(string $sku): Book
     {
         $params = [
@@ -102,17 +116,6 @@ class BookMapper
             'id'    => $sku
         ];
         $result = $this->client->get($params);
-        return $this->dbToBook($result->asArray()["_source"]);
-    }
-
-    public function dbToBook($array) :Book
-    {
-        return new Book(
-            $array["title"],
-            $array["sku"],
-            $array["category"],
-            (int) $array["price"],
-            $array["stock"]
-        );
+        return BookMapper::dbToBook($result->asArray()["_source"]);
     }
 }

@@ -3,10 +3,10 @@
 namespace Dinargab\Homework12;
 
 use Dinargab\Homework12\Clients\ElasticSearchClient;
+use Dinargab\Homework12\Data\Mapper\ConsoleMapper;
 use Dinargab\Homework12\Index\IndexManager;
+use Dinargab\Homework12\Repository\ElasticSearchRepository;
 use Dinargab\Homework12\Seeder\BookSeeder;
-use Dinargab\Homework12\Mapper\BookMapper;
-use Dinargab\Homework12\Mapper\ConsoleMapper;
 use Elastic\Elasticsearch\Client;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +22,7 @@ class App
     private Application $application;
     private Configuration $config;
     private Client $client;
-    private BookMapper $bookMapper;
+    private ElasticSearchRepository $bookRepository;
     private IndexManager $indexManager;
 
     public function __construct()
@@ -30,7 +30,7 @@ class App
         $this->application = new Application(getenv("APPLICATION_NAME") ?? "book-search");
         $this->config = new Configuration();
         $this->client = (new ElasticSearchClient($this->config))->getClient();
-        $this->bookMapper = new BookMapper($this->client, $this->config);
+        $this->bookRepository = new ElasticSearchRepository($this->client, $this->config);
         $this->indexManager = new IndexManager($this->client, $this->config);
     }
 
@@ -62,7 +62,7 @@ class App
                 $maxPrice = $input->getOption("max-price");
                 $inStock = !empty($input->getOption("in-stock"));
 
-                $result = $this->bookMapper->search($query, ['min_price' => $minPrice, 'max_price' => $maxPrice], $category, $inStock);
+                $result = $this->bookRepository->search($query, ['min_price' => $minPrice, 'max_price' => $maxPrice], $category, $inStock);
 
                 $table = new Table($output);
                 $table->setHeaders(ConsoleMapper::geTableHeaders())
@@ -77,7 +77,7 @@ class App
             ->addArgument("sku", InputArgument::REQUIRED)
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $bookSku = $input->getArgument("sku");
-                $resultBook = $this->bookMapper->getBySku($bookSku);
+                $resultBook = $this->bookRepository->getBySku($bookSku);
                 $table = new Table($output);
                 $table->setHeaders(ConsoleMapper::geTableHeaders())
                     ->addRow(ConsoleMapper::bookToConsoleRow($resultBook))->render();

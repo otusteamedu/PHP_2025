@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dinargab\Homework12\Model;
+namespace Dinargab\Homework12\Data\Model;
 
 class Book
 {
