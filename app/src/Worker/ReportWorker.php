@@ -9,7 +9,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-$connection = new RabbitMQConnection('rabbitmq', 5672, 'guest', 'guest');
+$connection = new RabbitMQConnection($_ENV['RABBIT_HOST'], $_ENV['RABBIT_PORT'], $_ENV['RABBIT_USER'], $_ENV['RABBIT_PASSWORD']);
 $channel = $connection->getChannel();
 
 $channel->queue_declare('report_queue', false, true, false, false);
