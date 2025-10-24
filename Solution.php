@@ -43,40 +43,40 @@ class Solution {
     }
 
 
-    function mergedArray($arMain,$listAbsorb){
-
-        $arAbsorb = $this->listToArray($listAbsorb);
-
-        $iLength = count($arAbsorb);
-
-        for ($i = 0; $i < count($arAbsorb); $i++) {
-        $arMain[] = $arAbsorb[$i];
-        }
-
-        return $arMain;
-
-    }
-
     function mergeTwoLists($list1, $list2) {
 
         $arMerged = [];
 
-        $arMerged = $this->mergedArray($arMerged,$list1);
-        $arMerged = $this->mergedArray($arMerged,$list2);
+        $arMerged1 = $this->listToArray($list1);
+        $arMerged2 = $this->listToArray($list2);
 
-        $totalLength = count($arMerged);
+        $iLength1 = count($arMerged1);
+        $iLength2 = count($arMerged2);
 
-        for ($i = 0; $i < $totalLength - 1; $i++) {
-            for ($j = 0; $j < $totalLength - $i - 1; $j++) {
-                if ($arMerged[$j] > $arMerged[$j + 1]) {
-                    $iTmp = $arMerged[$j];
-                    $arMerged[$j] = $arMerged[$j + 1];
-                    $arMerged[$j + 1] = $iTmp;
-                }
+        $iCounter1 = 0;
+        $iCounter2 = 0;
+        $arMergedRes = [];
+ 
+        for ($i = 0 ; $i < $iLength1 + $iLength2; $i++){
+
+            if ($iCounter1 >= $iLength1) {
+                $arMergedRes[] = $arMerged2[$iCounter2];
+                $iCounter2++;
+            }elseif($iCounter2 >= $iLength2) {
+                $arMergedRes[] = $arMerged1[$iCounter1];
+                $iCounter1++;
+            }elseif($arMerged1[$iCounter1] <= $arMerged2[$iCounter2]) {
+            $arMergedRes[] = $arMerged1[$iCounter1];
+            $iCounter1++;
+            }else{
+            $arMergedRes[] = $arMerged2[$iCounter2];
+            $iCounter2++;
             }
+
         }
-        
-        return $this->arrayToList($arMerged);   
+
+
+        return $this->arrayToList($arMergedRes);   
         
     }
 }
