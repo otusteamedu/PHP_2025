@@ -1,0 +1,60 @@
+﻿version: "3.7"
+services:
+    gateway:
+        build:
+            context: docker/gateway
+            dockerfile: development/nginx/Dockerfile
+        ports:
+            - "80:80"
+    db:
+        image: postgres:15
+        ports:
+            - 15432:5432
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASS}
+        volumes:
+            - ./data/db/psql:/var/lib/postgresql/data
+    srv-proxy:
+        build:
+            context: docker/srv-api/development
+            dockerfile: nginx/Dockerfile
+        volumes:
+            - ./public:/app/public
+    srv-fpm:
+        build:
+            context: docker/srv-api/development
+            dockerfile: php-fpm/Dockerfile
+        environment:
+            PHP_IDE_CONFIG: serverName=SRVAPI
+            DB_HOST: ${DB_HOST}
+            DB_USER: ${DB_USER}
+            DB_PASS: ${DB_PASS}
+            DB_NAME: ${DB_NAME}
+        volumes:
+            - ./:/app
+    srv-cli:
+        build:
+            context: docker/srv-api/development
+            dockerfile: php-cli/Dockerfile
+        environment:
+            DB_HOST: ${DB_HOST}
+            DB_USER: ${DB_USER}
+            DB_PASS: ${DB_PASS}
+            DB_NAME: ${DB_NAME}
+        volumes:
+            - ./:/app
+    redis:
+        image: "redis:alpine"
+        command: redis-server --save 20 1 --loglevel warning
+        restart: unless-stopped
+        volumes:
+            - ./data/db/redis:/data
+    memcached:
+        image: memcached:alpine
+        command:
+            - --conn-limit=1024
+            - --memory-limit=64
+            - --threads=4
