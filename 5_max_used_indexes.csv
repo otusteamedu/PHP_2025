@@ -1,0 +1,7 @@
+"Таблица","Индекс","Количество сканирований"
+"movie_rooms","movie_rooms_pkey","10018637"
+"movies","movies_pkey","10018570"
+"users","users_pkey","9819074"
+"orders","orders_pkey","2286556"
+"movie_sessions","movie_sessions_pkey","2103090"
+
