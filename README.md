@@ -1,3 +1,3 @@
-# PHP_2025
+### Описание выполненного домашнего задания №12
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Реализованы паттерны **DataMapper** и **Identity Map**
