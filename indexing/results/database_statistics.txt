@@ -1,0 +1,81 @@
+*** 15 САМЫХ БОЛЬШИХ ОБЪЕКТОВ БД ***
+ object_type | schemaname |                object_name                | total_size | table_size | indexes_size
+-------------+------------+-------------------------------------------+------------+------------+--------------
+ table       | public     | ticket                                    | 1325 MB    | 488 MB     | 836 MB
+ index       | public     | idx_ticket_purchase_screening_price       | 329 MB     | -          | -
+ index       | public     | ticket_screening_id_seat_id_key           | 214 MB     | -          | -
+ index       | public     | ticket_pkey                               | 182 MB     | -          | -
+ index       | public     | idx_ticket_screening_id                   | 56 MB      | -          | -
+ index       | public     | idx_ticket_purchase_time                  | 55 MB      | -          | -
+ table       | public     | customer                                  | 38 MB      | 20 MB      | 18 MB
+ table       | public     | screening                                 | 23 MB      | 8824 kB    | 15 MB
+ index       | public     | customer_email_key                        | 14 MB      | -          | -
+ table       | public     | seat                                      | 8272 kB    | 4032 kB    | 4240 kB
+ index       | public     | screening_hall_id_show_date_show_time_key | 5240 kB    | -          | -
+ index       | public     | customer_pkey                             | 4408 kB    | -          | -
+ index       | public     | screening_pkey                            | 3312 kB    | -          | -
+ index       | public     | idx_screening_show_date_time              | 3224 kB    | -          | -
+ index       | public     | seat_hall_id_row_number_seat_number_key   | 2464 kB    | -          | -
+(15 rows)
+
+
+*** РАЗМЕРЫ ТАБЛИЦ ***
+ tablename | total_size | table_size | indexes_size | size_bytes 
+-----------+------------+------------+--------------+------------
+ ticket    | 1325 MB    | 488 MB     | 836 MB       | 1388953600
+ customer  | 38 MB      | 20 MB      | 18 MB        |   39837696
+ screening | 23 MB      | 8824 kB    | 15 MB        |   24453120
+ seat      | 8272 kB    | 4032 kB    | 4240 kB      |    8470528
+ movie     | 528 kB     | 368 kB     | 160 kB       |     540672
+ hall      | 56 kB      | 16 kB      | 40 kB        |      57344
+ cinema    | 24 kB      | 8192 bytes | 16 kB        |      24576
+ seat_type | 24 kB      | 8192 bytes | 16 kB        |      24576
+(8 rows)
+
+
+*** 5 САМЫХ ЧАСТО ИСПОЛЬЗУЕМЫХ ИНДЕКСОВ ***
+ schemaname | tablename |            indexname            |  scans  | tuples_read | tuples_fetched 
+------------+-----------+---------------------------------+---------+-------------+----------------
+ public     | ticket    | ticket_screening_id_seat_id_key | 9437215 |      850071 |         850004
+ public     | screening | screening_pkey                  | 8578227 |     8578225 |        8578221
+ public     | seat      | seat_pkey                       | 8578214 |     8578214 |        8578202
+ public     | customer  | customer_pkey                   | 8578202 |     8578200 |        8578200
+ public     | hall      | hall_pkey                       |  306621 |      306621 |         306621
+(5 rows)
+
+
+*** 5 САМЫХ РЕДКО ИСПОЛЬЗУЕМЫХ ИНДЕКСОВ ***
+ schemaname | tablename |              indexname              | scans | tuples_read | tuples_fetched 
+------------+-----------+-------------------------------------+-------+-------------+----------------
+ public     | customer  | customer_email_key                  |     0 |           0 |              0
+ public     | screening | idx_screening_show_date_time        |     0 |           0 |              0
+ public     | ticket    | idx_ticket_purchase_screening_price |     0 |           0 |              0
+ public     | ticket    | ticket_pkey                         |     0 |           0 |              0
+ public     | screening | idx_screening_show_date             |     2 |         410 |              0
+(5 rows)
+
+
+*** ВСЕ ИНДЕКСЫ И ИХ ИСПОЛЬЗОВАНИЕ ***
+ schemaname | tablename |                 indexname                 | idx_scan | idx_tup_read | idx_tup_fetch 
+------------+-----------+-------------------------------------------+----------+--------------+---------------
+ public     | cinema    | cinema_pkey                               |      405 |          405 |           405
+ public     | customer  | customer_email_key                        |        0 |            0 |             0
+ public     | customer  | customer_pkey                             |  8578202 |      8578200 |       8578200
+ public     | hall      | hall_pkey                                 |   306621 |       306621 |        306621
+ public     | movie     | movie_pkey                                |   168516 |       168516 |        168504
+ public     | screening | idx_screening_hall_id                     |        8 |            8 |             0
+ public     | screening | idx_screening_movie_id                    |        6 |            6 |             0
+ public     | screening | idx_screening_show_date                   |        2 |          410 |             0
+ public     | screening | idx_screening_show_date_time              |        0 |            0 |             0
+ public     | screening | screening_hall_id_show_date_show_time_key |   188308 |        19828 |         19820
+ public     | screening | screening_pkey                            |  8578227 |      8578225 |       8578221
+ public     | seat      | seat_hall_id_row_number_seat_number_key   |       27 |         2592 |          2576
+ public     | seat      | seat_pkey                                 |  8578214 |      8578214 |       8578202
+ public     | seat_type | seat_type_pkey                            |   139344 |       139344 |        139344
+ public     | ticket    | idx_ticket_purchase_screening_price       |        0 |            0 |             0
+ public     | ticket    | idx_ticket_purchase_time                  |        3 |      4331504 |             0
+ public     | ticket    | idx_ticket_screening_id                   |        3 |           59 |             0
+ public     | ticket    | ticket_pkey                               |        0 |            0 |             0
+ public     | ticket    | ticket_screening_id_seat_id_key           |  9437215 |       850071 |        850004
+(19 rows)
+

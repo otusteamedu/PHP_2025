@@ -1,3 +1,28 @@
-# PHP_2025
+### Описание выполненного домашнего задания №9
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Была проведена оптимизация производительности базы данных кинотеатра на PostgreSQL через создание и анализ эффективности индексов.
+
+#### Струтура выполненного задания:
+
+```bash
+indexing/
+├── analysis/
+│   ├── analyze_10k.sql              — анализ производительности на ~10K данных
+│   ├── analyze_10m_no_indexes.sql   — анализ на ~10M данных без индексов
+│   ├── analyze_10m_with_indexes.sql — анализ на ~10M данных с индексами
+│   └── database_statistics.sql      — статистика размеров и использования индексов
+├── final_report/
+│   ├── performance_summary.md       — сводная таблица результатов по 6 запросам
+│   └── optimizations_list.md        — перечень оптимизаций с пояснениями
+├── queries/
+│   ├── create_schema.sql            — DDL схема базы данных
+│   ├── six_queries.sql              — 6 тестовых запросов (3 простых + 3 сложных)
+│   ├── fill_10k_data.sql            — заполнение тестовыми данными (~10K записей)
+│   ├── fill_10m_data.sql            — заполнение большими данными (~10M записей)
+│   └── create_indexes.sql           — создание 7 индексов
+└── results/
+    ├── results_10k.txt              — планы выполнения на малых данных
+    ├── results_10m_no_indexes.txt   — планы на больших данных без оптимизации (без индексов)
+    ├── results_10m_with_indexes.txt — планы на больших данных с индексами
+    └── database_statistics.txt      — статистика объектов БД и использования индексов
+```
