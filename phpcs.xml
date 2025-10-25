@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_2025">
+    <description>PHP CodeSniffer configuration for PHP_2025 project</description>
+    
+    <file>src</file>
+    <file>public</file>
+    <file>config</file>
+    
+    <exclude-pattern>vendor</exclude-pattern>
+    <exclude-pattern>storage</exclude-pattern>
+    
+    <rule ref="PSR12"/>
+</ruleset>

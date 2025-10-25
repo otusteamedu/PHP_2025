@@ -1,0 +1,263 @@
+openapi: 3.0.0
+info:
+  title: Request Processing API
+  version: 1.0.0
+  description: |
+    REST API for processing requests with queues.
+    
+    This API allows you to:
+    - Create new processing requests
+    - Check the status of existing requests
+    - Monitor system health
+    
+    All requests are processed asynchronously using RabbitMQ queues.
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+
+paths:
+  /api/health:
+    get:
+      summary: Health Check
+      description: Check if the API is running and healthy
+      operationId: healthCheck
+      tags:
+        - System
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2025-09-06T06:10:15+00:00"
+              example:
+                status: "ok"
+                timestamp: "2025-09-06T06:10:15+00:00"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/requests:
+    post:
+      summary: Create Request
+      description: Create a new processing request
+      operationId: createRequest
+      tags:
+        - Requests
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequestDTO'
+            example:
+              data: "Sample data to process"
+              priority: "normal"
+      responses:
+        '201':
+          description: Request created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestResponseDTO'
+              example:
+                id: "req_68bbd04ea97a1.47346a93a87a56bf"
+                status: "pending"
+                createdAt: "2025-09-06T06:10:22+00:00"
+        '400':
+          description: Bad request - invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/requests/{requestId}:
+    get:
+      summary: Get Request Status
+      description: Get the current status and details of a specific request
+      operationId: getRequestStatus
+      tags:
+        - Requests
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: Unique identifier of the request
+          schema:
+            type: string
+            pattern: '^req_[a-f0-9]+$'
+          example: "req_68bbd04ea97a1.47346a93a87a56bf"
+      responses:
+        '200':
+          description: Request details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestStatusDTO'
+              example:
+                id: "req_68bbd04ea97a1.47346a93a87a56bf"
+                status: "completed"
+                createdAt: "2025-09-06T06:10:22+00:00"
+                processedAt: "2025-09-06T06:10:25+00:00"
+                result: "Request processed successfully\nID: req_68bbd04ea97a1.47346a93a87a56bf\nData: test data\nPriority: normal\nProcessing time: 3 seconds\nProcessed at: 2025-09-06 06:10:25"
+                processingTime: 3
+        '404':
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/docs:
+    get:
+      summary: API Documentation
+      description: Interactive API documentation using Swagger UI
+      operationId: getApiDocs
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: Swagger UI HTML page
+          content:
+            text/html:
+              schema:
+                type: string
+
+
+components:
+  schemas:
+    CreateRequestDTO:
+      type: object
+      required:
+        - data
+        - priority
+      properties:
+        data:
+          type: string
+          description: Data to be processed
+          example: "Sample data to process"
+          minLength: 1
+          maxLength: 1000
+        priority:
+          type: string
+          description: Priority level for processing
+          enum: [low, normal, high]
+          example: "normal"
+      example:
+        data: "Sample data to process"
+        priority: "normal"
+
+    RequestResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique request identifier
+          pattern: '^req_[a-f0-9]+$'
+          example: "req_68bbd04ea97a1.47346a93a87a56bf"
+        status:
+          type: string
+          description: Current request status
+          enum: [pending, processing, completed, failed]
+          example: "pending"
+        createdAt:
+          type: string
+          format: date-time
+          description: Request creation timestamp
+          example: "2025-09-06T06:10:22+00:00"
+
+    RequestStatusDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique request identifier
+          pattern: '^req_[a-f0-9]+$'
+          example: "req_68bbd04ea97a1.47346a93a87a56bf"
+        status:
+          type: string
+          description: Current request status
+          enum: [pending, processing, completed, failed]
+          example: "completed"
+        createdAt:
+          type: string
+          format: date-time
+          description: Request creation timestamp
+          example: "2025-09-06T06:10:22+00:00"
+        processedAt:
+          type: string
+          format: date-time
+          description: Request processing completion timestamp
+          example: "2025-09-06T06:10:25+00:00"
+          nullable: true
+        result:
+          type: string
+          description: Processing result (available when status is completed)
+          example: "Request processed successfully\nID: req_68bbd04ea97a1.47346a93a87a56bf\nData: test data\nPriority: normal\nProcessing time: 3 seconds\nProcessed at: 2025-09-06 06:10:25"
+          nullable: true
+        processingTime:
+          type: integer
+          description: Processing time in seconds (available when status is completed)
+          example: 3
+          nullable: true
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Internal Server Error"
+        status:
+          type: integer
+          description: HTTP status code
+          example: 500
+        details:
+          type: string
+          description: Additional error details
+          example: "Database connection failed"
+          nullable: true
+      example:
+        error: "Internal Server Error"
+        status: 500
+        details: "Database connection failed"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token authentication (for future use)
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: Requests
+    description: Request processing operations
+  - name: Documentation
+    description: API documentation endpoints
+
