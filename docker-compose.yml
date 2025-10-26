@@ -1,0 +1,49 @@
+services:
+  
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./public:/var/www/html:ro
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: php-fpm
+    volumes:
+      - .:/var/www/project
+    depends_on:
+      - redis
+      - tarantool
+    env_file:
+      - .env
+    working_dir: /var/www/project
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - ./docker/data/redis:/data
+
+  tarantool:
+    image: tarantool/tarantool:latest
+    container_name: tarantool
+    environment:
+      TARANTOOL_USER_NAME: ${TARANTOOL_USER_NAME}
+      TARANTOOL_USER_PASSWORD: ${TARANTOOL_USER_PASSWORD}
+    volumes:
+      - ./docker/data/tarantool:/opt/tarantool
+      - ./docker/tarantool/init.lua:/opt/tarantool/init.lua
+    command: tarantool /opt/tarantool/init.lua
+    env_file:
+      - .env
+
+networks:
+  default:
+    driver: bridge 
