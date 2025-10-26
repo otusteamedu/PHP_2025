@@ -1,0 +1,61 @@
+services:
+    memcached:
+        image: 'memcached:alpine'
+        networks:
+          - otus_php
+
+    redis:
+        image: 'redis:alpine'
+        networks:
+          - otus_php
+    postgres:
+        image: 'postgres:15-alpine'
+        working_dir: /app/home
+        volumes:
+            - './project/postgres/data:/var/lib/postgresql/data'
+        environment:
+            - POSTGRES_USER=${PG_USER}
+            - POSTGRES_PASSWORD=${PG_PASS}
+            - POSTGRES_DB=app_db
+#        ports:
+#            - '8084:5432'
+        networks:
+            - otus_php
+
+    nginx:
+        image: 'nginx:alpine'
+        working_dir: /app/home
+        volumes:
+            - './project/src:/app/home'
+            - './project/nginx/log:/app/log'
+            - './project/php-fpm/socket:/app/socket'
+            - './project/nginx/nginx.conf:/etc/nginx/conf.d/default.conf'
+        depends_on:
+            - php
+        ports:
+            - '80:80'
+        networks:
+            - otus_php
+
+    php:
+        build: project/php-fpm
+        working_dir: /app/home
+        volumes:
+            - './project/src:/app/home'
+            - './project/php-fpm/log:/app/log'
+            - './project/php-fpm/socket:/app/socket'
+            - './project/php-fpm/settings.ini:/etc/php/8.4/fpm/conf.d/99-overrides.ini'
+            - './project/php-fpm/php-fpm-conf-overrides.conf:/etc/php/8.4/fpm/pool.d/zz-overrides.conf'
+        environment:
+            - POSTGRES_USER=${PG_USER}
+            - POSTGRES_PASSWORD=${PG_PASS}
+            - POSTGRES_DB=app_db
+        depends_on:
+            - postgres
+        networks:
+            - otus_php
+
+#Docker Networks
+networks:
+    otus_php:
+        driver: bridge
