@@ -25,6 +25,12 @@ class Validator
     }
 
 
+    public function index()
+    {
+        $this->checkGetParam('offset', 0);
+        $this->checkGetParam('limit', 1000);
+    }
+
     public function store()
     {
         $this->checkPostParam('users', 'array');
@@ -97,6 +103,14 @@ class Validator
             throw new Exception("empty param $name");
 
         if (!preg_match('/^(19|20)\d{2}\-(0[1-9]|1[0-2])\-(0[1-9]|[12]\d|3[01])$/', $param))
+            throw new Exception("wrong type $name");
+    }
+
+    private function checkGetParam(string $name, int $default)
+    {
+        if (!isset($_GET[$name]))
+            $_GET[$name] = $default;
+        if (!preg_match('/^-?\d+$/', ($_GET[$name])))
             throw new Exception("wrong type $name");
     }
 }

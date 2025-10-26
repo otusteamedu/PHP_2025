@@ -19,7 +19,7 @@ class UserMapper
     {
         $result = $this->mysql->select('SELECT * FROM ' . self::TABLE . ' WHERE id=?', [$id]);
 
-        if(empty($result))
+        if (empty($result))
             return null;
 
         return new User(
@@ -61,14 +61,29 @@ class UserMapper
     }
 
 
-    public function getAll(): ?array
+    public function getAll(int $offset, int $limit): ?array
     {
-        $result = $this->mysql->select('SELECT * FROM ' . self::TABLE);
-        
+
+        $result = $this->mysql->select(
+            'SELECT * FROM ' . self::TABLE . " LIMIT :offset,:limit",
+            [':offset' => $offset, ':limit' => $limit]
+        );
+
+        $total = $this->getCount();
+    
+        $result = [
+            'rows' => $result,
+            'meta'=>[
+                'total'=>$total,
+                'offset'=>$offset,
+                'limit'=>$limit,
+            ],
+        ];
+
         return $result;
     }
 
-    public function delete(int $id):int
+    public function delete(int $id): int
     {
         $this->mysql->delete('DELETE FROM ' . self::TABLE . ' WHERE id=?', [$id]);
         return $id;
@@ -89,5 +104,11 @@ class UserMapper
             throw new Exception('failed create');
 
         return (int)$id;
+    }
+
+    private function getCount()
+    {
+        $result = $this->mysql->select('SELECT count(id) as count FROM ' . self::TABLE);
+        return $result[0]['count'];
     }
 }

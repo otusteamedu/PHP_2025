@@ -23,13 +23,14 @@ class UserController
 
     public function index(): array
     {
-        return $this->mapper->getAll();
+        $this->validator->index();
+        return $this->mapper->getAll((int)$_GET['offset'], (int)$_GET['limit']);
     }
 
     public function update(array $params = []): array
     {
         $this->validator->update($params['id']);
-        return ['id'=>$this->mapper->update($params['id'])];
+        return ['id' => $this->mapper->update($params['id'])];
     }
     public function show(array $params = []): ?User
     {
@@ -48,6 +49,6 @@ class UserController
     public function destroy(array $params = []): array
     {
         $this->validator->destroy($params['id']);
-        return ['id'=>$this->mapper->delete($params['id'])];
+        return ['id' => $this->mapper->delete($params['id'])];
     }
 }
