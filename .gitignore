@@ -3,3 +3,5 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+/project/php-fpm/log/
+/project/nginx/log/
