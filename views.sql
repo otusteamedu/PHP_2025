@@ -24,9 +24,10 @@ SELECT
     COALESCE(
             av.value_text,
             av.value_date::text,
+            av.value_float::text,
             CASE WHEN av.value_boolean THEN 'Да' ELSE 'Нет' END
     ) AS value_display
 FROM attribute_values av
-         JOIN attributes a ON av.attribute_id = a.id
-         JOIN attribute_types at ON a.type_id = at.id
+    JOIN attributes a ON av.attribute_id = a.id
+    JOIN attribute_types at ON a.type_id = at.id
     JOIN titles t ON av.title_id = t.id;

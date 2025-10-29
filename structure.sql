@@ -34,24 +34,19 @@ CREATE TABLE attribute_values
     value_text    TEXT NULL,
     value_boolean BOOLEAN NULL,
     value_date    DATE NULL,
-    CHECK ( (value_text IS NOT NULL):: int + (value_boolean IS NOT NULL):: int + (value_date IS NOT NULL):: int = 1
-) );
+    value_float NUMERIC(12,4) NULL, -- вполне хватит для рейтинга/денежных значений
+    CHECK ( (value_text IS NOT NULL):: int + (value_boolean IS NOT NULL):: int + (value_date IS NOT NULL):: int + (value_float IS NOT NULL):: int = 1)
+);
 
 -- Индексы
 
 CREATE INDEX idx_attributes_type_id ON attributes (type_id);
-
 CREATE INDEX idx_attribute_values_title_id ON attribute_values (title_id);
-
 CREATE INDEX idx_attribute_values_attribute_id ON attribute_values (attribute_id);
-
 CREATE INDEX idx_attribute_values_type_attr ON attribute_values (title_id, attribute_id);
-
 CREATE INDEX idx_attribute_values_value_text_trgm ON attribute_values USING gin (value_text gin_trgm_ops);
-
 CREATE INDEX idx_attribute_values_value_boolean ON attribute_values (value_boolean);
-
 CREATE INDEX idx_attribute_values_value_date ON attribute_values (value_date);
-
-CREATE INDEX idx_attribute_values_composite on attribute_values (attribute_id, value_date, value_boolean);
+CREATE INDEX idx_attribute_values_value_float ON attribute_values(value_float);
+CREATE INDEX idx_attribute_values_composite ON attribute_values(attribute_id, value_date, value_boolean, value_float);
 
