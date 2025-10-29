@@ -1,0 +1,17 @@
+deptrac:
+  paths:
+    - ./src
+  layers:
+    - name: Shared
+      collectors:
+        - type: directory
+          value: ./src/Shared/.*
+    - name: News
+      collectors:
+        - type: directory
+          value: ./src/News/.*
+
+  ruleset:
+    News:
+      - Shared
+    Shared: ~
