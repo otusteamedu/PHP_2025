@@ -1,0 +1,45 @@
+FROM php:8.4-fpm-alpine
+LABEL authors="Artem Plekhanov"
+
+# Установка системных зависимостей
+RUN apk update && apk upgrade \
+    && apk add --no-cache nano mc \
+    libldap openldap-dev \
+    zip libzip-dev libffi-dev libpng-dev \
+    libjpeg-turbo-dev freetype freetype-dev libpq-dev \
+    libmcrypt-dev oniguruma-dev libxml2-dev openssl-dev \
+    cyrus-sasl-dev curl autoconf
+RUN apk add --no-cache shadow \
+    rabbitmq-c-dev rabbitmq-c oniguruma-dev
+
+# Установка PHP расширений
+RUN apk add --no-cache pcre-dev $PHPIZE_DEPS
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
+    && pecl install raphf redis \
+    && pecl install -o -f amqp \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install zip mbstring bcmath sockets \
+    && docker-php-ext-enable raphf redis sockets amqp \
+    && docker-php-source delete
+RUN apk clean cache \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /opt/app
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# Копирование файлов
+# - публичная часть
+COPY /public /opt/app/public
+# - скрипты воркеров
+COPY /scripts /opt/app/scripts
+# - приложение
+COPY /src /opt/app/src
+# - конфигурация composer
+#COPY /vendor /opt/app/vendor
+COPY /composer.json /opt/app/composer.json
+#COPY /composer.lock /opt/app/composer.lock
+
+# Установка зависимостей
+RUN composer install --no-dev --optimize-autoloader
