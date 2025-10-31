@@ -1,0 +1,118 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use App\Application\DTO\SearchRequest;
+use App\Application\UseCase\SearchBooksHandler;
+use App\Infrastructure\Container;
+
+function usage(): void {
+    $script = basename(__FILE__);
+    echo "\nBookstore search CLI\n";
+    echo "Usage (positional):\n  php bin/{$script} <title?> <category?> <min_price?> <max_price?> <exact_price?>\n";
+    echo "Usage (options):\n  php bin/{$script} --title=... --category=... --min-price=... --max-price=... --price=... [--in-stock=1|0] [--size=20] [--from=0]\n\n";
+}
+
+$args = $argv;
+array_shift($args);
+
+$options = [
+    'title' => null,
+    'category' => null,
+    'min_price' => null,
+    'max_price' => null,
+    'price' => null,
+    'in_stock' => '1',
+    'size' => '20',
+    'from' => '0',
+];
+
+foreach ($args as $arg) {
+    if (str_starts_with($arg, '--')) {
+        $pair = explode('=', substr($arg, 2), 2);
+        $key = $pair[0] ?? '';
+        $val = $pair[1] ?? '';
+        $key = str_replace('-', '_', $key);
+        if (array_key_exists($key, $options)) {
+            $options[$key] = $val;
+        }
+    }
+}
+
+if ($options['title'] === null
+        && $options['category'] === null
+        && $options['min_price'] === null
+        && $options['max_price'] === null
+        && $options['price'] === null) {
+    $options['title'] = $args[0] ?? null;
+    $options['category'] = $args[1] ?? null;
+    $options['min_price'] = $args[2] ?? null;
+    $options['max_price'] = $args[3] ?? null;
+    $options['price'] = $args[4] ?? null;
+}
+
+$min = isset($options['min_price']) && $options['min_price'] !== '' ? (int)$options['min_price'] : null;
+$max = isset($options['max_price']) && $options['max_price'] !== '' ? (int)$options['max_price'] : null;
+$exact = isset($options['price']) && $options['price'] !== '' ? (int)$options['price'] : null;
+$inStockOnly = ($options['in_stock'] ?? '1') !== '0';
+$size = (int)($options['size'] ?? '20');
+$from = (int)($options['from'] ?? '0');
+
+try {
+    $container = new Container();
+    /** @var SearchBooksHandler $handler */
+    $handler = $container->get(SearchBooksHandler::class);
+
+    $request = new SearchRequest(
+        query: $options['title'],
+        category: $options['category'],
+        minPrice: $exact === null ? $min : null,
+        maxPrice: $exact === null ? $max : null,
+        exactPrice: $exact,
+        inStockOnly: $inStockOnly,
+        size: $size,
+        from: $from,
+    );
+    $result = $handler->handle($request);
+
+    $items = $result['items'];
+    $total = $result['total'];
+    $maxScore = $result['max_score'];
+
+    if ($items === []) {
+        echo "No results found.\n";
+        exit(0);
+    }
+
+    $rowFmt = "| %-50s | %-10s | %-20s | %10s | %12s |\n";
+    $line = str_repeat('-', 118) . "\n";
+    echo $line;
+    printf($rowFmt, 'Title', 'SKU', 'Category', 'Price', 'Total stock');
+    echo $line;
+
+    foreach ($items as $item) {
+        $title = mb_strimwidth($item['title'], 0, 50, '…', 'UTF-8');
+        $category = mb_strimwidth($item['category'], 0, 20, '…', 'UTF-8');
+
+        $title = str_pad($title, 50 + (strlen($title) - mb_strwidth($title, 'UTF-8')));
+        $category = str_pad($category, 20 + (strlen($category) - mb_strwidth($category, 'UTF-8')));
+
+        printf(
+                "| %s | %-10s | %s | %10s | %12s |\n",
+                $title,
+                $item['sku'],
+                $category,
+                number_format((int)$item['price'], 0, '.', ' '),
+                number_format((int)$item['total_stock'], 0, '.', ' ')
+        );
+    }
+    echo $line;
+    printf("Total: %d, Max score: %s\n", $total, $maxScore === null ? 'n/a' : number_format($maxScore, 4));
+
+} catch (Throwable $e) {
+    fwrite(STDERR, 'Error: ' . $e->getMessage() . "\n");
+    usage();
+    exit(1);
+}
