@@ -1,0 +1,18 @@
+Топ-15 самых больших объектов в базе данных 'cinema'
+===========================================================
+
+ticket                                   Table  1967 MB
+idx_ticket_covering_q4                   Index  457 MB
+ticket_showtime_id_seat_id_key           Index  368 MB
+ticket_pkey                              Index  207 MB
+showtime                                 Table  8912 kB
+showtime_hall_id_starts_at_key           Index  2448 kB
+showtime_pkey                            Index  1384 kB
+idx_showtime_starts_at_utc_date          Index  376 kB
+customer                                 Table  288 kB
+seat                                     Table  256 kB
+customer_email_key                       Index  80 kB
+seat_hall_id_row_number_seat_number_key  Index  72 kB
+seat_pkey                                Index  56 kB
+customer_pkey                            Index  40 kB
+seat_type                                Table  40 kB

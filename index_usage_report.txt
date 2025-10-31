@@ -1,0 +1,22 @@
+Анализ использования индексов в базе данных 'cinema'
+
+Топ-5 самых ЧАСТО используемых индексов
+=========================================
+Индекс                                      Таблица                Кол-во использований
+------                                            -------                       -----------------------
+ticket_showtime_id_seat_id_key                    ticket                        20010012
+seat_pkey                                         seat                          9680114
+ticket_status_pkey                                ticket_status                 9680109
+customer_pkey                                     customer                      9680106
+showtime_pkey                                     showtime                      9371773
+
+
+Топ-5 самых РЕДКО используемых (или неиспользуемых) индексов
+==============================================================
+Индекс                                      Таблица                Кол-во использований
+------                                            -------                       -----------------------
+customer_email_key                                customer                      0
+seat_type_code_key                                seat_type                     0
+idx_ticket_covering_q4                            ticket                        2
+idx_showtime_starts_at_utc_date                   showtime                      4
+ticket_pkey                                       ticket                        5
