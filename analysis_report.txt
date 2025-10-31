@@ -1,0 +1,264 @@
+======================================================================
+ЗАПРОС #1: Выбор всех фильмов на сегодня
+======================================================================
+
+SQL:
+----
+SELECT DISTINCT m.title
+    FROM movie m
+    JOIN showtime s ON m.id = s.movie_id
+    WHERE DATE(s.starts_at) = CURRENT_DATE
+
+ПЛАН ВЫПОЛНЕНИЯ (EXPLAIN ANALYZE):
+-----------------------------------
+Unique  (cost=13.79..13.80 rows=1 width=516) (actual time=0.097..0.098 rows=1.00 loops=1)
+  Buffers: shared hit=7 dirtied=1
+  ->  Sort  (cost=13.79..13.80 rows=1 width=516) (actual time=0.096..0.096 rows=1.00 loops=1)
+        Sort Key: m.title
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=7 dirtied=1
+        ->  Nested Loop  (cost=0.14..13.78 rows=1 width=516) (actual time=0.044..0.059 rows=1.00 loops=1)
+              Buffers: shared hit=4 dirtied=1
+              ->  Seq Scan on showtime s  (cost=0.00..5.50 rows=1 width=8) (actual time=0.025..0.040 rows=1.00 loops=1)
+                    Filter: (date(starts_at) = CURRENT_DATE)
+                    Rows Removed by Filter: 199
+                    Buffers: shared hit=2
+              ->  Index Scan using movie_pkey on movie m  (cost=0.14..8.16 rows=1 width=524) (actual time=0.016..0.016 rows=1.00 loops=1)
+                    Index Cond: (id = s.movie_id)
+                    Index Searches: 1
+                    Buffers: shared hit=2 dirtied=1
+Planning:
+  Buffers: shared hit=219 dirtied=1
+Planning Time: 1.585 ms
+Execution Time: 0.195 ms
+
+
+======================================================================
+ЗАПРОС #2: Подсчёт проданных билетов за неделю
+======================================================================
+
+SQL:
+----
+SELECT COUNT(*) AS sold_tickets_last_week
+    FROM ticket
+    WHERE status = 'sold' AND sold_at >= NOW() - INTERVAL '7 days'
+
+ПЛАН ВЫПОЛНЕНИЯ (EXPLAIN ANALYZE):
+-----------------------------------
+Aggregate  (cost=324.95..324.96 rows=1 width=8) (actual time=2.520..2.521 rows=1.00 loops=1)
+  Buffers: shared hit=122
+  ->  Seq Scan on ticket  (cost=0.00..319.06 rows=2358 width=0) (actual time=0.011..2.386 rows=2358.00 loops=1)
+        Filter: (((status)::text = 'sold'::text) AND (sold_at >= (now() - '7 days'::interval)))
+        Rows Removed by Filter: 7495
+        Buffers: shared hit=122
+Planning:
+  Buffers: shared hit=48 dirtied=1
+Planning Time: 0.461 ms
+Execution Time: 2.540 ms
+
+
+======================================================================
+ЗАПРОС #3: Формирование афиши на сегодня
+======================================================================
+
+SQL:
+----
+SELECT m.title, s.starts_at, h.name AS hall_name
+    FROM showtime s
+    JOIN movie m ON s.movie_id = m.id
+    JOIN hall h ON s.hall_id = h.id
+    WHERE DATE(s.starts_at) = CURRENT_DATE
+    ORDER BY s.starts_at
+
+ПЛАН ВЫПОЛНЕНИЯ (EXPLAIN ANALYZE):
+-----------------------------------
+Sort  (cost=22.01..22.02 rows=1 width=742) (actual time=0.093..0.094 rows=1.00 loops=1)
+  Sort Key: s.starts_at
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=9 dirtied=1
+  ->  Nested Loop  (cost=0.29..22.00 rows=1 width=742) (actual time=0.045..0.060 rows=1.00 loops=1)
+        Buffers: shared hit=6 dirtied=1
+        ->  Nested Loop  (cost=0.14..13.78 rows=1 width=532) (actual time=0.033..0.048 rows=1.00 loops=1)
+              Buffers: shared hit=4
+              ->  Seq Scan on showtime s  (cost=0.00..5.50 rows=1 width=24) (actual time=0.022..0.036 rows=1.00 loops=1)
+                    Filter: (date(starts_at) = CURRENT_DATE)
+                    Rows Removed by Filter: 199
+                    Buffers: shared hit=2
+              ->  Index Scan using movie_pkey on movie m  (cost=0.14..8.16 rows=1 width=524) (actual time=0.010..0.010 rows=1.00 loops=1)
+                    Index Cond: (id = s.movie_id)
+                    Index Searches: 1
+                    Buffers: shared hit=2
+        ->  Index Scan using hall_pkey on hall h  (cost=0.15..8.17 rows=1 width=226) (actual time=0.011..0.011 rows=1.00 loops=1)
+              Index Cond: (id = s.hall_id)
+              Index Searches: 1
+              Buffers: shared hit=2 dirtied=1
+Planning:
+  Buffers: shared hit=46 dirtied=1
+Planning Time: 0.519 ms
+Execution Time: 0.141 ms
+
+
+======================================================================
+ЗАПРОС #4: Поиск 3 самых прибыльных фильмов за неделю
+======================================================================
+
+SQL:
+----
+SELECT m.title, SUM(t.price_paid) AS total_revenue
+    FROM ticket t
+    JOIN showtime s ON t.showtime_id = s.id
+    JOIN movie m ON s.movie_id = m.id
+    WHERE t.status = 'sold' AND t.sold_at >= NOW() - INTERVAL '7 days'
+    GROUP BY m.title
+    ORDER BY total_revenue DESC
+    LIMIT 3
+
+ПЛАН ВЫПОЛНЕНИЯ (EXPLAIN ANALYZE):
+-----------------------------------
+Limit  (cost=366.29..366.30 rows=3 width=548) (actual time=3.852..3.854 rows=3.00 loops=1)
+  Buffers: shared hit=128
+  ->  Sort  (cost=366.29..366.62 rows=130 width=548) (actual time=3.852..3.853 rows=3.00 loops=1)
+        Sort Key: (sum(t.price_paid)) DESC
+        Sort Method: top-N heapsort  Memory: 25kB
+        Buffers: shared hit=128
+        ->  HashAggregate  (cost=362.99..364.61 rows=130 width=548) (actual time=3.787..3.801 rows=50.00 loops=1)
+              Group Key: m.title
+              Batches: 1  Memory Usage: 40kB
+              Buffers: shared hit=125
+              ->  Hash Join  (cost=19.43..351.20 rows=2358 width=522) (actual time=0.146..3.041 rows=2358.00 loops=1)
+                    Hash Cond: (s.movie_id = m.id)
+                    Buffers: shared hit=125
+                    ->  Hash Join  (cost=6.50..331.88 rows=2358 width=14) (actual time=0.097..2.666 rows=2358.00 loops=1)
+                          Hash Cond: (t.showtime_id = s.id)
+                          Buffers: shared hit=124
+                          ->  Seq Scan on ticket t  (cost=0.00..319.06 rows=2358 width=14) (actual time=0.011..2.197 rows=2358.00 loops=1)
+                                Filter: (((status)::text = 'sold'::text) AND (sold_at >= (now() - '7 days'::interval)))
+                                Rows Removed by Filter: 7495
+                                Buffers: shared hit=122
+                          ->  Hash  (cost=4.00..4.00 rows=200 width=16) (actual time=0.055..0.056 rows=200.00 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 18kB
+                                Buffers: shared hit=2
+                                ->  Seq Scan on showtime s  (cost=0.00..4.00 rows=200 width=16) (actual time=0.004..0.020 rows=200.00 loops=1)
+                                      Buffers: shared hit=2
+                    ->  Hash  (cost=11.30..11.30 rows=130 width=524) (actual time=0.025..0.025 rows=50.00 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on movie m  (cost=0.00..11.30 rows=130 width=524) (actual time=0.008..0.011 rows=50.00 loops=1)
+                                Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=55 dirtied=1
+Planning Time: 0.692 ms
+Execution Time: 3.951 ms
+
+
+======================================================================
+ЗАПРОС #5: Схема зала со свободными/занятыми местами для сеанса ID=1
+======================================================================
+
+SQL:
+----
+SELECT
+        s.row_number,
+        s.seat_number,
+        CASE
+            WHEN t.id IS NULL THEN 'свободно'
+            ELSE 'занято'
+        END AS status
+    FROM seat s
+    LEFT JOIN ticket t ON s.id = t.seat_id AND t.showtime_id = 1
+    WHERE s.hall_id = (SELECT hall_id FROM showtime WHERE id = 1)
+    ORDER BY s.row_number, s.seat_number
+
+ПЛАН ВЫПОЛНЕНИЯ (EXPLAIN ANALYZE):
+-----------------------------------
+Sort  (cost=125.47..125.86 rows=159 width=40) (actual time=0.405..0.420 rows=153.00 loops=1)
+  Sort Key: s.row_number, s.seat_number
+  Sort Method: quicksort  Memory: 32kB
+  Buffers: shared hit=50
+  InitPlan 1
+    ->  Seq Scan on showtime  (cost=0.00..4.50 rows=1 width=8) (actual time=0.011..0.043 rows=1.00 loops=1)
+          Filter: (id = 1)
+          Rows Removed by Filter: 199
+          Buffers: shared hit=2
+  ->  Hash Right Join  (cost=26.11..115.15 rows=159 width=40) (actual time=0.242..0.304 rows=153.00 loops=1)
+        Hash Cond: (t.seat_id = s.id)
+        Buffers: shared hit=47
+        ->  Bitmap Heap Scan on ticket t  (cost=4.63..93.55 rows=44 width=16) (actual time=0.049..0.076 rows=41.00 loops=1)
+              Recheck Cond: (showtime_id = 1)
+              Heap Blocks: exact=35
+              Buffers: shared hit=40
+              ->  Bitmap Index Scan on ticket_showtime_id_seat_id_key  (cost=0.00..4.62 rows=44 width=0) (actual time=0.039..0.039 rows=41.00 loops=1)
+                    Index Cond: (showtime_id = 1)
+                    Index Searches: 1
+                    Buffers: shared hit=5
+        ->  Hash  (cost=19.50..19.50 rows=159 width=16) (actual time=0.170..0.172 rows=153.00 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 16kB
+              Buffers: shared hit=7
+              ->  Bitmap Heap Scan on seat s  (cost=5.51..19.50 rows=159 width=16) (actual time=0.083..0.120 rows=153.00 loops=1)
+                    Recheck Cond: (hall_id = (InitPlan 1).col1)
+                    Heap Blocks: exact=2
+                    Buffers: shared hit=7
+                    ->  Bitmap Index Scan on seat_hall_id_row_number_seat_number_key  (cost=0.00..5.47 rows=159 width=0) (actual time=0.075..0.075 rows=153.00 loops=1)
+                          Index Cond: (hall_id = (InitPlan 1).col1)
+                          Index Searches: 1
+                          Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=88 dirtied=1
+Planning Time: 0.806 ms
+Execution Time: 0.516 ms
+
+
+======================================================================
+ЗАПРОС #6: Диапазон цен на билет для сеанса ID=1
+======================================================================
+
+SQL:
+----
+SELECT
+        MIN(st.base_price + COALESCE(sty.price_modifier, 0)) AS min_price,
+        MAX(st.base_price + COALESCE(sty.price_modifier, 0)) AS max_price
+    FROM showtime st
+    JOIN hall h ON st.hall_id = h.id
+    JOIN seat s ON h.id = s.hall_id
+    JOIN seat_type sty ON s.seat_type_id = sty.id
+    WHERE st.id = 1
+
+ПЛАН ВЫПОЛНЕНИЯ (EXPLAIN ANALYZE):
+-----------------------------------
+Aggregate  (cost=18.71..18.72 rows=1 width=64) (actual time=0.234..0.235 rows=1.00 loops=1)
+  Buffers: shared hit=13 dirtied=1
+  ->  Nested Loop  (cost=0.58..18.66 rows=5 width=21) (actual time=0.076..0.170 rows=153.00 loops=1)
+        Buffers: shared hit=13 dirtied=1
+        ->  Nested Loop  (cost=0.43..18.04 rows=5 width=15) (actual time=0.060..0.108 rows=153.00 loops=1)
+              Join Filter: (st.hall_id = s.hall_id)
+              Buffers: shared hit=9
+              ->  Nested Loop  (cost=0.15..12.72 rows=1 width=23) (actual time=0.046..0.056 rows=1.00 loops=1)
+                    Buffers: shared hit=4
+                    ->  Seq Scan on showtime st  (cost=0.00..4.50 rows=1 width=15) (actual time=0.011..0.021 rows=1.00 loops=1)
+                          Filter: (id = 1)
+                          Rows Removed by Filter: 199
+                          Buffers: shared hit=2
+                    ->  Index Only Scan using hall_pkey on hall h  (cost=0.15..8.17 rows=1 width=8) (actual time=0.033..0.033 rows=1.00 loops=1)
+                          Index Cond: (id = st.hall_id)
+                          Heap Fetches: 1
+                          Index Searches: 1
+                          Buffers: shared hit=2
+              ->  Index Scan using seat_hall_id_row_number_seat_number_key on seat s  (cost=0.28..3.33 rows=159 width=16) (actual time=0.012..0.033 rows=153.00 loops=1)
+                    Index Cond: (hall_id = h.id)
+                    Index Searches: 1
+                    Buffers: shared hit=5
+        ->  Memoize  (cost=0.15..0.20 rows=1 width=22) (actual time=0.000..0.000 rows=1.00 loops=153)
+              Cache Key: s.seat_type_id
+              Cache Mode: logical
+              Hits: 151  Misses: 2  Evictions: 0  Overflows: 0  Memory Usage: 1kB
+              Buffers: shared hit=4 dirtied=1
+              ->  Index Scan using seat_type_pkey on seat_type sty  (cost=0.14..0.19 rows=1 width=22) (actual time=0.007..0.007 rows=1.00 loops=2)
+                    Index Cond: (id = s.seat_type_id)
+                    Index Searches: 2
+                    Buffers: shared hit=4 dirtied=1
+Planning:
+  Buffers: shared hit=57
+Planning Time: 0.754 ms
+Execution Time: 0.322 ms
+
+
