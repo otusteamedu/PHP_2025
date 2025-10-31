@@ -26,7 +26,7 @@ CREATE TABLE values (
     text_value TEXT,
     boolean_value BOOLEAN,
     date_value DATE,
-    float_value FLOAT,
+    numeric_value NUMERIC(3, 1),
     FOREIGN KEY (film_id) REFERENCES films(id),
     FOREIGN KEY (attribute_id) REFERENCES attributes(id)
 );
@@ -58,7 +58,7 @@ INSERT INTO values (film_id, attribute_id, boolean_value) VALUES (1, 3, true);
 INSERT INTO values (film_id, attribute_id, date_value) VALUES (1, 5, '2010-07-16');
 INSERT INTO values (film_id, attribute_id, date_value) VALUES (1, 7, '2025-11-20');
 INSERT INTO values (film_id, attribute_id, date_value) VALUES (1, 8, '2025-10-31');
-INSERT INTO values (film_id, attribute_id, float_value) VALUES (1, 9, 8.7);
+INSERT INTO values (film_id, attribute_id, numeric_value) VALUES (1, 9, 8.7);
 
 
 -- Значения для фильма "Интерстеллар"
@@ -67,7 +67,7 @@ INSERT INTO values (film_id, attribute_id, boolean_value) VALUES (2, 4, false);
 INSERT INTO values (film_id, attribute_id, date_value) VALUES (2, 6, '2014-11-07');
 INSERT INTO values (film_id, attribute_id, date_value) VALUES (2, 7, '2025-11-25');
 INSERT INTO values (film_id, attribute_id, date_value) VALUES (2, 8, '2025-11-15');
-INSERT INTO values (film_id, attribute_id, float_value) VALUES (2, 9, 8.6);
+INSERT INTO values (film_id, attribute_id, numeric_value) VALUES (2, 9, 8.6);
 
 
 -- View для служебных данных
@@ -89,7 +89,7 @@ SELECT
     f.title AS "фильм",
     at.type_name AS "тип атрибута",
     a.attribute_name AS "атрибут",
-    COALESCE(v.text_value, v.boolean_value::TEXT, v.date_value::TEXT, v.float_value::TEXT) AS "значение"
+    COALESCE(v.text_value, v.boolean_value::TEXT, v.date_value::TEXT, v.numeric_value::TEXT) AS "значение"
 FROM films f
 JOIN values v ON f.id = v.film_id
 JOIN attributes a ON v.attribute_id = a.id
