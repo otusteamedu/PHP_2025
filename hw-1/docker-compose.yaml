@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: hw1/app
+    container_name: hw1-app
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/php-socket:/var/run/php
+    networks:
+      - otus-network
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: hw1/nginx
+    container_name: hw1-nginx
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/php-socket:/var/run/php
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - otus-network
+
+  db:
+    image: mariadb:11
+    container_name: hw1-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./docker/dbdata:/var/lib/mysql
+
+  redis:
+    image: redis:8.2.2
+    container_name: hw1-redis
+    networks:
+      - otus-network
+
+  memcached:
+    image: memcached:1.6.39
+    container_name: hw1-memcached
+    networks:
+      - otus-network
+
+
+networks:
+  otus-network:
+    driver: bridge
