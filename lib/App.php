@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__.'/EmailValidator.php';
+namespace App;
 
 class App
 {
@@ -19,7 +19,7 @@ class App
         $emailsInput = '';
         $results = [];
 
-        if ($method === 'POST' && !empty($_POST['emails'])) {
+        if ($method === 'POST' && ! empty($_POST['emails'])) {
             $emailsInput = (string) $_POST['emails'];
             $emails = preg_split('/[\s,]+/', $emailsInput, -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
@@ -36,6 +36,6 @@ class App
             }
         }
 
-        require __DIR__ . '/../views/email_check.php';
+        require __DIR__.'/../views/email_check.php';
     }
 }

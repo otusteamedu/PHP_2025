@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../lib/App.php';
+use App\App;
 
-$app = new App();
+require_once __DIR__.'/../vendor/autoload.php';
+
+$app = new App;
 $app->run();
-
-
