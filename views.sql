@@ -25,6 +25,7 @@ SELECT
             av.value_text,
             av.value_date::text,
             av.value_float::text,
+            av.value_int::text,
             CASE WHEN av.value_boolean THEN 'Да' ELSE 'Нет' END
     ) AS value_display
 FROM attribute_values av
