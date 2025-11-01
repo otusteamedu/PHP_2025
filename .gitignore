@@ -3,3 +3,8 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+/hw1/.env
+/hw1/docker/dbdata/*
+!/hw1/docker/dbdata/
+/hw1/docker/redisdata/*
+!/hw1/docker/redisdata
