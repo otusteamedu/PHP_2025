@@ -1,11 +1,12 @@
 <?php
 
-namespace Blarkinov\PhpDbCourse\Service;
+namespace Blarkinov\PhpDbCourse\Service\Database;
 
+use Blarkinov\PhpDbCourse\Models\Repository\User\UserRepositoryInterface;
 use Exception;
 use PDO;
 
-class MySQL
+class MySQL implements UserRepositoryInterface
 {
     private static ?PDO $conn = null;
 

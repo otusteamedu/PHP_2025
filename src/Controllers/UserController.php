@@ -2,53 +2,52 @@
 
 namespace Blarkinov\PhpDbCourse\Controllers;
 
-use Blarkinov\PhpDbCourse\Http\Response;
-use Blarkinov\PhpDbCourse\Models\Event\WorkerEvent;
 use Blarkinov\PhpDbCourse\Models\User\User;
 use Blarkinov\PhpDbCourse\Models\User\UserMapper;
-use Blarkinov\PhpDbCourse\Service\Validator;
+use Blarkinov\PhpDbCourse\Service\Database\Fabric;
+use Blarkinov\PhpDbCourse\Service\UserDestroyValidator;
+use Blarkinov\PhpDbCourse\Service\UserIndexValidator;
+use Blarkinov\PhpDbCourse\Service\UserShowValidator;
+use Blarkinov\PhpDbCourse\Service\UserStoreValidator;
+use Blarkinov\PhpDbCourse\Service\UserUpdateValidator;
 
 class UserController
 {
-    private Response $response;
-    private Validator $validator;
     private UserMapper $mapper;
 
     public function __construct()
     {
-        $this->response = new Response();
-        $this->validator = new Validator();
-        $this->mapper = new UserMapper();
+        $this->mapper = new UserMapper((new Fabric)->create());
     }
 
     public function index(): array
     {
-        $this->validator->index();
+        (new UserIndexValidator)->validate();
         return $this->mapper->getAll((int)$_GET['offset'], (int)$_GET['limit']);
     }
 
     public function update(array $params = []): array
     {
-        $this->validator->update($params['id']);
+        (new UserUpdateValidator)->validate($params['id']);
         return ['id' => $this->mapper->update($params['id'])];
     }
     public function show(array $params = []): ?User
     {
-        $this->validator->show($params['id']);
+        (new UserShowValidator)->validate($params['id']);
         return $this->mapper->findByID($params['id']);
     }
 
     public function store(): array
     {
 
-        $this->validator->store();
+        (new UserStoreValidator)->validate();
         $id = $this->mapper->create();
         return ['id' => $id];
     }
 
     public function destroy(array $params = []): array
     {
-        $this->validator->destroy($params['id']);
+        (new UserDestroyValidator)->validate($params['id']);
         return ['id' => $this->mapper->delete($params['id'])];
     }
 }

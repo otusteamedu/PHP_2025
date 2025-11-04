@@ -5,7 +5,7 @@ namespace Blarkinov\PhpDbCourse\Http;
 use Blarkinov\PhpDbCourse\Bin\Dispatcher;
 use Blarkinov\PhpDbCourse\Bin\Router;
 use Blarkinov\PhpDbCourse\Controllers\MainController;
-use Blarkinov\PhpDbCourse\Service\Validator;
+use Blarkinov\PhpDbCourse\Service\Validator\MainValidator;
 use Throwable;
 
 class Request
@@ -27,7 +27,7 @@ class Request
 
         try {
 
-            if (!(new Validator)->mainValidate()) {
+            if (!(new MainValidator)->validate()) {
                 $this->mainController->badRequest();
                 return;
             }

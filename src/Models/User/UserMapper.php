@@ -2,22 +2,21 @@
 
 namespace Blarkinov\PhpDbCourse\Models\User;
 
-use Blarkinov\PhpDbCourse\Service\MySQL;
+use Blarkinov\PhpDbCourse\Models\Repository\User\UserRepositoryInterface;
 use Exception;
 
 class UserMapper
 {
     private const TABLE = 'users';
-    private MySQL $mysql;
 
-    public function __construct()
+    public function __construct(private UserRepositoryInterface $repository)
     {
-        $this->mysql = new MySQL();
+        $this->repository = $repository;
     }
 
     public function findByID(int $id): ?User
     {
-        $result = $this->mysql->select('SELECT * FROM ' . self::TABLE . ' WHERE id=?', [$id]);
+        $result = $this->repository->select('SELECT * FROM ' . self::TABLE . ' WHERE id=?', [$id]);
 
         if (empty($result))
             return null;
@@ -51,7 +50,7 @@ class UserMapper
 
         $parameters[':id'] = $id;
 
-        $this->mysql->update(
+        $this->repository->update(
             'UPDATE ' . self::TABLE . ' SET ' . implode(',', $placeholders) . ' WHERE id = :id',
             $parameters
         );
@@ -64,19 +63,19 @@ class UserMapper
     public function getAll(int $offset, int $limit): ?array
     {
 
-        $result = $this->mysql->select(
+        $result = $this->repository->select(
             'SELECT * FROM ' . self::TABLE . " LIMIT :offset,:limit",
             [':offset' => $offset, ':limit' => $limit]
         );
 
         $total = $this->getCount();
-    
+
         $result = [
             'rows' => $result,
-            'meta'=>[
-                'total'=>$total,
-                'offset'=>$offset,
-                'limit'=>$limit,
+            'meta' => [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
             ],
         ];
 
@@ -85,13 +84,13 @@ class UserMapper
 
     public function delete(int $id): int
     {
-        $this->mysql->delete('DELETE FROM ' . self::TABLE . ' WHERE id=?', [$id]);
+        $this->repository->delete('DELETE FROM ' . self::TABLE . ' WHERE id=?', [$id]);
         return $id;
     }
 
     private function add(array $data): int
     {
-        $id = $this->mysql->insert(
+        $id = $this->repository->insert(
             'INSERT INTO ' . self::TABLE . ' (first_name,last_name,date_birth,gender) VALUES (:first_name,:last_name,:date_birth,:gender)',
             [
                 ':first_name' => $data['first_name'],
@@ -108,7 +107,7 @@ class UserMapper
 
     private function getCount()
     {
-        $result = $this->mysql->select('SELECT count(id) as count FROM ' . self::TABLE);
+        $result = $this->repository->select('SELECT count(id) as count FROM ' . self::TABLE);
         return $result[0]['count'];
     }
 }
