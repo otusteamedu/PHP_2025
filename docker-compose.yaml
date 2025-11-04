@@ -1,0 +1,81 @@
+services:
+  nginx:
+    image: "nginx:latest"
+    container_name: ${NGINX_CONTAINER}
+    volumes:
+      - ./app:/var/www/app
+      - ./docker/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: ./docker/php-fpm
+      dockerfile: Dockerfile
+    image: otus-hw29/php-fpm
+    container_name: ${APP_CONTAINER}
+    restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./app:/var/www/app
+    networks:
+      - app-network
+    env_file: .env
+
+  consumer:
+    build:
+      context: ./docker/php-cli
+      dockerfile: Dockerfile
+    image: otus-hw29/php-cli
+    container_name: ${CONSUMER_CONTAINER}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    tty: true
+    volumes:
+      - ./app:/var/www/app
+    networks:
+      - app-network
+    env_file: .env
+    entrypoint: [ "bash", "-c", "php console/index.php" ]
+
+  rabbitmq:
+    image: rabbitmq:3.13.7-management
+    container_name: ${RABBIT_CONTAINER}
+    hostname: ${RABBIT_HOST}
+    ports:
+      - ${RABBIT_PORT}:${RABBIT_PORT}
+      - ${RABBIT_UI_PORT}:${RABBIT_UI_PORT}
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
+    networks:
+      - app-network
+    env_file: .env
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: ${MAILHOG_CONTAINER}
+    ports:
+      - ${MAILHOG_PORT}
+      - ${MAILHOG_UI_PORT}:${MAILHOG_UI_PORT}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
