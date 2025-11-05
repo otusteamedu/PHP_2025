@@ -25,6 +25,15 @@ services:
     working_dir: /app/mysite.local
     networks:
       - app-network
+  redis:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: myapp/redis
+    container_name: redis
+    working_dir: /app/mysite.local
+    networks:
+      - app-network
 
 networks:
   app-network:
