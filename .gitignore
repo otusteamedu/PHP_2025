@@ -3,3 +3,10 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+
+dbdata/
+memcached/
+.env
+.gitignore
+/redis/data/

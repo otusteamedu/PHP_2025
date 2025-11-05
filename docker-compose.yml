@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  php-fpm:
+    image: otus/php
+    container_name: app-otus
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ./code:/data/otus.local
+    networks:
+      - otus-network
+    depends_on:
+      - memcached
+      - redis
+      - db
+
+  webserver:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: otus/nginx
+    container_name: webserver
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./code:/data/otus.local
+    networks:
+      - otus-network
+    depends_on:
+      - php-fpm
+
+  db:
+    image: mysql:8.4.0
+    container_name: db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./dbdata:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - otus-network
+
+  redis:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: redis:alpine
+    container_name: otus-redis
+    volumes:
+      - ./redis/data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - otus-network
+
+  memcached:
+    container_name: memcached
+    build:
+      context: ./memcache
+      dockerfile: Dockerfile
+    ports:
+      - "11211:11211"
+    networks:
+      - otus-network
+
+networks:
+  otus-network:
+    driver: bridge
