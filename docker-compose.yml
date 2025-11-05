@@ -38,8 +38,8 @@ services:
   db:
     image: percona/percona-server:8.0
     container_name: db
-    ports:
-      - "3306:3306"
+#    ports:
+#      - "3306:3306"
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -51,16 +51,16 @@ services:
   memcached:
     image: memcached:latest
     container_name: memcached
-    ports:
-      - "11211:11211"
+#    ports:
+#      - "11211:11211"
     networks:
       - app-network
 
   redis:
     image: redis:latest
     container_name: redis
-    ports:
-      - "6379:6379"
+#    ports:
+#      - "6379:6379"
     volumes:
       - redis_data:/data
     networks:

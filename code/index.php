@@ -2,7 +2,7 @@
 echo "Привет, Alex!<br>" . date("Y-m-d H:i:s") . "<br><br>";
 // --------
 $memcached = new Memcached();
-$memcached->addServer('10.10.1.2', 11211);
+$memcached->addServer('10.10.1.3', 11211);
 
 $key = 'test_key';
 $value = 'test_value';
@@ -18,7 +18,7 @@ if (!$memcached->set($key, $value)) {
     }
 }
 // --------
-$servername = "10.10.1.3";
+$servername = "10.10.1.5";
 $username = "nobody";
 $password = "SECRET_PASS_CHANGE!";
 $database = "dbtest";
@@ -39,7 +39,7 @@ try {
 $redis = new Redis();
 
 try {
-    $redis->connect('10.10.1.4', 6379);
+    $redis->connect('10.10.1.2', 6379);
     echo "Успешное подключение к серверу Redis<br>";
 
     $key = 'test_key';
