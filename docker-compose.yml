@@ -9,6 +9,7 @@ services:
     container_name: webserver
     ports:
       - "8080:80"
+      - "6379:6379"
     volumes:
        - ./code:/app/mysite.local
     networks:
