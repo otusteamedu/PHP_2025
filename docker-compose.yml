@@ -1,0 +1,32 @@
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: otus-hw6/nginx
+    container_name: ${CONTAINER_NAME_NGINX}
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/data
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: otus-hw6/php
+    container_name: ${CONTAINER_NAME_APP}
+    restart: always
+    volumes:
+      - ./app:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
