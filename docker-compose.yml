@@ -1,0 +1,91 @@
+services:
+  # Контейнер с PHP-FPM
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: app
+    volumes:
+      - ./code:/data/mysite.local
+      - ./php-socket:/var/run/php
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MEMCACHED_HOST=memcached
+      - MEMCACHED_PORT=11211
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=${MYSQL_DATABASE}
+      - DB_USER=root
+      - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    networks:
+      - app-network
+    depends_on:
+      - db
+      - redis
+      - memcached
+
+  # Контейнер с Nginx
+  webserver:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: webserver
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./code:/data/mysite.local
+      - ./php-socket:/var/run/php
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  # Контейнер с MySQL
+  db:
+    image: mysql:8.0
+    container_name: db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - app-network
+
+  # Memcached
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: memcached
+    ports:
+      - "11211:11211"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  php-socket:
