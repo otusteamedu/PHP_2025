@@ -1,5 +1,8 @@
+aiPrompts/
 .idea/
 /vendor/
+/var/
+.env
 .DS_Store
 .AppleDouble
 .LSOverride
