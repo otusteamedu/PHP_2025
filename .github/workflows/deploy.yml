@@ -1,0 +1,46 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Позволяет запускать вручную
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        run: |
+          echo "Setting up production environment..."
+
+      - name: Copy new code to production
+        run: |
+          echo "Copying new code to production directory..."
+          mkdir -p /var/www/html/production-media-monitoring
+          cp -r $GITHUB_WORKSPACE/* /var/www/html/production-media-monitoring/
+
+      - name: Setup production environment
+        run: |
+          echo "Setting up production environment file..."
+          cd /var/www/html/production-media-monitoring
+          cp .env .env.production 2>/dev/null || cp .env.example .env.production 2>/dev/null || echo "No .env or .env.example found"
+
+      - name: Blue-Green Deployment
+        run: |
+          echo "Starting Blue-Green deployment..."
+          cd /var/www/html/production-media-monitoring
+          ./scripts/blue-green-deploy.sh
+
+      - name: Cleanup old images
+        run: |
+          echo "Cleaning up old Docker images..."
+          docker image prune -f
+
+      - name: Deployment successful
+        run: |
+          echo "✅ Blue-Green deployment completed successfully!"
+          echo "Application is running at: http://localhost"
