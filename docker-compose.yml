@@ -11,11 +11,11 @@ services:
       - ./php-socket:/var/run/php
     environment:
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_PORT=${REDIS_PORT}
       - MEMCACHED_HOST=memcached
-      - MEMCACHED_PORT=11211
+      - MEMCACHED_PORT=${MEMCACHED_PORT}
       - DB_HOST=db
-      - DB_PORT=3306
+      - DB_PORT=${DB_PORT}
       - DB_NAME=${MYSQL_DATABASE}
       - DB_USER=root
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -66,8 +66,6 @@ services:
   redis:
     image: redis:7-alpine
     container_name: redis
-    ports:
-      - "6379:6379"
     volumes:
       - ./redis/data:/data
     command: redis-server --appendonly yes
@@ -78,8 +76,6 @@ services:
   memcached:
     image: memcached:1.6-alpine
     container_name: memcached
-    ports:
-      - "11211:11211"
     networks:
       - app-network
 
