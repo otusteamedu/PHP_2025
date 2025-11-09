@@ -6,7 +6,7 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     image: myapp/nginx2025
-    container_name: ${CONTAINER_NAME}
+    container_name: ${CONTAINER_NAME_NGINX}
     ports:
       - "80:80"
     volumes:
@@ -20,7 +20,7 @@ services:
       context: ./fpm
       dockerfile: Dockerfile
     image: myapp/php2025
-    container_name: app
+    container_name: ${CONTAINER_NAME_PHP}
     volumes:
       - ./code:/data/mysite.local
     networks:
