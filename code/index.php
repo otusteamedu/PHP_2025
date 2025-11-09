@@ -1,6 +1,7 @@
 <?php
 	$servicesLink = [
-		'Redis' => '/redis.php'
+		'Redis' => '/redis.php',
+		'Memcached' => '/memcached.php',
 	];
 ?>
 <!doctype html>
