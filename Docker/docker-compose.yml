@@ -15,9 +15,9 @@ services:
       - app-network
 
 
-  app:
+  php:
     build:
-      context: ./fpm
+      context: ./php
       dockerfile: Dockerfile
     image: myapp/php2025
     container_name: ${CONTAINER_NAME_PHP}
