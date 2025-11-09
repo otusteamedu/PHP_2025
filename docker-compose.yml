@@ -9,6 +9,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./code:/data/otus.local
+      - php-sock:/var/run/php
     networks:
       - otus-network
     depends_on:
@@ -27,6 +28,7 @@ services:
       - "443:443"
     volumes:
       - ./code:/data/otus.local
+      - php-sock:/var/run/php
     networks:
       - otus-network
     depends_on:
@@ -71,3 +73,5 @@ services:
 networks:
   otus-network:
     driver: bridge
+volumes:
+  php-sock:
