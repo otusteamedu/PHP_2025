@@ -1,0 +1,157 @@
+<?php
+
+return [
+    "burgers" => [
+        'super-cheese-burger' => [
+            'name' => 'Супер сырный бургер',
+            'price' => 400,
+            'ingredients' => [
+                'beef' => 1,
+                'sesame-bun' => 2,
+                'cheddar-cheese' => 2,
+                'cheese sauce' => 1,
+                'tomato' => 1,
+                'onion' => 1,
+                'garlic' => 1
+            ]
+        ],
+        'double-burger' => [
+            'name' => 'Двойный бургер',
+            'price' => 360,
+            'ingredients' => [
+                'beef' => 1,
+                'sesame bun' => 2,
+                'cheddar-cheese' => 1,
+                'pickles' => 1,
+                'tomato' => 1,
+                'burger-sauce' => 1,
+                'onion' => 1,
+                'garlic' => 1
+            ]
+        ],
+        'sesame-burger' => [
+            'name' => 'Кунжутный бургер',
+            'price' => 320,
+            'ingredients' => [
+                'chicken' => 1,
+                'sesame bun' => 2,
+                'cheddar-cheese' => 1,
+                'tomato' => 1,
+                'lettuce-leaf' => 1,
+                'burger-sauce' => 1,
+                'onion' => 1,
+                'garlic' => 1
+            ]
+        ],
+        'chicken-burger' => [
+            'name' => 'Куриный бургер',
+            'price' => 280,
+            'ingredients' => [
+                'chicken' => 1,
+                'bun' => 2,
+                'cheddar-cheese' => 1,
+                'lettuce-leaf' => 1,
+                'burger-sauce' => 1,
+                'onion' => 1,
+                'garlic' => 1
+            ]
+        ],
+        'cheese-burger' => [
+            'name' => 'Чизбургер',
+            'price' => 300,
+            'ingredients' => [
+                'beef' => 1,
+                'bun' => 2,
+                'cheddar-cheese' => 1,
+                'pickles' => 1,
+                'mustard-sauce' => 1,
+                'onion' => 1,
+                'garlic' => 1
+            ]
+        ],
+        'hamburger' => [
+            'name' => 'Гамбургер',
+            'price' => 280,
+            'ingredients' => [
+                'beef' => 1,
+                'bun' => 2,
+                'pickles' => 1,
+                'mustard-sauce' => 1,
+                'onion' => 1,
+                'garlic' => 1
+            ]
+        ]
+    ],
+    'hotdogs' => [
+        'grill-hotdog' => [
+            'name' => 'Хот-дог на гриле',
+            'price' => 260,
+            'ingredients' => [
+                'grill-sausage' => 1,
+                'long-bun' => 2,
+                'cheddar-cheese' => 1,
+                'ketchup' => 1,
+                'mustard-sauce' => 1
+            ]
+        ],
+        'cheese-hotdog' => [
+            'name' => 'Хот-дог сырный',
+            'price' => 240,
+            'ingredients' => [
+                'sausage' => 1,
+                'long-bun' => 2,
+                'cheddar-cheese' => 1,
+                'ketchup' => 1,
+                'mustard-sauce' => 1
+            ]
+        ],
+        'classic-hotdog' => [
+            'name' => 'Хот-дог классический',
+            'price' => 200,
+            'ingredients' => [
+                'sausage' => 1,
+                'long-bun' => 2,
+                'ketchup' => 1,
+                'mustard-sauce' => 1
+            ]
+        ]
+    ],
+    'sandwiches' => [
+        'spicy-sandwich' => [
+            'name' => 'Сэндвич острый',
+            'price' => 170,
+            'ingredients' => [
+
+                'bread' => 2,
+                'cheddar-cheese' => 1,
+                'tomato' => 1,
+                'pickles' => 1,
+                'spicy-sauce' => 1
+            ]
+        ],
+        'classic-sandwich' => [
+            'name' => 'Сэндвич классический',
+            'price' => 150,
+            'ingredients' => [
+
+                'bread' => 2,
+                'cheddar-cheese' => 1,
+                'tomato' => 1,
+                'pickles' => 1,
+                'burger-sauce' => 1
+            ]
+        ]
+    ],
+    'extras' => [
+        'cheese-sauce' => 60,
+        'burger-sauce' => 40,
+        'ketchup' => 40,
+        'mustard-sauce' => 40,
+        'cheddar-cheese' => 60,
+        'tomato' => 40,
+        'pickles' => 40,
+        'lettuce-leaf' => 40,
+        'onion' => 20,
+        'garlic' => 20
+    ]
+];

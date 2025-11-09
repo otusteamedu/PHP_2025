@@ -1,0 +1,17 @@
+{
+    "name": "kamalo/burgers.shop",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Kamalo\\BurgersShop\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Алсу Камалова",
+            "email": "camalovalsu@outlook.com"
+        }
+    ],
+    "require": {}
+}
