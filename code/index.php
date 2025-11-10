@@ -2,6 +2,7 @@
 	$servicesLink = [
 		'Redis' => '/redis.php',
 		'Memcached' => '/memcached.php',
+		'PostgreSQL' => '/postgresql.php',
 	];
 ?>
 <!doctype html>
@@ -26,5 +27,7 @@
 				<?php endforeach; ?>
 			</ul>
 		<?php endif; ?>
+
+	<?php phpinfo() ?>
 	</body>
 </html>
