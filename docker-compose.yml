@@ -1,0 +1,67 @@
+services:
+  nginx:
+    build:
+        context: .docker/nginx
+        dockerfile: Dockerfile
+    image: nginx:latest
+    container_name: ${PROJECT_NAME}-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/data/fkh.local
+    depends_on:
+      - php
+    networks:
+      - fkh-network
+
+  php:
+      build:
+        context: .docker/php
+        dockerfile: Dockerfile
+      container_name: ${PROJECT_NAME}-php
+      image: php:8.4-fpm
+      restart: unless-stopped
+      volumes:
+        - ./app:/var/www/html
+      depends_on:
+        - mysql
+      networks:
+        - fkh-network
+
+  mysql:
+      image: mysql
+      container_name: ${PROJECT_NAME}-db
+      restart: unless-stopped
+      volumes:
+        - ./dbdata:/var/lib/mysql
+      ports:
+        - "33066:3306"
+      environment:
+        MYSQL_DATABASE: ${MYSQL_DATABASE}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      networks:
+        - fkh-network
+
+  redis:
+    image: redis:latest
+    container_name: ${PROJECT_NAME}-redis
+    networks:
+      - fkh-network
+
+  memcached:
+    image: memcached:latest
+    container_name: ${PROJECT_NAME}-memcached
+    networks:
+      - fkh-network
+
+volumes:
+  php_socket:
+
+networks:
+  fkh-network:
+    driver: bridge
+
+
