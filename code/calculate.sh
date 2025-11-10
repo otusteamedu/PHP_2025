@@ -15,5 +15,5 @@ if ! echo "$b" | grep -qE '^-?[0-9]+(\.[0-9]+)?$'; then
   exit 1
 fi
 
-result=$(echo "$a + $b" | bc)
+result=$(awk "BEGIN {print $a + $b}" )
 echo "Сумма чисел $a и $b равна: $result"
