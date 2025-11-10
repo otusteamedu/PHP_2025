@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  webserver:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: webserver
+    ports:
+      - "8080:80"
+      - "6379:6379"
+    volumes:
+       - ./code:/app/mysite.local
+    networks:
+      - app-network
+  php:
+    build:
+      context: ./php-fpm
+      dockerfile: Dockerfile
+    image: myapp/php:8.4-fpm
+    container_name: php-fpm
+    volumes:
+      - ./code:/app/mysite.local
+    working_dir: /app/mysite.local
+    env_file:
+      - .env
+    networks:
+      - app-network
+  redis:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: myapp/redis
+    container_name: redis
+    working_dir: /app/mysite.local
+    networks:
+      - app-network
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    shm_size: 128mb
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./db/postgres:/var/lib/postgresql
+    ports:
+      - ${POSTGRES_PORT}:5432
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
