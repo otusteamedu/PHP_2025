@@ -8,7 +8,9 @@ RUN apt-get update && \
         libssl-dev \
         pkg-config \
         memcached \
-        && pecl install redis memcached && \
+        libpq-dev && \
+        docker-php-ext-install pdo pdo_pgsql pgsql && \
+        pecl install redis memcached && \
         docker-php-ext-enable redis memcached && \
     rm -rf /var/lib/apt/lists/*
 
