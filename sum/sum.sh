@@ -23,7 +23,10 @@ if ! [[ $2 =~ $regulyar ]]; then
 fi
 
 # Вычисляю
-summa=$(echo "$1 + $2" | bc)
+#summa=$(echo "$1 + $2" | bc)
+
+# Вычисление без bc
+summa=$(awk "BEGIN {print $1 + $2}")
 
 # Ответ
 echo "$summa"
