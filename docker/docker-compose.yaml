@@ -1,0 +1,47 @@
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: av-nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ../src:/var/www/src
+      - ../public:/var/www/public:ro
+      - ../vendor:/var/www/vendor:ro
+      - ../docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../docker/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../docker/_logs/nginx:/var/log/nginx
+      - php_socket:/run/php
+    depends_on:
+      - php
+
+  php:
+    container_name: php
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    image: av-php:fpm-alpine
+    volumes:
+      - ../src:/var/www/src
+      - ../public:/var/www/public:ro
+      - ../vendor:/var/www/vendor:ro
+      - ../docker/php/conf/php.ini:/usr/local/etc/php/php.ini:ro
+      - ../docker/php/conf/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ../docker/php/conf/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+      - ../docker/_logs/php:/var/log/php
+      - php_socket:/run/php
+
+  selenium:
+    image: selenium/standalone-firefox:4.35.0-20250828
+    shm_size: '2gb'
+    container_name: selenium
+    ports:
+      - "4444:4444"
+      - "5900:5900"
+      - "7900:7900"
+
+volumes:
+  php_socket:

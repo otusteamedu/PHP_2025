@@ -3,3 +3,8 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+/docker/.env
+/docker/_logs/
+
+.env
