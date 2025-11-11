@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+//chmod +x bin/console
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use App\Infrastructure\Console\CommandEvent\StorageAddTestDataCommand;
+use App\Infrastructure\Console\CommandEvent\StorageSearchCommand;
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+
+$app->add(new StorageAddTestDataCommand());
+$app->add(new StorageSearchCommand());
+
+$app->run();
