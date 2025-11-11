@@ -1,0 +1,56 @@
+
+services:
+  #Контейнер с nginx
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  #Контейнер с PHP-FPM
+  app:
+    build:
+      context: .
+      dockerfile: docker/fpm/Dockerfile
+    expose:
+      - "9000"
+    volumes:
+      - ./:/var/www
+    networks:
+      - app-network
+    depends_on:
+      - redis
+      - elasticsearch
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  elasticsearch:
+    image: elasticsearch:8.18.0
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - app-network
+
+#виртуальная сеть
+networks:
+  app-network:
+    driver: bridge
