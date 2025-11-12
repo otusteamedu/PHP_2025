@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  linux:
+    build:
+      context: ./linux
+      dockerfile: Dockerfile
+    image: myapp/alpine
+    container_name: alpine
+    volumes:
+      - ./code:/app
+    working_dir: /app
+    command: tail -f /dev/null
