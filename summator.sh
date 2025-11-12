@@ -16,5 +16,5 @@ if ! is_valid_number "$num2"; then
     exit 0
 fi
 
-sum=$(echo "$num1 + $num2" | bc)
+sum=$(awk "BEGIN { print $num1 + $num2 }")
 echo "$sum"
