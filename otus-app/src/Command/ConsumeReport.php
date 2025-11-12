@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controller;
+namespace App\Command;
 
-use App\Interface\QueueServiceInterface;
 use App\Service\ReportService;
 use Exception;
 use JsonException;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class ConsumeReport
 {
@@ -18,9 +18,9 @@ class ConsumeReport
      * @throws JsonException
      * @throws Exception
      */
-    public function process(string $queueMessage): void
+    public function process(AMQPMessage $queueMessage): void
     {
-        $decodedData = json_decode($queueMessage, true, 512, JSON_THROW_ON_ERROR);
+        $decodedData = json_decode($queueMessage->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         if (!isset($decodedData['email'], $decodedData['startDate'], $decodedData['endDate'])) {
             throw new Exception('Invalid queue data');

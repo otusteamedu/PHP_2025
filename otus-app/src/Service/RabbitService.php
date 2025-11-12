@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\Enum\QueueNameEnum;
 use App\Interface\QueueServiceInterface;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitService implements QueueServiceInterface
 {
@@ -15,7 +17,7 @@ class RabbitService implements QueueServiceInterface
             $_ENV['RABBIT_HOST'],
             $_ENV['RABBIT_PORT'],
             $_ENV['RABBIT_USER'],
-            $_ENV['RABBIT_PASS']
+            $_ENV['RABBIT_PASSWORD']
         );
     }
 

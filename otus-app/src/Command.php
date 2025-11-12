@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Controller\ConsumeReport;
+use App\Command\ConsumeReport;
 use App\Enum\QueueNameEnum;
 use App\Service\RabbitService;
 use App\Service\ReportService;
@@ -14,8 +14,8 @@ class Command
     public function run(array $argv): void
     {
         try {
-            $action = $argv[0] ?? null;
-            $subAction = $argv[1] ?? null;
+            $action = $argv[1] ?? null;
+            $subAction = $argv[2] ?? null;
 
             switch ($action) {
                 case 'consumer:run':

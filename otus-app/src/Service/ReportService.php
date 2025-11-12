@@ -48,7 +48,7 @@ class ReportService
         $file = fopen('php://output', 'w');
         sleep(5);
 
-        fputcsv($file, $reportData);
+        fputcsv($file, $reportData, escape: "\\");
 
         return $reportData;
     }
