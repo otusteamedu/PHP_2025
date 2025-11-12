@@ -23,23 +23,19 @@ services:
 
   redis:
     image: redis:latest
-    ports:
-      - "6379:6379"
     networks:
       - app-network
   memcached:
     image: memcached:latest
-    ports:
-      - "11211:11211"
     networks:
       - app-network
   db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: default
-      MYSQL_USER: user
-      MYSQL_PASSWORD: 123
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASS}
     ports:
       - "3306:3306"
     volumes:
