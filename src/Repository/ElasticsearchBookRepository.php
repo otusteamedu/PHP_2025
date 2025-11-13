@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\DTO\Book;
-use App\DTO\SearchParams;
+use App\DTO\BookSearchParams;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use stdClass;
@@ -34,7 +34,7 @@ class ElasticsearchBookRepository implements BookRepositoryInterface
         return new self($client, $config['index']);
     }
 
-    public function search(SearchParams $params): array
+    public function search(BookSearchParams $params): array
     {
         $query = $this->buildQuery($params);
 
@@ -52,7 +52,7 @@ class ElasticsearchBookRepository implements BookRepositoryInterface
     /**
      * Формирует Elasticsearch запрос из параметров поиска
      */
-    private function buildQuery(SearchParams $params): array
+    private function buildQuery(BookSearchParams $params): array
     {
         $must = [];
         $filter = [];

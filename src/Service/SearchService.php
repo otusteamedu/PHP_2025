@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\Book;
-use App\DTO\SearchParams;
+use App\DTO\BookSearchParams;
+use App\DTO\SearchParamsInterface;
 use App\Repository\BookRepositoryInterface;
 
 /**
@@ -35,7 +36,7 @@ class SearchService
      *
      * @param  array<string>  $argv
      */
-    private function parseParams(array $argv): SearchParams
+    private function parseParams(array $argv): SearchParamsInterface
     {
         $query = null;
         $category = null;
@@ -54,7 +55,7 @@ class SearchService
             }
         }
 
-        return new SearchParams(
+        return new BookSearchParams(
             query: $query,
             category: $category,
             maxPrice: $maxPrice,

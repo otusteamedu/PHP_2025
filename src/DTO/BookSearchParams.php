@@ -7,7 +7,7 @@ namespace App\DTO;
 /**
  * Параметры поиска книг
  */
-readonly class SearchParams
+readonly class BookSearchParams implements SearchParamsInterface
 {
     public function __construct(
         public ?string $query = null,
