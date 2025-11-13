@@ -4,4 +4,4 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Command;
 
-(new Command())->run($argv);
+echo (new Command())->run($argv);

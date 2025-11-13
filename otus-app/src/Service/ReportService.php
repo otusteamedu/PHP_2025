@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Enum\QueueNameEnum;
+use App\Exception\CustomException;
 use App\Interface\QueueServiceInterface;
 use DateTimeImmutable;
 use Exception;
@@ -23,11 +24,19 @@ class ReportService
     public function addCreateReportEvent(array $entryData): void
     {
         try {
+            $startDate = $entryData['startDate'] ?? null;
+            $endDate = $entryData['endDate'] ?? null;
+            $email = $entryData['email'] ?? null;
+
+            if (empty($startDate) || empty($endDate) || empty($email)) {
+                throw new CustomException('Invalid entry data', 400);
+            }
+
             $startDate = (new DateTimeImmutable($entryData['startDate']))->format('Y-m-d H:i:s');
             $endDate = (new DateTimeImmutable($entryData['endDate']))->format('Y-m-d H:i:s');
             $email = $entryData['email'];
         } catch (Throwable) {
-            throw new Exception('Invalid entry data');
+            throw new CustomException('Invalid entry data', 400);
         }
 
         $queueData = [

@@ -3,14 +3,14 @@
 namespace App;
 
 use App\Controller\CreateReport;
+use App\Exception\CustomException;
 use App\Service\RabbitService;
 use App\Service\ReportService;
-use Exception;
 use Throwable;
 
 class App
 {
-    public function run(): void
+    public function run(): string
     {
         try {
             $queueService = new RabbitService();
@@ -23,13 +23,19 @@ class App
                 $app->process($body);
 
                 http_response_code(200);
-                echo 'Report in progress';
-            } else {
-                throw new Exception('Invalid request method');
+
+                return 'Report in progress';
             }
+
+            throw new CustomException('Not found', 404);
+        } catch (CustomException $e) {
+            http_response_code($e->getCode());
+
+            return $e->getMessage();
         } catch (Throwable) {
-            http_response_code(400);
-            echo 'Invalid request';
+            http_response_code(500);
+
+            return 'Internal server error';
         }
     }
 }
