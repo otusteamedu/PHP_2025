@@ -1,0 +1,79 @@
+services:
+  nginx-main:
+    build:
+      context: docker/nginx-main
+      dockerfile: Dockerfile
+    image: otus-test/nginx-main
+    container_name: "nginx-main"
+    ports:
+      - "80:80"
+    depends_on:
+      - php1
+      - php2
+      - nginx1
+      - nginx2
+    networks:
+      - test-network
+
+  nginx1:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: otus-test/nginx
+    container_name: "nginx1"
+    volumes:
+      - ./otus-app:/data/mysite.local/otus-app
+    depends_on:
+      - php1
+      - php2
+    networks:
+      - test-network
+
+  nginx2:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: otus-test/nginx
+    container_name: "nginx2"
+    volumes:
+      - ./otus-app:/data/mysite.local/otus-app
+    depends_on:
+      - php1
+      - php2
+    networks:
+      - test-network
+
+  php1:
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    image: otus-test/php
+    container_name: php1
+    volumes:
+      - ./PHP_2025/..:/data/mysite.local
+    depends_on:
+      - redis
+    networks:
+      - test-network
+
+  php2:
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    image: otus-test/php
+    container_name: php2
+    volumes:
+      - ./PHP_2025/..:/data/mysite.local
+    depends_on:
+      - redis
+    networks:
+      - test-network
+
+  redis:
+    image: redis:latest
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
