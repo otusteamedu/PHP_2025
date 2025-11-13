@@ -23,41 +23,53 @@ class Solution {
         $a = $headA;
         $countA = 0;
 
-        while ($a !== null) {
-            $countA++;
-            $a = $a->next;
-        }
-
         $b = $headB;
         $countB = 0;
 
-        while ($b !== null) {
-            $countB++;
-            $b = $b->next;
+        while (true) {
+            if ($a === null && $b === null) {
+                break;
+            }
+
+            if ($a !== null) {
+                $countA++;
+                $a = $a->next;
+            }
+
+            if ($b !== null) {
+                $countB++;
+                $b = $b->next;
+            }
         }
 
         $a = $headA;
         $b = $headB;
 
-        if ($countA > $countB) {
-            while ($countA !== $countB) {
-                $a = $a->next;
-                $countA--;
-            }
-        }
+        while (true) {
+            if ($countA !== $countB) {
+                if ($countA > $countB) {
+                    $a = $a->next;
+                    $countA--;
 
-        if ($countA < $countB) {
-            while ($countA !== $countB) {
-                $b = $b->next;
-                $countB--;
-            }
-        }
+                    continue;
+                }
 
-        while ($a !== $b) {
+                if ($countA < $countB) {
+                    $b = $b->next;
+                    $countB--;
+
+                    continue;
+                }
+            }
+
+            if ($a === $b) {
+                break;
+            }
+
             $a = $a->next;
             $b = $b->next;
         }
 
         return $a;
     }
-} //сложность o(n+m), тк 2 раза проходимся по headA и 2 раза по headB
+} //сложность o(n+m), один раз проходим по ноде с самым большим кол-вом элементов, затем в худшем случае полностью пройдемся по $headA и $headB
