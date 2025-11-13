@@ -12,7 +12,7 @@ use Throwable;
 
 class Command
 {
-    public function run(array $argv): void
+    public function run(array $argv): string
     {
         try {
             $action = $argv[1] ?? null;
@@ -39,9 +39,8 @@ class Command
                 default:
                     throw new Exception("Unknown action: $action");
             }
-        } catch (Throwable) {
-            http_response_code(400);
-            echo 'Invalid request';
+        } catch (Throwable $e) {
+            return 'Invalid request ' . $e->getMessage();
         }
     }
 }
