@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Exception;
+declare(strict_types=1);
 
-use Exception;
+namespace App\Exception;
 
 class EmailInvalidException extends CustomException
 {
