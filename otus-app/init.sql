@@ -80,9 +80,11 @@ create table if not exists otus_cinema_db.paymentMethod (
     updatedAt datetime not null
     );
 
+-- price is a * 100 value, f.e. 104050 = 1040.50
 create table if not exists otus_cinema_db.payment (
     id bigint unsigned not null primary key,
     customerId bigint unsigned not null,
+    totalPrice bigint unsigned not null,
     status varchar(20) not null,
     externalId varchar(255) not null,
     paymentMethodId bigint unsigned not null,
@@ -94,6 +96,7 @@ create table if not exists otus_cinema_db.payment (
 
 create table if not exists otus_cinema_db.ticket (
     id bigint unsigned not null primary key,
+    price bigint unsigned not null,
     paymentId bigint unsigned not null,
     sessionId bigint unsigned not null,
     seatId bigint unsigned not null,

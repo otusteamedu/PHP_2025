@@ -21,13 +21,13 @@ values (1, 'some movie name1', 3601, 16, now(), now()),
 insert into otus_cinema_db.paymentMethod (id, name, isActive, createdAt, updatedAt)
 values (1, 'some method', 1, now(), now());
 
-insert into otus_cinema_db.payment (id, customerId, status, externalId, paymentMethodId, createdAt, updatedAt)
-values (1, 1, 'paid', 'num 1', 1, now(), now()),
-       (2, 2, 'paid', 'num 12', 1, now(), now()),
-       (3, 3, 'paid', 'num 23', 1, now(), now()),
-       (4, 2, 'failed', 'num 74', 1, now(), now()),
-       (5, 2, 'paid', 'num 665', 1, now(), now()),
-       (6, 3, 'paid', 'num 2891', 1, now(), now());
+insert into otus_cinema_db.payment (id, totalPrice, customerId, status, externalId, paymentMethodId, createdAt, updatedAt)
+values (1, 100000, 1, 'paid', 'num 1', 1, now(), now()),
+       (2, 102000, 2, 'paid', 'num 12', 1, now(), now()),
+       (3, 208000, 3, 'paid', 'num 23', 1, now(), now()),
+       (4, 100000, 2, 'failed', 'num 74', 1, now(), now()),
+       (5, 102000, 2, 'paid', 'num 665', 1, now(), now()),
+       (6, 124800, 3, 'paid', 'num 2891', 1, now(), now());
 
 insert into otus_cinema_db.seatType (id, name, priceModifier, createdAt, updatedAt)
 values (1, 'basic', 100, now(), now()),
@@ -46,10 +46,10 @@ values (1, 1, 1, 100000, '2020-10-10 12:20:00', now(), now()),
        (2, 1, 2, 102000, '2020-10-10 15:00:00', now(), now()),
        (3, 2, 3, 104000, '2020-10-10 12:00:00', now(), now());
 
-insert into otus_cinema_db.ticket (id, paymentId, sessionId, seatId, status, createdAt, updatedAt)
-values (1, 1, 1, 1, 'finished', now(), now()),
-       (2, 2, 2, 1, 'finished', now(), now()),
-       (3, 3, 3, 4, 'finished', now(), now()),
-       (4, 3, 3, 5, 'finished', now(), now()),
-       (5, 5, 2, 2, 'finished', now(), now()),
-       (6, 6, 3, 6, 'finished', now(), now());
+insert into otus_cinema_db.ticket (id, price, paymentId, sessionId, seatId, status, createdAt, updatedAt)
+values (1, 100000, 1, 1, 1, 'finished', now(), now()),
+       (2, 102000, 2, 2, 1, 'finished', now(), now()),
+       (3, 104000, 3, 3, 4, 'finished', now(), now()),
+       (4, 104000, 3, 3, 5, 'finished', now(), now()),
+       (5, 102000, 5, 2, 2, 'finished', now(), now()),
+       (6, 124800, 6, 3, 6, 'finished', now(), now());
