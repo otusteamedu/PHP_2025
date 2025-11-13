@@ -6,11 +6,46 @@ namespace App;
 
 use App\EventService\EventRedisService;
 use App\EventService\EventServiceInterface;
+use App\Exception\CustomException;
 use Exception;
 use Throwable;
 
 class App
 {
+    public function run(): string
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+
+        try {
+            if ($method === 'POST') {
+                if ($_SERVER['REQUEST_URI'] === '/clear') {
+                    $this->handleDeleteAllEvents();
+
+                    return $this->handleResponse('Success');
+                }
+
+                $this->handleAddEvent();
+
+                return $this->handleResponse('Success');
+            }
+
+            if ($method === 'GET') {
+                $event = $this->handleGetEvent();
+
+                return $this->handleResponse($event);
+            }
+        } catch (CustomException $e) {
+            return $this->handleResponse($e->getMessage(), $e->getCode());
+        } catch (Throwable) {
+            return $this->handleResponse('Internal server error', 500);
+        }
+
+        return $this->handleResponse('Invalid request method', 400);
+    }
+
+    /**
+     * @throws CustomException
+     */
     public function handleAddEvent(): void
     {
         try {
@@ -20,9 +55,7 @@ class App
             $priority = $decodedBody['priority'] ?? null;
 
             if (empty($eventNameList) || empty($priority)) {
-                $this->handleResponse('Invalid request', 400);
-
-                return;
+                throw new CustomException('Invalid request', 400);
             }
 
             $eventService = $this->getEventService();
@@ -30,26 +63,30 @@ class App
             foreach ($eventNameList as $eventName) {
                 $eventService->addJsonEvent($eventName, $decodedBody, $priority);
             }
-
-            $this->handleResponse('OK');
+        } catch (CustomException $e) {
+            throw $e;
         } catch (Throwable) {
-            $this->handleResponse('Invalid request', 400);
+            throw new CustomException('Invalid request', 400);
         }
     }
 
+    /**
+     * @throws CustomException
+     */
     public function handleDeleteAllEvents(): void
     {
         try {
             $eventService = $this->getEventService();
             $eventService->clearAllEvents();
-
-            $this->handleResponse('OK');
         } catch (Throwable) {
-            $this->handleResponse('Invalid request', 400);
+            throw new CustomException('Invalid request', 400);
         }
     }
 
-    public function handleGetEvent(): void
+    /**
+     * @throws CustomException
+     */
+    public function handleGetEvent(): string
     {
         try {
             $decodedBody = (new RequestBodyService())->getDecodedJsonBody();
@@ -57,9 +94,7 @@ class App
             $params = $decodedBody['params'] ?? null;
 
             if (empty($params)) {
-                $this->handleResponse('Invalid request', 400);
-
-                return;
+                throw new CustomException('Invalid request', 400);
             }
 
             $eventName = 'event';
@@ -77,20 +112,21 @@ class App
                     }
                 }
 
-                $this->handleResponse($event);
-
-                return;
+                return $event;
             }
 
-            $this->handleResponse('Event not found');
+            throw new CustomException('Event not found');
+        } catch (CustomException $e) {
+            throw $e;
         } catch (Throwable) {
-            $this->handleResponse('Invalid request', 400);
+            throw new CustomException('Invalid request', 400);
         }
     }
 
-    private function handleResponse(string $message, int $statusCode = 200): void {
+    private function handleResponse(string $message, int $statusCode = 200): string {
         http_response_code($statusCode);
-        echo $message;
+
+        return $message;
     }
 
     /**
