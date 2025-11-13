@@ -13,7 +13,7 @@ class EmailChecker
     /**
      * @throws Exception
      */
-    public function checkIsValidEmailList(array $emailList): bool
+    public function checkIsValidEmailList(array $emailList): void
     {
         if (empty($emailList)) {
             throw new EmailInvalidException();
@@ -28,8 +28,6 @@ class EmailChecker
                 throw new EmailInvalidException();
             }
         }
-
-        return true;
     }
 
     /**
