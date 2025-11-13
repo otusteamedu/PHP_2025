@@ -22,7 +22,7 @@ services:
     image: otus-test/nginx
     container_name: "nginx1"
     volumes:
-      - ./otus-app:/data/mysite.local
+      - ./otus-app:/data/mysite.local/otus-app
     depends_on:
       - php1
       - php2
@@ -36,7 +36,7 @@ services:
     image: otus-test/nginx
     container_name: "nginx2"
     volumes:
-      - ./otus-app:/data/mysite.local
+      - ./otus-app:/data/mysite.local/otus-app
     depends_on:
       - php1
       - php2
@@ -50,7 +50,7 @@ services:
     image: otus-test/php
     container_name: php1
     volumes:
-      - ./otus-app:/data/mysite.local
+      - ./PHP_2025/..:/data/mysite.local
     depends_on:
       - redis
     networks:
@@ -63,7 +63,7 @@ services:
     image: otus-test/php
     container_name: php2
     volumes:
-      - ./otus-app:/data/mysite.local
+      - ./PHP_2025/..:/data/mysite.local
     depends_on:
       - redis
     networks:

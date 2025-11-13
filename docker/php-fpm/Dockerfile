@@ -17,6 +17,8 @@ RUN pecl install redis && \
 
 COPY php.ini /usr/local/etc/php/conf.d/php-custom.ini
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 WORKDIR /data
 
 VOLUME /data
