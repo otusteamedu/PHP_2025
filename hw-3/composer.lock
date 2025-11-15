@@ -1,0 +1,55 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "f720aefec84ec1e580df0ec2a40793e5",
+    "packages": [
+        {
+            "name": "ubunvova/word-count",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ubunvova/WordCount.git",
+                "reference": "ab548c8cd42375c6afc99f68777b2d9403aa09db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ubunvova/WordCount/zipball/ab548c8cd42375c6afc99f68777b2d9403aa09db",
+                "reference": "ab548c8cd42375c6afc99f68777b2d9403aa09db",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ubunvova\\WordCount\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "ubunvova",
+                    "email": "ubunvova@gmail.ru"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/ubunvova/WordCount/issues",
+                "source": "https://github.com/ubunvova/WordCount/tree/1.0.0"
+            },
+            "time": "2025-11-15T15:45:41+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
