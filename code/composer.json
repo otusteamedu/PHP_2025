@@ -1,0 +1,12 @@
+{
+    "name": "vals/test-composer",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Vals\\TestComposer\\": "src/"
+        }
+    },
+    "require": {
+        "alisa-selezneva/composer-package": "^1.1"
+    }
+}
