@@ -3,3 +3,6 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+README.md
+Docker/exchange/db_data/
+Docker/.env
