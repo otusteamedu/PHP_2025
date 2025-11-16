@@ -1,6 +1,7 @@
 FROM php:8.4-fpm-alpine
 
 RUN apk add \
+      curl-dev \
       libmemcached-dev \
       cyrus-sasl-dev \
       zlib-dev \
@@ -13,7 +14,8 @@ RUN apk add \
       icu-dev
 
 RUN pecl install memcached redis \
-    && docker-php-ext-enable memcached redis
+    && docker-php-ext-enable memcached redis \
+    && docker-php-ext-install curl
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
