@@ -11,7 +11,7 @@ if ! [[ $1 =~ ^-?[0-9]+([.][0-9]+)?$ ]] || ! [[ $2 =~ ^-?[0-9]+([.][0-9]+)?$ ]];
     exit -1
 fi
 
-result=$(echo "$1 + $2" | bc)
+result=$(awk "BEGIN { print $1 + $2 }")
 
 if [[ $result == .* ]]; then
     result="0$result"
