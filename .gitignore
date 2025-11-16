@@ -10,3 +10,4 @@ memcached/
 .env
 .gitignore
 /redis/data/
+/code/vendor/
