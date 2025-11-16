@@ -46,15 +46,11 @@ services:
     command: redis-server --appendonly yes
     volumes:
       - ./redisdata:/data
-    ports:
-      - "6379:6379"
     networks:
       - app-network
 
   memcached:
     image: memcached:1.6-alpine
-    ports:
-      - "11211:11211"
     command: memcached -m 64m
     networks:
       - app-network
