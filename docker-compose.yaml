@@ -1,0 +1,54 @@
+services:
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: otus-test/nginx
+    container_name: otus-nginx
+    networks:
+      - test-network
+    ports:
+      - "82:82"
+    volumes:
+      - ./otus-app:/data/mysite.local/otus-app
+      - php_fpm_socket:/var/run/php
+
+  php:
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    image: otus-test/php
+    container_name: otus-php
+    environment:
+      - ELASTIC_CONTAINER=${ELASTIC_CONTAINER}
+      - ELASTIC_PORT=${ELASTIC_PORT}
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_HOST=${ELASTIC_HOST}
+      - ELASTIC_DEFAULT_INDEX=${ELASTIC_DEFAULT_INDEX}
+      - BOOK_LIST_FILE=${BOOK_LIST_FILE}
+    networks:
+      - test-network
+    volumes:
+      - ./PHP_2025/..:/data/mysite.local
+      - php_fpm_socket:/var/run/php
+    depends_on:
+      - nginx
+
+  elasticsearch:
+    container_name: otus-elastic
+    image: elasticsearch:8.18.0
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
+
+volumes:
+  php_fpm_socket:
