@@ -1,8 +1,7 @@
 {
     "require": {
         "tenshuu/otus-package-test": "^1.0"
-    }
-    ,
+    },
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     }
