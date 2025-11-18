@@ -22,7 +22,7 @@ class App
         try {
             $decodedRequestBody = RequestBodyService::getDecodedJsonBody();
 
-            $entryDto = new EmailValidateEntryDto($decodedRequestBody['emailList']);
+            $entryDto = new EmailValidateEntryDto($decodedRequestBody['emailList'] ?? null);
             $responseDto = (new EmailValidateHandler(new EmailValidationService()))->handle($entryDto);
 
             return $this->handleResponse($responseDto);

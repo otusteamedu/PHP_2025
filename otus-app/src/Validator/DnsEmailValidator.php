@@ -8,7 +8,11 @@ class DnsEmailValidator implements EmailValidatorInterface
 {
     public function isValidEmail(string $email): bool
     {
-        $domain = explode('@', $email)[1];
+        $domain = explode('@', $email)[1] ?? null;
+
+        if ($domain === null) {
+            return false;
+        }
 
         return checkdnsrr($domain) !== false;
     }
