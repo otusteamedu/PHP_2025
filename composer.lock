@@ -4,21 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "261508b8c11a812b0177da3b96c55533",
+    "content-hash": "4b128c8cf5c0ea915656cb67179eac8d",
     "packages": [
         {
             "name": "tenshuu/otus-package-test",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tenshuu/otus-package-test.git",
-                "reference": "01e40fafdf46cb260313139e7fcc7d8157e6325c"
+                "reference": "c5df896176a52abf417525560214cf9a6e7c8be9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tenshuu/otus-package-test/zipball/01e40fafdf46cb260313139e7fcc7d8157e6325c",
-                "reference": "01e40fafdf46cb260313139e7fcc7d8157e6325c",
+                "url": "https://api.github.com/repos/tenshuu/otus-package-test/zipball/c5df896176a52abf417525560214cf9a6e7c8be9",
+                "reference": "c5df896176a52abf417525560214cf9a6e7c8be9",
                 "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
             },
             "type": "library",
             "autoload": {
@@ -29,9 +32,9 @@
             "notification-url": "https://packagist.org/downloads/",
             "support": {
                 "issues": "https://github.com/tenshuu/otus-package-test/issues",
-                "source": "https://github.com/tenshuu/otus-package-test/tree/1.0.0"
+                "source": "https://github.com/tenshuu/otus-package-test/tree/1.0.1"
             },
-            "time": "2025-06-13T15:01:20+00:00"
+            "time": "2025-11-18T20:42:24+00:00"
         }
     ],
     "packages-dev": [],
