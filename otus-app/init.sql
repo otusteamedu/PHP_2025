@@ -27,7 +27,6 @@ create table otus_cinema_eav.attributeValue (
     id serial primary key,
     movieId bigint unsigned not null,
     attributeId bigint unsigned not null,
-    stringValue varchar(255) default null,
     textValue text default null,
     intValue int default null,
     floatValue real default null,

@@ -20,7 +20,6 @@ CREATE OR REPLACE VIEW otus_cinema_eav.marketing_view as
         a.name as attributeName,
         case at.type
             when 'text' then av.textValue
-            when 'string' then av.stringValue
             when 'bool' then if(av.boolValue = 1, 'yes', 'no')
             when 'date' then date_format(av.dateValue, '%d %M, %Y')
             when 'datetime' then date_format(av.datetimeValue, '%H:%i:%s %d %M, %Y')
