@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./app:/var/www/html
+    depends_on:
+      - php
+    networks:
+      - app-network
+
+  php:
+    # image: php:8.2-fpm В стандартном образе не было редиса, мемкэша и БД.
+    # Соберем образ из dockerfile
+    build:
+      context: ./php
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - redis
+      - memcached
+      - db
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  memcached:
+    image: memcached:alpine
+    ports:
+      - "11211:11211"
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
