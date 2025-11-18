@@ -1,0 +1,16 @@
+{
+    "name": "maksim-skoropispcev/math",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "MaksimSkoropispcev\\Math\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Maksim Skoropiscev",
+            "email": "maksim.sckoropistsev@ya.ru"
+        }
+    ],
+    "require": {}
+}
