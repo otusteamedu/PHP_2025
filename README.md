@@ -1,3 +1,3 @@
-# PHP_2025
+# HW3
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+https://packagist.org/packages/axelstx/otus-composer
