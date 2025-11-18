@@ -1,0 +1,13 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="https://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\News\Domain\Entity\News" table="news_news">
+        <id name="id" type="uuid">
+            <generator strategy="NONE"/>
+        </id>
+        <embedded name="title" class="App\News\Domain\Entity\ValueObject\NewsTitle" use-column-prefix="false"/>
+        <embedded name="link" class="App\News\Domain\Entity\ValueObject\NewsLink" use-column-prefix="false"/>
+        <field name="createdAt" type="datetimetz_immutable"/>
+    </entity>
+</doctrine-mapping>
