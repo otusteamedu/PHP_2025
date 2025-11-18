@@ -1,0 +1,51 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+    image: igainutdinov/nginx
+    ports:
+      - "80:80"
+    volumes:
+      - php-fpm-sock:/var/run/php
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: .docker/php-fpm/Dockerfile
+    env_file: .env
+    image: igainutdinov/php-fpm
+    volumes:
+      - php-fpm-sock:/var/run/php
+    depends_on:
+      - memcached
+      - redis
+      - database
+
+  memcached:
+    image: memcached:alpine
+    command: memcached -m 64 -p 11211 -u memcache
+
+  redis:
+    image: redis:alpine
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+
+  database:
+    image: mariadb:12-ubi
+    volumes:
+      - database-data:/var/lib/mysql
+    environment:
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+
+
+
+volumes:
+  php-fpm-sock:
+  redis-data:
+  database-data:
