@@ -12,5 +12,7 @@
             "email": "maksim.sckoropistsev@ya.ru"
         }
     ],
-    "require": {}
+    "require": {
+        "maksim-skoropispcev/math": "^0.0.1"
+    }
 }
