@@ -48,3 +48,23 @@ curl -i -X POST "http://localhost:8080" \
      -H "Content-Type: application/x-www-form-urlencoded" \
      -d "string=(()()()()))((((()()()))(()()()(((()))))))"
 ```
+
+# Centrifugo
+
+http://localhost:8000
+
+password : otus
+
+# WS load
+
+```shell
+cd playground
+```
+
+```shell
+npm install
+```
+
+```shell
+node load.js
+```

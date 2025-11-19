@@ -1,0 +1,12 @@
+### centrifugo
+WEBSOCKET ws://localhost:8000/connection/websocket?cf_ws_frame_ping_pong=true
+Content-Type: application/json
+
+{"id": 1, "connect": {}}
+
+### nginx -> centrifugo
+WEBSOCKET ws://localhost:8080/centrifugo/connection/websocket?cf_ws_frame_ping_pong=true
+Content-Type: application/json
+
+{"id": 1, "connect": {}}
+###
