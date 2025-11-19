@@ -1,0 +1,8 @@
+framework:
+    messenger:
+        transports:
+            task:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+
+        routing:
+            'App\UserInterface\Message\TaskMessage': task

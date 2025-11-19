@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping">
+    <entity name="App\Domain\Task\Task" table="`task`">
+
+        <id name="id" type="guid" column="id">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="Ramsey\Uuid\Doctrine\UuidGenerator"/>
+        </id>
+
+        <field name="email" type="string"/>
+        <field name="title" type="string"/>
+        <field name="status" type="string" column="status" />
+        <field name="description" type="string"/>
+        <field name="createdAt" type="datetimetz_immutable"/>
+    </entity>
+</doctrine-mapping>

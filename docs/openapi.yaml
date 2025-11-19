@@ -1,0 +1,132 @@
+openapi: 3.0.2
+servers:
+  - url: 'http://localhost:8080'
+    description: Local
+info:
+  version: '1.0'
+  title: 'task'
+  contact:
+    email: 'm.lubnik@21vek.by'
+
+paths:
+  /task:
+    post:
+      tags:
+        - Создание задачи
+      summary: 'Создать задачу'
+      description: 'Создать задачу'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskBody'
+      responses:
+        200:
+          $ref: '#/components/responses/CreateTaskResponse'
+        422:
+          description: '
+            Ошибки валидации:
+            <ul>
+              <li>ba785a8c-82cb-4283-967c-3cf342181b40 - Значение должно иметь тип {type}</li>
+              <li>c1051bb4-d103-4f74-8988-acbcafc7fdc3 - Значение не должно быть пустым</li>
+            </ul>
+            '
+        500:
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /task/{id}:
+    post:
+      tags:
+        - Получение задачи
+      summary: 'Получить задачу'
+      description: 'Получить задачу'
+      responses:
+        200:
+          $ref: '#/components/responses/GetTaskResponse'
+        404:
+          $ref: '#/components/responses/NotFoundResponse'
+        500:
+          $ref: '#/components/responses/InternalServerErrorResponse'
+
+components:
+  schemas:
+    CreateTaskBody:
+      type: object
+      required:
+        - email
+        - title
+        - description
+        - status
+      properties:
+        email:
+          type: string
+          example: 'm.lubnil@21vek.by'
+          description: 'email'
+        title:
+          type: string
+          example: 'title'
+          description: 'Заголовок задачи'
+        description:
+          type: string
+          example: 'description'
+          description: 'Описание задачи'
+        status:
+          type: string
+          example: 'done'
+          description: 'Статус задачи'
+
+    CreateTaskResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: '1200203a-e8f9-4527-b404-ab5d2731d01a'
+          description: 'id задачи'
+
+    GetTaskResponse:
+      type: object
+      required:
+        - email
+        - title
+        - description
+        - status
+      properties:
+        email:
+          type: string
+          example: 'm.lubnil@21vek.by'
+          description: 'email'
+        title:
+          type: string
+          example: 'title'
+          description: 'Заголовок задачи'
+        description:
+          type: string
+          example: 'description'
+          description: 'Описание задачи'
+        status:
+          type: string
+          example: 'done'
+          description: 'Статус задачи'
+
+  responses:
+    InternalServerErrorResponse:
+      description: 'Системная ошибка'
+
+    NotFoundResponse:
+      description: 'Task not found'
+
+    CreateTaskResponse:
+      description: 'Id отправленной задачи'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateTaskResponse'
+
+    GetTaskResponse:
+      description: 'Данные задачи'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetTaskResponse'

@@ -1,3 +1,7 @@
-# PHP_2025
+# Api для обработки задач
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Документация OpenApi: 
+путь docs/openapi.yaml
+
+Воркер, который вычитывает очередь задач:
+php bin/console messenger:consume task
