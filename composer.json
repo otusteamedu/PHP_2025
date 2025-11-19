@@ -7,5 +7,7 @@
     ],
     "require": {
         "gnvs/otus-democalc": "dev-main"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
