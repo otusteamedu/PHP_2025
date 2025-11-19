@@ -13,6 +13,6 @@
         }
     ],
     "require": {
-        "maksim-skoropispcev/math": "^0.0.1"
+        "maksim-skoropispcev/math": ">=0.0.1"
     }
 }
