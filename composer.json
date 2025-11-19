@@ -1,0 +1,13 @@
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/gnvs/otus_democalc"
+        }
+    ],
+    "require": {
+        "gnvs/otus-democalc": "dev-main"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
