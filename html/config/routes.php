@@ -8,9 +8,7 @@ use League\Route\Router;
 use League\Route\Strategy\JsonStrategy;
 use Middlewares\BasicAuthentication;
 use Otus\Http\Controllers\Index;
-use Otus\Http\Controllers\Memcached;
-use Otus\Http\Controllers\Postgres;
-use Otus\Http\Controllers\Redis;
+use Otus\Http\Controllers\Mx;
 
 /** @var Container $container */
 
@@ -35,8 +33,6 @@ if (getenv('APPLICATION_USERNAME') && getenv('APPLICATION_PASSWORD')) {
 // $router->middleware(new ContentLength());
 
 $router->get('/', Index::class);
-$router->get('/redis', Redis::class);
-$router->get('/memcached', Memcached::class);
-$router->get('/postgres', Postgres::class);
+$router->get('/mx', Mx::class);
 
 return $router;
