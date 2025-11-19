@@ -1,0 +1,21 @@
+{
+  "name": "orioledev/otus-body-mass-index-calculator-project",
+  "description": "Test project for testing body mass index calculator",
+  "type": "project",
+  "license": "BSD-3-Clause",
+  "autoload": {
+    "psr-4": {
+      "OrioleDev\\OtusBodyMassIndexCalculatorProject\\": "src"
+    }
+  },
+  "authors": [
+    {
+      "name": "Kuzmina Mariia",
+      "email": "orriole@yandex.ru"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "orioledev/otus-body-mass-index-calculator": "^1.0"
+  }
+}
