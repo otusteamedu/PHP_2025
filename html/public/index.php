@@ -8,8 +8,6 @@ use Otus\Kernel\ValueObject;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-session_start();
-
 echo new Application(
     new Request(
         new ValueObject($_GET),

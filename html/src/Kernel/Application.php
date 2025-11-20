@@ -17,6 +17,7 @@ readonly class Application
     public function __construct(
         public Request $request,
     ) {
+        session_start();
     }
 
     /**
