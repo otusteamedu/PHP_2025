@@ -8,7 +8,7 @@ use League\Route\Router;
 use League\Route\Strategy\JsonStrategy;
 use Middlewares\BasicAuthentication;
 use Otus\Http\Controllers\Index;
-use Otus\Http\Controllers\Mx;
+use Otus\Http\Controllers\EmailValidator;
 
 /** @var Container $container */
 
@@ -33,6 +33,6 @@ if (getenv('APPLICATION_USERNAME') && getenv('APPLICATION_PASSWORD')) {
 // $router->middleware(new ContentLength());
 
 $router->get('/', Index::class);
-$router->get('/mx', Mx::class);
+$router->get('/email/validator', EmailValidator::class);
 
 return $router;

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 use League\Container\Container;
 use League\Container\ReflectionContainer;
-use Otus\Contracts\MxServiceInterface;
-use Otus\Services\MxService;
+use Otus\Contracts\EmailValidatorServiceInterface;
+use Otus\Services\EmailValidatorService;
 
 $container = new Container();
 $container->delegate(new ReflectionContainer());
 
 $container
-    ->add(MxServiceInterface::class, static function (): MxServiceInterface {
-        return new MxService();
+    ->add(EmailValidatorServiceInterface::class, static function (): EmailValidatorServiceInterface {
+        return new EmailValidatorService();
     });
 
 return $container;

@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Otus\Http\Controllers;
 
 use Laminas\Diactoros\Response;
-use Otus\Contracts\MxServiceInterface;
+use Otus\Contracts\EmailValidatorServiceInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-readonly class Mx
+readonly class EmailValidator
 {
     /**
-     * @param MxServiceInterface $mxService
+     * @param EmailValidatorServiceInterface $emailValidator
      */
     public function __construct(
-        protected MxServiceInterface $mxService,
+        protected EmailValidatorServiceInterface $emailValidator,
     ) {
     }
 
@@ -32,7 +32,7 @@ readonly class Mx
         $email = $query['email'] ?? null;
 
         if (is_string($email)) {
-            $validate = $this->mxService->validate($email);
+            $validate = $this->emailValidator->handle($email);
         }
 
         $response = new Response();

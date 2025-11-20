@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Otus\Services;
 
-use Otus\Contracts\MxServiceInterface;
+use Otus\Contracts\EmailValidatorServiceInterface;
 
-class MxService implements MxServiceInterface
+class EmailValidatorService implements EmailValidatorServiceInterface
 {
     /**
      * @param string $email
      *
      * @return bool
      */
-    public function validate(string $email): bool
+    public function handle(string $email): bool
     {
         return $this->filter($email) && $this->dns($email);
     }
