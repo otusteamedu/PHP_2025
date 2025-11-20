@@ -35,7 +35,7 @@ class Application
      */
     public static function getInstance(): static
     {
-        if (!static::$instance instanceof self) {
+        if (!static::$instance instanceof static) {
             $request = static::getRequest();
 
             $container = static::getContainer();
