@@ -103,7 +103,7 @@ public function findTasksForReminder(string $currentDateTime): array
     
     error_log("🔔 Searching reminders for: Date={$currentDate}, Time={$currentTime}");
     
-    // ⬇️ ИСПРАВЛЕННЫЙ запрос с уникальными именами параметров
+    //запрос с уникальными именами параметров
     $sql = "SELECT * FROM tasks 
             WHERE reminder_type != 'none' 
             AND status = 'pending'
@@ -175,4 +175,5 @@ public function findTasksForReminder(string $currentDateTime): array
 
         return $task;
     }
+
 }
