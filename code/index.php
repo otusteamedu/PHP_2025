@@ -1,45 +1,53 @@
 <?php
 
-// Check if Memcached extension is loaded
-if (extension_loaded('memcached')) {
-    echo "<h1>Memcached extension is loaded.</h1>";
+/**
+ * Проверяет, что в строке для каждой открывающей скобки '(' есть соответствующая закрывающая ')'.
+ *
+ * @param string $string Строка для проверки.
+ * @return bool True, если скобки сбалансированы, иначе false.
+ */
+function balance(string $string): bool
+{
+    $balance = 0;
 
-    // Attempt to connect to Memcached server
-    $memcached = new Memcached();
-    $memcached->addServer('memcached', 11211); // Use the service name from docker-compose
+    for ($i = 0, $iMax = strlen($string); $i < $iMax; $i++) {
+        $char = $string[$i];
 
-    if ($memcached->getStats()) {
-        echo "<h1>Successfully connected to Memcached server.</h1>";
-        echo "<pre>";
-        print_r($memcached->getStats());
-        echo "</pre>";
-    } else {
-        echo "<h1>Could not connect to Memcached server.</h1>";
-    }
-} else {
-    echo "<h1>Memcached extension is NOT loaded.</h1>";
-}
-
-// Check if Redis extension is loaded
-if (extension_loaded('redis')) {
-    echo "<h1>Redis extension is loaded.</h1>";
-
-    try {
-        // Attempt to connect to Redis server
-        $redis = new Redis();
-        $redis->connect('redis', 6379); // Use the service name from docker-compose
-
-        if ($redis->ping()) {
-            echo "<h1>Successfully connected to Redis server.</h1>";
-            echo "<pre>";
-            echo "Redis server is running.";
-            echo "</pre>";
-        } else {
-            echo "<h1>Could not connect to Redis server.</h1>";
+        if ($char === '(') {
+            $balance++;
+        } elseif ($char === ')') {
+            $balance--;
         }
-    } catch (RedisException $e) {
-        echo "<h1>Could not connect to Redis server: " . $e->getMessage() . "</h1>";
+
+        if ($balance < 0) {
+            return false;
+        }
     }
-} else {
-    echo "<h1>Redis extension is NOT loaded.</h1>";
+
+    return $balance === 0;
 }
+
+$request = htmlspecialchars($_REQUEST['string'] ?? '');
+
+
+if(!$request){
+    http_response_code(400);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['error' => true, 'message' => 'Отсутствуют параметры запроса'], JSON_THROW_ON_ERROR);
+    exit();
+}
+
+
+if(!balance($request)){
+    http_response_code(400);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['error' => true, 'message' => "Строка '{$request}' НЕ валидна!"], JSON_THROW_ON_ERROR);
+    exit();
+}
+
+
+    http_response_code(200);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => true, 'message' => 'Всё хорошо'], JSON_THROW_ON_ERROR);
+    exit();
+?>
