@@ -2,17 +2,8 @@
 
 declare(strict_types=1);
 
-use Otus\Kernel\Application;
-use Otus\Kernel\Http\Request;
-use Otus\Kernel\ValueObject;
+use Otus\Kernel\ApplicationFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-echo new Application(
-    new Request(
-        new ValueObject($_GET),
-        new ValueObject($_POST),
-        new ValueObject($_SESSION),
-        new ValueObject($_SERVER),
-    )
-)->run();
+echo ApplicationFactory::factory()->run();
