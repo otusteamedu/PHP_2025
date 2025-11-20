@@ -24,15 +24,14 @@ class UserState
         $this->tempData = $tempData;
     }
 
-    // Getters
     public function getUserId(): int { return $this->userId; }
     public function getState(): string { return $this->state; }
     public function getTempData(): array { return $this->tempData; }
     public function getTempDataValue(string $key, $default = null) { return $this->tempData[$key] ?? $default; }
 
-    // Setters
     public function setState(string $state): void { $this->state = $state; }
     public function setTempData(array $tempData): void { $this->tempData = $tempData; }
     public function setTempDataValue(string $key, $value): void { $this->tempData[$key] = $value; }
     public function clearTempData(): void { $this->tempData = []; }
+
 }
