@@ -11,7 +11,7 @@ class Task
     public const STATUS_PENDING = 'pending';
     public const STATUS_COMPLETED = 'completed';
 
-    // ⬇️ НОВОЕ: Типы напоминаний
+    //Типы напоминаний
     public const REMINDER_TYPE_NONE = 'none';
     public const REMINDER_TYPE_ONE_TIME = 'one_time';
     public const REMINDER_TYPE_DAILY = 'daily';
@@ -26,7 +26,7 @@ class Task
     private string $priority;
     private string $status;
     
-    // ⬇️ НОВЫЕ ПОЛЯ для напоминаний
+    //полч для напоминаний
     private string $reminderType;
     private ?string $reminderDate;
     private ?string $reminderTime;
@@ -62,7 +62,7 @@ class Task
         $this->updatedAt = date('Y-m-d H:i:s');
     }
 
-    // Существующие геттеры...
+    //  геттеры
     public function getId(): ?int { return $this->id; }
     public function getUserId(): int { return $this->userId; }
     public function getTitle(): string { return $this->title; }
@@ -73,20 +73,20 @@ class Task
     public function getCreatedAt(): string { return $this->createdAt; }
     public function getUpdatedAt(): string { return $this->updatedAt; }
 
-    // ⬇️ НОВЫЕ геттеры для напоминаний
+    //геттеры для напоминаний
     public function getReminderType(): string { return $this->reminderType; }
     public function getReminderDate(): ?string { return $this->reminderDate; }
     public function getReminderTime(): ?string { return $this->reminderTime; }
     public function getLastReminderSent(): ?string { return $this->lastReminderSent; }
 
-    // Существующие сеттеры...
+    // сеттеры
     public function setTitle(string $title): void { $this->title = $title; }
     public function setDescription(?string $description): void { $this->description = $description; }
     public function setDueDate(?string $dueDate): void { $this->dueDate = $dueDate; }
     public function setPriority(string $priority): void { $this->priority = $priority; }
     public function setStatus(string $status): void { $this->status = $status; }
 
-    // ⬇️ НОВЫЕ сеттеры для напоминаний
+    //сеттеры для напоминаний
     public function setReminderType(string $reminderType): void { $this->reminderType = $reminderType; }
     public function setReminderDate(?string $reminderDate): void { $this->reminderDate = $reminderDate; }
     public function setReminderTime(?string $reminderTime): void { $this->reminderTime = $reminderTime; }
@@ -111,7 +111,7 @@ class Task
         ];
     }
 
-    // ⬇️ НОВЫЕ методы для работы с напоминаниями
+    //методы для работы с напоминаниями
     public function hasReminder(): bool
     {
         return $this->reminderType !== self::REMINDER_TYPE_NONE;
@@ -134,4 +134,5 @@ class Task
 
         return $this->reminderDate . ' ' . $this->reminderTime . ':00';
     }
+
 }
