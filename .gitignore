@@ -10,3 +10,5 @@ memcached/
 .env
 .gitignore
 /redis/data/
+/nginx/logs/*
+/nginx/logs/error.log
