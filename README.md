@@ -1,3 +1,11 @@
-# PHP_2025
+# Тест своего пакета
+Бла бла бла...
 
-AArefiev Git-Branch
+## Установка
+composer require arlex2305k/test
+
+## Использование
+```markdown
+<?php
+echo Arlex2305k\Test\MyTestMath::factorial(10) . PHP_EOL;
+```

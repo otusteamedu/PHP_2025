@@ -1,0 +1,53 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "408d3d208aa81cca330145e4e09cdd9a",
+    "packages": [
+        {
+            "name": "arlex2305k/test",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/arlex2305k/test.git",
+                "reference": "2eef0dfd6f97acd3d1416301eae9eb52b550f45a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/arlex2305k/test/zipball/2eef0dfd6f97acd3d1416301eae9eb52b550f45a",
+                "reference": "2eef0dfd6f97acd3d1416301eae9eb52b550f45a",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Arlex2305k\\Test\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "arlex2305k",
+                    "email": "aap@digsol.ru"
+                }
+            ],
+            "description": "Test math package",
+            "support": {
+                "issues": "https://github.com/arlex2305k/test/issues",
+                "source": "https://github.com/arlex2305k/test/tree/1.0.1"
+            },
+            "time": "2025-11-21T06:34:57+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}

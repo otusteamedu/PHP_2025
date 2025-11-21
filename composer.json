@@ -1,0 +1,12 @@
+{
+    "name": "alex/php_2025",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Alex\\Php2025\\": "src/"
+        }
+    },
+    "require": {
+        "arlex2305k/test": "^1.0"
+    }
+}
