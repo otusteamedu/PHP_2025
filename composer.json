@@ -1,0 +1,17 @@
+{
+    "name": "blarkinov/hw1500",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Blarkinov\\Hw1500\\": "src/",
+            "Framework\\": "Framework/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Larkinov",
+            "email": "buyantolarkinov@gmail.com"
+        }
+    ],
+    "require": {}
+}

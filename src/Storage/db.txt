@@ -1,0 +1,2 @@
+{"id":1,"food":["Burger","Hotdog"],"status":"CREATE","cost":30}
+{"id":2,"food":["SandwichCustom","HotdogCustom","SandwichCustom"],"status":"CREATE","cost":65}
