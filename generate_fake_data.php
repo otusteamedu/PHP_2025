@@ -1,10 +1,12 @@
 <?php
 
-require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use Faker\Factory as Faker;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
+
+include 'ChunkInsert.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $loaded = $dotenv->safeLoad();
@@ -22,35 +24,63 @@ $pdo = new PDO("pgsql:host=$dbHost;port=$dbPort;dbname=$dbName;", $dbUser, $dbPa
 
 $faker = Faker::create('ru_RU');
 $output = new ConsoleOutput();
+$sessionsFrom = date('Y-m-d 00:00:00');
 
 // Конфигурация
-$numTitles = 100;
-$numCinemas = 5;
-$numHallsPerCinema = 3;
-$hallSizeY = 5;
-$hallSizeX = 5;
+$neededRecordsCount = 10_000_000;
 
-$minTitleDuration = 60;
-$maxTitleDuration = 360;
+// Базовые настройки
+$numTitles = 19;
+$numCinemas = 1;
+$numHallsPerCinema = 25;
+$hallSizeY = 14;
+$hallSizeX = 14;
+$numTickets = 19;
+$duration = 144;
+$featuresPerHall = 2;
 
-$sessionsFrom = date('Y-m-d');
-$countDays = 10;
+// ---- Статика ----
+$totalHallsCount = $numCinemas * $numHallsPerCinema;
+$totalSeatsCount = $totalHallsCount * ($hallSizeX * $hallSizeY);
 
-$requiredTicketsCount = 10000;
-
-// Особенности залов
 $hallFeatures = [
     ['name' => '3D', 'additional_price' => 3.5, 'description' => '3D-оборудование'],
     ['name' => 'VIP кресла', 'additional_price' => 5.0, 'description' => 'Повышенный комфорт'],
     ['name' => 'Dolby Atmos', 'additional_price' => 2.5, 'description' => 'Пространственный звук'],
     ['name' => 'IMAX', 'additional_price' => 4.0, 'description' => 'IMAX экран'],
+    ['name' => 'IMAX', 'additional_price' => 4.0, 'description' => 'IMAX экран'],
 ];
+$totalHallFeaturesCount = count($hallFeatures);
 
-$pdo->beginTransaction();
+// pivot hall <-> feature
+$totalHallFeaturesPivotCount = $totalHallsCount * $featuresPerHall;
+
+// ---- Динамика ----
+
+// Сеансов на 1 день
+$totalSessionsPerDay = (1440 / $duration) * ($numCinemas * $numHallsPerCinema);
+
+// Билетов на 1 день
+$totalTicketsPerDay = $totalSessionsPerDay * $numTickets;
+
+// ---- Итог ----
+$staticRecordsCount = $numCinemas + $totalHallsCount + $totalSeatsCount + $numTitles + $totalHallFeaturesCount + $totalHallFeaturesPivotCount;
+
+$recordsPerDay = $totalSessionsPerDay + $totalTicketsPerDay;
+
+
+$countDays = (int)(($neededRecordsCount - 250) / $recordsPerDay);
+
+$totalRecordsCount = $staticRecordsCount + $recordsPerDay * $countDays;
+
+echo 'Static records count: ' . number_format($staticRecordsCount) . PHP_EOL;
+echo 'Records per day: ' . number_format($recordsPerDay) . PHP_EOL;
+echo 'Total records count: ' . number_format($totalRecordsCount) . PHP_EOL;
+
 $pdo->exec(
     "
     TRUNCATE tickets, sessions, hall_seats, hall_feature_hall, hall_features, halls, titles, cinemas RESTART IDENTITY CASCADE
-"
+",
 );
 
 // hall_features
@@ -71,10 +101,13 @@ $insertTitle = $pdo->prepare("INSERT INTO titles (title, duration) VALUES (?, ?)
 $cinemaProgress = new ProgressBar($output, $numTitles);
 $cinemaProgress->setFormat('Titles: %current%/%max% [%bar%] %percent:3s%%');
 $cinemaProgress->start();
+
+$titleDuration = new DateTime()->setTime(0, 0);
+$titleDuration->modify("+{$duration} minutes");
 for ($i = 0; $i < $numTitles; $i++) {
     $name = $faker->realText(32);
-    $duration = mt_rand($minTitleDuration, $maxTitleDuration);
-    $insertTitle->execute([$name, sprintf('%02d:%02d:00', intdiv($duration, 60), $duration % 60)]);
+
+    $insertTitle->execute([$name, $titleDuration->format("H:i:s")]);
     $titles[] = ['id' => $pdo->lastInsertId(), 'duration' => $duration];
     $cinemaProgress->advance();
 }
@@ -84,14 +117,18 @@ $output->writeln('');
 // cinemas, halls, seats, sessions, tickets
 $insertCinema = $pdo->prepare("INSERT INTO cinemas (name, address) VALUES (?, ?) RETURNING id");
 $insertHall = $pdo->prepare("INSERT INTO halls (cinema_id, base_price, name) VALUES (?, ?, ?) RETURNING id");
-$insertHallSeat = $pdo->prepare("INSERT INTO hall_seats (hall_id, row_number, seat_number) VALUES (?, ?, ?)");
-$insertSession = $pdo->prepare(
-    "INSERT INTO sessions (hall_id, title_id, additional_price, start_at, end_at) VALUES (?, ?, ?, ?, ?) RETURNING id"
-);
-$insertTicket = $pdo->prepare(
-    "INSERT INTO tickets (session_id, hall_seat_id, price, created_at) VALUES (?, ?, ?, now())"
-);
 $insertHallFeature = $pdo->prepare("INSERT INTO hall_feature_hall (hall_id, feature_id) VALUES (?, ?)");
+
+$hallSeatsChunkedInsert = new ChunkInsert($pdo, 'INSERT INTO hall_seats (hall_id, row_number, seat_number) VALUES', 3);
+$hallSeatsSelectQuery = $pdo->prepare('SELECT id FROM hall_seats WHERE hall_id = ?');
+
+$ticketsInsert = new ChunkInsert($pdo, 'INSERT INTO tickets (session_id, hall_seat_id, price) VALUES', 3);
+
+$sessionsInsert = new ChunkInsert(
+    $pdo, 'INSERT INTO sessions (hall_id, title_id, additional_price, start_at, end_at) VALUES', 3,
+);
+$sessionsSelectQuery = $pdo->prepare("SELECT id FROM sessions WHERE hall_id = ?");
+
 
 $sectionCinemas = $output->section();
 $hallSection = $output->section();
@@ -104,14 +141,12 @@ $cinemaProgress->setFormat('Cinemas: %current%/%max% [%bar%] %percent:3s%%');
 $cinemaProgress->start();
 
 $featureIds = $pdo->query("SELECT id FROM hall_features")->fetchAll(PDO::FETCH_COLUMN);
-$ticketsCount = 0;
 
 for ($c = 0; $c < $numCinemas; $c++) {
-    $name = $faker->colorName().' '.$faker->city();
+    $name = $faker->colorName() . ' ' . $faker->city();
     $address = $faker->address();
     $insertCinema->execute([$name, $address]);
     $cinemaId = $pdo->lastInsertId();
-
 
     $hallSection->clear();
     $hallProgress = new ProgressBar($hallSection, $numHallsPerCinema);
@@ -120,20 +155,18 @@ for ($c = 0; $c < $numCinemas; $c++) {
 
     for ($h = 0; $h < $numHallsPerCinema; $h++) {
         $basePrice = mt_rand(7, 15);
-        $hallName = $faker->monthName().' '.strtoupper($faker->lexify('Hall ??'));
+        $hallName = $faker->monthName() . ' ' . strtoupper($faker->lexify('Hall ??'));
         $insertHall->execute([$cinemaId, $basePrice, $hallName]);
         $hallId = $pdo->lastInsertId();
 
-
         // особенности
-        $selectedFeatures = array_rand($featureIds, rand(1, count($featureIds)));
-        if (! is_array($selectedFeatures)) {
+        $selectedFeatures = array_rand($featureIds, $featuresPerHall);
+        if (!is_array($selectedFeatures)) {
             $selectedFeatures = [$selectedFeatures];
         }
         foreach ($selectedFeatures as $fIndex) {
             $insertHallFeature->execute([$hallId, $featureIds[$fIndex]]);
         }
-
 
         // места
         $seatsSection->clear();
@@ -143,12 +176,17 @@ for ($c = 0; $c < $numCinemas; $c++) {
         $seatIds = [];
         for ($y = 1; $y <= $hallSizeY; $y++) {
             for ($x = 1; $x <= $hallSizeX; $x++) {
-                $insertHallSeat->execute([$hallId, $y, $x]);
-                $seatIds[] = $pdo->lastInsertId();
+                $hallSeatsChunkedInsert->addRow([$hallId, $y, $x]);
                 $seatsProgress->advance();
             }
         }
-        $seatsProgress->finish();
+        $seatsSection->clear();
+        $hallSeatsChunkedInsert->insert();
+
+        $hallSeatsSelectQuery->execute([$hallId]);
+        while (($hallSeatId = $hallSeatsSelectQuery->fetch(PDO::FETCH_COLUMN))) {
+            $seatIds[] = $hallSeatId;
+        }
 
         // сеансы и билеты
         $daysSection->clear();
@@ -158,41 +196,44 @@ for ($c = 0; $c < $numCinemas; $c++) {
 
         $currentDay = new DateTimeImmutable($sessionsFrom);
         $endDay = $currentDay->add(new DateInterval("P{$countDays}D"));
+        $additionalPrice = mt_rand(0, 5);
         while ($currentDay < $endDay) {
             $title = $titles[array_rand($titles)];
             $start = $currentDay;
             $end = $start->add(new DateInterval("PT{$title['duration']}M"));
-            $additionalPrice = mt_rand(0, 5);
-            $insertSession->execute(
-                [$hallId, $title['id'], $additionalPrice, $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')]
+
+            $sessionsInsert->addRow(
+                [
+                    $hallId,
+                    $title['id'],
+                    $additionalPrice,
+                    "'{$start->format('Y-m-d H:i:s')}'",
+                    "'{$end->format('Y-m-d H:i:s')}'",
+                ],
             );
-            $sessionId = $pdo->lastInsertId();
-
-            $numTickets = mt_rand(20, count($seatIds));
-            $usedSeats = array_rand($seatIds, $numTickets);
-            if (! is_array($usedSeats)) {
-                $usedSeats = [$usedSeats];
-            }
-
-            $ticketsSection->clear();
-            $ticketsProgress = new ProgressBar($ticketsSection, $numTickets);
-            $ticketsProgress->setFormat('Tickets: %current%/%max% [%bar%] %percent:3s%%');
-            $ticketsProgress->start();
-            foreach ($usedSeats as $sIndex) {
-                $price = $basePrice + $additionalPrice + mt_rand(0, 3);
-                $insertTicket->execute([$sessionId, $seatIds[$sIndex], $price]);
-                $ticketsProgress->advance();
-                $ticketsCount += 1;
-                if ($ticketsCount >= $requiredTicketsCount) {
-                    $ticketsProgress->finish();
-                    break 4;
-                }
-            }
-            $ticketsProgress->finish();
-
-            $currentDay = $end->add(new DateInterval('PT5M'));
+            $currentDay = $end;
             $daysProgress->setProgress(($countDays - $currentDay->diff($endDay)->days));
         }
+        $sessionsInsert->insert();
+
+        $ticketsSection->clear();
+        $ticketsProgress = new ProgressBar($ticketsSection, $numTickets * (1440 / $duration));
+        $ticketsProgress->setFormat('Tickets: %current%/%max% [%bar%] %percent:3s%%');
+        $ticketsProgress->start();
+        $sessionsSelectQuery->execute([$hallId]);
+        while (($sessionId = $sessionsSelectQuery->fetch(PDO::FETCH_COLUMN))) {
+            $usedSeats = array_rand($seatIds, $numTickets);
+            if (!is_array($usedSeats)) {
+                $usedSeats = [$usedSeats];
+            }
+            foreach ($usedSeats as $sIndex) {
+                $price = $basePrice + $additionalPrice + mt_rand(0, 3);
+                $ticketsInsert->addRow([$sessionId, $seatIds[$sIndex], $price]);
+            }
+            $ticketsProgress->advance($numTickets);
+        }
+
+        $ticketsInsert->insert();
         $daysProgress->finish();
         $hallProgress->advance();
     }
@@ -202,7 +243,5 @@ for ($c = 0; $c < $numCinemas; $c++) {
 
 $cinemaProgress->finish();
 $output->writeln('');
-$pdo->commit();
 
 $output->writeln("Data generation completed successfully!");
-$output->writeln("$ticketsCount tickets generated!");
