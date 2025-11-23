@@ -1,5 +1,6 @@
-.idea/
-/vendor/
+.env
 .DS_Store
-.AppleDouble
-.LSOverride
+/postgres/data
+/code/vendor/
+/code/composer.lock
+/nginx/logs
