@@ -1,41 +1,20 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-        if ($char === '(') {
-            $balance++;
-        } elseif ($char === ')') {
-            $balance--;
-        }
+use Ak\Hw\Services\BracketsBalance;
 
-        if ($balance < 0) {
-            return false;
-        }
+$string = htmlspecialchars(htmlspecialchars($_REQUEST['string']) ?? '');
+
+if ($string) {
+    try {
+        $message = new BracketsBalance()($string)['message'];
+        $code = 200;
+    } catch (Exception $e) {
+        $message = $e->getMessage();
+        $code = $e->getCode();
     }
-
-    return $balance === 0;
+    http_response_code($code);
+    header('Content-Type: application/text; charset=utf-8');
+    echo $message;
 }
-
-$request = htmlspecialchars($_REQUEST['string'] ?? '');
-
-
-if(!$request){
-    http_response_code(400);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => true, 'message' => 'Отсутствуют параметры запроса'], JSON_THROW_ON_ERROR);
-    exit();
-}
-
-
-if(!balance($request)){
-    http_response_code(400);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => true, 'message' => "Строка '{$request}' НЕ валидна!"], JSON_THROW_ON_ERROR);
-    exit();
-}
-
-
-    http_response_code(200);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['success' => true, 'message' => 'Всё хорошо'], JSON_THROW_ON_ERROR);
-    exit();
 ?>
