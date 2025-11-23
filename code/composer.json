@@ -1,0 +1,14 @@
+{
+  "name": "ak/hw",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Ak\\Hw\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Alexander Kanapatski"
+    }
+  ]
+}
