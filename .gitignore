@@ -12,3 +12,4 @@ memcached/
 /redis/data/
 /nginx/logs/*
 /nginx/logs/error.log
+/code/vendor/

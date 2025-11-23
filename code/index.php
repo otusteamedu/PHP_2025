@@ -1,17 +1,5 @@
 <?php
-
-/**
- * Проверяет, что в строке для каждой открывающей скобки '(' есть соответствующая закрывающая ')'.
- *
- * @param string $string Строка для проверки.
- * @return bool True, если скобки сбалансированы, иначе false.
- */
-function balance(string $string): bool
-{
-    $balance = 0;
-
-    for ($i = 0, $iMax = strlen($string); $i < $iMax; $i++) {
-        $char = $string[$i];
+require __DIR__ . '/vendor/autoload.php';
 
         if ($char === '(') {
             $balance++;
