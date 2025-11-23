@@ -1,0 +1,10 @@
+{
+    "name": "arlex2305k/brackets",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Arlex2305k\\Brackets\\": "src/"
+        }
+    },
+    "require": {}
+}

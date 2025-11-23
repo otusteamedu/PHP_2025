@@ -1,11 +1,8 @@
-# Тест своего пакета
-Бла бла бла...
+# Балансер + подсчет скобок (HW#4)
+Балансер: балансирует с главного nginx на 2 дочерних, те в свою очередь на 2 php-fpm (без привязки) + сделан кластер из 3 redis через sentinel
 
-## Установка
-composer require arlex2305k/test
+## Пример использования сервиса проверки баланса скобок в строке
 
-## Использование
-```markdown
-<?php
-echo Arlex2305k\Test\MyTestMath::factorial(10) . PHP_EOL;
+```bash
+curl -X POST http://localhost/ -d "string=(()()()())"
 ```
