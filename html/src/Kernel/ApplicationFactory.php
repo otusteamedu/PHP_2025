@@ -13,6 +13,8 @@ readonly class ApplicationFactory
      */
     public static function factory(): Application
     {
+        session_start();
+
         return new Application(
             new Request(
                 new ValueObject($_GET),
