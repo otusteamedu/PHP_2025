@@ -10,12 +10,12 @@ final class Email
     {
     }
 
-    public static function create(string $value): self
+    public static function create(string $value): ?self
     {
         $value = trim($value);
 
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidEmailException($value);
+            return null;
         }
 
         return new self(strtolower($value));

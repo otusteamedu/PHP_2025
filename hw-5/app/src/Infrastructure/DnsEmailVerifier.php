@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure;
 
 use App\Domain\Email;
-use App\Domain\EmailVerified;
+use App\Domain\EmailVerifiedInterface;
 
-final readonly class DnsEmailVerifier implements EmailVerified
+final readonly class DnsEmailVerifier implements EmailVerifiedInterface
 {
     public function verify(Email $email): bool
     {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application;
 
 use App\Domain\Email;
-use App\Domain\InvalidEmailException;
 use App\Infrastructure\CheckedEmailsFileWriter;
 use App\Infrastructure\DnsEmailVerifier;
 use App\Infrastructure\EmailsFileReader;
@@ -32,15 +31,14 @@ final readonly class VerificationEmailService
         $verified = [];
 
         foreach ($emails as $emailString) {
-            try {
-                $email = Email::create($emailString);
+            $email = Email::create($emailString);
 
-                if ($this->dnsEmailsVerifier->verify($email)) {
-                    $verified[] = $email->getValue();
-                }
-            } catch (InvalidEmailException $emailException) {
-                // В дальнейшем можно логировать невалидные emails
+            if ($email === null) {
                 continue;
+            }
+
+            if ($this->dnsEmailsVerifier->verify($email)) {
+                $verified[] = $email->getValue();
             }
         }
 
