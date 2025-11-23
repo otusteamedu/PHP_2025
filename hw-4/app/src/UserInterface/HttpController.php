@@ -13,29 +13,23 @@ readonly class HttpController
     ) {
     }
 
-    public function handle(): void
+    public function handle(): HttpResponse
     {
         $input = $_POST['string'] ?? '';
 
         if ($input === '') {
-            http_response_code(400);
-            echo "Пустая строка";
-            return;
+            return new HttpResponse(400, "Пустая строка");
         }
 
         if (!$this->containsOnlyParentheses($input)) {
-            http_response_code(400);
-            echo "Нужна строка только с круглыми скобками";
-            return;
+            return new HttpResponse(400, "Нужна строка только с круглыми скобками");
         }
 
         if ($this->bracketService->check($input)) {
-            http_response_code(200);
-            echo "Скобки сбалансированы";
-        } else {
-            http_response_code(400);
-            echo "Скобки не сбалансированы";
+            return new HttpResponse(200, "Скобки сбалансированы");
         }
+
+        return new HttpResponse(400, "Скобки не сбалансированы");
     }
 
     private function containsOnlyParentheses(string $postString): bool
