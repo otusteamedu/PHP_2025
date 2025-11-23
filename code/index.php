@@ -1,54 +1,40 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
+use Ak\Hw\Models\EmailFinder;
+
 /**
- * Проверяет, что в строке для каждой открывающей скобки '(' есть соответствующая закрывающая ')'.
+ * Отправляет JSON-ответ клиенту и завершает выполнение скрипта.
  *
- * @param string $string Строка для проверки.
- * @return bool True, если скобки сбалансированы, иначе false.
+ * @param bool $isSuccess Успешен ли был запрос.
+ * @param array $data Данные для включения в ответ.
+ * @param int $statusCode HTTP-код ответа.
+ * @throws JsonException
  */
-function balance(string $string): bool
+function sendJsonResponse(bool $isSuccess, array $data, int $statusCode = 200): void
 {
-    $balance = 0;
-
-    for ($i = 0, $iMax = strlen($string); $i < $iMax; $i++) {
-        $char = $string[$i];
-
-        if ($char === '(') {
-            $balance++;
-        } elseif ($char === ')') {
-            $balance--;
-        }
-
-        if ($balance < 0) {
-            return false;
-        }
+    http_response_code($statusCode);
+    header('Content-Type: application/json; charset=utf-8');
+    $response = ['success' => $isSuccess];
+    if ($isSuccess) {
+        $response['data'] = $data;
+    } else {
+        $response['error'] = $data;
     }
-
-    return $balance === 0;
-}
-
-$request = htmlspecialchars($_REQUEST['string'] ?? '');
-
-
-if(!$request){
-    http_response_code(400);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => true, 'message' => 'Отсутствуют параметры запроса'], JSON_THROW_ON_ERROR);
+    echo json_encode($response, JSON_THROW_ON_ERROR);
     exit();
 }
 
 
-if(!balance($request)){
-    http_response_code(400);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => true, 'message' => "Строка '{$request}' НЕ валидна!"], JSON_THROW_ON_ERROR);
-    exit();
+$text = htmlspecialchars($_REQUEST['text'] ?? '');
+
+if (empty($text)) {
+    sendJsonResponse(false, ['message' => 'Text parameter is required.'], 400);
 }
 
-
-    http_response_code(200);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['success' => true, 'message' => 'Всё хорошо'], JSON_THROW_ON_ERROR);
-    exit();
-?>
+try {
+    $validEmails = new EmailFinder()->getEmailsByText($text);
+    sendJsonResponse(true, ['emails' => $validEmails]);
+} catch (Exception $e) {
+    sendJsonResponse(false, ['message' => $e->getMessage()], $e->getCode());
+}
