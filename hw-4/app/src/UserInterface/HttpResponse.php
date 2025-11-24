@@ -10,5 +10,6 @@ final readonly class HttpResponse
         public int $status,
         public string $body,
     ) {
+        http_response_code($status);
     }
 }

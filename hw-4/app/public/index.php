@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-$definitions = require dirname(__DIR__) . '/config/services.php';
-$container = new App\Infrastructure\DI\Container($definitions);
+use App\App;
 
-$controller = $container->get('httpController');
-$response = $controller->handle();
+$app = new App();
+$response = $app->run();
 
-http_response_code($response->status);
 echo $response->body;
