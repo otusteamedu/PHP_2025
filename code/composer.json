@@ -1,0 +1,10 @@
+{
+    "name": "alisaselezneva/code",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Alisaselezneva\\Code\\": "src/"
+        }
+    },
+    "require": {}
+}
