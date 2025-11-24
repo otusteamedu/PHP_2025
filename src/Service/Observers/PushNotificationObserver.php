@@ -13,6 +13,7 @@ class PushNotificationObserver implements OrderObserverInterface
     {
 
     }
+
     public function update(ProductOrderNotificationDTO $notificationDTO): void
     {
         echo "Push Notification: " . $this->notificationMessageFactory->createMessage($notificationDTO) . "</br>";

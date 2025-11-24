@@ -16,7 +16,7 @@ class HotDogBuilder implements BuilderInterface
         $this->reset();
     }
 
-    public function reset():void
+    public function reset(): void
     {
         $this->hotdog = new HotDog();
     }

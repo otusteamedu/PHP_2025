@@ -13,6 +13,7 @@ class SmsNotificationObserver implements OrderObserverInterface
     {
 
     }
+
     public function update(ProductOrderNotificationDTO $notificationDTO): void
     {
         echo "SMS Notification: " . $this->notificationMessageFactory->createMessage($notificationDTO) . "</br>";

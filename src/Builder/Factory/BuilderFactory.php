@@ -12,9 +12,9 @@ use InvalidArgumentException;
 class BuilderFactory
 {
     public function __construct(
-        private BurgerBuilder $burgerBuilder,
+        private BurgerBuilder   $burgerBuilder,
         private SandwichBuilder $sandwichBuilder,
-        private HotDogBuilder $hotDogBuilder,
+        private HotDogBuilder   $hotDogBuilder,
     )
     {
 

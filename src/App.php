@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Dinargab\Homework15;
 
 use Dinargab\Homework15\Controller\CreateOrderController;
-use Dinargab\Homework15\Exception\DefectiveProductException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

@@ -16,7 +16,7 @@ class SandwichBuilder implements BuilderInterface
         $this->reset();
     }
 
-    public function reset():void
+    public function reset(): void
     {
         $this->sandwich = new Sandwich();
     }

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- $pageTitle comes from the array key passed in render() -->
     <title>Homework 15</title>
 </head>
 <body>

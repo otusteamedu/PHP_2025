@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Dinargab\Homework15\Service\Order\OrderHandler;
 
 
-
 use Dinargab\Homework15\Model\Order\OrderStatus;
 
 class ReadyOrderHandler extends AbstractOrderHandler

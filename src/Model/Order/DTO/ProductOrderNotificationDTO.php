@@ -8,7 +8,7 @@ use Dinargab\Homework15\Model\Order\OrderStatus;
 class ProductOrderNotificationDTO
 {
     public function __construct(
-        public int $orderId,
+        public int         $orderId,
         public OrderStatus $orderStatus,
     )
     {

@@ -10,6 +10,7 @@ class DefectiveProductDecorator extends AbstractProductDecorator
     {
         return [];
     }
+
     function getIngredientName(): string
     {
         return "";

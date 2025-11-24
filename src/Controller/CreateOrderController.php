@@ -19,12 +19,13 @@ class CreateOrderController extends AbstractController
 
     public function __construct(
         private ProductOrderFactory $productOrderFactory,
-        private CookingProcess $cookingProcess,
+        private CookingProcess      $cookingProcess,
     )
     {
         $this->productOrder = $this->productOrderFactory->create();
     }
-    public function __invoke(array $orderData) :void
+
+    public function __invoke(array $orderData): void
     {
         try {
             $this->productOrder->setOrderedProducts($orderData);

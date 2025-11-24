@@ -8,7 +8,6 @@ use Dinargab\Homework15\Model\Product\Burger;
 use Dinargab\Homework15\Model\Product\HotDog;
 use Dinargab\Homework15\Model\Product\ProductInterface;
 use Dinargab\Homework15\Model\Product\Sandwich;
-use Exception;
 
 abstract class AbstractCookProcess implements CookProcessInterface
 {
@@ -26,13 +25,13 @@ abstract class AbstractCookProcess implements CookProcessInterface
         $echoString = "Starting process of cooking $type";
         if ($additionalIngredients) {
             foreach ($additionalIngredients as $key => $ingredient) {
-              $echoString .= ($key === 0 ? " with" : "") . " $ingredient, ";
+                $echoString .= ($key === 0 ? " with" : "") . " $ingredient, ";
             }
         }
         echo $echoString;
     }
 
-    abstract  protected function cookProduct(string $type, array $additionalIngredients): ProductInterface;
+    abstract protected function cookProduct(string $type, array $additionalIngredients): ProductInterface;
 
     protected function checkAfter(ProductInterface $product): ProductInterface
     {
@@ -44,7 +43,7 @@ abstract class AbstractCookProcess implements CookProcessInterface
 
     protected function isValid(ProductInterface $product): bool
     {
-        $minIngredients = match(get_class($product)) {
+        $minIngredients = match (get_class($product)) {
             Burger::class, Sandwich::class => 3,
             HotDog::class => 2,
             default => 2

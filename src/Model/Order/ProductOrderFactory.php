@@ -9,12 +9,13 @@ use Dinargab\Homework15\Service\Observers\SmsNotificationObserver;
 class ProductOrderFactory
 {
     public function __construct(
-        private SmsNotificationObserver $smsNotificationObserver,
+        private SmsNotificationObserver  $smsNotificationObserver,
         private PushNotificationObserver $pushNotificationObserver
     )
     {
 
     }
+
     public function create()
     {
         $productOrder = new ProductOrder();

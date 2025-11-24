@@ -13,6 +13,7 @@ class CookingProcess extends AbstractCookProcess
     {
 
     }
+
     protected function cookProduct(string $type, array $additionalIngredients): ProductInterface
     {
         return $this->productFactory->create($type, $additionalIngredients);

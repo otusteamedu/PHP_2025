@@ -9,10 +9,11 @@ use Dinargab\Homework15\Model\Order\ProductOrder;
 class AbstractOrderHandler implements OrderHandlerInterface
 {
 
-    public function __construct(private ?OrderHandlerInterface $nextHandler = null  )
+    public function __construct(private ?OrderHandlerInterface $nextHandler = null)
     {
 
     }
+
     public function setNext(OrderHandlerInterface $next): OrderHandlerInterface
     {
         $this->nextHandler = $next;

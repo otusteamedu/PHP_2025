@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Dinargab\Homework15\Exception;
 
-class DefectiveProductException extends \Exception
+use Exception;
+
+class DefectiveProductException extends Exception
 {
 
 }
