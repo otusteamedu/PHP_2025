@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
-$definitions = require dirname(__DIR__) . '/config/services.php';
-$container = new App\Infrastructure\DI\Container($definitions);
+use App\App;
 
-$verificationEmailCommand = $container->get('verificationEmailCommand');
-$verificationEmailCommand->handle();
+$app = new App();
+$app->run();
