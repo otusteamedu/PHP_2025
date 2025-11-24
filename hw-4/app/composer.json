@@ -1,0 +1,14 @@
+{
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "vsilkin",
+      "email": "testemail@gmail.com"
+    }
+  ],
+  "require": {}
+}

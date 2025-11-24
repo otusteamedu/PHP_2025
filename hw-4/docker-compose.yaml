@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: hw4/nginx
+    container_name: hw4-nginx
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/sockets:/var/run/php
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app-first
+      - app-second
+    networks:
+      - otus-network
+
+  app-first:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: hw4/app
+    container_name: hw4-app-first
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/sockets:/var/run/php
+      - ./docker/php/app-first.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+      - ./docker/php/session.ini:/usr/local/etc/php/conf.d/session.ini
+    depends_on:
+      - redis
+    networks:
+      - otus-network
+
+  app-second:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: hw4/app
+    container_name: hw4-app-second
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/sockets:/var/run/php
+      - ./docker/php/app-second.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+      - ./docker/php/session.ini:/usr/local/etc/php/conf.d/session.ini
+    depends_on:
+      - redis
+    networks:
+      - otus-network
+
+  redis:
+    image: redis:8.2.2
+    container_name: hw4-redis
+    networks:
+      - otus-network
+
+networks:
+  otus-network:
+    driver: bridge
