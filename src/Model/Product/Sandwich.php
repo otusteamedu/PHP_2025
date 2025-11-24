@@ -27,7 +27,6 @@ class Sandwich implements ProductInterface
     {
         $ingredients = [];
         $ingredients[] = $this->bread;
-        array_merge($ingredients, $this->fillings);
         return array_merge($ingredients, $this->fillings);
     }
 }

@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Dinargab\Homework15\Model\Product\Decorators;
 
+use Dinargab\Homework15\Model\Product\Decorators\Helpers\ProductDecoratorHelper;
 use Dinargab\Homework15\Model\Product\ProductInterface;
 
-class AbstractProductDecorator implements ProductInterface
+abstract class AbstractProductDecorator implements ProductInterface
 {
-    protected const INGREDIENT_NAME = "ingredient";
     public function __construct(protected ProductInterface $product)
     {
 
@@ -15,7 +15,7 @@ class AbstractProductDecorator implements ProductInterface
 
     public function getName(): string
     {
-        return $this->product->getName();
+        return ProductDecoratorHelper::addIngredientToName($this->product->getName(), $this->getIngredientName());
     }
 
     public function getPrice(): int
@@ -30,6 +30,11 @@ class AbstractProductDecorator implements ProductInterface
 
     public function getIngredients(): array
     {
-        return $this->product->getIngredients();
+        $ingredients = $this->product->getIngredients();
+        $ingredients[] = $this->getIngredientName();
+        return $ingredients;
     }
+
+    abstract function getIngredientName(): string;
+
 }

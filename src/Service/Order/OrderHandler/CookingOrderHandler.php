@@ -19,7 +19,7 @@ class CookingOrderHandler extends AbstractOrderHandler
     {
         $order->setStatus(OrderStatus::COOKING);
         foreach ($order->getOrderedProducts() as $product) {
-            $order->addProduct($this->process->cook($product['type'], $product['additionalIngredients']));
+            $order->addProduct($this->process->cook($product['type'], $product['additionalIngredients'] ?? []));
         }
         parent::handle($order);
     }

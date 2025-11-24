@@ -10,9 +10,9 @@ class BaconProductDecorator extends AbstractProductDecorator
 
     protected const INGREDIENT_NAME = "bacon";
 
-    public function getName(): string
+    public function getIngredientName(): string
     {
-        return ProductDecoratorHelper::addIngredientToName($this->product->getName(), self::INGREDIENT_NAME);
+        return self::INGREDIENT_NAME;
     }
 
     public function getPrice(): int
@@ -20,10 +20,4 @@ class BaconProductDecorator extends AbstractProductDecorator
         return $this->product->getPrice() + 3;
     }
 
-    public function getIngredients(): array
-    {
-        $ingredients = $this->product->getIngredients();
-        $ingredients[] = self::INGREDIENT_NAME;
-        return $ingredients;
-    }
 }

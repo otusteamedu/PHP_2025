@@ -44,6 +44,11 @@ class ProductFactory
                 $product = $this->productDecoratorSelector->getDecoratedProduct($additionalIngredient, $product);
             }
         }
+
+        //3% chance to get defective product
+        if (rand(0, 100) < 3) {
+            $product = $this->productDecoratorSelector->getDecoratedProduct('defective', $product);
+        }
         return $product;
 
     }

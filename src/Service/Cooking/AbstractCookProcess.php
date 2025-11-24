@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Dinargab\Homework15\Service\Cooking;
 
+use Dinargab\Homework15\Exception\DefectiveProductException;
 use Dinargab\Homework15\Model\Product\Burger;
 use Dinargab\Homework15\Model\Product\HotDog;
 use Dinargab\Homework15\Model\Product\ProductInterface;
@@ -11,7 +12,6 @@ use Exception;
 
 abstract class AbstractCookProcess implements CookProcessInterface
 {
-
     public function cook(string $type, array $additionalIngredients): ProductInterface
     {
         $this->prepare($type, $additionalIngredients);
@@ -39,7 +39,7 @@ abstract class AbstractCookProcess implements CookProcessInterface
         if ($this->isValid($product)) {
             return $product;
         }
-        throw new Exception("Defective product is not valid");
+        throw new DefectiveProductException("Alarm! Defective product!!!");
     }
 
     protected function isValid(ProductInterface $product): bool
