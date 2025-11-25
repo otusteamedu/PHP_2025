@@ -1,0 +1,55 @@
+services:
+  balancer:
+    image: nginx:stable-alpine
+    volumes:
+      - ./nginx-balancer/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - backend1-nginx
+      - backend2-nginx
+    networks:
+      - mynet
+
+  backend1-php:
+    build: ./backend1/php-fpm
+    volumes:
+      - ./backend1/www:/var/www/html
+    networks:
+      - mynet
+
+  backend1-nginx:
+    image: nginx:stable-alpine
+    volumes:
+      - ./backend1/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./backend1/www:/var/www/html
+    depends_on:
+      - backend1-php
+    networks:
+      - mynet
+
+  backend2-php:
+    build: ./backend2/php-fpm
+    volumes:
+      - ./backend2/www:/var/www/html
+    networks:
+      - mynet
+
+  backend2-nginx:
+    image: nginx:stable-alpine
+    volumes:
+      - ./backend2/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./backend2/www:/var/www/html
+    depends_on:
+      - backend2-php
+    networks:
+      - mynet
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - mynet
+
+networks:
+  mynet:
+    driver: bridge
