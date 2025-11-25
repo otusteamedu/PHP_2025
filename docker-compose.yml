@@ -1,52 +1,5 @@
 services:
 
-    nginx:
-        build:
-            context: .
-            dockerfile: docker/build/nginx/Dockerfile
-            target: compose
-            args:
-                UID: ${UID}
-                GID: ${GID}
-        volumes:
-            - php-fpm-sock:/var/www/run/:rw
-            - ./html:/var/www/html/:ro
-        depends_on:
-            - php
-        networks:
-            private:
-
-    php:
-        build:
-            context: .
-            dockerfile: docker/build/php/Dockerfile
-            target: compose
-            args:
-                UID: ${UID}
-                GID: ${GID}
-        volumes:
-            - composer:/var/www/.composer/:rw
-            - php-fpm-sock:/var/www/run/:rw
-            - ./html:/var/www/html/:rw
-        depends_on:
-            - memcached
-            - redis
-            - postgres
-        networks:
-            private:
-
-    memcached:
-        image: memcached:1.6-trixie
-        networks:
-            private:
-
-    redis:
-        image: valkey/valkey:9.0-trixie
-        volumes:
-            - valkey:/data/:rw
-        networks:
-            private:
-
     postgres:
         image: postgres:18.0-trixie
         environment:
@@ -59,12 +12,6 @@ services:
             private:
 
 volumes:
-    composer:
-        name: composer
-    php-fpm-sock:
-        name: otus-php-2025_php-fpm-sock
-    valkey:
-        name: otus-php-2025_valkey
     postgres:
         name: otus-php-2025_postgres
 
