@@ -8,7 +8,7 @@ services:
     image: myapp/nginx
     container_name: webserver
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
        - ./code:/app/mysite.local
     networks:
