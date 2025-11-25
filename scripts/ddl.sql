@@ -6,9 +6,6 @@ create table public.halls
     title varchar not null
 );
 
-alter table public.halls
-    owner to otus;
-
 create table public.movies
 (
     id    bigserial
@@ -16,9 +13,6 @@ create table public.movies
             primary key,
     title varchar not null
 );
-
-alter table public.movies
-    owner to otus;
 
 create table public.seances
 (
@@ -46,9 +40,6 @@ create index seances_hall_id_index
 create index seances_movie_id_index
     on public.seances (movie_id);
 
-alter table public.seances
-    owner to otus;
-
 create table public.tickets
 (
     id        bigserial
@@ -62,6 +53,3 @@ create table public.tickets
 
 create index tickets_seance_id_index
     on public.tickets (seance_id);
-
-alter table public.tickets
-    owner to otus;

@@ -6,7 +6,7 @@ https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_
 select
     movies.title,
     sum(tickets.price) as total
-    from
+from
            "movies" inner join seances on movies.id = seances.movie_id inner join tickets on seances.id = tickets.seance_id
-    group by movies.id order by total desc;
+group by movies.id order by total desc;
 ```
