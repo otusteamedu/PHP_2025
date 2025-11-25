@@ -13,12 +13,23 @@ services:
        - ./code:/app/mysite.local
     networks:
       - app-network
-  php:
+  php-fpm1:
     build:
       context: ./php-fpm
       dockerfile: Dockerfile
     image: myapp/php:8.4-fpm
-    container_name: php-fpm
+    container_name: php-fpm1
+    volumes:
+      - ./code:/app/mysite.local
+    working_dir: /app/mysite.local
+    networks:
+      - app-network
+  php-fpm2:
+    build:
+      context: ./php-fpm
+      dockerfile: Dockerfile
+    image: myapp/php:8.4-fpm
+    container_name: php-fpm2
     volumes:
       - ./code:/app/mysite.local
     working_dir: /app/mysite.local
