@@ -1,6 +1,19 @@
 version: '3'
 
 services:
+  webserver-balancer:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx-balancer
+    image: myapp/nginx-balancer
+    container_name: webserver-balancer
+    ports:
+      - "80:80"
+    depends_on:
+       - webserver1
+       - webserver2
+    networks:
+      - app-network
   webserver1:
     build:
       context: ./nginx
