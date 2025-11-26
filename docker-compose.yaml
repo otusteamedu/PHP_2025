@@ -1,0 +1,101 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: 'nginx'
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - app-network-4
+    depends_on:
+      - nginx_1
+      - nginx_2
+
+  nginx_1:
+    image: nginx:alpine
+    container_name: 'nginx_1'
+    restart: unless-stopped
+    volumes:
+      - ./docker/nginx_1/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx_1/logs:/var/log/nginx:delegated
+      - .:/var/app:ro,cached
+    networks:
+      - app-network-4
+    depends_on:
+      - php_fpm_1
+
+  nginx_2:
+    image: nginx:alpine
+    container_name: 'nginx_2'
+    restart: unless-stopped
+    volumes:
+      - ./docker/nginx_2/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx_2/logs:/var/log/nginx:delegated
+      - .:/var/app:ro,cached
+    networks:
+      - app-network-4
+    depends_on:
+      - php_fpm_2
+
+
+  php_fpm_1:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: 'php_fpm_1'
+    restart: unless-stopped
+    volumes:
+      - .:/var/app:rw
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/dev.ini
+    networks:
+      - app-network-4
+    depends_on:
+      - postgres
+      - redis
+
+  php_fpm_2:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: 'php_fpm_2'
+    restart: unless-stopped
+    volumes:
+      - .:/var/app:rw
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/dev.ini
+    networks:
+      - app-network-4
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:14.15-alpine3.21
+    container_name: 'postgres'
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network-4
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: 'redis'
+    restart: unless-stopped
+    networks:
+      - app-network-4
+
+networks:
+  app-network-4:
+    driver: bridge
+
+volumes:
+  postgres_data:
