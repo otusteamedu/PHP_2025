@@ -10,6 +10,10 @@
 	<h3 class="container__title">Запрос обработал контейнер:
 		<span>container_id=<?php echo $_SERVER['HOSTNAME'];?></span>
 	</h3>
+	<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/redis.php';  ?>
+	<?php if (isset($containerIdFromRedis)):?>
+		<p>redis container_id=<?= $containerIdFromRedis ?></p>
+	<?php endif;?>
 </div>
 </body>
 </html>
