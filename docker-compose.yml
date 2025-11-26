@@ -1,16 +1,16 @@
 version: '3'
 
 services:
-  webserver:
+  webserver1:
     build:
       context: ./nginx
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-nginx-1
     image: myapp/nginx
-    container_name: webserver
-    ports:
-      - "80:80"
+    container_name: nginx1
     volumes:
-       - ./code:/app/mysite.local
+      - ./code:/app/mysite.local
+    depends_on:
+      - php-fpm1
     networks:
       - app-network
   php-fpm1:

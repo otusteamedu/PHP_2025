@@ -1,0 +1,11 @@
+FROM nginx
+
+WORKDIR /app
+
+VOLUME /app
+
+COPY ./hosts/nginx-1.conf /etc/nginx/conf.d/mysite.local.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
