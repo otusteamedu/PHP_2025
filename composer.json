@@ -1,0 +1,11 @@
+{
+    "name": "alex/app",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.4"
+    }
+}
