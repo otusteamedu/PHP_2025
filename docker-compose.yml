@@ -13,6 +13,18 @@ services:
       - php-fpm1
     networks:
       - app-network
+  webserver2:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx-2
+    image: myapp/nginx2
+    container_name: nginx2
+    volumes:
+      - ./code:/app/mysite.local
+    depends_on:
+      - php-fpm2
+    networks:
+      - app-network
   php-fpm1:
     build:
       context: ./php-fpm

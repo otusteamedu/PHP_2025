@@ -1,0 +1,11 @@
+FROM nginx
+
+WORKDIR /app
+
+VOLUME /app
+
+COPY ./hosts/nginx-2.conf /etc/nginx/conf.d/nginx-2.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
