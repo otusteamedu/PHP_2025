@@ -16,15 +16,15 @@ create table public.movies
 
 create table public.seances
 (
-    id       bigserial
+    id                    bigserial
         constraint seances_pk
             primary key,
-    begin_at timestamp not null,
-    end_at   timestamp not null,
-    hall_id  bigint    not null
+    begin_at              timestamp not null,
+    end_at                timestamp not null,
+    hall_id               bigint    not null
         constraint seances_halls_id_fk
             references public.halls,
-    movie_id bigint    not null
+    movie_id              bigint    not null
         constraint seances_movies_id_fk
             references public.movies,
     begin_at_range_end_at tsrange generated always as (tsrange(begin_at, end_at)) stored,
@@ -42,14 +42,51 @@ create index seances_movie_id_index
 
 create table public.tickets
 (
-    id        bigserial
+    id       bigserial
         constraint tickets_pk
             primary key,
-    seance_id bigint  not null
-        constraint tickets_seances_id_fk
-            references public.seances,
-    price     integer not null
+    price    integer not null,
+    price_id bigint  not null
+        constraint tickets_prices_id_fk
+            references public.prices
 );
 
-create index tickets_seance_id_index
-    on public.tickets (seance_id);
+create index tickets_price_id_index
+    on public.tickets (price_id);
+
+create table public.places
+(
+    id      bigserial
+        constraint places_pk
+            primary key,
+    number  varchar not null,
+    hall_id bigint  not null
+        constraint places_halls_id_fk
+            references public.halls
+);
+
+create index places_hall_id_index
+    on public.places (hall_id);
+
+create table public.prices
+(
+    id        bigint  not null
+        constraint prices_pk
+            primary key,
+    value     integer not null,
+    place_id  bigint  not null
+        constraint prices_places_id_fk
+            references public.places,
+    seance_id bigint  not null
+        constraint prices_seances_id_fk
+            references public.seances
+);
+
+create index prices_place_id_index
+    on public.prices (place_id);
+
+create unique index prices_place_id_seance_id_uindex
+    on public.prices (place_id, seance_id);
+
+create index prices_seance_id_index
+    on public.prices (seance_id);
