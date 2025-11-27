@@ -1,13 +1,14 @@
 <?php
+namespace App\Validator;
 
-class Validator
+class InputValidator
 {
     public function validate(string $input): void
     {
         $input = trim($input);
         
         if ($input === '') {
-            throw new Exception("Пустая строка");
+            throw new \InvalidArgumentException("Пустая строка");
         }
         
         $balance = 0;
@@ -20,15 +21,16 @@ class Validator
             } elseif ($char === ')') {
                 $balance--;
                 if ($balance < 0) {
-                    throw new Exception("Неверные скобки");
+                    throw new \InvalidArgumentException("Неверные скобки");
                 }
             } else {
-                throw new Exception("Недопустимый символ");
+                throw new \InvalidArgumentException("Недопустимый символ: '{$char}'");
             }
         }
         
         if ($balance !== 0) {
-            throw new Exception("Неверные скобки");
+            throw new \InvalidArgumentException("Неверные скобки");
         }
     }
 }
+?>
