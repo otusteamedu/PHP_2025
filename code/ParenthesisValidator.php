@@ -13,6 +13,31 @@ class ParenthesisValidator
         $this->characters = str_split($str);
     }
 
+    public static function runTests(): void
+    {
+        $arrStrings = [
+            '(()(' => false,
+            ')(' => false,
+            '(()()(()(' => false,
+            '()' => true,
+            '(()())' => true,
+        ];
+
+        foreach ($arrStrings as $string => $testAnswer) {
+            $result = self::test($string, $testAnswer) ? 'West was passed' : 'Test failed';
+            echo  $result . "<br>";
+        }
+    }
+
+    private static function test(string $str, bool $correctAnswer): bool {
+        try {
+            (new ParenthesisValidator($str))->validate();
+            return $correctAnswer == true;
+        } catch (Exception $e) {
+            return $correctAnswer == false;
+        }
+    }
+
     /**
      * @throws Exception
      */
