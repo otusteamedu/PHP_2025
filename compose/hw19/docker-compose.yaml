@@ -1,0 +1,58 @@
+# в этом блоке мы описываем контейнеры, которые будут запускаться
+services:
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: hw12/nginx
+    container_name: nginxhw19
+    # проброс портов
+    ports:
+      - "80:80"
+    volumes:
+       - ../../.:/data/mysite.local
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      phpnew:
+         condition: service_started
+  phpnew:
+    # Если нет секции build, то система будет искать образ в репозиториях
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    image: hw12/php # имя будущего образа
+    container_name: phpnew19 # имя контейнера после запуска
+    environment:
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_SENDER_NAME=${SMTP_SENDER_NAME}
+
+    volumes:
+       - ../../.:/data/mysite.local
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+    # мы можем создать для контейнеров внутреннюю сеть
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
