@@ -9,7 +9,8 @@ class App
     public function run(): string
     {
         try {
-            return $this->getTemplate();
+            $auth = new \Pryaniki\App\Auth();
+            return $this->getTemplate($auth);
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -18,7 +19,7 @@ class App
     /**
      * @throws Exception
      */
-    private function getTemplate(): string
+    private function getTemplate(Auth $auth): string
     {
         $templatePath = $_SERVER['DOCUMENT_ROOT'] . '/page-template.php';
 
