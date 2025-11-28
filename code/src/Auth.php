@@ -3,10 +3,13 @@
 namespace Pryaniki\App;
 class Auth
 {
+    private \Redis $redis;
+
     public function __construct()
     {
         session_start();
         $this->increaseSessionCounter();
+        $this->redis =  new \Redis();
     }
 
     private function increaseSessionCounter(): void
@@ -31,5 +34,16 @@ class Auth
     public function getSessionCounter(): string
     {
         return $_SESSION['counter'];
+    }
+
+    public function getRedisContainerId(): string
+    {
+        $this->redis->connect('redis', 6379);
+        $containerIdFromRedis = $this->redis->get('container_id');
+        if (!$containerIdFromRedis) {
+            $this->redis->set('container_id', $_SERVER['HOSTNAME']);
+            $containerIdFromRedis = $this->redis->get('container_id');
+        }
+        return $containerIdFromRedis;
     }
 }
