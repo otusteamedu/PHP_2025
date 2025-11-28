@@ -1,5 +1,7 @@
 <?php
+namespace Pryaniki\App;
 
+use Exception;
 class ParenthesisValidator
 {
     const ACCEPTABLE_CHARACTERS = ['(', ')'];
