@@ -1,0 +1,13 @@
+{
+  "name": "fedorkhvostunkov/dz1",
+  "description": "Test project to demonstrate package installation",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/DaruHashida/csv_to_sql_converter"
+    }
+  ],
+  "require": {
+    "daruhashida/csv-to-sql-converter": "^1.0"
+  }
+}
