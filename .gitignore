@@ -1,7 +1,5 @@
 .idea/
 /vendor/
-.env
-logs/
 *.bak
 *.orig
-code/vendor/
+composer.lock

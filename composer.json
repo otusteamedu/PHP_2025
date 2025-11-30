@@ -1,0 +1,12 @@
+{
+    "name": "arlex2305k/emails_verifier",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Arlex2305k\\EmailsVerifier\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0"
+    }
+}
