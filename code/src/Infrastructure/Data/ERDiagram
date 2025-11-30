@@ -1,0 +1,55 @@
+erDiagram
+    MOVIES ||--|{ SESSIONS : scheduled_in
+    SESSIONS ||--|{ TICKETS : generates
+    HALLS ||--|{ SESSIONS : used_for
+    SEATS ||--|| TICKETS : assigned_to
+    HALLS ||--|{ SEATS : contains
+    ZONES ||--|{ SEATS : defines
+    HALLS ||--|{ PRICES : has_pricing_for
+    ZONES ||--|{ PRICES : has_pricing_in 
+    MOVIES {
+        int id
+        string title
+        int durationMinutes
+        int ageRating
+        date startDistribution
+        date endDistribution
+    }
+    SESSIONS {
+        int id
+        date startTime
+        date endTime
+        int idMovie
+        int idHall
+    }
+    TICKETS {
+        int id
+        int idSeat
+        int idSession
+        string status
+        float finalPrice
+        date updateStatusDt
+    }
+    HALLS {
+        int id
+        string name
+    }
+    SEATS {
+        int id
+        int row
+        int seat
+        int idHall
+        int idZone
+    }
+    ZONES {
+        int id
+        string name
+    }
+    PRICES {
+        int idZone
+        int idHall
+        time fromTime
+        time toTime
+        bool isWeekend
+        float price
+    }
