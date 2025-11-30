@@ -21,7 +21,7 @@ class App
      */
     private function getTemplate(Auth $auth): string
     {
-        $templatePath = $_SERVER['DOCUMENT_ROOT'] . '/page-template.php';
+        $templatePath = $_SERVER['DOCUMENT_ROOT'] . '/src/View/auth.php';
 
         if (!file_exists($templatePath)) {
             throw new Exception("Template not found: $templatePath");
