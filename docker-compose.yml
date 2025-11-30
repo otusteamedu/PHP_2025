@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  webserver-balancer:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx-balancer
+    image: myapp/nginx-balancer
+    container_name: webserver-balancer
+    ports:
+      - "80:80"
+    depends_on:
+       - webserver1
+       - webserver2
+    networks:
+      - app-network
+  webserver1:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx-1
+    image: myapp/nginx
+    container_name: nginx1
+    volumes:
+      - ./code:/app/mysite.local
+    depends_on:
+      - php-fpm1
+    networks:
+      - app-network
+  webserver2:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx-2
+    image: myapp/nginx2
+    container_name: nginx2
+    volumes:
+      - ./code:/app/mysite.local
+    depends_on:
+      - php-fpm2
+    networks:
+      - app-network
+  php-fpm1:
+    build:
+      context: ./php-fpm
+      dockerfile: Dockerfile
+    image: myapp/php:8.4-fpm
+    container_name: php-fpm1
+    volumes:
+      - ./code:/app/mysite.local
+    working_dir: /app/mysite.local
+    networks:
+      - app-network
+  php-fpm2:
+    build:
+      context: ./php-fpm
+      dockerfile: Dockerfile
+    image: myapp/php:8.4-fpm
+    container_name: php-fpm2
+    volumes:
+      - ./code:/app/mysite.local
+    working_dir: /app/mysite.local
+    networks:
+      - app-network
+  redis:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: myapp/redis
+    container_name: redis
+    working_dir: /app/mysite.local
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
