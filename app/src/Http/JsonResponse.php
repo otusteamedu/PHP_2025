@@ -17,12 +17,23 @@ class JsonResponse
         $this->statusCode = $statusCode;
     }
 
-    // Отправляю ответ с HTTP заголовком, потом вывожу JSON
-    public function send(): void
+    // Вовращаю данные для отправки
+    public function getContent(): string
     {
-        http_response_code($this->statusCode);
+        return json_encode($this->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+    // Возвращаем статус-код
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    // Устанавливаю заголовки
+    public function sendHeaders(): void
+    {
+        http_response_code($this->StatusCode);
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($this->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 }
 ?>
