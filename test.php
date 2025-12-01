@@ -25,18 +25,16 @@ $emails = [
 ];
 
 $service = new Service($emails);
-$service->verify();
+$result = $service->verify();
 
-$total = $service->getEmailsCount();
-echo "Проверка Email [$total]:\n";
+echo "Проверка Email [Всего: {$service->getEmailsCount()} | Валидны: {$service->getValidCount()} | Невалидны: {$service->getInvalidCount()}]:\n";
 echo "==========================\n";
 
-echo "--- Валидные [" . $service->getValidCount() . "]:\n";
-foreach ($service->getArEmailsValid() as $email) {
-	echo "$email : ok.\n";
-}
-
-echo "--- Невалидные [" . $service->getInvalidCount() . "]:\n";
-foreach ($service->getArEmailsInvalid() as $email) {
-	echo "$email : error!\n";
+foreach ($service->getArEmails() as $email) {
+	if (!$email->hasErrors()) {
+		echo "$email : ok.\n";
+	} else {
+		$strErrors = implode(' | ', $email->getErrors());
+		echo "$email : $strErrors\n";
+	}
 }

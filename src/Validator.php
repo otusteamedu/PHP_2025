@@ -4,46 +4,55 @@ namespace Arlex2305k\EmailsVerifier;
 
 class Validator
 {
-	private static function checkFormat(string $email): bool
+	private function checkFormat(Email $email): bool
 	{
+		$result = true;
+
+		$address = $email->getAddress();
+
 		static $pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
-		if (!preg_match($pattern, $email)) {
-			return false;
+		if (!preg_match($pattern, $address)) {
+			$email->addError('Адрес не соответствует шаблону');
+			$result = false;
 		}
 
-		if (str_contains($email, '..')) {
-			return false;
+		if (str_contains($address, '..')) {
+			$email->addError('В адресе найдены две точки подряд');
+			$result = false;
 		}
 
-		$parts = explode('@', $email);
-		$localPart = $parts[0];
-		$domain = $parts[1] ?? '';
+		$localPart = $email->getLocalPart();
 		if (str_starts_with($localPart, '.') || str_ends_with($localPart, '.')) {
-			return false;
-		}
-		if (str_starts_with($domain, '.')) {
-			return false;
+			$email->addError('Локальная часть адреса начинается или заканчивается точкой');
+			$result = false;
 		}
 
-		return true;
+		if (str_starts_with($email->getDomain(), '.')) {
+			$email->addError('Домен начинается с точки');
+			$result = false;
+		}
+
+		return $result;
 	}
 
-	private static function checkMxRecord(string $email): bool
+	private function checkMxRecord(Email $email): bool
 	{
-		$domain = substr(strrchr($email, "@"), 1);
-		return checkdnsrr($domain);
+		$result = checkdnsrr($email->getDomain());
+		if (!$result) {
+			$email->addError('MX-запись не найдена');
+		}
+		return $result;
 	}
 
-	public static function validate(string $email): bool
+	public function validate(Email $email): bool
 	{
-		if (!self::checkFormat($email)) {
+		if ($email->hasErrors()) { // это вообще не e-mail-адрес
 			return false;
 		}
-
-		if (!self::checkMxRecord($email)) {
+		if (!$this->checkFormat($email)) { // ошибки формата - нет смысла проверять MX-запись
 			return false;
 		}
-
-		return true;
+		$this->checkMxRecord($email);
+		return !$email->hasErrors();
 	}
 }

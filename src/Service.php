@@ -5,15 +5,16 @@ namespace Arlex2305k\EmailsVerifier;
 class Service
 {
 	private array $arEmails;
-	private array $arEmailsValid;
-	private array $arEmailsInvalid;
 
 	private int $emailsCount, $validCount, $invalidCount;
+
+	private Validator $validator;
 
 	public function __construct(array $arEmails = [])
 	{
 		$this->setEmailsAsArray($arEmails);
 		$this->initVars();
+		$this->validator = new Validator();
 	}
 
 	private function initVars(): void
@@ -26,10 +27,7 @@ class Service
 	{
 		$this->arEmails = [];
 		foreach ($arEmails as $email) {
-			$email = trim($email);
-			if ($email) {
-				$this->arEmails[] = $email;
-			}
+			$this->arEmails[] = new Email($email);
 		}
 		$this->emailsCount = count($this->arEmails);
 		return $this;
@@ -51,15 +49,12 @@ class Service
 	{
 		$this->initVars();
 		foreach ($this->arEmails as $email) {
-			$isValid = Validator::validate($email);
-			if ($isValid) {
-				$this->arEmailsValid[] = $email;
+			if ($this->validator->validate($email)) {
+				$this->validCount++;
 			} else {
-				$this->arEmailsInvalid[] = $email;
+				$this->invalidCount++;
 			}
 		}
-		$this->validCount = count($this->arEmailsValid);
-		$this->invalidCount = count($this->arEmailsInvalid);
 		return $this;
 	}
 
