@@ -13,15 +13,21 @@ try {
      * Создается ответ с уже обновленными данными
      */
     $response = new JsonResponse($emailResult->toArray());
+	
+	$response->sendHeaders();
+    echo $response->getContent();
     
 } catch (AppException $e) {
     $response = $e->toResponse();
+	
+	 $response->sendHeaders();
+    echo $response->getContent();
+	
 } catch (Exception $e) {
     $response = new JsonResponse(['error'=>'Ошибка сервера'], 500);
-}
-
-    // Точка входа
-    $response->sendHeaders();
+	
+	$response->sendHeaders();
     echo $response->getContent();
+}
 
 ?>
