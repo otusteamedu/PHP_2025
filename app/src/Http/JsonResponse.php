@@ -32,7 +32,7 @@ class JsonResponse
     // Устанавливаю заголовки
     public function sendHeaders(): void
     {
-        http_response_code($this->StatusCode);
+        http_response_code($this->statusCode);
         header('Content-Type: application/json; charset=utf-8');
     }
 }
