@@ -8,7 +8,7 @@ use Dinargab\Homework20\Application\Job\GetJobs\GetAllJobsUseCase;
 use Dinargab\Homework20\Application\Job\GetJobStatus\GetJobStatusRequest;
 use Dinargab\Homework20\Application\Job\GetJobStatus\GetJobStatusUseCase;
 use Dinargab\Homework20\Domain\Exception\EntityNotFoundException;
-use FastRoute\RouteParser;
+use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
@@ -25,6 +25,35 @@ class JobsController
 
     }
 
+    #[OA\Get(
+        path: "/jobs",
+        operationId: "getAllJobs",
+        tags: ["Jobs"],
+        summary: "Get all jobs",
+        description: "Retrieves a list of all jobs",
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Successful operation",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "jobs",
+                            type: "array",
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: "id", type: "integer", example: 1),
+                                    new OA\Property(property: "status", type: "string", example: "completed"),
+                                ],
+                                type: "object"
+                            )
+                        )
+                    ],
+                    type: "object"
+                )
+            ),
+        ]
+    )]
     public function index(Request $request, Response $response): Response
     {
         $jobs = ($this->getAllJobsUseCase)();
@@ -33,6 +62,49 @@ class JobsController
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
+    #[OA\Get(
+        path: "/jobs/{id}",
+        operationId: "getJobStatus",
+        tags: ["Jobs"],
+        summary: "Get job status",
+        description: "Retrieves the status of a specific job by ID",
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "Job ID",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer", minimum: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Successful operation",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "jobId", type: "integer", example: 1),
+                        new OA\Property(
+                            property: "status",
+                            type: "string",
+                            enum: ["new", "active", "completed"],
+                            example: "completed"
+                        ),
+                        new OA\Property(
+                            property: "statementUrl",
+                            type: "string",
+                            example: "/api/v1/statement/123"
+                        )
+                    ],
+                    type: "object"
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Job not found",
+            ),
+        ]
+    )]
     public function getJobStatus(Request $request, Response $response, int $id): Response
     {
         $requestJobStatus = new GetJobStatusRequest($id);

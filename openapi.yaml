@@ -1,0 +1,129 @@
+openapi: 3.0.0
+paths:
+  /jobs:
+    get:
+      tags:
+        - Jobs
+      summary: 'Get all jobs'
+      description: 'Retrieves a list of all jobs'
+      operationId: getAllJobs
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                properties:
+                  jobs: { type: array, items: { properties: { id: { type: integer, example: 1 }, status: { type: string, example: completed } }, type: object } }
+                type: object
+  '/jobs/{id}':
+    get:
+      tags:
+        - Jobs
+      summary: 'Get job status'
+      description: 'Retrieves the status of a specific job by ID'
+      operationId: getJobStatus
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Job ID'
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                properties:
+                  jobId: { type: integer, example: 1 }
+                  status: { type: string, enum: [new, active, completed], example: completed }
+                  statementUrl: { type: string, example: /api/v1/statement/123 }
+                type: object
+        '404':
+          description: 'Job not found'
+  /statement:
+    post:
+      tags:
+        - Statements
+      summary: 'Request a new statement'
+      description: 'Creates a new statement request and adds it to the processing queue'
+      operationId: requestStatement
+      requestBody:
+        description: 'Statement date range'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - dateFrom
+                - dateTo
+              properties:
+                dateFrom:
+                  description: 'Start date (YYYY-MM-DD)'
+                  type: string
+                  format: date
+                  example: '2024-01-01'
+                dateTo:
+                  description: 'End date (YYYY-MM-DD)'
+                  type: string
+                  format: date
+                  example: '2024-12-31'
+              type: object
+      responses:
+        '202':
+          description: 'Request accepted and queued for processing'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Request added to queue, await processing' }
+                  jobId: { type: integer, example: 123 }
+                type: object
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string, example: 'Missing required parameters: dateFrom dateTo' }
+                type: object
+  '/statement/{id}':
+    get:
+      tags:
+        - Statements
+      summary: 'Get statement by ID'
+      description: 'Retrieves a statement by its ID'
+      operationId: getStatement
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Statement ID'
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                properties:
+                  statementId: { type: integer, example: 123 }
+                  dateFrom: { type: string, format: date, example: '2024-01-01' }
+                  dateTo: { type: string, format: date, example: '2024-12-31' }
+                type: object
+        '404':
+          description: 'Statement not found'
+tags:
+  -
+    name: Jobs
+    description: Jobs
+  -
+    name: Statements
+    description: Statements
