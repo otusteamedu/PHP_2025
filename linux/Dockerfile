@@ -1,8 +1,7 @@
 FROM alpine
 
 RUN apk add --no-cache bash \
-    bats \
-    bc
+    bats
 WORKDIR /app
 VOLUME /app
 CMD ["/bin/bash"]
