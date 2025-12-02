@@ -25,3 +25,5 @@ then
   echo "Второй операнд не является числом"
   exit 1
 fi
+
+echo -e "$1\n $2" | awk '{sum+=$1} END {print sum}'
