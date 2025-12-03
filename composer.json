@@ -1,0 +1,20 @@
+{
+  "name": "dinargab/homework15",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Dinargab\\Homework15\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "DinarGab",
+      "email": "Dinar@reaspekt.ru"
+    }
+  ],
+  "require": {
+    "symfony/dependency-injection": "^7.3",
+    "symfony/yaml": "^7.3",
+    "symfony/config": "^7.3"
+  }
+}
