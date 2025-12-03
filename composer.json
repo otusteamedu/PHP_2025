@@ -1,0 +1,19 @@
+{
+    "name": "achemakin/otus_php",
+    "description": "учебный проект php OTUS",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Achemakin\\OtusPhp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ALEXANDR CHEMAKIN",
+            "email": "kotor79@gmail.com"
+        }
+    ],
+    "require": {
+        "achemakin/test_composer-package": "^1.0"
+    }
+}
