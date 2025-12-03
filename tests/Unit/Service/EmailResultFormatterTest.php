@@ -1,12 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Service;
+namespace Unit\Service;
 
 use Dinargab\Homework5\Result\ValidationResult;
 use Dinargab\Homework5\Service\EmailResultFormatter;
-use Dinargab\Homework5\Service\EmailValidator;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 class EmailResultFormatterTest extends TestCase

@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Dinargab\Homework5\Service;
+namespace Unit\Service;
 
 use Dinargab\Homework5\Result\ValidationResult;
-use PHPUnit\Framework\Attributes\CoversClass;
+use Dinargab\Homework5\Service\EmailValidator;
+use Dinargab\Homework5\Service\FormatterInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
