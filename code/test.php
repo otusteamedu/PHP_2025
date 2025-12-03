@@ -1,7 +1,14 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-echo \App\Hello::hi();
+use Achemakin\OtusPhp\Hello;
+
+echo Hello::hi();
+echo "<br><hr><br>";
+
+$strProcessor = new Achemakin\TestComposerPackage\StringProcessor();
+$testString = "Тестовая строка";
+echo "Длина строки '$testString': " . $strProcessor->getLength($testString);;
 echo "<br><hr><br>";
 
 testMemcached();
