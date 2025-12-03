@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "5c92d281bbbdebfe7f699e5f3261f99e",
+    "packages": [
+        {
+            "name": "achemakin/test_composer-package",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/achemakin/test_composer-package.git",
+                "reference": "c329df48da308b0a9ed6ffe977fb28bb3eeb8056"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/achemakin/test_composer-package/zipball/c329df48da308b0a9ed6ffe977fb28bb3eeb8056",
+                "reference": "c329df48da308b0a9ed6ffe977fb28bb3eeb8056",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Achemakin\\TestComposerPackage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "ALEXANDR CHEMAKIN",
+                    "email": "kotor79@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/achemakin/test_composer-package/issues",
+                "source": "https://github.com/achemakin/test_composer-package/tree/1.0.1"
+            },
+            "time": "2025-12-03T05:16:34+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}
