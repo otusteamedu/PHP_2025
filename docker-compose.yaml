@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - .:/var/app:ro,cached
+    networks:
+      - app-network
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - .:/var/app:rw
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
