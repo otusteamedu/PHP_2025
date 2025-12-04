@@ -1,5 +1,7 @@
 <?php
 
+namespace Index;
+
 class Solution
 {
     /**
@@ -8,7 +10,7 @@ class Solution
      *
      * @return array
      */
-    function mergeTwoLists(array $list1, array $list2): array
+    public function bubble(array $list1, array $list2): array
     {
         $merge = [...$list1, ...$list2];
         $count = count($merge);
@@ -29,6 +31,6 @@ class Solution
     }
 }
 
-var_dump(
-    new Solution()->mergeTwoLists([2, 1, 3], [2, 3, 10, 3])
+print_r(
+    new Solution()->bubble([20, 2, 1, 3], [2, 3, 10, 3])
 );
