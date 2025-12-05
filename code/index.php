@@ -1,20 +1,17 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
+use Ak\Hw\Services\ArrayMerge;
 
-use Ak\Hw\Services\BracketsBalance;
+$merge = new ArrayMerge();
 
-$string = htmlspecialchars(htmlspecialchars($_REQUEST['string']) ?? '');
+$test1 = $merge([1,2,4], [1,3,4]);
+$test2 = $merge([-4,-1,2,], [-3,1,5,6]);
+$test3 = $merge([1,4,3], [1,2,5,6]);
+$test4 = $merge([], []);
+$test5 = $merge([], [0]);
 
-if ($string) {
-    try {
-        $message = new BracketsBalance()($string)['message'];
-        $code = 200;
-    } catch (Exception $e) {
-        $message = $e->getMessage();
-        $code = $e->getCode();
-    }
-    http_response_code($code);
-    header('Content-Type: application/text; charset=utf-8');
-    echo $message;
-}
+echo "<pre>";
+print_r([$test1, $test2, $test3, $test4, $test5]);
+echo "</pre>";
+
 ?>
