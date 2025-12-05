@@ -109,8 +109,8 @@ class Solution
     }
 }
 
-$a = array_map(fn() => rand(0, 9), range(1, 10));
-$b = array_map(fn() => rand(0, 9), range(1, 10));
+$a = array_map(fn() => mt_rand(0, 9), range(1, 10));
+$b = array_map(fn() => mt_rand(0, 9), range(1, 10));
 
 $solutions = new Solution();
 
