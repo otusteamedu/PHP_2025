@@ -19,13 +19,13 @@ erDiagram
         int id
         date startTime
         date endTime
-        int idMovie
-        int idHall
+        int movieId
+        int hallId
     }
     TICKETS {
         int id
-        int idSeat
-        int idSession
+        int seatId
+        int sessionId
         string status
         float finalPrice
         date updateStatusDt
@@ -38,16 +38,16 @@ erDiagram
         int id
         int row
         int seat
-        int idHall
-        int idZone
+        int hallId
+        int zoneId
     }
     ZONES {
         int id
         string name
     }
     PRICES {
-        int idZone
-        int idHall
+        int zoneId
+        int hallId
         time fromTime
         time toTime
         bool isWeekend
