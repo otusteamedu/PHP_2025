@@ -25,7 +25,7 @@ class EmailVerificationService
     {
         $verifiedEmails = [];
         foreach ($emails as $email) {
-            if (trim($email) === '') {
+            if ($email === '') {
                 continue;
             }
 

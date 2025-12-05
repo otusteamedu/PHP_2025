@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Http\Request;
+use App\Http\Response;
 use App\Service\EmailVerificationService;
 use App\Validator\EmailValidator;
 
@@ -19,13 +21,45 @@ class EmailVerificationController
     }
 
     /**
-     * @param string[] $emails
-     * @return array{email: string, format_valid: bool, mx_record: bool, valid: bool, reason: string}[]
+     * @param Request $request
+     * @return Response
      */
-    public function verifyEmails(array $emails): array
+    public function handle(Request $request): Response
     {
-        $filteredEmails = array_filter($emails, 'is_string');
-        return $this->emailVerificationService->verifyMultiple($filteredEmails);
+        return $request->isPost()
+            ? $this->handlePost($request)
+            : $this->handleGet();
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    private function handlePost(Request $request): Response
+    {
+        $rawInput = $request->getEmailsInput();
+        $emails = $this->parseEmails($rawInput);
+        $results = $this->emailVerificationService->verifyMultiple($emails);
+
+        return Response::json($results);
+    }
+
+    /**
+     * @return Response
+     */
+    private function handleGet(): Response
+    {
+        return Response::view(__DIR__ . '/../View/verify.html');
+    }
+
+    /**
+     * @param string $input
+     * @return array
+     */
+    private function parseEmails(string $input): array
+    {
+        $emails = array_map('trim', explode(PHP_EOL, trim($input)));
+        return array_filter($emails);
     }
 
     /**
