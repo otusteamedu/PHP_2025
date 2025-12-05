@@ -1,6 +1,6 @@
 <?php
 
-namespace Index;
+namespace Bubble;
 
 class Solution
 {
