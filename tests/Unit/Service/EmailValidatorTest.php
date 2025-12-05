@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Unit\Service;
 
 use Dinargab\Homework5\Result\ValidationResult;
+use Dinargab\Homework5\Service\DnsChecker\DnsCheckerInterface;
 use Dinargab\Homework5\Service\EmailValidator;
 use Dinargab\Homework5\Service\FormatterInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -16,7 +17,14 @@ class EmailValidatorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->validator = new EmailValidator();
+
+        $dnsChecker = $this->createMock(DnsCheckerInterface::class);
+        $dnsChecker->method('hasMxRecords')
+            ->willReturnCallback(function ($domain) {
+                return $domain === 'example.com' || $domain === 'otus.ru' || $domain === 'gmail.com';
+            });
+
+        $this->validator = new EmailValidator(dnsChecker: $dnsChecker);
     }
 
     public static function validEmailProvider(): array
@@ -28,7 +36,7 @@ class EmailValidatorTest extends TestCase
             ['a.little.lengthy.but.fine@example.com'],
             ['disposable.style.email.with+symbol@example.com'],
             ['test@example.com'],
-            ["!#$%&'*+-/=?^_`{}|~@example.org"],
+            ["!#$%&'*+-/=?^_`{}|~@example.com"],
         ];
     }
 

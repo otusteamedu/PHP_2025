@@ -19,7 +19,6 @@ class EmailValidationIntegrationTest extends TestCase
 
     public function testFullValidationAndFormattingFlow(): void
     {
-        // Подготовка данных
         $emails = [
             'test@example.com',
             'invalid-email',
@@ -28,14 +27,11 @@ class EmailValidationIntegrationTest extends TestCase
 
         $validationResults = $this->validator->verifyEmails($emails);
 
-        // Проверка результатов валидации
         $this->assertCount(3, $validationResults);
         $this->assertInstanceOf(ValidationResult::class, $validationResults[0]);
 
-        // Шаг 2: Форматирование результатов
         $formattedOutput = $this->validator->verifyEmails($emails, true);
 
-        // Проверка форматированного вывода
         $this->assertStringContainsString('test@example.com', $formattedOutput);
         $this->assertStringContainsString('invalid-email', $formattedOutput);
         $this->assertStringContainsString('another@test.com', $formattedOutput);

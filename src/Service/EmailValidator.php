@@ -6,6 +6,8 @@ namespace Dinargab\Homework5\Service;
 
 use Dinargab\Homework5\Result\ValidationResult;
 use Dinargab\Homework5\Result\ResultInterface;
+use Dinargab\Homework5\Service\DnsChecker\DefaultDnsChecker;
+use Dinargab\Homework5\Service\DnsChecker\DnsCheckerInterface;
 
 class EmailValidator
 {
@@ -16,9 +18,14 @@ class EmailValidator
     private const EMAIL_MAX_LENGTH = 254;
 
     private FormatterInterface $formatter;
+    private DnsCheckerInterface $dnsChecker;
 
-    public function __construct() {
-        $this->formatter = new EmailResultFormatter();
+    public function __construct(
+        ?FormatterInterface $formatter = null,
+        ?DnsCheckerInterface $dnsChecker = null
+    ) {
+        $this->formatter = $formatter ?? new EmailResultFormatter();
+        $this->dnsChecker = $dnsChecker ?? new DefaultDnsChecker();
     }
 
     /**
@@ -60,7 +67,7 @@ class EmailValidator
     {
         $emailParts = explode("@", $email);
         $domain = $emailParts[1];
-        return checkdnsrr($domain, "MX");
+        return $this->dnsChecker->hasMxRecords($domain);
     }
 
     /**
