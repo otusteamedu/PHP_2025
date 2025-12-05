@@ -1,0 +1,63 @@
+services:
+  #контейнер с nginx
+  php_course_nginx:
+    image: nginx
+    container_name: 'php_course_nginx'
+    # открываем порт веб-сервера к нам на хостовую машину из контейнера (порт_хоста:порт_в_контейнере)
+    ports:
+      - "80:80"
+    volumes:
+      - ./code:/var/www/php_course
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/logs:/var/log/nginx:delegated
+
+    working_dir: /var/www/php_course
+
+    # дождёмся сборки и запуска контейнеров с php-fpm
+    depends_on:
+      - php_course_php_fpm1
+      - php_course_php_fpm2
+      - php_course_php_fpm3
+    networks:
+      - php_course_network
+
+  #Контейнер 1 с PHP-FPM
+  php_course_php_fpm1:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    container_name: 'php_course_php_fpm1' # имя контейнера после запуска
+    volumes:
+      - ./code:/var/www/php_course
+
+    # мы можем создать для контейнеров внутреннюю сеть, чтобы они могли "общаться" друг с другом
+    # отдельной изолированной сети
+    networks:
+      - php_course_network
+
+  #Контейнер 2 с PHP-FPM
+  php_course_php_fpm2:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    container_name: 'php_course_php_fpm2'
+    volumes:
+      - ./code:/var/www/php_course
+    networks:
+      - php_course_network
+
+  #Контейнер 3 с PHP-FPM
+  php_course_php_fpm3:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    container_name: 'php_course_php_fpm3'
+    volumes:
+      - ./code:/var/www/php_course
+    networks:
+      - php_course_network
+
+#Docker Networks
+networks:
+  php_course_network:
+    driver: bridge
