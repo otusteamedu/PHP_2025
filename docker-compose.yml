@@ -1,0 +1,87 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx-hw5
+    ports:
+      - "8000:80"
+      - "443:443"
+    volumes:
+      - ./code:/data/webserver
+      - ./nginx/logs:/var/log/nginx:delegated
+
+    working_dir: /var/www/webserver
+
+    networks:
+      - app5-network
+    depends_on:
+      - php-fpm
+      - php-fpm2
+      - php-fpm3
+
+  php-fpm:
+    container_name: php-fpm
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
+    volumes:
+      - ./code:/data/webserver
+    networks:
+      - app5-network
+
+  php-fpm2:
+    container_name: php-fpm2
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
+    volumes:
+      - ./code:/data/webserver
+    networks:
+      - app5-network
+
+  php-fpm3:
+    container_name: php-fpm3
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
+    volumes:
+      - ./code:/data/webserver
+    networks:
+      - app5-network
+
+  db:
+    image: mysql:8.4.0
+    container_name: mysql-server
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./dbdata:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - app5-network
+
+  redis:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: redis:alpine
+    container_name: redis-server
+    volumes:
+      - ./redis/data:/data
+    networks:
+      - app5-network
+
+networks:
+  app5-network:
+    driver: bridge
+volumes:
+  php-sock:
