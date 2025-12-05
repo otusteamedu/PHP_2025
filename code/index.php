@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+session_start();
+$_SESSION['visits'] = ($_SESSION['visits'] ?? 0) + 1;
+$_SESSION['last_visit_at'] = $_SESSION['last_visit_at'] ?? date('c');
+$_SESSION['container'] = $_SERVER['HOSTNAME'] ?? '-';
+
 function isValidParentheses(string $s): bool {
     $balance = 0;
     $len = strlen($s);
@@ -15,6 +20,7 @@ function isValidParentheses(string $s): bool {
                 return false;
             }
         } else {
+            $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
             continue;
         }
     }
@@ -37,7 +43,7 @@ if ($method === 'POST') {
     }
 
     $input = (string)$_POST['string'];
-
+            
     if (trim($input) === '') {
         respondError(400, 'В параметре string отсутствует значение.');
     }
@@ -50,4 +56,8 @@ if ($method === 'POST') {
 }
 
 http_response_code(200);
-echo 'Всё хорошо. Контейнер: ' . ($_SERVER['HOSTNAME'] ?? '-');
+echo 'Всё хорошо. Контейнер: ' . ($_SERVER['HOSTNAME'] ?? '-') . PHP_EOL;
+
+
+echo 'PHPSESSID: ' . (session_id() ?: '-') . PHP_EOL;
+echo 'SESSION: ' . json_encode($_SESSION, JSON_UNESCAPED_UNICODE) . PHP_EOL;

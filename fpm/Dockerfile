@@ -3,6 +3,10 @@ FROM php:8.2-fpm
 #   устанавливаем nano для удобства просмотра конфигов
 RUN apt-get update && apt-get install nano -y
 
+#   Устанавливаем расширение Redis через PECL и включаем его
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
 #   пример установки дополнительных библиотек и модулей
 #   в текущем виде - необязательно, но иметь в виду нужно
 #RUN apt-get install -y \
@@ -27,4 +31,4 @@ RUN apt-get update && apt-get install nano -y
 #        docker-php-ext-enable memcached
 
 #   копируем дополнительные настройки php при необходимости, например, настройки memcached
-#COPY ./php.ini /usr/local/etc/php/conf.d/php-custom.ini
+COPY ./php.ini /usr/local/etc/php/conf.d/php-custom.ini

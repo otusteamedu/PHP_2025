@@ -34,6 +34,8 @@ services:
     # отдельной изолированной сети
     networks:
       - php_course_network
+    depends_on:
+      - redis
 
   #Контейнер 2 с PHP-FPM
   php_course_php_fpm2:
@@ -45,6 +47,8 @@ services:
       - ./code:/var/www/php_course
     networks:
       - php_course_network
+    depends_on:
+      - redis
 
   #Контейнер 3 с PHP-FPM
   php_course_php_fpm3:
@@ -56,8 +60,23 @@ services:
       - ./code:/var/www/php_course
     networks:
       - php_course_network
+    depends_on:
+      - redis
+
+  #Контейнер с Redis
+  redis:
+    image: redis:7-alpine
+    container_name: php_course_redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    networks:
+      - php_course_network
 
 #Docker Networks
 networks:
   php_course_network:
     driver: bridge
+
+volumes:
+  redis-data:
