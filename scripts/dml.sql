@@ -3,20 +3,20 @@ values (1, 'A'),
        (2, 'B'),
        (3, 'C');
 
+insert into public.hall_seats (id, hall_id, row, col, number, seat_type)
+values (1, 1, 1, 1, 'A1', 'seat'),
+       (2, 1, 1, 2, 'A2', 'seat'),
+       (3, 1, 1, 3, 'A3', 'seat'),
+       (4, 2, 1, 1, 'B1', 'seat'),
+       (5, 2, 1, 2, 'B2', 'seat'),
+       (6, 3, 1, 1, 'C1', 'seat');
+
 insert into public.movies (id, title)
 values (1, 'A'),
        (2, 'B'),
        (3, 'C'),
        (4, 'ABC'),
        (5, 'AC');
-
-insert into public.places (id, number, hall_id)
-values (1, 'A1', 1),
-       (2, 'A2', 1),
-       (3, 'A3', 1),
-       (4, 'B1', 2),
-       (5, 'B2', 2),
-       (6, 'C1', 3);
 
 insert into public.seances (id, begin_at, end_at, hall_id, movie_id, price)
 values (1, '2025-11-25 12:00:00.000000', '2025-11-25 13:00:00.000000', 1, 1, 100),
@@ -28,12 +28,12 @@ values (1, '2025-11-25 12:00:00.000000', '2025-11-25 13:00:00.000000', 1, 1, 100
        (7, '2025-11-25 21:00:00.000000', '2025-11-25 22:00:00.000000', 1, 5, 300),
        (8, '2025-11-25 22:00:00.000000', '2025-11-25 23:00:00.000000', 3, 5, 300);
 
-insert into public.tickets (id, price, place_id, seance_id, hall_id)
-values (1, 100, 1, 1, 1),
-       (2, 200, 2, 4, 1),
-       (3, 300, 3, 7, 1),
-       (4, 100, 4, 2, 2),
-       (5, 200, 5, 5, 2),
-       (6, 100, 6, 3, 3),
-       (7, 200, 6, 6, 3),
-       (8, 300, 6, 8, 3);
+insert into public.tickets (id, price, hall_seat_id, seance_id)
+values (1, 100, 1, 1),
+       (2, 200, 2, 4),
+       (3, 300, 3, 7),
+       (4, 100, 4, 2),
+       (5, 200, 5, 5),
+       (6, 100, 6, 3),
+       (7, 200, 6, 6),
+       (8, 300, 6, 8);

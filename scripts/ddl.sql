@@ -6,6 +6,29 @@ create table public.halls
     title varchar not null
 );
 
+create table public.hall_seats
+(
+    id        bigserial
+        constraint hall_seats_pk
+            primary key,
+    hall_id   bigint  not null
+        constraint hall_seats_halls_id_fk
+            references public.halls,
+    number    varchar,
+    row       integer not null,
+    col       integer not null,
+    seat_type varchar not null
+);
+
+create index hall_seats_hall_id_index
+    on public.hall_seats (hall_id);
+
+create unique index hall_seats_hall_id_row_col_uindex
+    on public.hall_seats (hall_id, row, col);
+
+create unique index hall_seats_hall_id_number_uindex
+    on public.hall_seats (hall_id, number);
+
 create table public.movies
 (
     id    bigserial
@@ -41,39 +64,25 @@ create index seances_hall_id_index
 create index seances_movie_id_index
     on public.seances (movie_id);
 
-create unique index seances_id_hall_id_uindex
-    on public.seances (id, hall_id);
-
-create table public.places
-(
-    id      bigserial
-        constraint places_pk
-            primary key,
-    number  varchar not null,
-    hall_id bigint  not null
-        constraint places_halls_id_fk
-            references public.halls
-);
-
-create index places_hall_id_index
-    on public.places (hall_id);
-
-create unique index places_hall_id_number_uindex
-    on public.places (hall_id, number);
-
-create unique index places_id_hall_id_uindex
-    on public.places (id, hall_id);
-
 create table public.tickets
 (
-    id        bigserial
-        primary key,
-    price     integer not null,
-    place_id  bigint  not null,
-    seance_id bigint  not null,
-    hall_id   bigint  not null
-        references public.halls,
-    unique (place_id, seance_id),
-    foreign key (place_id, hall_id) references public.places (id, hall_id),
-    foreign key (seance_id, hall_id) references public.seances (id, hall_id)
+    id           bigserial
+        constraint tickets_pk
+            primary key,
+    price        integer not null,
+    seance_id    bigint  not null
+        constraint tickets_seances_id_fk
+            references public.seances,
+    hall_seat_id bigint  not null
+        constraint tickets_hall_seats_id_fk
+            references public.hall_seats
 );
+
+create index tickets_hall_seat_id_index
+    on public.tickets (hall_seat_id);
+
+create unique index tickets_seance_id_hall_seat_id_uindex
+    on public.tickets (seance_id, hall_seat_id);
+
+create index tickets_seance_id_index
+    on public.tickets (seance_id);
