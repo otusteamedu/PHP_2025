@@ -18,7 +18,7 @@ CREATE TABLE seance (
                         id SERIAL PRIMARY KEY,
                         film_id INT NOT NULL REFERENCES film(id) ON DELETE CASCADE,
                         hall_id INT NOT NULL REFERENCES hall(id) ON DELETE CASCADE,
-                        price FLOAT NOT NULL,
+                        price DECIMAL(10,2) NOT NULL,
                         seance_time TIMESTAMP NOT NULL
 );
 
