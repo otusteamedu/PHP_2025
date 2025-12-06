@@ -3,7 +3,7 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Arlex2305k\\EmailsVerifier\\": "src/"
+            "Arlex2305k\\MergeLists\\": "src/"
         }
     },
     "require": {
