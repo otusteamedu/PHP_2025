@@ -3,11 +3,6 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\Controller\EmailVerificationController;
-use App\Http\Request;
+use App\Application;
 
-$request = Request::fromGlobals();
-$controller = EmailVerificationController::create();
-
-$response = $controller->handle($request);
-$response->send();
+Application::create()->run();

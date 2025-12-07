@@ -52,17 +52,22 @@ class Response
     }
 
     /**
-     * @return never
+     * @return void
      */
-    public function send(): never
+    public function sendHeaders(): void
     {
         http_response_code($this->status);
 
         foreach ($this->headers as $name => $value) {
             header("$name: $value");
         }
+    }
 
-        echo $this->content;
-        exit;
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->content;
     }
 }
