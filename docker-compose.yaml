@@ -70,7 +70,10 @@ services:
     networks:
       - php_course_network
     depends_on:
-      - redis
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-init
 
   # Контейнер 2 с PHP-FPM
   php_fpm_2:
@@ -83,7 +86,10 @@ services:
     networks:
       - php_course_network
     depends_on:
-      - redis
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-init
 
   # Контейнер 3 с PHP-FPM
   php_fpm_3:
@@ -96,16 +102,115 @@ services:
     networks:
       - php_course_network
     depends_on:
-      - redis
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-init
 
-  #Контейнер с Redis
-  redis:
+  #Контейнеры с Redis
+  redis-1:
     image: redis:7-alpine
-    container_name: php_course_redis    
+    container_name: redis-1
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --save
+      - "60 1000"
+      - --save
+      - "300 10"
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - /data/nodes.conf
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
     volumes:
-      - redis-data:/data
+      - ./redis-data/node1:/data
     networks:
       - php_course_network
+  redis-2:
+    image: redis:7-alpine
+    container_name: redis-2
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --save
+      - "60 1000"
+      - --save
+      - "300 10"
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - /data/nodes.conf
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    volumes:
+      - ./redis-data/node2:/data
+    networks:
+      - php_course_network
+  redis-3:
+    image: redis:7-alpine
+    container_name: redis-3
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --save
+      - "60 1000"
+      - --save
+      - "300 10"
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - /data/nodes.conf
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    volumes:
+      - ./redis-data/node3:/data
+    networks:
+      - php_course_network  
+
+  # Одноразовая инициализация Redis Cluster (распределение слотов)
+  redis-init:
+    image: redis:7-alpine
+    container_name: redis-init
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+    networks:
+      - php_course_network
+    restart: on-failure
+    command: >-
+      sh -c "
+        set -e;
+        echo 'Waiting for Redis nodes...';
+        until redis-cli -h redis-1 -p 6379 ping | grep -q PONG; do sleep 1; done;
+        until redis-cli -h redis-2 -p 6379 ping | grep -q PONG; do sleep 1; done;
+        until redis-cli -h redis-3 -p 6379 ping | grep -q PONG; do sleep 1; done;
+        if redis-cli -c -h redis-1 -p 6379 cluster info 2>/dev/null | grep -q 'cluster_state:ok'; then
+          echo 'Cluster already initialized';
+          exit 0;
+        fi;
+        echo 'Creating Redis Cluster (3 masters, no replicas)...';
+        yes yes | redis-cli --cluster create redis-1:6379 redis-2:6379 redis-3:6379 --cluster-replicas 0;
+        echo 'Cluster info:';
+        redis-cli -c -h redis-1 -p 6379 cluster info;
+      "
 
 #Docker Networks
 networks:

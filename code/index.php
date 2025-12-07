@@ -2,10 +2,57 @@
 
 declare(strict_types=1);
 
-session_start();
+if (!startSessionSafe()) {
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo 'Сервис Redis временно недоступен.';
+    exit;
+}
+
 $_SESSION['visits'] = ($_SESSION['visits'] ?? 0) + 1;
 $_SESSION['last_visit_at'] = $_SESSION['last_visit_at'] ?? date('c');
 $_SESSION['container'] = $_SERVER['HOSTNAME'] ?? '-';
+
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+header('Content-Type: text/plain; charset=utf-8');
+
+if ($method === 'POST') {
+    if (!array_key_exists('string', $_POST)) {
+        respondError(400, 'Отсутствует обязательный параметр string');
+    }
+
+    $input = (string)$_POST['string'];
+            
+    if (trim($input) === '') {
+        respondError(400, 'В параметре string отсутствует значение.');
+    }
+
+    if (preg_match('/[()]/', $input)) {
+        if (!isValidParentheses($input)) {
+            respondError(400, 'Невалидное значение. Количество открытых и закрытых скобок не совпадает.');
+        }
+    }
+}
+
+http_response_code(200);
+echo 'Всё хорошо. Контейнер: ' . ($_SERVER['HOSTNAME'] ?? '-') . PHP_EOL;
+echo 'PHPSESSID: ' . (session_id() ?: '-') . PHP_EOL;
+echo 'SESSION: ' . json_encode($_SESSION, JSON_UNESCAPED_UNICODE) . PHP_EOL;
+
+
+// Безопасный старт сессии с повторными попытками при временных сбоях Redis
+function startSessionSafe(int $maxAttempts = 3, int $retryDelayMs = 100): bool {
+    for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+        if (@session_start()) {
+            return true;
+        }
+        if ($attempt < $maxAttempts) {
+            usleep($retryDelayMs * 1000);
+        }
+    }
+    return false;
+}
 
 function isValidParentheses(string $s): bool {
     $balance = 0;
@@ -32,32 +79,3 @@ function respondError(int $code, string $message): void {
     echo $message;
     exit;
 }
-
-$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-
-header('Content-Type: text/plain; charset=utf-8');
-
-if ($method === 'POST') {
-    if (!array_key_exists('string', $_POST)) {
-        respondError(400, 'Отсутствует обязательный параметр string');
-    }
-
-    $input = (string)$_POST['string'];
-            
-    if (trim($input) === '') {
-        respondError(400, 'В параметре string отсутствует значение.');
-    }
-
-    if (preg_match('/[()]/', $input)) {
-        if (!isValidParentheses($input)) {
-            respondError(400, 'Невалидное значение. Количество открытых и закрытых скобок не совпадает.');
-        }
-    }
-}
-
-http_response_code(200);
-echo 'Всё хорошо. Контейнер: ' . ($_SERVER['HOSTNAME'] ?? '-') . PHP_EOL;
-
-
-echo 'PHPSESSID: ' . (session_id() ?: '-') . PHP_EOL;
-echo 'SESSION: ' . json_encode($_SESSION, JSON_UNESCAPED_UNICODE) . PHP_EOL;
