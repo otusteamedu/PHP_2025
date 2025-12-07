@@ -13,8 +13,8 @@ class ListNode {
 class Solution {
     function mergeTwoLists(ListNode|null $list1, ListNode|null $list2): ListNode|null
     {
-        if (!$list1) return $list2;
-        if (!$list2) return $list1;
+        if (is_null($list1)) return $list2;
+        if (is_null($list2)) return $list1;
 
         if($list1->val > $list2->val) {
             return $this->getHeadMergedLists($list2, $list1);
