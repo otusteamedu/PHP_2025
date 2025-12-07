@@ -27,6 +27,20 @@ class Solution {
     {
         $resultNode = $mainListNode;
 
+        if ($this->isLastNode($mainListNode)) {
+            $this->attachOtherListToMain($otherListNode, $mainListNode);
+            return $resultNode;
+        }
+
         return $resultNode;
+    }
+    function isLastNode(ListNode $node): bool
+    {
+        return is_null($node->next);
+    }
+
+    function attachOtherListToMain(ListNode $otherListNode, ListNode &$mainListNode): void
+    {
+        $mainListNode->next = $otherListNode;
     }
 }
