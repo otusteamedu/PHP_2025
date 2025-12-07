@@ -1,3 +1,3 @@
-# PHP_2025
+# HW7
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Линейная рекурсия со сложностью O(n + m)
