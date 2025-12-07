@@ -9,6 +9,6 @@ INSERT INTO seance (film_id, hall_id, price, seance_time) VALUES (1, 1, 200.00, 
 INSERT INTO seance (film_id, hall_id, price, seance_time) VALUES (2, 2, 150.00, '2025-12-05 18:30');
 INSERT INTO seance (film_id, hall_id, price, seance_time) VALUES (3, 1, 200.00, '2025-12-06 19:00');
 
-INSERT INTO ticket (seance_id, row, seat, status) VALUES (1, 2, 3, 'sold');
-INSERT INTO ticket (seance_id, row, seat, status) VALUES (1, 2, 4, 'sold');
-INSERT INTO ticket (seance_id, row, seat, status) VALUES (2, 1, 1, 'sold');
+INSERT INTO ticket (seance_id, row, seat, status) VALUES (1, 2, 3, 'sold', 200.00);
+INSERT INTO ticket (seance_id, row, seat, status) VALUES (1, 2, 4, 'sold', 200.00);
+INSERT INTO ticket (seance_id, row, seat, status) VALUES (2, 1, 1, 'sold', 150.00);

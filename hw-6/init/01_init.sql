@@ -29,5 +29,6 @@ CREATE TABLE ticket (
                         row SMALLINT NOT NULL,
                         seat SMALLINT NOT NULL,
                         status VARCHAR(10) NOT NULL DEFAULT 'free',
+                        price DECIMAL(10,2) NOT NULL,
                         CONSTRAINT unique_seat_per_seance UNIQUE(seance_id, row, seat)
 );
