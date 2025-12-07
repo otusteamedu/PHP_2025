@@ -32,6 +32,14 @@ class Solution {
             return $resultNode;
         }
 
+        $otherListNodeIsLast = $this->isLastNode($otherListNode);
+
+        if ($otherListNodeIsLast &&
+            $mainListNode->val <= $otherListNode->val) {
+            $this->insertNodeToList($otherListNode, $mainListNode);
+            return $resultNode;
+        }
+
         return $resultNode;
     }
     function isLastNode(ListNode $node): bool
@@ -42,5 +50,12 @@ class Solution {
     function attachOtherListToMain(ListNode $otherListNode, ListNode &$mainListNode): void
     {
         $mainListNode->next = $otherListNode;
+    }
+
+    function insertNodeToList(ListNode $node, ListNode &$mainListNode): void
+    {
+        $nextMainNode = $mainListNode->next;
+        $node->next = $nextMainNode;
+        $mainListNode->next = $node;
     }
 }
