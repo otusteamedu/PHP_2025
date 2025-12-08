@@ -1,0 +1,274 @@
+==================== ОРИГИНАЛЬНЫЕ ЗАПРОСЫ ====================
+==== 1. Выбор всех фильмов на сегодня ====
+План выполнения                                                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------
+Hash Join  (cost=317.17..1044.70 rows=500 width=22) (actual time=1.583..4.823 rows=3256 loops=1)                                        
+  Hash Cond: (s.movie_id = m.id)                                                                                                        
+  ->  Bitmap Heap Scan on session s  (cost=8.17..734.38 rows=500 width=4) (actual time=0.162..2.786 rows=3256 loops=1)                  
+        Recheck Cond: (date(start_time) = CURRENT_DATE)                                                                                 
+        Heap Blocks: exact=758                                                                                                          
+        ->  Bitmap Index Scan on idx_session_start_time  (cost=0.00..8.05 rows=500 width=0) (actual time=0.100..0.100 rows=3256 loops=1)
+              Index Cond: (date(start_time) = CURRENT_DATE)                                                                             
+  ->  Hash  (cost=184.00..184.00 rows=10000 width=26) (actual time=1.366..1.367 rows=10000 loops=1)                                     
+        Buckets: 16384  Batches: 1  Memory Usage: 714kB                                                                                 
+        ->  Seq Scan on movie m  (cost=0.00..184.00 rows=10000 width=26) (actual time=0.007..0.469 rows=10000 loops=1)                  
+Planning Time: 0.489 ms                                                                                                                 
+Execution Time: 4.934 ms                                                                                                                
+
+==== 2. Подсчёт проданных билетов за неделю ====
+План выполнения                                                                                                                       
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Aggregate  (cost=29485.40..29485.41 rows=1 width=8) (actual time=40.889..40.891 rows=1 loops=1)                                                     
+  ->  Nested Loop  (cost=100.66..28637.40 rows=339202 width=0) (actual time=0.238..34.068 rows=323312 loops=1)                                      
+        ->  Bitmap Heap Scan on session s  (cost=100.22..1028.11 rows=7017 width=4) (actual time=0.221..1.837 rows=6674 loops=1)                    
+              Recheck Cond: ((start_time >= (now() - '7 days'::interval)) AND (start_time <= now()))                                                
+              Heap Blocks: exact=770                                                                                                                
+              ->  Bitmap Index Scan on idx_session_time_range  (cost=0.00..98.47 rows=7017 width=0) (actual time=0.153..0.154 rows=6674 loops=1)    
+                    Index Cond: ((start_time >= (now() - '7 days'::interval)) AND (start_time <= now()))                                            
+        ->  Index Only Scan using idx_ticket_session_id on ticket t  (cost=0.43..3.45 rows=48 width=4) (actual time=0.002..0.003 rows=48 loops=6674)
+              Index Cond: (session_id = s.id)                                                                                                       
+              Heap Fetches: 0                                                                                                                       
+Planning Time: 0.456 ms                                                                                                                             
+Execution Time: 40.931 ms                                                                                                                           
+
+==== 3. Формирование афиши (фильмы, которые показывают сегодня) ====
+План выполнения                                                                                                                 
+----------------------------------------------------------------------------------------------------------------------------------------------
+HashAggregate  (cost=1045.95..1050.95 rows=500 width=22) (actual time=3.672..3.825 rows=2749 loops=1)                                         
+  Group Key: m.title                                                                                                                          
+  Batches: 1  Memory Usage: 369kB                                                                                                             
+  ->  Hash Join  (cost=317.17..1044.70 rows=500 width=22) (actual time=1.605..3.125 rows=3256 loops=1)                                        
+        Hash Cond: (s.movie_id = m.id)                                                                                                        
+        ->  Bitmap Heap Scan on session s  (cost=8.17..734.38 rows=500 width=4) (actual time=0.138..1.249 rows=3256 loops=1)                  
+              Recheck Cond: (date(start_time) = CURRENT_DATE)                                                                                 
+              Heap Blocks: exact=758                                                                                                          
+              ->  Bitmap Index Scan on idx_session_start_time  (cost=0.00..8.05 rows=500 width=0) (actual time=0.084..0.084 rows=3256 loops=1)
+                    Index Cond: (date(start_time) = CURRENT_DATE)                                                                             
+        ->  Hash  (cost=184.00..184.00 rows=10000 width=26) (actual time=1.416..1.416 rows=10000 loops=1)                                     
+              Buckets: 16384  Batches: 1  Memory Usage: 714kB                                                                                 
+              ->  Seq Scan on movie m  (cost=0.00..184.00 rows=10000 width=26) (actual time=0.005..0.484 rows=10000 loops=1)                  
+Planning Time: 0.191 ms                                                                                                                       
+Execution Time: 3.958 ms                                                                                                                      
+
+==== 4. Поиск 3 самых прибыльных фильмов за неделю ====
+План выполнения                                                                                                                                      
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Limit  (cost=39223.09..39223.10 rows=3 width=54) (actual time=96.135..96.139 rows=3 loops=1)                                                                       
+  ->  Sort  (cost=39223.09..39248.09 rows=10000 width=54) (actual time=96.133..96.136 rows=3 loops=1)                                                              
+        Sort Key: (sum(t.price)) DESC                                                                                                                              
+        Sort Method: top-N heapsort  Memory: 25kB                                                                                                                  
+        ->  HashAggregate  (cost=38968.84..39093.84 rows=10000 width=54) (actual time=94.327..95.731 rows=4854 loops=1)                                            
+              Group Key: m.title                                                                                                                                   
+              Batches: 1  Memory Usage: 2449kB                                                                                                                     
+              ->  Nested Loop  (cost=409.66..37272.83 rows=339202 width=27) (actual time=1.491..57.362 rows=323312 loops=1)                                        
+                    ->  Hash Join  (cost=409.22..1355.54 rows=7017 width=26) (actual time=1.479..5.426 rows=6674 loops=1)                                          
+                          Hash Cond: (s.movie_id = m.id)                                                                                                           
+                          ->  Bitmap Heap Scan on session s  (cost=100.22..1028.11 rows=7017 width=8) (actual time=0.172..2.011 rows=6674 loops=1)                 
+                                Recheck Cond: ((start_time >= (now() - '7 days'::interval)) AND (start_time <= now()))                                             
+                                Heap Blocks: exact=770                                                                                                             
+                                ->  Bitmap Index Scan on idx_session_time_range  (cost=0.00..98.47 rows=7017 width=0) (actual time=0.120..0.120 rows=6674 loops=1) 
+                                      Index Cond: ((start_time >= (now() - '7 days'::interval)) AND (start_time <= now()))                                         
+                          ->  Hash  (cost=184.00..184.00 rows=10000 width=26) (actual time=1.272..1.273 rows=10000 loops=1)                                        
+                                Buckets: 16384  Batches: 1  Memory Usage: 714kB                                                                                    
+                                ->  Seq Scan on movie m  (cost=0.00..184.00 rows=10000 width=26) (actual time=0.003..0.440 rows=10000 loops=1)                     
+                    ->  Index Only Scan using idx_ticket_session_price on ticket t  (cost=0.43..4.64 rows=48 width=9) (actual time=0.003..0.006 rows=48 loops=6674)
+                          Index Cond: (session_id = s.id)                                                                                                          
+                          Heap Fetches: 0                                                                                                                          
+Planning Time: 0.257 ms                                                                                                                                            
+Execution Time: 96.393 ms                                                                                                                                          
+
+==== 5. Сформировать схему зала и показать на ней свободные и занятые места на конкретный сеанс ====
+План выполнения                                                                                                             
+------------------------------------------------------------------------------------------------------------------------------------------
+Sort  (cost=240.22..240.25 rows=10 width=46) (actual time=0.019..0.019 rows=0 loops=1)                                                    
+  Sort Key: s.row_number, s.seat_number                                                                                                   
+  Sort Method: quicksort  Memory: 25kB                                                                                                    
+  InitPlan 1                                                                                                                              
+    ->  Index Scan using session_pkey on session  (cost=0.29..8.31 rows=1 width=4) (actual time=0.004..0.004 rows=0 loops=1)              
+          Index Cond: (id = 1)                                                                                                            
+  ->  Hash Right Join  (cost=44.31..231.75 rows=10 width=46) (actual time=0.010..0.010 rows=0 loops=1)                                    
+        Hash Cond: (t.seat_id = s.id)                                                                                                     
+        ->  Bitmap Heap Scan on ticket t  (cost=4.80..192.11 rows=48 width=8) (never executed)                                            
+              Recheck Cond: (session_id = 1)                                                                                              
+              ->  Bitmap Index Scan on idx_ticket_session_price  (cost=0.00..4.79 rows=48 width=0) (never executed)                       
+                    Index Cond: (session_id = 1)                                                                                          
+        ->  Hash  (cost=39.38..39.38 rows=10 width=18) (actual time=0.008..0.008 rows=0 loops=1)                                          
+              Buckets: 1024  Batches: 1  Memory Usage: 8kB                                                                                
+              ->  Bitmap Heap Scan on seat s  (cost=4.37..39.38 rows=10 width=18) (actual time=0.008..0.008 rows=0 loops=1)               
+                    Recheck Cond: (hall_id = (InitPlan 1).col1)                                                                           
+                    ->  Bitmap Index Scan on idx_seat_hall_id  (cost=0.00..4.37 rows=10 width=0) (actual time=0.006..0.006 rows=0 loops=1)
+                          Index Cond: (hall_id = (InitPlan 1).col1)                                                                       
+Planning Time: 0.256 ms                                                                                                                   
+Execution Time: 0.036 ms                                                                                                                  
+
+==== 6. Вывести диапазон минимальной и максимальной цены за билет на конкретный сеанс ====
+План выполнения                                                                                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Result  (cost=1.07..1.08 rows=1 width=64) (actual time=0.006..0.006 rows=1 loops=1)                                                                                  
+  InitPlan 1                                                                                                                                                         
+    ->  Limit  (cost=0.43..0.53 rows=1 width=5) (actual time=0.004..0.004 rows=0 loops=1)                                                                            
+          ->  Index Only Scan using idx_ticket_session_price on ticket  (cost=0.43..5.27 rows=48 width=5) (actual time=0.004..0.004 rows=0 loops=1)                  
+                Index Cond: (session_id = 1)                                                                                                                         
+                Heap Fetches: 0                                                                                                                                      
+  InitPlan 2                                                                                                                                                         
+    ->  Limit  (cost=0.43..0.53 rows=1 width=5) (actual time=0.001..0.001 rows=0 loops=1)                                                                            
+          ->  Index Only Scan Backward using idx_ticket_session_price on ticket ticket_1  (cost=0.43..5.27 rows=48 width=5) (actual time=0.001..0.001 rows=0 loops=1)
+                Index Cond: (session_id = 1)                                                                                                                         
+                Heap Fetches: 0                                                                                                                                      
+Planning Time: 0.084 ms                                                                                                                                              
+Execution Time: 0.014 ms                                                                                                                                             
+
+==================== ОПТИМИЗИРОВАННЫЕ ЗАПРОСЫ ====================
+==== 1. Выбор всех фильмов на сегодня (оптимизированный) ====
+План выполнения                                                                                                             
+------------------------------------------------------------------------------------------------------------------------------------------
+Hash Join  (cost=350.07..1190.60 rows=2807 width=22) (actual time=1.220..2.517 rows=3256 loops=1)                                         
+  Hash Cond: (s.movie_id = m.id)                                                                                                          
+  ->  Bitmap Heap Scan on session s  (cost=41.07..874.23 rows=2807 width=4) (actual time=0.126..1.086 rows=3256 loops=1)                  
+        Recheck Cond: ((start_time >= CURRENT_DATE) AND (start_time < (CURRENT_DATE + '1 day'::interval)))                                
+        Heap Blocks: exact=758                                                                                                            
+        ->  Bitmap Index Scan on idx_session_time_range  (cost=0.00..40.37 rows=2807 width=0) (actual time=0.074..0.075 rows=3256 loops=1)
+              Index Cond: ((start_time >= CURRENT_DATE) AND (start_time < (CURRENT_DATE + '1 day'::interval)))                            
+  ->  Hash  (cost=184.00..184.00 rows=10000 width=26) (actual time=1.085..1.085 rows=10000 loops=1)                                       
+        Buckets: 16384  Batches: 1  Memory Usage: 714kB                                                                                   
+        ->  Seq Scan on movie m  (cost=0.00..184.00 rows=10000 width=26) (actual time=0.004..0.407 rows=10000 loops=1)                    
+Planning Time: 0.103 ms                                                                                                                   
+Execution Time: 2.571 ms                                                                                                                  
+
+==== 2. Подсчёт проданных билетов за неделю (оптимизированный) ====
+План выполнения                                                                                                                       
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Aggregate  (cost=29485.40..29485.41 rows=1 width=8) (actual time=37.014..37.015 rows=1 loops=1)                                                     
+  ->  Nested Loop  (cost=100.66..28637.40 rows=339202 width=0) (actual time=0.164..30.433 rows=323312 loops=1)                                      
+        ->  Bitmap Heap Scan on session s  (cost=100.22..1028.11 rows=7017 width=4) (actual time=0.159..1.435 rows=6674 loops=1)                    
+              Recheck Cond: ((start_time >= (now() - '7 days'::interval)) AND (start_time <= now()))                                                
+              Heap Blocks: exact=770                                                                                                                
+              ->  Bitmap Index Scan on idx_session_time_range  (cost=0.00..98.47 rows=7017 width=0) (actual time=0.107..0.107 rows=6674 loops=1)    
+                    Index Cond: ((start_time >= (now() - '7 days'::interval)) AND (start_time <= now()))                                            
+        ->  Index Only Scan using idx_ticket_session_id on ticket t  (cost=0.43..3.45 rows=48 width=4) (actual time=0.001..0.003 rows=48 loops=6674)
+              Index Cond: (session_id = s.id)                                                                                                       
+              Heap Fetches: 0                                                                                                                       
+Planning Time: 0.124 ms                                                                                                                             
+Execution Time: 37.030 ms                                                                                                                           
+
+==== 3. Формирование афиши (оптимизированный) ====
+План выполнения                                                                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Hash Join  (cost=936.87..1178.34 rows=2807 width=22) (actual time=1.426..2.236 rows=2749 loops=1)                                                     
+  Hash Cond: (m.id = s.movie_id)                                                                                                                      
+  ->  Seq Scan on movie m  (cost=0.00..184.00 rows=10000 width=26) (actual time=0.003..0.268 rows=10000 loops=1)                                      
+  ->  Hash  (cost=905.97..905.97 rows=2472 width=4) (actual time=1.418..1.419 rows=2749 loops=1)                                                      
+        Buckets: 4096  Batches: 1  Memory Usage: 129kB                                                                                                
+        ->  HashAggregate  (cost=881.25..905.97 rows=2472 width=4) (actual time=1.189..1.302 rows=2749 loops=1)                                       
+              Group Key: s.movie_id                                                                                                                   
+              Batches: 1  Memory Usage: 241kB                                                                                                         
+              ->  Bitmap Heap Scan on session s  (cost=41.07..874.23 rows=2807 width=4) (actual time=0.120..0.938 rows=3256 loops=1)                  
+                    Recheck Cond: ((start_time >= CURRENT_DATE) AND (start_time < (CURRENT_DATE + '1 day'::interval)))                                
+                    Heap Blocks: exact=758                                                                                                            
+                    ->  Bitmap Index Scan on idx_session_time_range  (cost=0.00..40.37 rows=2807 width=0) (actual time=0.065..0.065 rows=3256 loops=1)
+                          Index Cond: ((start_time >= CURRENT_DATE) AND (start_time < (CURRENT_DATE + '1 day'::interval)))                            
+Planning Time: 0.130 ms                                                                                                                               
+Execution Time: 2.295 ms                                                                                                                              
+
+==== 4. Поиск 3 самых прибыльных фильмов за неделю (оптимизированный) ====
+План выполнения                                                                                                                                                 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Limit  (cost=22948.45..22948.46 rows=3 width=54) (actual time=97.738..97.745 rows=3 loops=1)                                                                                  
+  ->  Sort  (cost=22948.45..22973.45 rows=10000 width=54) (actual time=97.736..97.743 rows=3 loops=1)                                                                         
+        Sort Key: (sum(t.price)) DESC                                                                                                                                         
+        Sort Method: top-N heapsort  Memory: 25kB                                                                                                                             
+        ->  HashAggregate  (cost=22694.20..22819.20 rows=10000 width=54) (actual time=95.758..97.317 rows=4854 loops=1)                                                       
+              Group Key: m.title                                                                                                                                              
+              Batches: 1  Memory Usage: 2449kB                                                                                                                                
+              ->  Nested Loop  (cost=1425.25..20998.19 rows=339202 width=27) (actual time=2.899..60.517 rows=323312 loops=1)                                                  
+                    ->  Hash Join  (cost=1424.82..3475.76 rows=7017 width=30) (actual time=2.887..14.915 rows=6674 loops=1)                                                   
+                          Hash Cond: (s.movie_id = m.id)                                                                                                                      
+                          ->  Hash Join  (cost=1115.82..3148.33 rows=7017 width=12) (actual time=1.678..11.364 rows=6674 loops=1)                                             
+                                Hash Cond: (s.id = session.id)                                                                                                                
+                                ->  Seq Scan on session s  (cost=0.00..1770.00 rows=100000 width=8) (actual time=0.001..3.017 rows=100000 loops=1)                            
+                                ->  Hash  (cost=1028.11..1028.11 rows=7017 width=4) (actual time=1.653..1.655 rows=6674 loops=1)                                              
+                                      Buckets: 8192  Batches: 1  Memory Usage: 299kB                                                                                          
+                                      ->  Bitmap Heap Scan on session  (cost=100.22..1028.11 rows=7017 width=4) (actual time=0.190..1.287 rows=6674 loops=1)                  
+                                            Recheck Cond: ((start_time >= (now() - '7 days'::interval)) AND (start_time <= now()))                                            
+                                            Heap Blocks: exact=770                                                                                                            
+                                            ->  Bitmap Index Scan on idx_session_time_range  (cost=0.00..98.47 rows=7017 width=0) (actual time=0.135..0.135 rows=6674 loops=1)
+                                                  Index Cond: ((start_time >= (now() - '7 days'::interval)) AND (start_time <= now()))                                        
+                          ->  Hash  (cost=184.00..184.00 rows=10000 width=26) (actual time=1.198..1.199 rows=10000 loops=1)                                                   
+                                Buckets: 16384  Batches: 1  Memory Usage: 714kB                                                                                               
+                                ->  Seq Scan on movie m  (cost=0.00..184.00 rows=10000 width=26) (actual time=0.002..0.394 rows=10000 loops=1)                                
+                    ->  Index Only Scan using idx_ticket_session_price on ticket t  (cost=0.43..2.02 rows=48 width=9) (actual time=0.002..0.005 rows=48 loops=6674)           
+                          Index Cond: (session_id = s.id)                                                                                                                     
+                          Heap Fetches: 0                                                                                                                                     
+Planning Time: 0.426 ms                                                                                                                                                       
+Execution Time: 97.803 ms                                                                                                                                                     
+
+==== 5. Сформировать схему зала (оптимизированный) ====
+План выполнения                                                                                                             
+------------------------------------------------------------------------------------------------------------------------------------------
+Sort  (cost=240.22..240.25 rows=10 width=46) (actual time=0.014..0.015 rows=0 loops=1)                                                    
+  Sort Key: s.row_number, s.seat_number                                                                                                   
+  Sort Method: quicksort  Memory: 25kB                                                                                                    
+  InitPlan 1                                                                                                                              
+    ->  Limit  (cost=0.29..8.31 rows=1 width=4) (actual time=0.006..0.006 rows=0 loops=1)                                                 
+          ->  Index Scan using session_pkey on session  (cost=0.29..8.31 rows=1 width=4) (actual time=0.005..0.005 rows=0 loops=1)        
+                Index Cond: (id = 1)                                                                                                      
+  ->  Hash Right Join  (cost=44.31..231.75 rows=10 width=46) (actual time=0.012..0.012 rows=0 loops=1)                                    
+        Hash Cond: (t.seat_id = s.id)                                                                                                     
+        ->  Bitmap Heap Scan on ticket t  (cost=4.80..192.11 rows=48 width=8) (never executed)                                            
+              Recheck Cond: (session_id = 1)                                                                                              
+              ->  Bitmap Index Scan on idx_ticket_session_price  (cost=0.00..4.79 rows=48 width=0) (never executed)                       
+                    Index Cond: (session_id = 1)                                                                                          
+        ->  Hash  (cost=39.38..39.38 rows=10 width=18) (actual time=0.010..0.010 rows=0 loops=1)                                          
+              Buckets: 1024  Batches: 1  Memory Usage: 8kB                                                                                
+              ->  Bitmap Heap Scan on seat s  (cost=4.37..39.38 rows=10 width=18) (actual time=0.010..0.010 rows=0 loops=1)               
+                    Recheck Cond: (hall_id = (InitPlan 1).col1)                                                                           
+                    ->  Bitmap Index Scan on idx_seat_hall_id  (cost=0.00..4.37 rows=10 width=0) (actual time=0.007..0.007 rows=0 loops=1)
+                          Index Cond: (hall_id = (InitPlan 1).col1)                                                                       
+Planning Time: 0.170 ms                                                                                                                   
+Execution Time: 0.033 ms                                                                                                                  
+
+==== 6. Диапазон цен (оптимизированный) ====
+План выполнения                                                                                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Result  (cost=1.07..1.08 rows=1 width=64) (actual time=0.009..0.009 rows=1 loops=1)                                                                                  
+  InitPlan 1                                                                                                                                                         
+    ->  Limit  (cost=0.43..0.53 rows=1 width=5) (actual time=0.006..0.006 rows=0 loops=1)                                                                            
+          ->  Index Only Scan using idx_ticket_session_price on ticket  (cost=0.43..5.27 rows=48 width=5) (actual time=0.006..0.006 rows=0 loops=1)                  
+                Index Cond: (session_id = 1)                                                                                                                         
+                Heap Fetches: 0                                                                                                                                      
+  InitPlan 2                                                                                                                                                         
+    ->  Limit  (cost=0.43..0.53 rows=1 width=5) (actual time=0.001..0.001 rows=0 loops=1)                                                                            
+          ->  Index Only Scan Backward using idx_ticket_session_price on ticket ticket_1  (cost=0.43..5.27 rows=48 width=5) (actual time=0.001..0.001 rows=0 loops=1)
+                Index Cond: (session_id = 1)                                                                                                                         
+                Heap Fetches: 0                                                                                                                                      
+Planning Time: 0.057 ms                                                                                                                                              
+Execution Time: 0.017 ms                                                                                                                                             
+
+==================== САМЫЕ БОЛЬШИЕ ОБЪЕКТЫ БД ====================
+Таблица                           | Размер
+---------------------------------------- | --------------------
+public.ticket                            | 989 MB
+public.client                            | 810 MB
+public.ticket_pkey                       | 533 MB
+public.client_pkey                       | 322 MB
+public.idx_ticket_session_price          | 145 MB
+public.idx_ticket_session_id             | 33 MB
+public.session                           | 13 MB
+public.seat                              | 5488 kB
+public.session_pkey                      | 4416 kB
+public.seat_pkey                         | 2224 kB
+public.movie                             | 1184 kB
+public.idx_session_movie_id              | 920 kB
+public.idx_session_time_range            | 720 kB
+public.idx_session_start_time            | 704 kB
+pg_toast.pg_toast_2618                   | 552 kB
+
+==================== ИСПОЛЬЗОВАНИЕ ИНДЕКСОВ ====================
+Самые часто используемые индексы:
+Таблица       | Сканирований | Чтений | Выборок
+-------------------- | ------------ | ------------ | ------------
+session              | 29692931     | 29718885     | 29692881    
+seat                 | 29692886     | 29757524     | 24858878    
+client               | 29692871     | 34692870     | 24858870    
+hall                 | 373213       | 373213       | 223213      
+movie                | 222666       | 232666       | 222636      
