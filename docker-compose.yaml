@@ -62,8 +62,8 @@ services:
   # Контейнер 1 с PHP-FPM
   php_fpm_1:
     build:
-      context: ./fpm
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./fpm/Dockerfile
     container_name: 'php_fpm_1'
     volumes:
       - ./code:/var/www/php_course   
@@ -78,8 +78,8 @@ services:
   # Контейнер 2 с PHP-FPM
   php_fpm_2:
     build:
-      context: ./fpm
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./fpm/Dockerfile
     container_name: 'php_fpm_2'
     volumes:
       - ./code:/var/www/php_course
@@ -94,8 +94,8 @@ services:
   # Контейнер 3 с PHP-FPM
   php_fpm_3:
     build:
-      context: ./fpm
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./fpm/Dockerfile
     container_name: 'php_fpm_3'
     volumes:
       - ./code:/var/www/php_course
