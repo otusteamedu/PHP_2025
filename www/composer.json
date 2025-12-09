@@ -1,0 +1,25 @@
+{
+    "name": "larkinov/myapp",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Larkinov\\Myapp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Larkinov",
+            "email": "buyantolarkinov@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "codeception/module-phpbrowser": "^3.0",
+        "codeception/module-rest": "^3.4",
+        "codeception/module-symfony": "^3.8",
+        "codeception/module-doctrine": "^3.3"
+    },
+    "require": {
+        "codeception/module-phpbrowser": "*",
+        "codeception/module-asserts": "*"
+    }
+}
