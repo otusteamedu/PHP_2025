@@ -1,0 +1,17 @@
+{
+  "name": "maksim-skoropispcev/leetcode-21",
+  "description": "Task 9",
+  "type": "project",
+  "autoload": {
+	"psr-4": {
+	  "Pryaniki\\App\\": "code/"
+	}
+  },
+  "authors": [
+	{
+	  "name": "Maksim Skoropiscev",
+	  "email": "maksim.sckoropistsev@ya.ru"
+	}
+  ],
+  "require": {}
+}
