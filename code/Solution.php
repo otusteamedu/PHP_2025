@@ -1,15 +1,7 @@
 <?php
 
-declare(strict_types=1);
+namespace Pryaniki\App;
 
-class ListNode {
-    public $val = 0;
-    public $next = null;
-    function __construct($val = 0, $next = null) {
-        $this->val = $val;
-        $this->next = $next;
-    }
-}
 class Solution {
     function mergeTwoLists(ListNode|null $list1, ListNode|null $list2): ListNode|null
     {
