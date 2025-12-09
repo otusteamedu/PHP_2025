@@ -13,6 +13,13 @@
         }
     ],
     "require-dev": {
-        "phpunit/phpunit": "^11.5"
+        "codeception/module-phpbrowser": "^3.0",
+        "codeception/module-rest": "^3.4",
+        "codeception/module-symfony": "^3.8",
+        "codeception/module-doctrine": "^3.3"
+    },
+    "require": {
+        "codeception/module-phpbrowser": "*",
+        "codeception/module-asserts": "*"
     }
 }
