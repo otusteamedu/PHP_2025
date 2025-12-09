@@ -54,7 +54,7 @@ class Response
     /**
      * @return void
      */
-    public function sendHeaders(): void
+    private function sendHeaders(): void
     {
         http_response_code($this->status);
 
@@ -66,8 +66,17 @@ class Response
     /**
      * @return string
      */
-    public function getContent(): string
+    private function getContent(): string
     {
         return $this->content;
+    }
+
+    /**
+     * @return string
+     */
+    public function send(): string
+    {
+        $this->sendHeaders();
+        return $this->getContent();
     }
 }

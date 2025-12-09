@@ -5,4 +5,5 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Application;
 
-Application::create()->run();
+$response = Application::create()->run();
+echo $response->send();

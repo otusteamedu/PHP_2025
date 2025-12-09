@@ -5,6 +5,7 @@ namespace App;
 
 use App\Controller\EmailVerificationController;
 use App\Http\Request;
+use App\Http\Response;
 
 
 class Application
@@ -28,12 +29,10 @@ class Application
     }
 
     /**
-     * @return void
+     * @return Response
      */
-    public function run(): void
+    public function run(): Response
     {
-        $response = $this->emailVerificationController->handle(new Request());
-        $response->sendHeaders();
-        echo $response->getContent();
+        return $this->emailVerificationController->handle(new Request());
     }
 }
