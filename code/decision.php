@@ -26,18 +26,18 @@ class Solution {
     function getHeadMergedLists(ListNode $mainListNode, ListNode $otherListNode): ListNode
     {
         $resultNode = $mainListNode;
+        while (!is_null($otherListNode)) {
+            if ($this->isLastNode($mainListNode)) {
+                $this->attachOtherListToMain($otherListNode, $mainListNode);
+                break;
+            }
 
-        if ($this->isLastNode($mainListNode)) {
-            $this->attachOtherListToMain($otherListNode, $mainListNode);
-            return $resultNode;
-        }
-
-        $otherListNodeIsLast = $this->isLastNode($otherListNode);
-
-        if ($otherListNodeIsLast &&
-            $mainListNode->val <= $otherListNode->val) {
-            $this->insertNodeToList($otherListNode, $mainListNode);
-            return $resultNode;
+            if ($mainListNode->val <= $otherListNode->val &&
+                $mainListNode->next->val >= $otherListNode->val) {
+                $this->insertNodeToList($otherListNode, $mainListNode);
+            } else {
+                $mainListNode = $mainListNode->next;
+            }
         }
 
         return $resultNode;
@@ -52,10 +52,14 @@ class Solution {
         $mainListNode->next = $otherListNode;
     }
 
-    function insertNodeToList(ListNode $node, ListNode &$mainListNode): void
+    function insertNodeToList(ListNode &$node, ListNode &$mainListNode): void
     {
+        $nextOtherNode = $node->next;
         $nextMainNode = $mainListNode->next;
-        $node->next = $nextMainNode;
+
         $mainListNode->next = $node;
+        $node->next = $nextMainNode;
+
+        $node = $nextOtherNode;
     }
 }
