@@ -1,0 +1,36 @@
+erDiagram
+	direction TB
+	CUSTOMER {
+		string id  ""  
+		string name  ""  
+		string email  ""  
+		string phone  ""  
+	}
+
+	HALL-CATEGORY {
+		string category PK ""
+		money price  ""
+	}
+
+	CINEMA {
+		smallserial id PK ""
+		string city  ""
+		string address  ""
+	}
+
+	HALL {
+		smallserial id PK ""
+		smallserial number  ""
+	}
+
+	CAPACITY-HALL {
+		smallserial id PK ""
+		smallserial cinema-id FK ""
+		smallserial row  ""
+		smallserial place  ""
+		enum category FK ""
+	}
+
+	HALL-CATEGORY}|--|{CAPACITY-HALL:"  "
+	HALL||--|{CAPACITY-HALL:"  "
+	CINEMA}|--|{CAPACITY-HALL:"  "
