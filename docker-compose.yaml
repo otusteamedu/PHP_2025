@@ -1,0 +1,222 @@
+services:
+  # Входной балансировщик HTTP → backend nginx
+  php_course_nginx:
+    image: nginx:alpine
+    container_name: php_course_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/logs:/var/log/nginx:delegated
+    depends_on:
+      - backend_nginx_1
+      - backend_nginx_2
+      - backend_nginx_3
+    networks:
+      - php_course_network
+
+  # Backend nginx 1
+  backend_nginx_1:
+    image: nginx:alpine
+    container_name: backend_nginx_1
+    volumes:
+      - ./code:/var/www/php_course
+      - ./nginx/backend1.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/logs:/var/log/nginx:delegated
+    depends_on:
+      - php_fpm_1
+      - php_fpm_2
+      - php_fpm_3
+    networks:
+      - php_course_network
+
+  # Backend nginx 2
+  backend_nginx_2:
+    image: nginx:alpine
+    container_name: backend_nginx_2
+    volumes:
+      - ./code:/var/www/php_course
+      - ./nginx/backend2.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/logs:/var/log/nginx:delegated
+    depends_on:
+      - php_fpm_1
+      - php_fpm_2
+      - php_fpm_3
+    networks:
+      - php_course_network
+
+  # Backend nginx 3
+  backend_nginx_3:
+    image: nginx:alpine
+    container_name: backend_nginx_3
+    volumes:
+      - ./code:/var/www/php_course
+      - ./nginx/backend3.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php_fpm_1
+      - php_fpm_2
+      - php_fpm_3
+    networks:
+      - php_course_network
+
+  # Контейнер 1 с PHP-FPM
+  php_fpm_1:
+    build:
+      context: .
+      dockerfile: ./fpm/Dockerfile
+    container_name: 'php_fpm_1'
+    volumes:
+      - ./code:/var/www/php_course   
+    networks:
+      - php_course_network
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-init
+
+  # Контейнер 2 с PHP-FPM
+  php_fpm_2:
+    build:
+      context: .
+      dockerfile: ./fpm/Dockerfile
+    container_name: 'php_fpm_2'
+    volumes:
+      - ./code:/var/www/php_course
+    networks:
+      - php_course_network
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-init
+
+  # Контейнер 3 с PHP-FPM
+  php_fpm_3:
+    build:
+      context: .
+      dockerfile: ./fpm/Dockerfile
+    container_name: 'php_fpm_3'
+    volumes:
+      - ./code:/var/www/php_course
+    networks:
+      - php_course_network
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-init
+
+  #Контейнеры с Redis
+  redis-1:
+    image: redis:7-alpine
+    container_name: redis-1
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --save
+      - "60 1000"
+      - --save
+      - "300 10"
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - /data/nodes.conf
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    volumes:
+      - ./redis-data/node1:/data
+    networks:
+      - php_course_network
+  redis-2:
+    image: redis:7-alpine
+    container_name: redis-2
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --save
+      - "60 1000"
+      - --save
+      - "300 10"
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - /data/nodes.conf
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    volumes:
+      - ./redis-data/node2:/data
+    networks:
+      - php_course_network
+  redis-3:
+    image: redis:7-alpine
+    container_name: redis-3
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --save
+      - "60 1000"
+      - --save
+      - "300 10"
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - /data/nodes.conf
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    volumes:
+      - ./redis-data/node3:/data
+    networks:
+      - php_course_network  
+
+  # Одноразовая инициализация Redis Cluster (распределение слотов)
+  redis-init:
+    image: redis:7-alpine
+    container_name: redis-init
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+    networks:
+      - php_course_network
+    restart: on-failure
+    command: >-
+      sh -c "
+        set -e;
+        echo 'Waiting for Redis nodes...';
+        until redis-cli -h redis-1 -p 6379 ping | grep -q PONG; do sleep 1; done;
+        until redis-cli -h redis-2 -p 6379 ping | grep -q PONG; do sleep 1; done;
+        until redis-cli -h redis-3 -p 6379 ping | grep -q PONG; do sleep 1; done;
+        if redis-cli -c -h redis-1 -p 6379 cluster info 2>/dev/null | grep -q 'cluster_state:ok'; then
+          echo 'Cluster already initialized';
+          exit 0;
+        fi;
+        echo 'Creating Redis Cluster (3 masters, no replicas)...';
+        yes yes | redis-cli --cluster create redis-1:6379 redis-2:6379 redis-3:6379 --cluster-replicas 0;
+        echo 'Cluster info:';
+        redis-cli -c -h redis-1 -p 6379 cluster info;
+      "
+
+#Docker Networks
+networks:
+  php_course_network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
