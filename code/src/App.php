@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Service\SessionManager;
+use App\Service\Validator;
+use App\Http\Response;
+
 class App
 {
     private SessionManager $sessionManager;
