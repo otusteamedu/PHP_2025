@@ -1,6 +1,5 @@
 <?php
-require 'validate.php';
-require 'response.php';
+namespace App;
 class Route{
 
     public static function route()
@@ -12,11 +11,9 @@ class Route{
          switch ($method){
             case 'POST':
                 $str = $params['string']; 
-        response( checkBrackets($str), "Строка со скобками корректна.\n");
-
-                break;
+       return response( checkBrackets($str), "Строка со скобками корректна.\n");
             default:  
-        response( false,"Ожидается POST-запрос с параметром 'string'.\n");
+       return response( false,"Ожидается POST-запрос с параметром 'string'.\n");
          }
 
 
