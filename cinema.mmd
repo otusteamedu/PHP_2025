@@ -1,12 +1,5 @@
 erDiagram
 	direction TB
-	CUSTOMER {
-		string id  ""  
-		string name  ""  
-		string email  ""  
-		string phone  ""  
-	}
-
 	HALL-CATEGORY {
 		string category PK ""
 		money price  ""
@@ -25,12 +18,36 @@ erDiagram
 
 	CAPACITY-HALL {
 		smallserial id PK ""
+		smallserial hall_id FK ""
 		smallserial cinema-id FK ""
 		smallserial row  ""
 		smallserial place  ""
 		enum category FK ""
 	}
 
+	CUSTOMER {
+		bigserial id  ""
+		string name  ""
+		string email  ""
+		string phone  ""
+	}
+
+	ORDER {
+		bigserial id PK ""
+		bigserial customer_id FK ""
+		smallserial hall_id FK ""
+	}
+
+	CLOTHED-PLACES {
+		bigserial id PK ""
+		bigserial order_id FK ""
+		smallserial row  ""
+		smallserial place  ""
+	}
+
 	HALL-CATEGORY}|--|{CAPACITY-HALL:"  "
 	HALL||--|{CAPACITY-HALL:"  "
 	CINEMA}|--|{CAPACITY-HALL:"  "
+	ORDER}|--|{CUSTOMER:"  "
+	ORDER}|--|{HALL:"  "
+	CLOTHED-PLACES}|--||ORDER:"  "
