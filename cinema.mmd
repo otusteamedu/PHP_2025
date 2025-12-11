@@ -32,12 +32,6 @@ erDiagram
 		string phone  ""
 	}
 
-	ORDER {
-		bigserial id PK ""
-		bigserial customer_id FK ""
-		smallserial hall_id FK ""
-	}
-
 	CLOTHED-PLACES {
 		bigserial id PK ""
 		bigserial order_id FK ""
@@ -45,9 +39,31 @@ erDiagram
 		smallserial place  ""
 	}
 
+	MOVIE {
+		bigserial id PK ""
+		string name  ""
+	}
+
+	ORDER {
+		bigserial id PK ""
+		bigserial customer_id FK ""
+		smallserial hall_id FK ""
+		timestamp time  ""
+	}
+
+	SESSION {
+		bigserial id PK ""
+		bigserial movie_id FK ""
+		bigserial order_id FK ""
+		smallserial hall_id FK ""
+		timestamp start_time  ""
+	}
+
 	HALL-CATEGORY}|--|{CAPACITY-HALL:"  "
-	HALL||--|{CAPACITY-HALL:"  "
-	CINEMA}|--|{CAPACITY-HALL:"  "
+	HALL||--||CAPACITY-HALL:"  "
+	CINEMA||--|{CAPACITY-HALL:"  "
 	ORDER}|--|{CUSTOMER:"  "
-	ORDER}|--|{HALL:"  "
 	CLOTHED-PLACES}|--||ORDER:"  "
+	SESSION}|--||ORDER:"  "
+	MOVIE||--|{SESSION:"  "
+	SESSION}|--||HALL:"  "
