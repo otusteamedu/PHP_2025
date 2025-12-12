@@ -24,6 +24,11 @@ class App
             'user@@example..com',
             'test@localhost.ru',
             'support@gmail.com',
+            111,
+            '',
+            null,
+            ['test1', 'test2'],
+            'invalid-email',
         ];
 
         $emailValidator = new EmailValidator();
