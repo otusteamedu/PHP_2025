@@ -1,0 +1,17 @@
+{
+    "name": "achemakin/otus_php_hw6",
+    "description": "учебный проект php OTUS",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ALEXANDR CHEMAKIN",
+            "email": "kotor79@gmail.com"
+        }
+    ],
+    "require": {}
+}
