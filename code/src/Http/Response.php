@@ -7,17 +7,46 @@ namespace App\Http;
 class Response
 {
     /**
-     * Ответ
+     * Ответ в формате JSON
      *
      * @param int $code HTTP-код ответа
-     * @param string $message Сообщение
-     * @return string Ответ
+     * @param array $data Данные для ответа
+     * @return string JSON ответ
      */
-    public function send(int $code, string $message): string
+    public function json(int $code, array $data): string
     {
         http_response_code($code);
-        header('Content-Type: text/plain; charset=utf-8');
+        header('Content-Type: application/json; charset=utf-8');
 
-        return $message;
+        return json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Ответ с ошибкой
+     *
+     * @param int $code HTTP-код ответа
+     * @param string $message Сообщение об ошибке
+     * @return string JSON ответ
+     */
+    public function error(int $code, string $message): string
+    {
+        return $this->json($code, [
+            'success' => false,
+            'error' => $message
+        ]);
+    }
+
+    /**
+     * Успешный ответ
+     *
+     * @param array $data Данные для ответа
+     * @return string JSON ответ
+     */
+    public function success(array $data): string
+    {
+        return $this->json(200, [
+            'success' => true,
+            'data' => $data
+        ]);
     }
 }
