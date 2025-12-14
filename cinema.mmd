@@ -1,28 +1,13 @@
+---
+config:
+  theme: redux-color
+---
 erDiagram
 	direction TB
-	HALL-CATEGORY {
-		string category PK ""
-		money price  ""
-	}
-
 	CINEMA {
 		smallserial id PK ""
 		string city  ""
 		string address  ""
-	}
-
-	HALL {
-		smallserial id PK ""
-		smallserial number  ""
-	}
-
-	CAPACITY-HALL {
-		smallserial id PK ""
-		smallserial hall_id FK ""
-		smallserial cinema-id FK ""
-		smallserial row  ""
-		smallserial place  ""
-		enum category FK ""
 	}
 
 	CUSTOMER {
@@ -32,23 +17,9 @@ erDiagram
 		string phone  ""
 	}
 
-	CLOTHED-PLACES {
-		bigserial id PK ""
-		bigserial order_id FK ""
-		smallserial row  ""
-		smallserial place  ""
-	}
-
 	MOVIE {
 		bigserial id PK ""
 		string name  ""
-	}
-
-	ORDER {
-		bigserial id PK ""
-		bigserial customer_id FK ""
-		smallserial hall_id FK ""
-		timestamp time  ""
 	}
 
 	SESSION {
@@ -59,11 +30,39 @@ erDiagram
 		timestamp start_time  ""
 	}
 
-	HALL-CATEGORY}|--|{CAPACITY-HALL:"  "
-	HALL||--||CAPACITY-HALL:"  "
-	CINEMA||--|{CAPACITY-HALL:"  "
+	HALL-CATEGORY {
+		enum category PK ""
+		money price  ""
+	}
+
+	ORDER {
+		bigserial id PK ""
+		bigserial customer_id FK ""
+		bigserial session_id FK ""
+		integer place_id  ""
+		timestamp time  ""
+	}
+
+	HALL {
+		smallserial id PK ""
+		smallserial cinema-id FK ""
+		smallserial number  ""
+	}
+
+	PLACE {
+		integer id PK ""
+		smallserial hall_id FK ""
+		smallserial cinema-id FK ""
+		smallserial row  ""
+		smallserial place  ""
+		enum category FK ""
+	}
+
+	HALL-CATEGORY}|--|{PLACE:"  "
+	HALL||--|{PLACE:"  "
 	ORDER}|--|{CUSTOMER:"  "
-	CLOTHED-PLACES}|--||ORDER:"  "
-	SESSION}|--||ORDER:"  "
+	SESSION||--|{ORDER:"  "
 	MOVIE||--|{SESSION:"  "
 	SESSION}|--||HALL:"  "
+	ORDER}|--|{PLACE:"  "
+	CINEMA||--|{HALL:"  "
