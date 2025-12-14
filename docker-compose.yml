@@ -57,15 +57,17 @@ services:
       - app5-network
 
   db:
-    image: mysql:8.4.0
-    container_name: mysql-server
+    image: postgres:13-alpine
+    container_name: postgres-server
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - ./dbdata:/var/lib/mysql
+      - ./pgdata:/var/lib/postgresql/data
+      - ./code/db:/docker-entrypoint-initdb.d
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - app5-network
 
