@@ -25,7 +25,7 @@ CREATE TABLE value (
     value_text TEXT,
     value_bool BOOLEAN,
     value_date DATE,
-    value_float FLOAT
+    value_numeric NUMERIC(3,1)
 );
 
 -- Создаем индексы
@@ -56,7 +56,7 @@ SELECT
         WHEN 'text' THEN v.value_text
         WHEN 'bool' THEN v.value_bool::text
         WHEN 'date' THEN v.value_date::text
-        WHEN 'float' THEN v.value_float::text
+        WHEN 'numeric' THEN v.value_numeric::text
         END AS value
 FROM film f
 JOIN value v ON f.id = v.film_id

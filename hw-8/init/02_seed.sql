@@ -8,7 +8,7 @@ VALUES
     ('text'),
     ('bool'),
     ('date'),
-    ('float');
+    ('numeric');
 
 INSERT INTO attribute (attribute_type_id, name)
 VALUES
@@ -17,7 +17,7 @@ VALUES
     (3, 'Мировая премьера'),
     (4, 'Рейтинг');
 
-INSERT INTO value (film_id, attribute_id, value_text, value_bool, value_date, value_float)
+INSERT INTO value (film_id, attribute_id, value_text, value_bool, value_date, value_numeric)
 VALUES
 (1, 1, 'Фильм получил высокие оценки критиков', NULL, NULL, NULL),
 (1, 2, NULL, TRUE, NULL, NULL),
