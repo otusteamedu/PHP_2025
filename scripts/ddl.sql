@@ -212,3 +212,30 @@ SELECT title,
        value
 FROM movie_attributes
 WHERE (mode::integer & 4) <> 0;
+
+create view public.movie_attributes_service_schedule(title, attribute, today, in_20_days) as
+SELECT m.title,
+       mea.attribute,
+       CASE
+           WHEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date = CURRENT_DATE
+               THEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date
+           ELSE NULL::date
+           END AS today,
+       CASE
+           WHEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date =
+                (CURRENT_DATE + '20 days'::interval) THEN COALESCE(mev.value_date::timestamp without time zone,
+                                                                   mev.value_datetime)::date
+           ELSE NULL::date
+           END AS in_20_days
+FROM movies m
+         JOIN movie_entity_values mev ON m.id = mev.movie_id
+         JOIN movie_entity_attributes mea ON mea.id = mev.movie_entity_attribute_id
+WHERE (mea.mode::integer & 2) <> 0
+  AND (COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date = ANY
+       (ARRAY [CURRENT_DATE::timestamp without time zone, CURRENT_DATE + '20 days'::interval]))
+ORDER BY (
+             CASE
+                 WHEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date = CURRENT_DATE
+                     THEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date
+                 ELSE NULL::date
+                 END);
