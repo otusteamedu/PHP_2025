@@ -34,3 +34,7 @@ select * from movie_attributes_marketing;
 ```sql
 select * from movie_attributes_service;
 ```
+
+```sql
+select * from movie_attributes_service_schedule;
+```
