@@ -4,24 +4,6 @@ config:
 ---
 erDiagram
 	direction TB
-	CINEMA {
-		smallserial id PK ""
-		string city  ""
-		string address  ""
-	}
-
-	CUSTOMER {
-		bigserial id  ""
-		string name  ""
-		string email  ""
-		string phone  ""
-	}
-
-	MOVIE {
-		bigserial id PK ""
-		string name  ""
-	}
-
 	SESSION {
 		bigserial id PK ""
 		bigserial movie_id FK ""
@@ -56,6 +38,24 @@ erDiagram
 		smallserial id PK ""
 		smallint cinema-id FK ""
 		smallint number  ""
+	}
+
+	CINEMA {
+		smallserial id PK ""
+		character-varying city  ""
+		text address  ""
+	}
+
+	CUSTOMER {
+		bigserial id  ""
+		character-varying name  ""
+		character-varying email  ""
+		character-varying phone  ""
+	}
+
+	MOVIE {
+		bigserial id PK ""
+		character-varying name  ""
 	}
 
 	HALL-CATEGORY}|--|{PLACE:"  "
