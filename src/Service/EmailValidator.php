@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Dinargab\Homework5\Service;
 
-use Dinargab\Homework5\Result\ValidationResult;
 use Dinargab\Homework5\Result\ResultInterface;
+use Dinargab\Homework5\Result\ValidationResult;
 use Dinargab\Homework5\Service\DnsChecker\DefaultDnsChecker;
 use Dinargab\Homework5\Service\DnsChecker\DnsCheckerInterface;
 
@@ -21,9 +21,10 @@ class EmailValidator
     private DnsCheckerInterface $dnsChecker;
 
     public function __construct(
-        ?FormatterInterface $formatter = null,
+        ?FormatterInterface  $formatter = null,
         ?DnsCheckerInterface $dnsChecker = null
-    ) {
+    )
+    {
         $this->formatter = $formatter ?? new EmailResultFormatter();
         $this->dnsChecker = $dnsChecker ?? new DefaultDnsChecker();
     }
@@ -72,9 +73,9 @@ class EmailValidator
 
     /**
      * Проверяет длину строки с Email адресом
-     * 
+     *
      * @param string $email Email адрес для проверки длины
-     * @return bool true если длина не превышает макс длину email 
+     * @return bool true если длина не превышает макс длину email
      */
 
     private function checkLength(string $email): bool
@@ -85,7 +86,7 @@ class EmailValidator
 
     /**
      * Проверяет массив email адресов на валидность
-     * 
+     *
      * @param array $emailsArray Массив email адресов для проверки
      * @param bool $formatResult Переменная определяющая в каком виде возвращать результат - массив ValidationResult или отформатированная строка готовая к выводу с результатами валидации
      * @return array|ResultInterface[]|string Массив ValidationResult или отформатированная строка. Тип зависит от значения $formatResult.
@@ -110,7 +111,7 @@ class EmailValidator
         return $returnArray;
     }
 
-    private function format(array $array): string 
+    private function format(array $array): string
     {
         return $this->formatter->format($array);
     }
