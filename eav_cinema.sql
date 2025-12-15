@@ -305,8 +305,8 @@ BEGIN
     
     -- Проверка рейтингов
     SELECT 
-        'Средний рейтинг IMDb',
-        ROUND(AVG(av.numeric_value), 2)::TEXT
+    'Средний рейтинг IMDb',
+        ROUND(AVG(av.numeric_value), 2)::TEXT,
         'По всем фильмам'
     FROM attribute_values av
     JOIN attributes a ON av.attr_id = a.attr_id
