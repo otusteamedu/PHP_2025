@@ -37,25 +37,25 @@ erDiagram
 
 	ORDER {
 		bigserial id PK ""
-		bigserial customer_id FK ""
-		bigserial session_id FK ""
-		integer place_id  ""
+		bigint customer_id FK ""
+		bigint session_id FK ""
+		integer place_id FK ""
 		timestamp time  ""
+	}
+
+	PLACE {
+		serial id PK ""
+		smallint hall_id FK ""
+		smallint cinema-id FK ""
+		smallint row  ""
+		smallint place  ""
+		enum category FK ""
 	}
 
 	HALL {
 		smallserial id PK ""
-		smallserial cinema-id FK ""
-		smallserial number  ""
-	}
-
-	PLACE {
-		integer id PK ""
-		smallserial hall_id FK ""
-		smallserial cinema-id FK ""
-		smallserial row  ""
-		smallserial place  ""
-		enum category FK ""
+		smallint cinema-id FK ""
+		smallint number  ""
 	}
 
 	HALL-CATEGORY}|--|{PLACE:"  "
