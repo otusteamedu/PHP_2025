@@ -16,7 +16,7 @@ CREATE TABLE hall (
 CREATE TABLE seat_category (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
-    price_multiplier DECIMAL NOT NULL DEFAULT 1
+    price_multiplier DECIMAL(3,2) NOT NULL DEFAULT 1
 );
 
 -- Места в зале
@@ -63,6 +63,7 @@ CREATE TABLE ticket (
     session_id INT NOT NULL,
     seat_id INT NOT NULL,
     status INT NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
     purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (session_id) REFERENCES session(id),
     FOREIGN KEY (seat_id) REFERENCES seat(id),

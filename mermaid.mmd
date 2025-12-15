@@ -50,19 +50,17 @@ erDiagram
         decimal base_price "NOT NULL"
     }
 
-    ticket {
-        int id PK "AUTO_INCREMENT"
-        int session_id "NOT NULL"
-        int seat_id "NOT NULL"
-        int status "NOT NULL"
-        timestamp purchased_at "DEFAULT CURRENT_TIMESTAMP"
-    }
-
     ticket_status {
          int id PK "AUTO_INCREMENT"
          int ticket_id "NOT NULL"
          varchar(50) name "NOT NULL"
     }
 
-
-
+    ticket {
+        int id PK "AUTO_INCREMENT"
+        int session_id "NOT NULL"
+        int seat_id "NOT NULL"
+        int status "NOT NULL"
+        decimal total_price "NOT NULL"
+        timestamp purchased_at "DEFAULT CURRENT_TIMESTAMP"
+    }
