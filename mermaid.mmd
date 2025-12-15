@@ -1,0 +1,66 @@
+erDiagram
+    cinema || --|{ hall : contains
+    hall || --|{ seat : contains
+    seat || --|{ seat_category : contains
+
+    session || --|{ movie : includes
+    session || --|{ hall : includes
+    
+    ticket || --|{ session : includes
+    ticket || -- |{ seat : includes
+    ticket || -- |{ ticket_status : contains
+
+    cinema {
+        int id PK "AUTO_INCREMENT"
+        varchar(255) name "NOT NULL"
+    }
+
+    hall {
+        int id PK "AUTO_INCREMENT"
+        int cinema_id "NOT NULL"
+        varchar(100) name "NOT NULL"      
+    }
+
+    seat {
+        int id PK "AUTO_INCREMENT"
+        int hall_id "NOT NULL"
+        int nrow "NOT NULL"
+        int seat_number "NOT NULL"
+        int seat_category_id "NOT NULL"
+    }
+
+    seat_category {
+        int id PK "AUTO_INCREMENT"
+        varchar(50) name "NOT NULL"
+        decimal price_multiplier "NOT NULL DEFAULT 1"
+    }
+
+    movie {
+        int id PK "AUTO_INCREMENT"
+        varchar(255) title "NOT NULL"
+        int duration "NOT NULL"
+        text description
+    }
+
+    session {
+        int id PK "AUTO_INCREMENT"
+        int movie_id "NOT NULL"
+        int hall_id "NOT NULL"
+        datetime start_time "NOT NULL"
+        decimal base_price "NOT NULL"
+    }
+
+    ticket_status {
+         int id PK "AUTO_INCREMENT"
+         int ticket_id "NOT NULL"
+         varchar(50) name "NOT NULL"
+    }
+
+    ticket {
+        int id PK "AUTO_INCREMENT"
+        int session_id "NOT NULL"
+        int seat_id "NOT NULL"
+        int status "NOT NULL"
+        decimal total_price "NOT NULL"
+        timestamp purchased_at "DEFAULT CURRENT_TIMESTAMP"
+    }
