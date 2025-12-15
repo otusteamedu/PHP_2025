@@ -97,13 +97,10 @@ create table public.movie_entity_attribute_types
             check (
                 (type)::text = ANY
                 ((ARRAY [
-                    'string'::character varying,
                     'text'::character varying,
                     'integer'::character varying,
                     'double'::character varying,
                     'boolean'::character varying,
-                    'date'::character varying,
-                    'time'::character varying,
                     'datetime'::character varying
                     ])::text[])
                 )
@@ -144,19 +141,15 @@ create table public.movie_entity_values
         constraint movie_entity_values_movies_id_fk
             references public.movies
             on update restrict on delete cascade,
-    value_string              varchar,
     value_text                text,
     value_integer             bigint,
     value_double              double precision,
     value_boolean             boolean,
-    value_date                date,
-    value_time                time,
     value_datetime            timestamp,
     constraint movie_entity_values_exactly_one_value_check
-        check ((((((((((value_string IS NOT NULL))::integer + ((value_text IS NOT NULL))::integer) +
-                     ((value_integer IS NOT NULL))::integer) + ((value_double IS NOT NULL))::integer) +
-                   ((value_boolean IS NOT NULL))::integer) + ((value_date IS NOT NULL))::integer) +
-                 ((value_time IS NOT NULL))::integer) + ((value_datetime IS NOT NULL))::integer) = 1)
+        check ((((((((value_text IS NOT NULL))::integer) +
+                   ((value_integer IS NOT NULL))::integer) + ((value_double IS NOT NULL))::integer) +
+                 ((value_boolean IS NOT NULL))::integer) + ((value_datetime IS NOT NULL))::integer) = 1)
 );
 
 create index movie_entity_values_movie_entity_attribute_id_index
@@ -174,13 +167,10 @@ SELECT m.title,
        mea.attribute,
        mea.mode,
        COALESCE(
-           mev.value_string,
            mev.value_text::character varying,
            mev.value_integer::text::character varying,
            mev.value_double::text::character varying,
            mev.value_boolean::text::character varying,
-           mev.value_date::text::character varying,
-           mev.value_time::text::character varying,
            mev.value_datetime::text::character varying
        ) AS value
 FROM movies m
@@ -217,25 +207,21 @@ create view public.movie_attributes_service_schedule(title, attribute, today, in
 SELECT m.title,
        mea.attribute,
        CASE
-           WHEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date = CURRENT_DATE
-               THEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date
-           ELSE NULL::date
+           WHEN mev.value_datetime::date = CURRENT_DATE
+               THEN mev.value_datetime::date
            END AS today,
        CASE
-           WHEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date =
-                (CURRENT_DATE + '20 days'::interval) THEN COALESCE(mev.value_date::timestamp without time zone,
-                                                                   mev.value_datetime)::date
-           ELSE NULL::date
+           WHEN mev.value_datetime::date =
+                CURRENT_DATE + '20 days'::interval
+               THEN mev.value_datetime::date
            END AS in_20_days
 FROM movies m
          JOIN movie_entity_values mev ON m.id = mev.movie_id
          JOIN movie_entity_attributes mea ON mea.id = mev.movie_entity_attribute_id
 WHERE (mea.mode::integer & 2) <> 0
-  AND (COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date = ANY
-       (ARRAY [CURRENT_DATE::timestamp without time zone, CURRENT_DATE + '20 days'::interval]))
-ORDER BY (
-             CASE
-                 WHEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date = CURRENT_DATE
-                     THEN COALESCE(mev.value_date::timestamp without time zone, mev.value_datetime)::date
-                 ELSE NULL::date
-                 END);
+  AND mev.value_datetime::date IN (
+                                   CURRENT_DATE,
+                                   CURRENT_DATE + '20 days'::interval
+    )
+
+ORDER BY mev.value_datetime::date;
