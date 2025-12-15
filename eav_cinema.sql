@@ -32,14 +32,14 @@ CREATE TABLE attribute_values (
     text_value TEXT,
     boolean_value BOOLEAN,
     date_value DATE,
-    float_value FLOAT,
+    numeric_value NUMERIC,
     
     -- Проверяем, что заполнен только один тип
     CHECK (
         (text_value IS NOT NULL)::INTEGER + 
         (boolean_value IS NOT NULL)::INTEGER + 
         (date_value IS NOT NULL)::INTEGER + 
-        (float_value IS NOT NULL)::INTEGER = 1
+        (numeric_value IS NOT NULL)::INTEGER = 1
     )
 );
 
@@ -57,7 +57,7 @@ BEGIN
     ('text', 'Текстовые значения'),
     ('boolean', 'Логические значения'),
     ('date', 'Даты'),
-    ('float', 'Числовые значения');
+    ('numeric', 'Числовые значения');
     
     -- Атрибуты
     INSERT INTO attributes (type_id, attr_name, display_name) VALUES
@@ -76,7 +76,7 @@ BEGIN
     (3, 'rf_premiere', 'Премьера в РФ'),
     (3, 'ticket_sale_start', 'Начало продажи билетов'),
     (3, 'tv_ad_start', 'Запуск ТВ-рекламы'),
-    -- float
+    -- numeric
     (4, 'rating_imdb', 'Рейтинг IMDb'),
     (4, 'rating_kinopoisk', 'Рейтинг Кинопоиск');
     
@@ -102,7 +102,7 @@ BEGIN
     (5, 1, 'Трогательная и мудрая история'), (5, 2, 'Невероятно вдохновляет купить катер и занятся ловлей креветок'),
     (6, 1, 'Великолепная визуализация'), (6, 2, 'Невероятно красивый мир и пришельцы, которые поклоняются деревьям'),
     (7, 1, 'Очень смешной мультфильм'), (7, 2, 'Лучший мультфильм про огра'),
-    (8, 1, 'Трогательная анимация с музыкой'), (8, 2, 'История становления из львенка в царя приаяти'),
+    (8, 1, 'Трогательная анимация с музыкой'), (8, 2, 'История становления из львенка в царя припяти'),
     (9, 1, 'Страх и напряжение'), (9, 2, 'Как можно сойти с ума в отеле и потом замерзуть, невероятно'),
     (10, 1, 'Классика космической фантастики'), (10, 2, 'Сын не признает отца и дружит с пришельцами');
     
@@ -148,8 +148,8 @@ BEGIN
     (5,12,'1994-06-20'),(6,12,'2009-12-01'),(7,12,'2001-05-01'),(8,12,'1994-06-01'),
     (9,12,'1980-05-01'),(10,12,'1977-05-01');
     
-    -- Рейтинги (Float значения)
-    INSERT INTO attribute_values (film_id, attr_id, float_value) VALUES
+    -- Рейтинги (Numeric значения)
+    INSERT INTO attribute_values (film_id, attr_id, numeric_value) VALUES
     -- rating_imdb (13)
     (1,13,7.8),(2,13,8.8),(3,13,7.6),(4,13,9.0),(5,13,8.8),
     (6,13,7.8),(7,13,7.9),(8,13,8.5),(9,13,8.4),(10,13,8.6),
@@ -207,10 +207,11 @@ SELECT
         WHEN av.boolean_value = true THEN 'Да'
         WHEN av.boolean_value = false THEN 'Нет'
         WHEN av.date_value IS NOT NULL THEN to_char(av.date_value, 'DD.MM.YYYY')
-        WHEN av.float_value IS NOT NULL THEN 
+        WHEN av.numeric_value IS NOT NULL THEN 
             CASE 
-                WHEN a.attr_name LIKE 'rating%' THEN ROUND(av.float_value::numeric, 1)::text
-                ELSE ROUND(av.float_value::numeric, 2)::text
+                WHEN a.attr_name LIKE 'rating%' 
+                    THEN ROUND(av.numeric_value, 1)::text
+                ELSE ROUND(av.numeric_value, 2)::text
             END
         ELSE ''
     END AS value
@@ -245,7 +246,7 @@ BEGIN
     SELECT 
         'Количество атрибутов',
         COUNT(*)::TEXT,
-        'Должно быть 14 (2 text + 6 boolean + 4 date + 2 float)'
+        'Должно быть 14 (2 text + 6 boolean + 4 date + 2 numeric)'
     FROM attributes
     HAVING COUNT(*) = 14
     
@@ -273,8 +274,7 @@ BEGIN
     WHERE text_value IS NULL 
         AND boolean_value IS NULL 
         AND date_value IS NULL 
-        AND float_value IS NULL
-    
+        AND numeric_value IS NULL
     UNION ALL
     
     -- Проверка представлений
@@ -306,7 +306,7 @@ BEGIN
     -- Проверка рейтингов
     SELECT 
         'Средний рейтинг IMDb',
-        ROUND(AVG(av.float_value)::numeric, 2)::TEXT,
+        ROUND(AVG(av.numeric_value), 2)::TEXT
         'По всем фильмам'
     FROM attribute_values av
     JOIN attributes a ON av.attr_id = a.attr_id
@@ -362,7 +362,7 @@ BEGIN
     )
     UNION ALL
     SELECT 'Средний рейтинг IMDb', (
-        SELECT ROUND(AVG(av.float_value)::numeric, 2)::TEXT
+        SELECT ROUND(AVG(av.numeric_value), 2)::TEXT
         FROM attribute_values av
         JOIN attributes a ON av.attr_id = a.attr_id
         WHERE a.attr_name = 'rating_imdb'
