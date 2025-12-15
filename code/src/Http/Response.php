@@ -10,10 +10,13 @@ class Response
         private int $statusCode = 200
     ) {}
 
-    public function send(): void
+    public function getContent(): string
     {
-        http_response_code($this->statusCode);
-        header('Content-Type: application/json');
-        echo $this->content;
+        return $this->content;
+    }
+
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
     }
 }

@@ -9,4 +9,6 @@ $app = new App($config);
 
 $response = $app->run();
 
-$response->send();
+http_response_code($response->getStatusCode());
+header('Content-Type: application/json');
+echo $response->getContent();
