@@ -67,7 +67,10 @@ CREATE TABLE public."values" (
     type_id integer,
     attribute_id integer,
     film_id bigint,
-    value character varying NOT NULL
+    value_numeric numeric,
+    value_date date,
+    value_boolean boolean,
+    value_text text
 );
 
 
@@ -81,11 +84,11 @@ CREATE VIEW public.about_films AS
  SELECT f.title AS film_title,
     at.title AS attribute_type_title,
     a.title AS attribute_title,
-    v.value
-   FROM (((public."values" v
-     JOIN public.films f ON ((v.film_id = f.id)))
-     JOIN public.attributes_types at ON ((v.type_id = at.id)))
-     JOIN public.attributes a ON ((v.attribute_id = a.id)))
+    COALESCE(v.value_text, v.value_numeric::text, v.value_date::text, v.value_boolean::text) AS value
+   FROM public."values" v
+     JOIN public.films f ON v.film_id = f.id
+     JOIN public.attributes_types at ON v.type_id = at.id
+     JOIN public.attributes a ON v.attribute_id = a.id
   ORDER BY f.id;
 
 
@@ -97,10 +100,17 @@ ALTER TABLE public.about_films OWNER TO "AK";
 
 CREATE VIEW public.about_films_json AS
  SELECT f.title AS film_title,
-    jsonb_object_agg(a.title, v.value) AS attributes
-   FROM ((public."values" v
-     JOIN public.films f ON ((v.film_id = f.id)))
-     JOIN public.attributes a ON ((v.attribute_id = a.id)))
+    jsonb_object_agg(a.title,
+        CASE
+            WHEN v.value_numeric IS NOT NULL THEN to_jsonb(v.value_numeric)
+            WHEN v.value_date IS NOT NULL THEN to_jsonb(v.value_date)
+            WHEN v.value_boolean IS NOT NULL THEN to_jsonb(v.value_boolean)
+            WHEN v.value_text IS NOT NULL THEN to_jsonb(v.value_text)
+            ELSE 'null'::jsonb
+        END) AS attributes
+   FROM public."values" v
+     JOIN public.films f ON v.film_id = f.id
+     JOIN public.attributes a ON v.attribute_id = a.id
   GROUP BY f.id, f.title;
 
 
@@ -168,20 +178,12 @@ ALTER TABLE public.films ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 CREATE VIEW public.service_dates AS
  SELECT f.title,
-    string_agg((
-        CASE
-            WHEN ((v.value)::date = CURRENT_DATE) THEN a.title
-            ELSE NULL::character varying
-        END)::text, ', '::text) AS today,
-    string_agg((
-        CASE
-            WHEN (((v.value)::date > CURRENT_DATE) AND ((v.value)::date <= (CURRENT_DATE + 20))) THEN a.title
-            ELSE NULL::character varying
-        END)::text, ', '::text) AS period
-   FROM ((public."values" v
-     JOIN public.attributes a ON ((v.attribute_id = a.id)))
-     JOIN public.films f ON ((f.id = v.film_id)))
-  WHERE ((v.value)::text ~ '^\d{4}-\d{2}-\d{2}$'::text)
+    string_agg(CASE WHEN v.value_date = CURRENT_DATE THEN a.title END, ', ') AS today,
+    string_agg(CASE WHEN v.value_date > CURRENT_DATE AND v.value_date <= (CURRENT_DATE + 20) THEN a.title END, ', ') AS period
+   FROM public."values" v
+     JOIN public.attributes a ON v.attribute_id = a.id
+     JOIN public.films f ON f.id = v.film_id
+  WHERE v.value_date IS NOT NULL
   GROUP BY f.id, f.title
   ORDER BY f.title;
 
@@ -195,23 +197,25 @@ ALTER TABLE public.service_dates OWNER TO "AK";
 CREATE VIEW public.workd AS
  WITH dates AS (
          SELECT v.id,
-            v.value,
+            v.value_date AS value,
             a.title,
             v.film_id
-           FROM ((public."values" v
-             JOIN public.attributes_types t ON ((v.type_id = t.id)))
-             LEFT JOIN public.attributes a ON ((a.id = v.attribute_id)))
-          WHERE (((t.title)::text = 'date'::text) AND (v.id IN ( SELECT v2.id
-                   FROM (public."values" v2
-                     JOIN public.attributes a_1 ON ((v2.attribute_id = a_1.id)))
-                  WHERE ((a_1.title)::text = ANY (ARRAY[('начало продаж'::character varying)::text, ('начало рекламы'::character varying)::text])))))
-        )
+           FROM public."values" v
+             JOIN public.attributes_types t ON v.type_id = t.id
+             LEFT JOIN public.attributes a ON a.id = v.attribute_id
+          WHERE t.title = 'date' AND v.id IN (
+              SELECT v2.id
+              FROM public."values" v2
+              JOIN public.attributes a_1 ON v2.attribute_id = a_1.id
+              WHERE a_1.title = ANY (ARRAY['начало продаж', 'начало рекламы'])
+          )
+    )
  SELECT f.title AS film,
     d.title AS action,
     d.value AS date
-   FROM (dates d
-     JOIN public.films f ON ((f.id = d.film_id)))
-  WHERE (((d.value)::text ~ '^\d{4}-\d{2}-\d{2}$'::text) AND (((d.value)::date >= CURRENT_DATE) AND ((d.value)::date <= (CURRENT_DATE + 20))));
+   FROM dates d
+     JOIN public.films f ON f.id = d.film_id
+  WHERE d.value >= CURRENT_DATE AND d.value <= (CURRENT_DATE + 20);
 
 
 ALTER TABLE public.workd OWNER TO "AK";
@@ -222,7 +226,7 @@ ALTER TABLE public.workd OWNER TO "AK";
 
 COPY public.attributes (id, title) FROM stdin;
 1	рецензии
-2	премия 
+2	премия
 3	премьера
 4	премьера в регионе
 5	начало продаж
@@ -262,23 +266,21 @@ COPY public.films (title, id) FROM stdin;
 -- Data for Name: values; Type: TABLE DATA; Schema: public; Owner: AK
 --
 
-COPY public."values" (id, type_id, attribute_id, film_id, value) FROM stdin;
-3	5	7	1	По версии IMDb Считается одним из величайших фильмов в истории кино
-4	5	1	1	Критики и зрители отмечают сильный сценарий, режиссуру и актерскую игру
-7	3	8	2	1
-8	3	8	1	0
-9	3	9	1	0
-10	3	9	2	1
-11	5	1	2	Считается шедевром мирового кинематографа. Хвалят режиссуру Фрэнсиса Форда Копполы и актерскую игру, особенно Марлона Брандо
-6	6	4	2	14.05.1972
-13	6	6	1	2025-12-16
-2	6	4	1	1994-07-23
-5	6	3	2	1972-04-24
-1	6	3	1	1994-07-23
-12	6	5	1	2025-12-15
-15	6	6	2	2025-12-21
-14	6	5	2	2025-12-22
-\.
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_text) VALUES ( 5, 7, 1, 'По версии IMDb Считается одним из величайших фильмов в истории кино');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_text) VALUES ( 5, 1, 1, 'Критики и зрители отмечают сильный сценарий, режиссуру и актерскую игру');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_boolean) VALUES ( 3, 8, 2, true);
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_boolean) VALUES ( 3, 8, 1, false);
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_boolean) VALUES ( 3, 9, 1, false);
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_boolean) VALUES ( 3, 9, 2, true);
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_text) VALUES ( 5, 1, 2, 'Считается шедевром мирового кинематографа. Хвалят режиссуру Фрэнсиса Форда Копполы и актерскую игру, особенно Марлона Брандо');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_date) VALUES ( 6, 4, 2, '1972-05-14');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_date) VALUES ( 6, 6, 1, '2025-12-16');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_date) VALUES ( 6, 4, 1, '1994-07-23');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_date) VALUES ( 6, 3, 2, '1972-04-24');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_date) VALUES ( 6, 3, 1, '1994-07-23');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_date) VALUES ( 6, 5, 1, '2025-12-15');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_date) VALUES ( 6, 6, 2, '2025-12-21');
+INSERT INTO public.values ( type_id, attribute_id, film_id, value_date) VALUES ( 6, 5, 2, '2025-12-22');
 
 
 --
@@ -362,4 +364,3 @@ ALTER TABLE ONLY public."values"
 --
 
 \unrestrict lL1Ogw47xw8l7prBvWQ7NiYvQNQvKrZbKKGsgu4C5dXkHY6wWcvJvWSM3yWD4YP
-
