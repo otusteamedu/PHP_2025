@@ -1,6 +1,7 @@
 ---
 config:
   theme: redux-color
+  layout: dagre
 ---
 erDiagram
 	direction TB
@@ -12,26 +13,12 @@ erDiagram
 		timestamp start_time  ""
 	}
 
-	HALL-CATEGORY {
-		enum category PK ""
-		money price  ""
-	}
-
 	ORDER {
 		bigserial id PK ""
 		bigint customer_id FK ""
 		bigint session_id FK ""
 		integer place_id FK ""
 		timestamp time  ""
-	}
-
-	PLACE {
-		serial id PK ""
-		smallint hall_id FK ""
-		smallint cinema-id FK ""
-		smallint row  ""
-		smallint place  ""
-		enum category FK ""
 	}
 
 	HALL {
@@ -58,7 +45,35 @@ erDiagram
 		character-varying name  ""
 	}
 
-	HALL-CATEGORY}|--|{PLACE:"  "
+	PLACE {
+		serial id PK ""
+		smallint hall_id FK ""
+		smallint cinema-id FK ""
+		smallint category_id FK ""
+		bigint price_id FK ""
+		smallint row  ""
+		smallint place  ""
+	}
+
+	PLACE-CATEGORY {
+		smallserial id PK ""
+		enum location  "'в центре', 'с краю', 'в центре, далеко', 'с краю далеко'"
+	}
+
+	PART-OF-DAY {
+		small-int id PK ""
+		enum value  "Утро, день, вечер, ночь"
+	}
+
+	PRICE {
+		bigserial id PK ""
+		bigint move-id FK ""
+		bigint place-category-id FK ""
+		smallint part-of-day-id FK ""
+		money price  ""
+	}
+
+	PLACE-CATEGORY}|--|{PLACE:"  "
 	HALL||--|{PLACE:"  "
 	ORDER}|--|{CUSTOMER:"  "
 	SESSION||--|{ORDER:"  "
@@ -66,3 +81,7 @@ erDiagram
 	SESSION}|--||HALL:"  "
 	ORDER}|--|{PLACE:"  "
 	CINEMA||--|{HALL:"  "
+	PRICE}|--|{PLACE-CATEGORY:"  "
+	PRICE}|--|{PLACE:"  "
+	PART-OF-DAY}|--|{PRICE:"  "
+	MOVIE||--|{PRICE:"  "
