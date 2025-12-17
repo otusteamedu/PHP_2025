@@ -1,8 +1,17 @@
 -- drop table attribute, movie, value;
+create type attribute_type as enum (
+    'integer',
+    'real',
+    'text',
+    'timestamp'
+    'date',
+    'boolean'
+);
 
 create table attribute
 (
     id serial primary key,
+    type attribute_type not null,
     name character varying(50) not null
 );
 
