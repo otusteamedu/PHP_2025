@@ -5,7 +5,8 @@ create type attribute_type as enum (
     'text',
     'timestamp',
     'date',
-    'boolean'
+    'boolean',
+    'money'
 );
 
 create table attribute
@@ -33,6 +34,7 @@ create table value
     timestampVal timestamp default null,
     dateVal date default null,
     booleanVal boolean default null,
+    moneyVal money default null,
     foreign key (movieId) references movie (id),
     foreign key (attributeId) references attribute (id)
 );
