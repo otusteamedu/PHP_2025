@@ -1,19 +1,17 @@
 -- drop table attribute, movie, value;
-create type attribute_type as enum (
-    'integer',
-    'real',
-    'text',
-    'timestamp',
-    'date',
-    'boolean',
-    'money'
+
+create table attribute_type
+(
+    id smallserial primary key,
+    name character varying(20)
 );
 
 create table attribute
 (
     id serial primary key,
-    type attribute_type not null,
-    name character varying(50) not null
+    typeId smallint not null,
+    name character varying(50) not null,
+    foreign key (typeId) references attribute_type (id)
 );
 
 create table movie

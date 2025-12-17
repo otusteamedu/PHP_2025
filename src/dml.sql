@@ -10,16 +10,24 @@ insert into movie (name) values
     ('Криминальное чтиво'),
     ('Трон: Наследие');
 
-insert into attribute (name, type) values
-    ('Стоимость фильма в $', 'money'),
-    ('Режиссёр', 'text'),
-    ('Страна', 'text'),
-    ('Жанр', 'text'),
-    ('Длительность в минутах', 'integer'),
-    ('Рейтинг', 'real'),
-    ('Год выпуска', 'integer'),
-    ('Дата премьеры', 'date'),
-    ('Оскар', 'boolean');
+insert into attribute_type (name) values
+    ('money'),
+    ('text'),
+    ('integer'),
+    ('real'),
+    ('date'),
+    ('boolean');
+
+insert into attribute (name, typeId) values
+    ('Стоимость фильма в $', 1),
+    ('Режиссёр', 2),
+    ('Страна', 2),
+    ('Жанр', 2),
+    ('Длительность в минутах', 3),
+    ('Рейтинг', 4),
+    ('Год выпуска', 3),
+    ('Дата премьеры', 5),
+    ('Оскар', 6);
 
 -- Крестный отец
 insert into value (movieId, attributeId, moneyVal) values (1,  1, 1546456.43);
