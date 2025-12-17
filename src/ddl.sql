@@ -3,7 +3,7 @@ create type attribute_type as enum (
     'integer',
     'real',
     'text',
-    'timestamp'
+    'timestamp',
     'date',
     'boolean'
 );
