@@ -118,15 +118,15 @@ insert into value (movieId, attributeId, dateVal) values (8,  8, '2025-12-28');
 insert into value (movieId, attributeId, booleanVal) values (8,  9, false);
 
 -- Криминальное чтиво
-insert into value (movieId, attributeId, moneyVal) values (19,  1, 1354546456.77);
-insert into value (movieId, attributeId, textVal) values (19,  2, 'Вишневская Алина Семёновна');
-insert into value (movieId, attributeId, textVal) values (19,  3, 'Лаос');
-insert into value (movieId, attributeId, textVal) values (19,  4, 'Комедия');
-insert into value (movieId, attributeId, integerVal) values (19,  5, 120);
-insert into value (movieId, attributeId, realVal) values (19,  6, '6.9');
-insert into value (movieId, attributeId, integerVal) values (19,  7, '2003');
-insert into value (movieId, attributeId, dateVal) values (19,  8, '2025-12-19');
-insert into value (movieId, attributeId, booleanVal) values (19,  9, false);
+insert into value (movieId, attributeId, moneyVal) values (9,  1, 1354546456.77);
+insert into value (movieId, attributeId, textVal) values (9,  2, 'Вишневская Алина Семёновна');
+insert into value (movieId, attributeId, textVal) values (9,  3, 'Лаос');
+insert into value (movieId, attributeId, textVal) values (9,  4, 'Комедия');
+insert into value (movieId, attributeId, integerVal) values (9,  5, 120);
+insert into value (movieId, attributeId, realVal) values (9,  6, '6.9');
+insert into value (movieId, attributeId, integerVal) values (9,  7, '2003');
+insert into value (movieId, attributeId, dateVal) values (9,  8, '2025-12-19');
+insert into value (movieId, attributeId, booleanVal) values (9,  9, false);
 
 -- Трон: Наследие
 insert into value (movieId, attributeId, moneyVal) values (10,  1, 100876456.73);
