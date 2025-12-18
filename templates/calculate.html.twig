@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Calculator</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<form method="get">
+    <input name="number1" type="text" class="form-control inputField" value="{{ number1 }}"/>
+    <select name="operation">
+        {% for item in operations %}
+            <option
+                    value="{{ item }}"
+                    {{ item == operation ? 'selected' }}
+            >{{ item }}</option>
+        {% endfor %}
+    </select>
+    <input name="number2" type="text" class="form-control inputField" value="{{ number2 }}"/>
+    <input name="submit" type="submit" value="Calculate" class="btn btn-primary"/>
+</form>
+<div>Result: {{ result }}</div>
+</body>
+</html>

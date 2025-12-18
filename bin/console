@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php
+//chmod +x bin/console
+
+declare(strict_types=1);
+
+use App\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Dotenv\Exception\PathException;
+
+$vendorDir = \dirname(__DIR__) . '/vendor';
+$autoloadPhp = $vendorDir . '/autoload.php';
+
+if (!\is_dir($vendorDir)) {
+    throw new LogicException('No vendor dir found.');
+}
+
+if (!is_file($autoloadPhp)) {
+    throw new LogicException('No autoload.php file found.');
+}
+
+require $autoloadPhp;
+
+$envFile = \dirname(__DIR__) . '/.env.docker';
+
+try {
+    (new Dotenv())->load($envFile);
+} catch (PathException $e) {
+    echo $_SERVER['APP_ENV'] === 'dev' ? $e->getMessage() : '';
+}
+
+$kernel = new Kernel($_SERVER['APP_ENV'], (bool)$_SERVER['APP_DEBUG']);
+$app = new Application($kernel);
+
+try {
+    $app->run();
+} catch (Exception $e) {
+    echo $_SERVER['APP_ENV'] === 'dev' ? $e->getMessage() : '';
+}
