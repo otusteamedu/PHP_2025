@@ -1,0 +1,59 @@
+-- Для проверки
+
+-- Проверить количество фильмов
+SELECT COUNT(*) as films_count FROM films;
+
+-- Посмотреть несколько фильмов
+SELECT * FROM films LIMIT 5;
+
+-- Проверить значения атрибутов
+SELECT * FROM attribute_values LIMIT 10;
+
+-- Проверить представление
+SELECT * FROM marketing_data LIMIT 10;
+
+-- Запустить тестовую функцию
+SELECT * FROM eav_schema();
+
+-- Посмотреть статистику
+SELECT * FROM show_stats();
+
+-- Проверить задачи
+SELECT * FROM service_tasks;
+
+-- Заполнение 10к записей
+SELECT fill_demo_data();           -- EAV данные (140 записей)
+SELECT fill_cinema_data();         -- Кинотеатр ( примерно 610 записей)
+SELECT fill_tickets_data(1000);    -- 1000 билетов
+SELECT fill_reviews_data(10000);   -- 10,000 отзывов
+
+-- Проверка с 10K
+SELECT * FROM films_today;
+SELECT * FROM weekly_tickets;
+SELECT * FROM today_poster;
+SELECT * FROM top_profitable_films;
+SELECT * FROM hall_scheme_view LIMIT 20;
+SELECT * FROM ticket_price_ranges LIMIT 5;
+
+-- Сохранить планы выполнения
+SELECT * FROM test_query_performance();
+
+-- Увеличение до 10M
+SELECT fill_reviews_data(10000000); -- 10 миллионов отзывов
+
+-- Тест с 10M
+-- Сохранить планы выполнения
+SELECT * FROM test_query_performance();
+
+-- Самые большие объекты
+SELECT * FROM analyze_largest_objects();
+
+-- Использование индексов
+SELECT * FROM analyze_index_usage();
+
+-- Добавить индексы по результатам анализа
+CREATE INDEX IF NOT EXISTS idx_reviews_created ON film_reviews(created_at);
+CREATE INDEX IF NOT EXISTS idx_reviews_text_gin ON film_reviews USING gin(to_tsvector('russian', review_text));
+
+-- Дополнительная проверка
+SELECT * FROM test_query_performance();
