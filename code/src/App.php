@@ -4,26 +4,36 @@ declare(strict_types=1);
 
 namespace src;
 
-use Exception;
-use InvalidArgumentException;
 use src\Controller\BracketsController;
 use src\Http\Response;
 use src\Service\BracketValidator;
+use Throwable;
 
-readonly class App
+final class App
 {
-    public function __construct(
-        readonly private array $config
-    ) {}
+    private array $config;
 
-    public function run(): Response
+    public function __construct()
     {
-        $this->initSession();
+        $this->config = require __DIR__ . '/../config/settings.php';
+    }
 
-        $validator = new BracketValidator();
-        $controller = new BracketsController($validator);
+    public function run(): void
+    {
+        try {
+            $this->initSession();
 
-        return $controller->handle();
+            $controller = new BracketsController(new BracketValidator());
+            $response = $controller->handle();
+
+            $this->emit($response);
+
+        } catch (Throwable $e) {
+            $this->emit(new Response([
+                'error' => true,
+                'message' => $e->getMessage()
+            ], (int)$e->getCode() ?: 500));
+        }
     }
 
     private function initSession(): void
@@ -33,5 +43,15 @@ readonly class App
             ini_set('session.save_path', $this->config['session']['path']);
             session_start();
         }
+    }
+
+    private function emit(Response $response): void
+    {
+        if (PHP_SAPI !== 'cli' && !headers_sent()) {
+            http_response_code($response->statusCode);
+            header('Content-Type: application/json; charset=utf-8');
+        }
+
+        echo json_encode($response->data, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     }
 }
