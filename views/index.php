@@ -2,18 +2,45 @@
 <html>
 <head>
     <title>Homework 15</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        main {
+            max-width: 500px;
+            margin: 0 auto;
+            font-size: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+    </style>
 </head>
 <body>
 
-<?if (!isset($response)) {?>
-<form action="/" enctype="multipart/form-data" method="post">
-    <input type="date" name="dateFrom" required>
-    <input type="date" name="dateTo" required>
-    <input type="email" name="email" required>
-    <button type="submit">Отправить</button>
-</form>
-<?} else {?>
-    <?php echo $response->getMessage();?>
-<?}?>
+<main>
+    <?php if (!isset($response)) { ?>
+        <form action="/" enctype="multipart/form-data" method="post">
+            <label>Date from
+                <input type="date" name="dateFrom" required>
+            </label>
+            <label>Date to
+                <input type="date" name="dateTo" required>
+            </label>
+            <label>Email
+                <input type="email" name="email" required>
+            </label>
+            <button type="submit">Отправить</button>
+        </form>
+    <?php } else { ?>
+        <?php echo $response->getMessage(); ?>
+    <?php } ?>
+</main>
 </body>
 </html>
