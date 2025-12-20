@@ -1,11 +1,12 @@
 # в этом блоке мы описываем контейнеры, которые будут запускаться
+name: homework20
 services:
 
   nginx:
     build:
       context: ./compose/hw20/nginx
-      dockerfile: Dockerfile
-    image: hw12/nginx
+      dockerfile: dockerfile
+    image: hw/nginx
     container_name: nginxhw20
     # проброс портов
     ports:
@@ -19,13 +20,16 @@ services:
          condition: service_started
       postgres:
           condition: service_started
+    networks:
+      - default_network
+
   phpnew:
     # Если нет секции build, то система будет искать образ в репозиториях
     build:
       context: ./compose/hw20/php
       dockerfile: Dockerfile
-    image: hw12/php # имя будущего образа
-    container_name: phpnewhw20 # имя контейнера после запуска
+    image: hw/php
+    container_name: phphw20 # имя контейнера после запуска
     environment:
       - RABBITMQ_HOST=${RABBITMQ_HOST}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
@@ -36,7 +40,42 @@ services:
       - DB_DATABASE=${DB_DATABASE}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - .:/data/mysite.local
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+      php-receiver:
+        condition: service_started
+    networks:
+      - default_network
 
+  php-receiver:
+    build:
+      context: ./compose/hw20/php
+      dockerfile: dockerfile
+    image: hw/php
+
+    container_name: php-receiver-hw20 # имя контейнера после запуска
+    environment:
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cd mysite.local
+        composer install
+        php consumer.php
     volumes:
        - .:/data/mysite.local
     depends_on:
@@ -44,6 +83,8 @@ services:
         condition: service_healthy
       postgres:
         condition: service_started
+    networks:
+      - default_network
 
     # мы можем создать для контейнеров внутреннюю сеть
 
@@ -60,6 +101,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - default_network
 
   postgres:
     container_name: postgreshw20
@@ -68,6 +111,16 @@ services:
     shm_size: 4096MB
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - ./compose/hw20/postgresql:/docker-entrypoint-initdb.d
     #Для подключения снаружи
     ports:
       - '5432:5432'
+    networks:
+      - default_network
+
+networks:
+  default_network:
+    driver: bridge

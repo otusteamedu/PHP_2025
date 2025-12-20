@@ -89,7 +89,7 @@ class JobRepository implements JobRepositoryInterface
 
         $job = $this->jobFactory->createFromParameters($jobParameters);
         $job->setStatus(JobStatusEnum::from($row['status']));
-        $job->setBankStatementId($row['statement']);
+        $job->setBankStatementId((int)$row['statement']);
         $reflection = new ReflectionClass($job);
 
         $idProperty = $reflection->getProperty("id");
