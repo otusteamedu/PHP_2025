@@ -23,10 +23,16 @@ director as (
 	select movieId, 'Режиссёр' as attributeName, v.attributeId, textVal as value from value as v
 	where v.attributeId = (select id from attribute where name = 'Режиссёр')
 ),
+country as (
+	select movieId, 'Страна' as attributeName, v.attributeId, textVal as value from value as v
+	where v.attributeId = (select id from attribute where name = 'Страна')
+),
 result as (
 	select * from cost
 	union all
 	select * from director
+	union all
+	select * from country
 )
 
 select m.name, r.attributeName, t.name, r.value from result as r
