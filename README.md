@@ -1,3 +1,10 @@
-# PHP_2025
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+*   **`EmailVerifyService.php`**  
+    Центральный узел приложения. Координирует работу всех валидаторов.
+
+*   **`Validator/`**  
+    *   `SyntaxValidator`: Отвечает за корректность написания адреса. Поддерживает кириллические домены.
+    *   `MxValidator`: Работает с сетью. Проверяет наличие MX-записей почтовых серверов. Имеет внутренний кэш.
+
+*   **`Dto/VerificationResponse.php`**  
+    исходный email, статус валидности и slug => текст ошибки.

@@ -1,0 +1,26 @@
+{
+  "name": "daruhashida/email-verifier",
+  "description": "Сервис для валидации email с regex и DNS MX валидацией.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Daru Hashida",
+      "email": "fedor.khvostunkov@yandex.ru"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "ext-filter": "*",
+    "ext-intl": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  }
+}
