@@ -25,7 +25,8 @@ CREATE TABLE value (
     value_text TEXT,
     value_bool BOOLEAN,
     value_date DATE,
-    value_numeric NUMERIC(3,1)
+    value_numeric NUMERIC(3,1),
+    value_int INT
 );
 
 -- Создаем индексы
