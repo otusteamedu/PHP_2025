@@ -74,6 +74,10 @@ result as (
 
 select m.name, r.attributeName, t.name, r.value from result as r
 left join movie as m on m.id = r.movieId
-left join attribute_type as t on r.attributeId= t.id
+left join (
+    select a.id, t.name from attribute as a
+        join attribute_type as t on a.typeId = t.id
+    ) as t
+    on r.attributeId= t.id
 
 group by m.name, attributename, t.name, r.value
