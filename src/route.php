@@ -1,24 +1,18 @@
 <?php
 
-use Blarkinov\RedisCourse\Controllers\EventController;
+use Blarkinov\RabbitMq\Controllers\BankStatementController;
 
 return [
     [
         'method'  => 'POST',
-        'pattern' => '/events',
-        'handler' => fn() => (new EventController)->save(),
+        'pattern' => '/bank_statement',
+        'handler' => fn() => (new BankStatementController)->push(),
 
     ],
     [
         'method'  => 'GET',
-        'pattern' => '/events',
-        'handler' => fn() => (new EventController)->priority(),
-
-    ],
-    [
-        'method'  => 'DELETE',
-        'pattern' => '/events',
-        'handler' => fn() => (new EventController)->destroy(),
+        'pattern' => '/bank_statement',
+        'handler' => fn() => (new BankStatementController)->get(),
 
     ],
 ];

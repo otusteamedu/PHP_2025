@@ -1,6 +1,6 @@
 <?php
 
-namespace Blarkinov\RedisCourse;
+namespace Blarkinov\RabbitMq;
 
 use Exception;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Blarkinov\RedisCourse\App;
+namespace Blarkinov\RabbitMq\App;
 
-use Blarkinov\RedisCourse\Http\Request;
+use Blarkinov\RabbitMq\Http\Request;
 
 class App
 {

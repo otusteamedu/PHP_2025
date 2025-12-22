@@ -6,3 +6,4 @@
 docker init
 .env
 ./redis.conf
+/.vscode/

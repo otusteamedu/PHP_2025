@@ -1,39 +1,41 @@
 <?php
 
-namespace Blarkinov\RedisCourse\Service;
+namespace Blarkinov\RabbitMq\Service;
 
+use Blarkinov\RabbitMq\Exceptions\BadRequestException;
 use Exception;
 
 class Validator
 {
-    public function mainValidate(): bool
+    public function mainValidate(): void
     {
-
         if (!isset($_SERVER['REQUEST_URI']))
-            return false;
+            throw new BadRequestException;
 
         if (empty($_SERVER['REQUEST_URI']))
-            return false;
+            throw new BadRequestException;
 
         if (!isset($_SERVER['REQUEST_METHOD']))
-            return false;
+            throw new BadRequestException;
 
         if (empty($_SERVER['REQUEST_METHOD']))
-            return false;
-
-        return true;
+            throw new BadRequestException;
     }
 
-    public function eventSave()
+    public function bankStatementPush()
     {
-        $this->checkParam('priority', 'integer');
-        $this->checkParam('data', 'array');
-        $this->checkParam('conditions', 'array');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
+            throw new BadRequestException;
+
+        $this->checkParam('dateFrom', 'string');
+        $this->checkParam('dateTo', 'string');
+        $this->checkParam('transactionType', 'string');
     }
 
-    public function eventPriority()
+    public function bankStatementGet()
     {
-        $this->checkParam('conditions', 'array');
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET')
+            throw new BadRequestException;
     }
 
     private function checkParam(string $name, string $type)
