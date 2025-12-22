@@ -1,0 +1,22 @@
+{
+  "name": "dinargab/homework19",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Dinargab\\Homework19\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "DinarGab",
+      "email": "Dinar@reaspekt.ru"
+    }
+  ],
+  "require": {
+    "symfony/dependency-injection": "^7.3",
+    "symfony/yaml": "^7.3",
+    "symfony/config": "^7.3",
+    "phpmailer/phpmailer": "^7.0",
+    "php-amqplib/php-amqplib": "^3.7"
+  }
+}
