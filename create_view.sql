@@ -29,12 +29,12 @@ SELECT
 	at.name AS attribute_type,
 	a.name AS attribute_name,
 	CASE at.data_type
-		WHEN 'varchar' THEN av.value_varchar
-		WHEN 'text' THEN av.value_text
+		WHEN 'string' THEN av.value_string
 		WHEN 'boolean' THEN CASE WHEN av.value_boolean IS TRUE THEN 'Да' WHEN av.value_boolean IS FALSE THEN 'Нет' ELSE NULL END
 		WHEN 'date' THEN TO_CHAR(av.value_date, 'YYYY-MM-DD')
 		WHEN 'int' THEN av.value_int::TEXT
-		WHEN 'decimal' THEN av.value_decimal::TEXT
+		WHEN 'numeric' THEN av.value_numeric::TEXT
+		WHEN 'float' THEN av.value_float::TEXT
 		WHEN 'json' THEN av.value_json::TEXT
 		ELSE NULL
 	END AS value_text

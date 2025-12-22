@@ -9,7 +9,7 @@ INSERT INTO movie (title, duration, description) VALUES
 
 -- Типы атрибутов
 INSERT INTO attribute_type (name, data_type) VALUES
-('Рецензии', 'text'),
+('Рецензии', 'string'),
 ('Премии', 'boolean'),
 ('Важные даты', 'date'),
 ('Служебные даты', 'date');
@@ -30,7 +30,7 @@ INSERT INTO attribute (attr_type_id, name, description) VALUES
 ((SELECT id FROM attribute_type WHERE name = 'Служебные даты'), 'Запуск рекламы на ТВ', 'Дата старта рекламной кампании на ТВ');
 
 -- Рецензии
-INSERT INTO attribute_values (movie_id, attribute_id, value_text) VALUES
+INSERT INTO attribute_values (movie_id, attribute_id, value_string) VALUES
 ((SELECT id FROM movie WHERE title = 'Дюна: Часть вторая'), (SELECT id FROM attribute WHERE name = 'Рецензия критика'), 'Визуально мощный и вдумчивый эпос, усиливающий первую часть.'),
 ((SELECT id FROM movie WHERE title = 'Дюна: Часть вторая'), (SELECT id FROM attribute WHERE name = 'Отзыв киноакадемии'), 'Амбициозное продолжение с акцентом на характеры.'),
 ((SELECT id FROM movie WHERE title = 'Оппенгеймер'), (SELECT id FROM attribute WHERE name = 'Рецензия критика'), 'Напряжённый портрет учёного, балансирующий на грани морали.'),
@@ -49,8 +49,8 @@ INSERT INTO attribute_values (movie_id, attribute_id, value_boolean) VALUES
 
 -- Важные даты
 INSERT INTO attribute_values (movie_id, attribute_id, value_date) VALUES
-((SELECT id FROM movie WHERE title = 'Дюна: Часть вторая'), (SELECT id FROM attribute WHERE name = 'Мировая премьера'), '2025-12-21'),
-((SELECT id FROM movie WHERE title = 'Дюна: Часть вторая'), (SELECT id FROM attribute WHERE name = 'Премьера в РФ'), '2025-12-21'),
+((SELECT id FROM movie WHERE title = 'Дюна: Часть вторая'), (SELECT id FROM attribute WHERE name = 'Мировая премьера'), CURRENT_DATE),
+((SELECT id FROM movie WHERE title = 'Дюна: Часть вторая'), (SELECT id FROM attribute WHERE name = 'Премьера в РФ'), CURRENT_DATE),
 ((SELECT id FROM movie WHERE title = 'Оппенгеймер'), (SELECT id FROM attribute WHERE name = 'Мировая премьера'), '2025-07-21'),
 ((SELECT id FROM movie WHERE title = 'Оппенгеймер'), (SELECT id FROM attribute WHERE name = 'Премьера в РФ'), '2025-08-10'),
 ((SELECT id FROM movie WHERE title = 'Бедные-несчастные'), (SELECT id FROM attribute WHERE name = 'Мировая премьера'), '2025-09-01'),

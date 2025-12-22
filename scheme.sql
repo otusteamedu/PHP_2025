@@ -9,7 +9,7 @@ CREATE TABLE movie (
 CREATE INDEX idx_movie_title ON movie (title);
 
 -- Типы атрибутов
-CREATE TYPE data_type_enum AS ENUM ('varchar', 'text', 'int', 'decimal', 'boolean', 'date', 'json');
+CREATE TYPE data_type_enum AS ENUM ('string', 'int', 'numeric', 'float', 'boolean', 'date', 'json');
 
 CREATE TABLE attribute_type (
     id SERIAL PRIMARY KEY,
@@ -39,10 +39,10 @@ CREATE TABLE attribute_values (
     movie_id INT NOT NULL,
     attribute_id INT NOT NULL,
 
-    value_varchar VARCHAR(255) NULL,
-    value_text TEXT NULL,
+    value_string TEXT NULL,
     value_int INT NULL,
-    value_decimal DECIMAL(10, 2) NULL,
+    value_numeric DECIMAL(10, 2) NULL,
+    value_float DOUBLE PRECISION NULL,
     value_boolean BOOLEAN NULL,
     value_date DATE NULL,
     value_json JSON NULL,

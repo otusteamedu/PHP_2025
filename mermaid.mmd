@@ -13,7 +13,7 @@ erDiagram
     attribute_type {
         serial id PK
         varchar(255) name "NOT NULL UNIQUE"
-        enum data_type "varchar|text|int|decimal|boolean|date|json"
+        enum data_type "string|int|numeric|float|boolean|date|json"
     }
 
     attribute {
@@ -27,10 +27,10 @@ erDiagram
         serial id PK
         int movie_id FK "REFERENCES movie(id)"
         int attribute_id FK "REFERENCES attribute(id)"
-        varchar(255) value_varchar
-        text value_text
+        text value_string
         int value_int
-        decimal value_decimal "decimal(10,2)"
+        decimal value_numeric "decimal(10,2)"
+        double value_float "DOUBLE PRECISION"
         boolean value_boolean
         date value_date
         json value_json
