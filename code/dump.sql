@@ -67,7 +67,8 @@ CREATE TABLE public."values" (
     type_id integer,
     attribute_id integer,
     film_id bigint,
-    value_numeric float4,
+    value_numeric integer,
+    value_float float4,
     value_date date,
     value_boolean boolean,
     value_text text
