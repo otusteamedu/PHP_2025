@@ -11,7 +11,7 @@ where CAST(s.date AS DATE) = CURRENT_DATE;
 -- Подсчёт проданных билетов за неделю
 EXPLAIN  SELECT count(tickets.id) FROM sessions
     INNER JOIN tickets on sessions.id = tickets.session_id
-WHERE CAST(sessions.date AS DATE) BETWEEN  CURRENT_DATE AND CURRENT_DATE + INTERVAL '2 days';
+WHERE CAST(sessions.date AS DATE) BETWEEN  CURRENT_DATE - INTERVAL '6days' AND CURRENT_DATE;
 
 -- Фильмы, которые показывают сегодня
 EXPLAIN SELECT films.title,sessions.date::TIME  FROM films
