@@ -6,6 +6,7 @@ namespace Dinargab\Homework20\Application\Job\ProcessJob;
 use Dinargab\Homework20\Domain\Job\Entity\Job;
 use Dinargab\Homework20\Domain\Job\JobStatusEnum;
 use Dinargab\Homework20\Domain\Job\Repository\JobRepositoryInterface;
+use Dinargab\Homework20\Domain\Logger\LoggerInterface;
 use Dinargab\Homework20\Domain\Queue\QueueServiceInterface;
 use Dinargab\Homework20\Domain\Statement\Factory\BankStatementFactoryInterface;
 use Dinargab\Homework20\Domain\Statement\Repository\BankStatementRepositoryInterface;
@@ -18,6 +19,7 @@ class ProcessJobUseCase
         private JobRepositoryInterface $jobRepository,
         private BankStatementFactoryInterface $bankStatementFactory,
         private BankStatementRepositoryInterface $bankStatementRepository,
+        private LoggerInterface $logger
     )
     {
 
@@ -37,13 +39,12 @@ class ProcessJobUseCase
             if (!$generatorJob) {
                 continue;
             }
-            //Тут мы как нибудь эту выписку делаем
-            // Сохраняем информацию о выписке и меняем статус работы
             $statement = $this->bankStatementFactory->createFromJob($generatorJob, "https://example.com");
             $statement = $this->bankStatementRepository->addStatement($statement);
             $generatorJob->setBankStatementId($statement->getId());
             $generatorJob->setStatus(JobStatusEnum::COMPLETED);
             $this->jobRepository->update($generatorJob);
+            $this->logger->log($generatorJob);
         }
     }
 }

@@ -32,27 +32,6 @@ class QueueService implements QueueServiceInterface
 
     public function pull(callable $callback): \Generator
     {
-//        $channel = $this->connection->getChannel();
-//        $channel->queue_declare(self::QUEUE_NAME, false, false, false, false);
-//        $rabbitCallback = function (AMQPMessage $msg) use ($callback) {
-//            yield $callback(unserialize($msg->getBody()));
-//        };
-//
-//        $channel->basic_consume(self::QUEUE_NAME, '', false, true, false, false, $rabbitCallback);
-//        echo " [*] Waiting for messages. To exit press CTRL+C\n";
-//
-//        while ($channel->is_consuming()) {
-//            $channel->wait();
-//        }
-//
-//        try {
-//            $channel->consume();
-//        } catch (\Throwable $exception) {
-//            echo $exception->getMessage();
-//        }
-//
-//
-//        $this->connection->close();
         $channel = $this->connection->getChannel();
         $channel->queue_declare(self::QUEUE_NAME, false, false, false, false);
 
@@ -63,9 +42,7 @@ class QueueService implements QueueServiceInterface
                 $job = unserialize($message->getBody());
                 yield $job;
             } else {
-                // No message, yield null or break
                 yield null;
-                // Optional: add a small delay to prevent busy waiting
                 usleep(100000); // 100ms
             }
         }

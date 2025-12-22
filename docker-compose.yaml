@@ -111,7 +111,7 @@ services:
     shm_size: 4096MB
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_DB=${DB_DATABASE}
     volumes:
       - ./compose/hw20/postgresql:/docker-entrypoint-initdb.d
