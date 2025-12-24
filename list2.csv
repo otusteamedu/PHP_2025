@@ -1,0 +1,6 @@
+"Индекс","Таблица","Сканирований"
+"session_pkey","session","9406575"
+"hall_seat_pkey","hall_seat","9406559"
+"seat_pricing_session_id_hall_seat_id_key","seat_pricing","9406555"
+"customer_pkey","customer","8406555"
+"ticket_session_id_hall_seat_id_key","ticket","8406555"

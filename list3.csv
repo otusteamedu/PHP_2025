@@ -1,0 +1,6 @@
+"Индекс","Таблица","Сканирований"
+"idx_session_hall_id","session","0"
+"idx_hall_layout_id","hall","0"
+"idx_hall_seat_layout_row_seat","hall_seat","0"
+"idx_session_end_time","session","0"
+"seat_pricing_pkey","seat_pricing","0"

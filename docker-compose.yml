@@ -19,6 +19,7 @@ services:
     volumes:
       - pg_dump:/app/dump
       - pg_data:/var/lib/postgresql/data
+      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
     networks:
       - app-network
 
