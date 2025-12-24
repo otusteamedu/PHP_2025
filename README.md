@@ -1,3 +1,1 @@
-# PHP_2025
-
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+В index.php приведен массив с списком имейлов, в App.php отправка email на валидацию и получение ответа, в Validator.php механизм проверки с помощью регулярного выражения и наличии MX записи.
