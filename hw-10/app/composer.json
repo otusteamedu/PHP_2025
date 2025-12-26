@@ -1,0 +1,23 @@
+{
+    "name": "otus/hw10",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "vova",
+            "email": "v.silkin@21vek.by"
+        }
+    ],
+    "require": {
+        "symfony/console": "^8.0",
+        "elasticsearch/elasticsearch": "^v8.19.0."
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
