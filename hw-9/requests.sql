@@ -2,13 +2,13 @@
 SELECT f.name
 FROM seance s
     JOIN film f ON s.film_id = f.id
-WHERE s.seance_time::date = CURRENT_DATE;
+WHERE s.seance_time >= CURRENT_DATE AND s.seance_time < CURRENT_DATE + INTERVAL '1 day';
 
 -- 2.запрос на подсчет проданных билетов за неделю
 SELECT COUNT(*)
 FROM ticket t
     JOIN seance s ON t.seance_id = s.id
-WHERE s.seance_time::date BETWEEN CURRENT_DATE - INTERVAL '7 days' AND CURRENT_DATE;
+WHERE s.seance_time >= CURRENT_DATE - INTERVAL '7 days' AND s.seance_time < CURRENT_DATE + INTERVAL '1 day';
 
 -- 3.запрос на получение фильмов которые показывают сегодня
 SELECT DISTINCT f.name
