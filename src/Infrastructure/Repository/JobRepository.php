@@ -27,7 +27,7 @@ class JobRepository implements JobRepositoryInterface
     {
         $stmt = $this->client->getConnection()->prepare("INSERT INTO job (parameters, status) VALUES (:parameters, :status)");
         $stmt->bindValue(':parameters', json_encode($job->getJobParameters()), PDO::PARAM_STR);
-        $stmt->bindValue(':status', JobStatusEnum::NEW);
+        $stmt->bindValue(':status', JobStatusEnum::NEW->value);
         $stmt->execute();
         $jobId = $this->client->getConnection()->lastInsertId();
         $reflection = new ReflectionClass($job);
