@@ -1,0 +1,14 @@
+{
+    "name": "alex/hw11",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.3",
+        "predis/predis": "^3.3",
+        "mongodb/mongodb": "^2.1"
+    }
+}
