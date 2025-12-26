@@ -1,40 +1,42 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
+use Ak\Hw\Models\Elastic;
+use Ak\Hw\Models\Shop;
 
-use Ak\Hw\Models\EmailFinder;
 
-/**
- * Отправляет JSON-ответ клиенту и завершает выполнение скрипта.
- *
- * @param bool $isSuccess Успешен ли был запрос.
- * @param array $data Данные для включения в ответ.
- * @param int $statusCode HTTP-код ответа.
- * @throws JsonException
- */
-function sendJsonResponse(bool $isSuccess, array $data, int $statusCode = 200): void
-{
-    http_response_code($statusCode);
-    header('Content-Type: application/json; charset=utf-8');
-    $response = ['success' => $isSuccess];
-    if ($isSuccess) {
-        $response['data'] = $data;
-    } else {
-        $response['error'] = $data;
+$categories = Shop::getCategories();
+$categoriesStr = '';
+foreach ($categories as $key => $value) {
+    $categoriesStr .= "$key - $value\n";
+}
+
+if (extension_loaded('readline')) {
+    echo "Добро пожаловать! Давайте найдем Вам книгу.\n";
+
+    $category = readline("Шаг 1:Выберите категорию: .\n ".$categoriesStr);
+
+    $price = readline("До какой цены вам нужна книга?\n");
+
+    // Шаг 1: Ввод имени
+    $title = readline("Вы можете найти что нибудь по названию:\n ");
+
+    $result = Shop::find($categories[$category], $price, $title);
+
+    if(!$result){
+        echo "к сожалению нам не удалось найти Вам книгу \n" ;
+        echo "Скрипт завершен.\n";
+        exit();
     }
-    echo json_encode($response, JSON_THROW_ON_ERROR);
-    exit();
+
+
+    echo "Вот что мы нашли для Вас:\n";
+    echo "--------------------------------------------------\n";
+    echo sprintf("| %-30s | %-15s | %-10s |\n", "Название", "Категория", "Цена");
+    echo "--------------------------------------------------\n";
+    foreach ($result as $book) {
+        echo sprintf("| %-30s | %-15s | %-10s |\n", $book["_source"]['title'], $book["_source"]['category'], $book["_source"]['price']);
+    }
+    echo "--------------------------------------------------\n";
 }
 
-
-$text = htmlspecialchars($_REQUEST['text'] ?? '');
-
-if (empty($text)) {
-    sendJsonResponse(false, ['message' => 'Text parameter is required.'], 400);
-}
-
-try {
-    $validEmails = new EmailFinder()->getEmailsByText($text);
-    sendJsonResponse(true, ['emails' => $validEmails]);
-} catch (Exception $e) {
-    sendJsonResponse(false, ['message' => $e->getMessage()], $e->getCode());
-}
+echo "Скрипт завершен.\n";
