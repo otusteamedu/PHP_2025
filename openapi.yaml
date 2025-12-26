@@ -1,6 +1,6 @@
 openapi: 3.0.0
 paths:
-  /jobs:
+  /api/v1/jobs:
     get:
       tags:
         - Jobs
@@ -16,7 +16,7 @@ paths:
                 properties:
                   jobs: { type: array, items: { properties: { id: { type: integer, example: 1 }, status: { type: string, example: completed } }, type: object } }
                 type: object
-  '/jobs/{id}':
+  '/api/v1/jobs/{id}':
     get:
       tags:
         - Jobs
@@ -45,7 +45,7 @@ paths:
                 type: object
         '404':
           description: 'Job not found'
-  /statement:
+  /api/v1/statement:
     post:
       tags:
         - Statements
@@ -91,7 +91,7 @@ paths:
                 properties:
                   message: { type: string, example: 'Missing required parameters: dateFrom dateTo' }
                 type: object
-  '/statement/{id}':
+  '/api/v1/statement/{id}':
     get:
       tags:
         - Statements

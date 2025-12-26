@@ -25,7 +25,7 @@ class StatementController
 
 
     #[OA\Post(
-        path: "/statement",
+        path: "/api/v1/statement",
         operationId: "requestStatement",
         tags: ["Statements"],
         summary: "Request a new statement",
@@ -105,7 +105,7 @@ class StatementController
     }
 
     #[OA\Get(
-        path: "/statement/{id}",
+        path: "/api/v1/statement/{id}",
         operationId: "getStatement",
         tags: ["Statements"],
         summary: "Get statement by ID",

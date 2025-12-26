@@ -25,7 +25,7 @@ class JobsController
     }
 
     #[OA\Get(
-        path: "/jobs",
+        path: "/api/v1/jobs",
         operationId: "getAllJobs",
         tags: ["Jobs"],
         summary: "Get all jobs",
@@ -62,7 +62,7 @@ class JobsController
     }
 
     #[OA\Get(
-        path: "/jobs/{id}",
+        path: "/api/v1/jobs/{id}",
         operationId: "getJobStatus",
         tags: ["Jobs"],
         summary: "Get job status",
