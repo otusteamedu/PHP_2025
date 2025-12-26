@@ -21,7 +21,6 @@ class JobsController
         private GetJobStatusUseCase $getJobStatusUseCase,
     )
     {
-        // Get the RouteParser from the RouteContext
 
     }
 

@@ -45,12 +45,15 @@ class StatementRepository implements BankStatementRepositoryInterface
         return $statements;
     }
 
-    public function getStatementById(int $id): BankStatement
+    public function getStatementById(int $id): ?BankStatement
     {
         $query = $this->client->getConnection()->prepare("SELECT * FROM bankstatement WHERE id = :id");
         $query->bindValue(":id", $id);
         $query->execute();
         $result = $query->fetch();
+        if (!$result) {
+            return null;
+        }
         $statement = $this->statementFactory->create($result["date_from"], $result["date_to"], $result["url"]);
         $reflection = new ReflectionClass($statement);
         $reflectionProperty = $reflection->getProperty("id");

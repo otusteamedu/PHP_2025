@@ -11,6 +11,6 @@ interface BankStatementRepositoryInterface
 
     public function getAllStatements(): array;
 
-    public function getStatementById(int $id): BankStatement;
+    public function getStatementById(int $id): ?BankStatement;
 
 }

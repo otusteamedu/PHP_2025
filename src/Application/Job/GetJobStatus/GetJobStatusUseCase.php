@@ -24,7 +24,7 @@ class GetJobStatusUseCase
         return new GetJobStatusResponse(
             $job->getId(),
             $job->getStatus(),
-            $job->getId()
+            $job->getBankStatementId()
         );
     }
 }

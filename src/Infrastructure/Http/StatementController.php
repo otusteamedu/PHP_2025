@@ -144,7 +144,7 @@ class StatementController
         try {
             $statementResponse = ($this->getStatementUseCase)($getStatementRequest);
         } catch (EntityNotFoundException $exception) {
-            return $response->withStatus(404);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
         }
         $response->getBody()->write(json_encode([
             'statementId' => $statementResponse->statementId,
