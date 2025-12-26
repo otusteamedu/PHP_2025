@@ -1,0 +1,90 @@
+erDiagram
+    cinema || --|{ hall : contains
+    hall || --|{ seat : contains
+    seat || --|{ seat_category : contains
+
+    session || --|{ movie : includes
+    session || --|{ hall : includes
+    
+    ticket || --|{ session : includes
+    ticket || -- |{ seat : includes
+
+    movie ||--o{ attribute_values : "has values"
+    attribute_type ||--|{ attribute : "groups"
+    attribute ||--o{ attribute_values : "describes"
+
+    cinema {
+        serial id PK
+        varchar(255) name "NOT NULL"
+    }
+
+    hall {
+        serial id PK
+        int cinema_id FK "REFERENCES cinema(id)"
+        varchar(100) name "NOT NULL"      
+    }
+
+    seat {
+        serial id PK
+        int hall_id FK "REFERENCES hall(id)"
+        int nrow "NOT NULL"
+        int seat_number "NOT NULL"
+        int seat_category_id FK "REFERENCES seat_category(id)"
+    }
+
+    seat_category {
+        serial id PK
+        varchar(50) name "NOT NULL"
+        decimal price_multiplier "decimal(10,2) NOT NULL DEFAULT 1"
+    }
+
+    movie {
+        serial id PK
+        varchar(255) title "NOT NULL"
+        int duration "NOT NULL"
+        text description
+    }
+
+    attribute_type {
+        serial id PK
+        varchar(255) name "NOT NULL UNIQUE"
+        enum data_type "string|int|numeric|float|boolean|date|json"
+    }
+
+    attribute {
+        serial id PK
+        int attr_type_id FK "REFERENCES attribute_type(id)"
+        varchar(100) name "NOT NULL UNIQUE"
+        text description
+    }
+
+    attribute_values {
+        serial id PK
+        int movie_id FK "REFERENCES movie(id)"
+        int attribute_id FK "REFERENCES attribute(id)"
+        text value_string
+        int value_int
+        decimal value_numeric "decimal(10,2)"
+        double value_float "DOUBLE PRECISION"
+        boolean value_boolean
+        date value_date
+        json value_json
+    }
+
+    session {
+        serial id PK
+        int movie_id FK "REFERENCES movie(id)"
+        int hall_id FK "REFERENCES hall(id)"
+        timestamp start_time "NOT NULL"
+        decimal base_price "decimal(10,2) NOT NULL"
+    }
+
+    ticket {
+        serial id PK
+        int session_id FK "REFERENCES session(id)"
+        int seat_id FK "REFERENCES seat(id)"
+        int status FK ""
+        enum status "reserved|paid|cancelled|used"
+        decimal total_price "decimal(10,2) NOT NULL"
+        timestamp purchased_at "DEFAULT CURRENT_TIMESTAMP"
+    }
