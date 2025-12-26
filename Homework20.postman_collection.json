@@ -1,0 +1,85 @@
+{
+	"info": {
+		"_postman_id": "59aa6050-9f93-4a83-ae0f-f92c8392bd02",
+		"name": "Homework20",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15577419"
+	},
+	"item": [
+		{
+			"name": "Jobs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/v1/jobs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Statement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "dateFrom",
+							"value": "2025-06-01",
+							"type": "text"
+						},
+						{
+							"key": "dateTo",
+							"value": "2025-06-03",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/api/v1/statement",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"statement"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Job Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/v1/jobs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"jobs"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
