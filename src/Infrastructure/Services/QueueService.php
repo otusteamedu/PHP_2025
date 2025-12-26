@@ -40,6 +40,7 @@ class QueueService implements QueueServiceInterface
 
             if ($message instanceof AMQPMessage) {
                 $job = unserialize($message->getBody());
+                sleep(10);
                 yield $job;
             } else {
                 yield null;

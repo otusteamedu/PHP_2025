@@ -92,7 +92,8 @@ class JobsController
                         new OA\Property(
                             property: "statementUrl",
                             type: "string",
-                            example: "/api/v1/statement/123"
+                            example: "/api/v1/statement/123",
+                            nullable: true
                         )
                     ],
                     type: "object"
@@ -113,13 +114,14 @@ class JobsController
             return $response->withStatus(404);
         }
         $routeParser = RouteContext::fromRequest($request)->getRouteParser();
-        $statementUrl = $routeParser->urlFor('statement', ['id' => $useCaseResponse->getStatementId()]);
-
-        $response->getBody()->write(json_encode([
+        $returnArray = [
             'jobId' => $useCaseResponse->getJobId(),
             'status' => $useCaseResponse->getStatus(),
-            'statementUrl' => $statementUrl
-        ]));
+        ];
+        if ($useCaseResponse->getStatementId()) {
+            $returnArray["statementUrl"] = $routeParser->urlFor('statement', ['id' => $useCaseResponse->getStatementId()]);
+        }
+        $response->getBody()->write(json_encode($returnArray));
 
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }

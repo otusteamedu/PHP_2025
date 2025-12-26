@@ -41,7 +41,7 @@ paths:
                 properties:
                   jobId: { type: integer, example: 1 }
                   status: { type: string, enum: [new, active, completed], example: completed }
-                  statementUrl: { type: string, example: /api/v1/statement/123 }
+                  statementUrl: { type: string, example: /api/v1/statement/123, nullable: true }
                 type: object
         '404':
           description: 'Job not found'
