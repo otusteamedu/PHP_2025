@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: 'nginx'
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/hosts/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - app-network
+    depends_on:
+      - nginx1
+      - nginx2
+
+  nginx1:
+    image: nginx:alpine
+    container_name: 'nginx1'
+    volumes:
+      - ./nginx/hosts/nginx1.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/hosts/logs1:/var/log/nginx:delegated
+      - .:/data
+    networks:
+      - app-network
+    depends_on:
+      - php-fpm1
+
+  nginx2:
+    image: nginx:alpine
+    container_name: 'nginx2'
+    volumes:
+      - ./nginx/hosts/nginx2.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/hosts/logs2:/var/log/nginx:delegated
+      - .:/data
+    networks:
+      - app-network
+    depends_on:
+      - php-fpm2
+
+
+  php-fpm1:
+    build:
+      context: .
+      dockerfile: fpm/Dockerfile
+    container_name: 'php-fpm1'
+    volumes:
+      - .:/data
+      - ./fpm/php.ini:/usr/local/etc/php/conf.d/dev.ini
+    networks:
+      - app-network
+    depends_on:
+      - redis
+
+  php-fpm2:
+    build:
+      context: .
+      dockerfile: fpm/Dockerfile
+    container_name: 'php-fpm2'
+    volumes:
+      - .:/data
+      - ./fpm/php.ini:/usr/local/etc/php/conf.d/dev.ini
+    networks:
+      - app-network
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: 'redis'
+    volumes:
+      - ./redisdata:/data    
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
