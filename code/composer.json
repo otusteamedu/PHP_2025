@@ -4,11 +4,17 @@
   "autoload": {
     "psr-4": {
       "Ak\\Hw\\": "src/"
-    }
+    },
+    "files": [
+      "src/functions.php"
+    ]
   },
   "authors": [
     {
       "name": "Alexander Kanapatski"
     }
-  ]
+  ],
+  "require": {
+    "predis/predis": "*"
+  }
 }

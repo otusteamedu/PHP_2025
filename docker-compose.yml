@@ -75,6 +75,8 @@ services:
       dockerfile: Dockerfile
     image: redis:alpine
     container_name: redis-server
+    ports:
+      - "6379:6379"
     volumes:
       - ./redis/data:/data
     networks:
