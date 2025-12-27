@@ -1,40 +1,62 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
+use Ak\Hw\Models\Events;
 
-use Ak\Hw\Models\EmailFinder;
+$events = new Events();
 
-/**
- * Отправляет JSON-ответ клиенту и завершает выполнение скрипта.
- *
- * @param bool $isSuccess Успешен ли был запрос.
- * @param array $data Данные для включения в ответ.
- * @param int $statusCode HTTP-код ответа.
- * @throws JsonException
- */
-function sendJsonResponse(bool $isSuccess, array $data, int $statusCode = 200): void
-{
-    http_response_code($statusCode);
-    header('Content-Type: application/json; charset=utf-8');
-    $response = ['success' => $isSuccess];
-    if ($isSuccess) {
-        $response['data'] = $data;
-    } else {
-        $response['error'] = $data;
+if (isset($_POST['params'])) {
+    $score = $events->getScore($_POST['params']);
+    echo json_encode(['score' => $score]);
+    exit;
+}
+
+$params = $events->getParams();
+?>
+
+<div id="params-container">
+    <?php foreach ($params as $p => $val): ?>
+        <button class="param-button" data-param="<?= htmlspecialchars($p) ?>"><?= htmlspecialchars($p) ?></button>
+    <?php endforeach; ?>
+</div>
+
+<div id="score-container">
+    Score: <span id="score">0</span>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const paramsContainer = document.getElementById('params-container');
+        const scoreElement = document.getElementById('score');
+
+        paramsContainer.addEventListener('click', function (e) {
+            if (e.target.classList.contains('param-button')) {
+                e.target.classList.toggle('active');
+                sendRequest();
+            }
+        });
+
+        function sendRequest() {
+            const activeButtons = document.querySelectorAll('.param-button.active');
+            const selectedParams = Array.from(activeButtons).map(button => button.dataset.param);
+
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: selectedParams.map(param => `params[]=${encodeURIComponent(param)}`).join('&')
+            })
+            .then(response => response.json())
+            .then(data => {
+                scoreElement.textContent = data.score;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+</script>
+<style>
+    .param-button.active {
+        background-color: #4CAF50;
+        color: white;
     }
-    echo json_encode($response, JSON_THROW_ON_ERROR);
-    exit();
-}
-
-
-$text = htmlspecialchars($_REQUEST['text'] ?? '');
-
-if (empty($text)) {
-    sendJsonResponse(false, ['message' => 'Text parameter is required.'], 400);
-}
-
-try {
-    $validEmails = new EmailFinder()->getEmailsByText($text);
-    sendJsonResponse(true, ['emails' => $validEmails]);
-} catch (Exception $e) {
-    sendJsonResponse(false, ['message' => $e->getMessage()], $e->getCode());
-}
+</style>
