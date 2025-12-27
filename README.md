@@ -4,6 +4,7 @@
 
 ## Быстрый старт
 
+- Разверните Elasticsearch в Docker: `docker compose up --build -d`.
 - Установите автозагрузку: `composer install`.
 - Запустите пример: `php bin/console app:hello --name="Your Name"`.
 - Короткий запуск: `./cli app:hello --name="Your Name"`.
