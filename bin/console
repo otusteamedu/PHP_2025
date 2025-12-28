@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$rootDir = dirname(__DIR__);
+require $rootDir . '/vendor/autoload.php';
+
+use App\Console\ConsoleApplication;
+
+$params = require $rootDir . '/config/params.php';
+$app = new ConsoleApplication($params);
+
+$commands = require $rootDir . '/config/console.php';
+
+foreach ($commands as $command) {
+    $app->add($command);
+}
+
+echo $app->run($argv);
