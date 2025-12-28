@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - php1
+      - php2
+
+  php1:
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    depends_on:
+      - redis
+    volumes:
+      - ./public:/var/www/html/public
+      - ./php/composer.json:/var/www/html/composer.json
+
+  php2:
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    depends_on:
+      - redis
+    volumes:
+      - ./public:/var/www/html/public
+      - ./php/composer.json:/var/www/html/composer.json
+
+  redis:
+    build: ./redis
