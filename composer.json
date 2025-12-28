@@ -3,7 +3,8 @@
     "description": "OTUS console application",
     "type": "project",
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "elasticsearch/elasticsearch": "^8.12"
     },
     "autoload": {
         "psr-4": {
@@ -12,5 +13,10 @@
     },
     "scripts": {
         "cli": "php bin/console"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

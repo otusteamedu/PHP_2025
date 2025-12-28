@@ -8,7 +8,8 @@ require $rootDir . '/vendor/autoload.php';
 
 use App\Console\ConsoleApplication;
 
-$app = new ConsoleApplication();
+$params = require $rootDir . '/config/params.php';
+$app = new ConsoleApplication($params);
 
 $commands = require $rootDir . '/config/console.php';
 

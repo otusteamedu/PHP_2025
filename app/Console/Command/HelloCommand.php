@@ -22,7 +22,7 @@ final class HelloCommand implements CommandInterface
     public function execute(array $input, ConsoleOutput $output): string
     {
         $name = isset($input['name']) ? (string) $input['name'] : 'Developer';
-        $message = sprintf('Hello, %s! Welcome to %s.', $name, ConsoleApplication::NAME);
+        $message = sprintf('Hello, %s! Welcome to %s.', $name, ConsoleApplication::getParams()['app_name']);
 
         return $output->writeln($message);
     }

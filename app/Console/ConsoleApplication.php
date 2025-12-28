@@ -10,9 +10,17 @@ use App\Console\IO\ConsoleOutput;
 final class ConsoleApplication
 {
     private array $commands = [];
+    private static array $paramsApp = [];
 
-    public const NAME = 'OTUS console Application';
-    public const VERSION = '1.0.0';
+    public function __construct(public readonly array $params)
+    {
+        self::$paramsApp = $params;
+    }
+
+    public static function getParams(): array
+    {
+        return self::$paramsApp;
+    }
 
     public function add(CommandInterface $command): void
     {
@@ -40,7 +48,7 @@ final class ConsoleApplication
 
     private function renderHelp(ConsoleOutput $output): string
     {
-        $message = $output->writeln(self::NAME . ' v' . self::VERSION);
+        $message = $output->writeln(self::$paramsApp['app_name'] . ' v' . self::$paramsApp['app_version']);
         $message .= $output->writeln('Available commands:');
 
         foreach ($this->commands as $command) {
