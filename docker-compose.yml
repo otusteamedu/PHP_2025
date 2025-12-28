@@ -1,0 +1,113 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx-hw5
+    ports:
+      - "8000:80"
+      - "443:443"
+    volumes:
+      - ./code:/data/webserver
+      - ./nginx/logs:/var/log/nginx:delegated
+
+    working_dir: /var/www/webserver
+
+    networks:
+      - app5-network
+    depends_on:
+      - php-fpm
+      - php-fpm2
+      - php-fpm3
+
+  php-fpm:
+    container_name: php-fpm
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
+    volumes:
+      - ./code:/data/webserver
+    networks:
+      - app5-network
+    depends_on:
+      - db
+    environment: # Added environment variables
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+
+  php-fpm2:
+    container_name: php-fpm2
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
+    volumes:
+      - ./code:/data/webserver
+    networks:
+      - app5-network
+    depends_on:
+      - db
+    environment: # Added environment variables
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+
+  php-fpm3:
+    container_name: php-fpm3
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
+    volumes:
+      - ./code:/data/webserver
+    networks:
+      - app5-network
+    depends_on:
+      - db
+    environment: # Added environment variables
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+
+  db:
+    image: postgres:13-alpine
+    container_name: postgres-server
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./code/db:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - app5-network
+
+  redis:
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    image: redis:alpine
+    container_name: redis-server
+    volumes:
+      - ./redis/data:/data
+    networks:
+      - app5-network
+
+networks:
+  app5-network:
+    driver: bridge
+volumes:
+  php-sock:
