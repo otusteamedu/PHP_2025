@@ -10,5 +10,8 @@
     {
       "name": "Alexander Kanapatski"
     }
-  ]
+  ],
+  "require": {
+    "ext-pdo": "*"
+  }
 }
