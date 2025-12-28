@@ -20,9 +20,9 @@ Execution Time: 1080.8 ms
 Причина — слишком много записей на один день,
 селективность низкая, индекс не используется.
 
-Индекс:
-CREATE INDEX idx_seance_film_time
-ON seance(film_id, seance_time);
+Изменил тип данных для таймстампа на INT, 
+повесил на него индекс CREATE INDEX idx_seance_time_film ON public.seance USING btree (seance_time, film_id)
+Execution Time: 527.8 ms
 
 
 ============================================================
@@ -47,7 +47,9 @@ Filter: seance_time BETWEEN CURRENT_DATE-7 AND CURRENT_DATE
 Execution Time: 446.3 ms
 
 10M + оптимизация:
-Execution Time: 333.1 ms
+Изменил тип данных для таймстампа на INT,
+повесил на него индекс CREATE INDEX idx_seance_time_film ON public.seance USING btree (seance_time, film_id)
+Execution Time: 360.754 ms
 
 Индекс:
 CREATE INDEX idx_ticket_seance_id
@@ -76,9 +78,10 @@ Filter: seance_time = CURRENT_DATE
 -> Index Scan (film_pkey)
 Execution Time: 648.3 ms
 
-Попытка переписать запрос без ::date и использовать индекс
-ухудшает план. Полный перебор строк за текущий день
-оказался самым быстрым вариантом.
+10M + оптимизация:
+Изменил тип данных для таймстампа на INT,
+повесил на него индекс CREATE INDEX idx_seance_time_film ON public.seance USING btree (seance_time, film_id)
+Execution Time: 562.897 ms
 
 
 ============================================================
@@ -111,11 +114,9 @@ Filter: seance_time BETWEEN CURRENT_DATE-7 AND CURRENT_DATE
 Execution Time: 777.3 ms
 
 10M + оптимизация:
-Execution Time: 647.5 ms
-
-Индексы:
-CREATE INDEX idx_seance_time_film
-ON seance(seance_time, film_id);
+Изменил тип данных для таймстампа на INT,
+повесил на него индекс CREATE INDEX idx_seance_time_film ON public.seance USING btree (seance_time, film_id)
+Execution Time: 545.304 ms
 
 CREATE INDEX idx_ticket_seance_status
 ON ticket(seance_id, status);

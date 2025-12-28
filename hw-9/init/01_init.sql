@@ -19,7 +19,7 @@ CREATE TABLE seance (
     film_id INT NOT NULL REFERENCES film(id) ON DELETE CASCADE,
     hall_id INT NOT NULL REFERENCES hall(id) ON DELETE CASCADE,
     price DECIMAL(10,2) NOT NULL,
-    seance_time TIMESTAMP NOT NULL
+    seance_time INT NOT NULL
 );
 
 -- создаем таблицу с билетами

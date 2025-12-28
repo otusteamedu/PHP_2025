@@ -15,7 +15,7 @@ SELECT
     gs,
     FLOOR(random() * 2)::INT + 1,
     20 + (random() * 20)::INT,
-    NOW() + (random() * INTERVAL '30 days')
+    EXTRACT(EPOCH FROM (NOW() + random() * INTERVAL '30 days'))::INT
 FROM generate_series(1, 10000000) gs;
 
 INSERT INTO ticket (seance_id, row, seat, status, price)
