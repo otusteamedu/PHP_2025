@@ -1,4 +1,4 @@
--- drop table cinema.customer, cinema.cinema, cinema.movie, cinema.place, cinema.hall, cinema.session, cinema.order;
+-- drop table cinema.customer, cinema.cinema, cinema.movie, cinema.place, cinema.hall, cinema.session, cinema.order, cinema.price;
 create schema cinema;
 
 create table cinema.customer
@@ -65,4 +65,18 @@ create table cinema.order
     foreign key (customerId) references cinema.customer (id),
     foreign key (sessionId) references cinema.session (id),
     foreign key (placeId) references cinema.place (id)
+);
+
+CREATE TYPE partOfDay AS ENUM ('Утро', 'День', 'Вечер', 'Ночь');
+CREATE TYPE priceCategory AS ENUM ('В центре', 'С краю', 'В центре, далеко', 'С краю далеко');
+
+create table cinema.price
+(
+    id bigserial primary key,
+    movieId bigint not null,
+    partOfDay partOfDay not null,
+    priceCategory priceCategory not null,
+    price money not null,
+
+    foreign key (movieId) references cinema.movie (id)
 );
