@@ -1,4 +1,4 @@
--- drop table cinema.customer;
+-- drop table cinema.customer, cinema.cinema;
 create schema cinema;
 
 create table cinema.customer
@@ -7,4 +7,11 @@ create table cinema.customer
     name character varying(50),
     email character varying(50) not null,
     phone character varying(20) not null
+);
+
+create table cinema.cinema
+(
+    id smallserial primary key,
+    city character varying(50) not null,
+    address text not null
 );
