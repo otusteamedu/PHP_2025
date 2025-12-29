@@ -1,4 +1,4 @@
--- drop table cinema.customer, cinema.cinema, cinema.movie;
+-- drop table cinema.customer, cinema.cinema, cinema.movie, cinema.place;
 create schema cinema;
 
 create table cinema.customer
@@ -20,4 +20,11 @@ create table cinema.movie
 (
     id bigserial primary key,
     name character varying(100) not null
+);
+
+create table cinema.place
+(
+    id serial primary key,
+    row smallint not null,
+    place smallint not null
 );
