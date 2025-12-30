@@ -25,13 +25,6 @@ erDiagram
 		text address  ""
 	}
 
-	CUSTOMER {
-		bigserial id  ""
-		character-varying name  ""
-		character-varying email  ""
-		character-varying phone  ""
-	}
-
 	MOVIE {
 		bigserial id PK ""
 		character-varying name  ""
@@ -46,21 +39,28 @@ erDiagram
 		timestamp time  ""
 	}
 
-	PLACE {
-		serial id PK ""
-		smallint hall_id FK ""
-		smallint cinema-id FK ""
-		bigint price_id FK ""
-		smallint row  ""
-		smallint place  ""
-		enum category  "'в центре', 'с краю', 'в центре, далеко', 'с краю далеко'"
-	}
-
 	PRICE {
 		bigserial id PK ""
 		bigint move-id FK ""
 		money price  ""
 		enum part-of-day-id  "Утро, день, вечер, ночь"
+	}
+
+	CUSTOMER {
+		bigserial id PK ""
+		character-varying name  ""
+		character-varying email  ""
+		character-varying phone  ""
+	}
+
+	PLACE {
+		serial id PK ""
+		smallint hall_id FK ""
+		smallint order-id FK ""
+		bigint price_id FK ""
+		smallint row  ""
+		smallint place  ""
+		enum category  "'в центре', 'с краю', 'в центре, далеко', 'с краю далеко'"
 	}
 
 	HALL||--|{PLACE:"  "
