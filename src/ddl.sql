@@ -32,12 +32,15 @@ create table cinema.hall
     foreign key (cinemaId) references cinema.cinema (id)
 );
 
+CREATE TYPE placeCategory AS ENUM ('В центре', 'С краю', 'В центре, далеко', 'С краю далеко');
+
 create table cinema.place
 (
     id serial primary key,
     row smallint not null,
     place smallint not null,
     hallId smallint not null,
+    category placeCategory not null,
 
     foreign key (hallId) references cinema.hall (id)
 );
@@ -70,14 +73,12 @@ create table cinema.order
 );
 
 CREATE TYPE partOfDay AS ENUM ('Утро', 'День', 'Вечер', 'Ночь');
-CREATE TYPE priceCategory AS ENUM ('В центре', 'С краю', 'В центре, далеко', 'С краю далеко');
 
 create table cinema.price
 (
     id bigserial primary key,
     movieId bigint not null,
     partOfDay partOfDay not null,
-    priceCategory priceCategory not null,
     price money not null,
 
     foreign key (movieId) references cinema.movie (id)
