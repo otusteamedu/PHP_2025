@@ -47,9 +47,11 @@ create table cinema.session
     id bigserial primary key,
     movieId bigint not null,
     hallId smallint not null,
+    orderId bigint not null,
     startTime timestamp not null,
 
     foreign key (hallId) references cinema.hall (id),
+    foreign key (orderId) references cinema.order (id),
     foreign key (movieId) references cinema.movie (id)
 );
 
