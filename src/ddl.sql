@@ -40,9 +40,13 @@ create table cinema.place
     row smallint not null,
     place smallint not null,
     hallId smallint not null,
+    orderId bigint not null,
+    placeId int not null,
     category placeCategory not null,
 
-    foreign key (hallId) references cinema.hall (id)
+    foreign key (hallId) references cinema.hall (id),
+    foreign key (placeId) references cinema.place (id),
+    foreign key (orderId) references cinema.order (id)
 );
 
 create table cinema.session
