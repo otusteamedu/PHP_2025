@@ -1,4 +1,5 @@
 -- drop table cinema.customer, cinema.cinema, cinema.movie, cinema.place, cinema.hall, cinema.session, cinema.order, cinema.price;
+-- drop table ;
 create schema cinema;
 
 create table cinema.customer
@@ -22,6 +23,15 @@ create table cinema.movie
     name character varying(100) not null
 );
 
+create table cinema.hall
+(
+    id smallserial primary key,
+    cinemaId smallint not null,
+    number smallint not null,
+
+    foreign key (cinemaId) references cinema.cinema (id)
+);
+
 create table cinema.place
 (
     id serial primary key,
@@ -30,15 +40,6 @@ create table cinema.place
     hallId smallint not null,
 
     foreign key (hallId) references cinema.hall (id)
-);
-
-create table cinema.hall
-(
-    id smallserial primary key,
-    cinemaId smallint not null,
-    number smallint not null,
-
-    foreign key (cinemaId) references cinema.cinema (id),
 );
 
 create table cinema.session
@@ -59,7 +60,6 @@ create table cinema.order
     sessionId bigint not null,
     placeId int not null,
     ticketPrice money not null,
-
     time timestamp not null,
 
     foreign key (customerId) references cinema.customer (id),
