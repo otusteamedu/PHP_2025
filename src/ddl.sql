@@ -1,5 +1,5 @@
 -- drop table cinema.customer, cinema.cinema, cinema.movie, cinema.place, cinema.hall, cinema.session, cinema.order, cinema.price;
--- drop table cinema.customer_order;
+-- drop table cinema.customer_order, cinema.order_place;
 create schema cinema;
 
 create table cinema.customer
@@ -85,4 +85,10 @@ CREATE TABLE cinema.customer_order (
     orderId bigint references cinema.customer,
     customerId bigint references cinema.order,
     PRIMARY KEY (orderId, customerId)
+);
+
+CREATE TABLE cinema.order_place (
+    orderId bigint references cinema.place,
+    placeId int references cinema.order,
+    PRIMARY KEY (orderId, placeId)
 );
