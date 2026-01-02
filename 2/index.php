@@ -60,7 +60,7 @@ class Magic implements MagicInterface
         // Поиск вызовов в синтаксисе JS через точку и вызовов в синтаксисе PHP через ->
         // и их последовательное выполнение
         if (preg_match_all('/(\.|->)\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*?)\)/s', $codeNoComments, $calls, PREG_SET_ORDER)) {
-            $obj = $this;
+            $result = null;
 
             foreach ($calls as $call) {
                 $name = $call[2];
@@ -71,11 +71,11 @@ class Magic implements MagicInterface
 
                 $arg = trim($call[3] ?? '');
 
-                $obj = $obj->$name($arg);
+                $result = $this->$name($arg);
             }
 
-            if (is_string($obj)) {
-                echo $obj;
+            if (is_string($result)) {
+                echo $result;
             }
 
             exit;
