@@ -45,21 +45,41 @@ interface MagicInterface
 class Magic implements MagicInterface
 {
     private string|array $value = '';
-    private static Magic $current;
 
     public function __construct()
     {
-        self::$current = $this;
-    }
+        $code = @file_get_contents(__FILE__);
 
-    public function __toString(): string
-    {
-        return '';
-    }
+        // Убираем комменты, чтобы закомментированные вызовы не выполнялись
+        $codeNoComments = preg_replace('!/\*.*?\*/!s', '', $code);
+        $codeNoComments = preg_replace('!//.*$!m', '', $codeNoComments);
+        $codeNoComments = preg_replace('!#.*$!m', '', $codeNoComments);
 
-    public static function getCurrent(): ?Magic
-    {
-        return self::$current;
+        $methods = get_class_methods(self::class);
+
+        // Поиск вызовов в синтаксисе JS через точку и вызовов в синтаксисе PHP через ->
+        // и их последовательное выполнение
+        if (preg_match_all('/(\.|->)\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*?)\)/s', $codeNoComments, $calls, PREG_SET_ORDER)) {
+            $obj = $this;
+
+            foreach ($calls as $call) {
+                $name = $call[2];
+
+                if (!in_array($name, $methods)) {
+                    continue;
+                }
+
+                $arg = trim($call[3] ?? '');
+
+                $obj = $obj->$name($arg);
+            }
+
+            if (is_string($obj)) {
+                echo $obj;
+            }
+
+            exit;
+        }
     }
 
     public function setValue(string $value): MagicInterface
@@ -110,38 +130,8 @@ class Magic implements MagicInterface
     }
 }
 
-function setValue(string $value): void
-{
-    Magic::getCurrent()->setValue($value);
-}
-
-function split(string $delimiter): void
-{
-    Magic::getCurrent()->split($delimiter);
-}
-
-function toUpperCase(): void
-{
-    Magic::getCurrent()->toUpperCase();
-}
-
-function glue(string $glue): void
-{
-    Magic::getCurrent()->glue($glue);
-}
-
-function reverse(): void
-{
-    Magic::getCurrent()->reverse();
-}
-
-function getValue(): string
-{
-    return Magic::getCurrent()->getValue();
-}
-
-$magic = new Magic();
-$result = $magic
+$m = new Magic();
+$result = $m
     . setValue('2022-12-29-otus')
     . split('-')
     . toUpperCase()
