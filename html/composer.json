@@ -13,7 +13,10 @@
     "autoload": {
         "psr-4": {
             "Otus\\Elasticsearch\\": "src/"
-        }
+        },
+        "files": [
+            "helpers/env.php"
+        ]
     },
     "authors": [
         {

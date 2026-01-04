@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Otus\Elasticsearch\Command;
 
 use Elastic\Elasticsearch\Client;
-use Elastic\Elasticsearch\ClientBuilder;
 use Elastic\Elasticsearch\Exception\AuthenticationException;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\MissingParameterException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
+use Otus\Elasticsearch\Factory\ESCFactory;
 
 readonly class InitializeCommand
 {
@@ -23,13 +23,7 @@ readonly class InitializeCommand
      */
     public function __construct()
     {
-        $this->client = ClientBuilder::create()
-            ->setHosts([
-                'https://localhost:9200',
-            ])
-            ->setSSLVerification(false)
-            ->setBasicAuthentication('elastic', 'elastic')
-            ->build();
+        $this->client = ESCFactory::factory();
     }
 
     /**

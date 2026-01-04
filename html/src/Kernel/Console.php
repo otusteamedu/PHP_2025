@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Otus\Elasticsearch\Kernel;
 
-class Console
+class Console extends AbstractKernel
 {
     /**
      * @param array $handlers
@@ -12,6 +12,7 @@ class Console
     public function __construct(
         protected array $handlers = [],
     ) {
+        parent::__construct();
     }
 
     /**

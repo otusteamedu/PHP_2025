@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Otus\Elasticsearch\Command;
 
 use Elastic\Elasticsearch\Client;
-use Elastic\Elasticsearch\ClientBuilder;
 use Elastic\Elasticsearch\Exception\AuthenticationException;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
@@ -14,6 +13,7 @@ use Otus\Elasticsearch\ES\Queries\DummyQuery;
 use Otus\Elasticsearch\ES\Queries\FuzzinessQuery;
 use Otus\Elasticsearch\ES\Queries\RangeQuery;
 use Otus\Elasticsearch\ES\Queries\TermQuery;
+use Otus\Elasticsearch\Factory\ESCFactory;
 
 readonly class SearchCommand
 {
@@ -27,13 +27,7 @@ readonly class SearchCommand
      */
     public function __construct()
     {
-        $this->client = ClientBuilder::create()
-            ->setHosts([
-                'https://localhost:9200',
-            ])
-            ->setSSLVerification(false)
-            ->setBasicAuthentication('elastic', 'elastic')
-            ->build();
+        $this->client = ESCFactory::factory();
     }
 
     /**
@@ -73,26 +67,25 @@ readonly class SearchCommand
 
     /**
      * @param array $hits
-     * @return void
      */
     protected function render(array $hits): void
     {
         echo implode(PHP_EOL . '---' . PHP_EOL, array_map(static function (array $hit): string {
             return PHP_EOL . implode(PHP_EOL, [
-                    'ID : ' . $hit['_id'],
-                    'Title : ' . $hit['_source']['title'],
-                    'SKU : ' . $hit['_source']['sku'],
-                    'Category : ' . $hit['_source']['category'],
-                    'Price : ' . $hit['_source']['price'],
-                    'Stock : ' . PHP_EOL . implode(PHP_EOL, array_map(static function (array $entity): string {
-                        [
-                            'shop' => $shop,
-                            'stock' => $stock,
-                        ] = $entity;
+                'ID : ' . $hit['_id'],
+                'Title : ' . $hit['_source']['title'],
+                'SKU : ' . $hit['_source']['sku'],
+                'Category : ' . $hit['_source']['category'],
+                'Price : ' . $hit['_source']['price'],
+                'Stock : ' . PHP_EOL . implode(PHP_EOL, array_map(static function (array $entity): string {
+                    [
+                        'shop' => $shop,
+                        'stock' => $stock,
+                    ] = $entity;
 
-                        return $shop . ' : ' . $stock;
-                    }, $hit['_source']['stock']))
-                ]) . PHP_EOL;
+                    return $shop . ' : ' . $stock;
+                }, $hit['_source']['stock'])),
+            ]) . PHP_EOL;
         }, $hits));
     }
 
