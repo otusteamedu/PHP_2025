@@ -1,0 +1,41 @@
+{
+    "name": "otus/elasticsearch",
+    "type": "project",
+    "require": {
+        "php": ">=8.4.0",
+        "elasticsearch/elasticsearch": "^9.2"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.92",
+        "rector/rector": "^2.3"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Otus\\Elasticsearch\\": "src/"
+        },
+        "files": [
+            "helpers/env.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Alexander",
+            "email": "system.bin@yandex.ru"
+        }
+    ],
+    "minimum-stability": "stable",
+    "scripts": {
+        "rector": "vendor/bin/rector",
+        "php-cs-fixer": "vendor/bin/php-cs-fixer fix",
+        "fix": [
+            "@rector",
+            "@php-cs-fixer"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}

@@ -1,0 +1,25 @@
+services:
+
+    elasticsearch:
+        image: elasticsearch:9.2.3
+        environment:
+            discovery.type: single-node
+            ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+        volumes:
+            - elasticsearch:/usr/share/elasticsearch/data:rw
+        ports:
+            -   target: 9200
+                published: 9200
+            -   target: 9300
+                published: 9300
+        networks:
+            private:
+
+volumes:
+    elasticsearch:
+        name: otus_php_2025_elasticsearch
+
+networks:
+    private:
+        name: otus-php-2025
+        driver: bridge
