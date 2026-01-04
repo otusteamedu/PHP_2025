@@ -1,5 +1,5 @@
 {
-    "name": "krok/elasticsearch",
+    "name": "otus/elasticsearch",
     "type": "project",
     "require": {
         "php": "~8.5.0",
@@ -12,7 +12,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Krok\\Elasticsearch\\": "src/"
+            "Otus\\Elasticsearch\\": "src/"
         }
     },
     "authors": [

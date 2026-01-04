@@ -4,6 +4,7 @@ services:
         image: elasticsearch:9.2.3
         environment:
             discovery.type: single-node
+            ELASTIC_PASSWORD: 'elastic'
         volumes:
             - elasticsearch:/usr/share/elasticsearch/data:rw
         ports:
