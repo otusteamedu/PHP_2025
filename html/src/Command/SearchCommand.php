@@ -11,7 +11,7 @@ use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Otus\Elasticsearch\ES\Operators\MustOperator;
 use Otus\Elasticsearch\ES\Queries\DummyQuery;
-use Otus\Elasticsearch\ES\Queries\MatchQuery;
+use Otus\Elasticsearch\ES\Queries\FuzzinessQuery;
 use Otus\Elasticsearch\ES\Queries\RangeQuery;
 use Otus\Elasticsearch\ES\Queries\TermQuery;
 
@@ -79,7 +79,7 @@ readonly class SearchCommand
 
         foreach ($opts as $field => $value) {
             $query[] = match ($field) {
-                'title', 'category' => new MatchQuery($field, $value),
+                'title', 'category' => new FuzzinessQuery($field, $value),
                 'sku' => new TermQuery($field, $value),
                 'price' => new RangeQuery($field, 'gte', $value),
 
