@@ -11,7 +11,7 @@ use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Otus\Elasticsearch\DataReader\JsonReader;
 
-readonly class ReindexCommand
+readonly class IndexingCommand
 {
     /**
      * @var Client
