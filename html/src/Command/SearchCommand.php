@@ -60,10 +60,40 @@ readonly class SearchCommand
                 ],
             ]);
 
-        // Не стал заморачиваться над выводом
-        print_r(json_decode($response->getBody()->getContents(), true)['hits']['hits']);
+        [
+            'hits' => [
+                'hits' => $hits,
+            ],
+        ] = json_decode($response->getBody()->getContents(), true);
+
+        $this->render($hits);
 
         return 0;
+    }
+
+    /**
+     * @param array $hits
+     * @return void
+     */
+    protected function render(array $hits): void
+    {
+        echo implode(PHP_EOL . '---' . PHP_EOL, array_map(static function (array $hit): string {
+            return PHP_EOL . implode(PHP_EOL, [
+                    'ID : ' . $hit['_id'],
+                    'Title : ' . $hit['_source']['title'],
+                    'SKU : ' . $hit['_source']['sku'],
+                    'Category : ' . $hit['_source']['category'],
+                    'Price : ' . $hit['_source']['price'],
+                    'Stock : ' . PHP_EOL . implode(PHP_EOL, array_map(static function (array $entity): string {
+                        [
+                            'shop' => $shop,
+                            'stock' => $stock,
+                        ] = $entity;
+
+                        return $shop . ' : ' . $stock;
+                    }, $hit['_source']['stock']))
+                ]) . PHP_EOL;
+        }, $hits));
     }
 
     /**
