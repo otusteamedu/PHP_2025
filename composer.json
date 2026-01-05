@@ -1,0 +1,10 @@
+{
+    "name": "gnvs/patterns",
+    "description": "Записи с Identity Map",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "public/src/"
+        }
+    }
+}
