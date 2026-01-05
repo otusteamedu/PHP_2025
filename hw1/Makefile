@@ -31,8 +31,10 @@ restart:
 	docker-compose -f docker-compose.yml restart $(c)
 
 ## down: Остановить и удалить контейнеры, сети, volumes
-down:
+down-start:
 	docker-compose -f docker-compose.yml down $(c)
+	docker-compose build --no-cache
+	docker-compose up -d
 
 ## build: Пересобрать Docker образы
 build:

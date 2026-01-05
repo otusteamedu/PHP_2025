@@ -1,7 +1,11 @@
-FROM nginx:1.19-alpine
+FROM nginx:alpine
 
-# Удаляем все стандартные конфиги
-RUN rm -rf /etc/nginx/conf.d/* /etc/nginx/sites-enabled/*
+# Устанавливаем правильные права для пользователя nginx
+RUN apk add --no-cache shadow && \
+    usermod -u 1000 nginx && \
+    groupmod -g 1000 nginx
 
-# Копируем наш конфиг
-COPY hosts/mysite.local.conf /etc/nginx/conf.d/
+# Копируем конфигурацию
+COPY hosts/ /etc/nginx/conf.d/
+
+EXPOSE 80 443

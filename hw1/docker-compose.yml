@@ -8,9 +8,10 @@ services:
             context: ./docker/fpm
             dockerfile: Dockerfile
         container_name: app # имя контейнера после запуска
+        user: "www-data:www-data"  # Запускаем от пользователя www-data
         volumes:
-            - ./app:/data/mysite.local
-            - php_socket:/var/run/php  # Добавить эту строку
+            - ./app:/data/application.local
+            - php_socket:/var/run/php
         # мы можем создать для контейнеров внутреннюю сеть
         networks:
             - app-network
@@ -26,9 +27,9 @@ services:
             - "${HTTP_PORT:-8080}:80"
             - "${HTTPS_PORT:-8443}:443"
         volumes:
-            - ./app:/data/mysite.local
-            - ./Docker/nginx/hosts:/etc/nginx/conf.d
-            - php_socket:/var/run/php 
+            - ./app:/data/application.local
+            - ./docker/nginx/hosts:/etc/nginx/conf.d
+            - php_socket:/var/run/php
         networks:
             - app-network
 
@@ -68,7 +69,8 @@ services:
                 memcached_image: ${MEMCACHED_IMAGE}
         networks: 
             - app-network
-        ports: [ "${MEMCACHED_PORT}:11211" ]
+        ports: 
+            - "${MEMCACHED_PORT}:11211"
         command: '-m 512'
     redis:
         build:
@@ -78,7 +80,8 @@ services:
                 redis_image: ${REDIS_IMAGE}
         networks: 
             - app-network
-        ports: [ "${REDIS_PORT}:6379" ]
+        ports: 
+            - "${REDIS_PORT}:6379"
 
 #Docker Networks
 networks:
