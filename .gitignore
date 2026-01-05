@@ -4,6 +4,7 @@
 .AppleDouble
 .LSOverride
 /code/vendor/
+/code/composer.lock
 /docker/nginx/logs/
 /docker/redis/data/
 .env
