@@ -3,3 +3,65 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# IDE и редакторы
+.vscode/
+
+# PHP
+composer.lock
+composer.phar
+.php_cs
+.php_cs.cache
+.phpunit.result.cache
+.phplint-cache
+.phpintel
+.buildpath
+.project
+.settings/
+
+# Логи и кэш
+*.log
+*.cache
+.cache/
+
+# Окружение
+.env
+.env.local
+.env.*.local
+.env.production
+.env.test
+.env.development
+
+# Зависимости
+/node_modules/
+/yarn.lock
+/package-lock.json
+/bower_components/
+
+# Тесты и покрытие кода
+/coverage/
+.phpunit.cache
+/clover.xml
+/codeception.yml
+
+# Деплой и сборка
+/build/
+/dist/
+/deploy/
+/.deploy/
+/*.tar.gz
+/*.zip
+
+# Базы данных
+*.sql
+*.sqlite
+*.dump
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Миграции (если не хранить в репозитории)
+/migrations/*.php
