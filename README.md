@@ -2,11 +2,11 @@
 
 https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
 
-Сервис событий (правила + матчинг) с двумя хранилищами: Redis и Memcached.
+Сервис событий с примерами двух хранилищ: Redis и Memcached.
 
 ## Запуск
 
-- Использовать существующий `.env` или скопировать свой пример: `cp .env .env.local` и при необходимости поменять переменные.
+- Переименвать `env.example` на `.env` и при необходимости поменять переменные.
 - По умолчанию включен Redis.
 - Собрать и поднять контейнеры: `docker-compose up -d`.
 
