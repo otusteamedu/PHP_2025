@@ -1,0 +1,93 @@
+
+# в этом блоке мы описываем контейнеры, которые будут запускаться
+services:
+    #Контейнер с PHP, назовём его app
+    php-fpm:
+        # Если нет секции build, то система будет искать образ в репозиториях
+        build:
+            context: ./docker/fpm
+            dockerfile: Dockerfile
+        container_name: app # имя контейнера после запуска
+        user: "www-data:www-data"  # Запускаем от пользователя www-data
+        volumes:
+            - ./app:/data/application.local
+            - php_socket:/var/run/php
+        # мы можем создать для контейнеров внутреннюю сеть
+        networks:
+            - app-network
+
+    #контейне с Nginx
+    nginx:
+        build:
+            context: ./docker/nginx
+            dockerfile: Dockerfile
+        container_name: nginx
+        # проброс портов
+        ports:
+            - "${HTTP_PORT:-8080}:80"
+            - "${HTTPS_PORT:-8443}:443"
+        volumes:
+            - ./app:/data/application.local
+            - ./docker/nginx/hosts:/etc/nginx/conf.d
+            - php_socket:/var/run/php
+        networks:
+            - app-network
+
+    # контейнер с MySQL
+    # строим на базе стандартного образа
+    postgres:
+        image: ${POSTGRES_IMAGE:-postgres:12.4-alpine}  # Используем переменную из .env
+        container_name: ${POSTGRES_HOST:-postgres}
+        restart: unless-stopped
+        ports:
+            - "${POSTGRES_PORT:-5432}:5432"  # Стандартный порт PostgreSQL - 5432
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB:-hw1_database}
+            POSTGRES_USER: ${POSTGRES_USER:-otus-user}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-otus-password}
+            # Дополнительные настройки для производительности
+            POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+            PGDATA: /var/lib/postgresql/data/pgdata
+            # Для разработки (опционально)
+            POSTGRES_HOST_AUTH_METHOD: trust  # Только для разработки!
+        volumes:
+            - postgres_data:/var/lib/postgresql/data  # Постоянное хранение данных
+            # Для инициализации БД (если нужно)
+            # - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+        networks:
+            - app-network
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-otus-user} -d ${POSTGRES_DB:-hw1_database}"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+    memcached:
+        build:
+            context: ./docker/memcached
+            dockerfile: Dockerfile
+            args:
+                memcached_image: ${MEMCACHED_IMAGE}
+        networks: 
+            - app-network
+        ports: 
+            - "${MEMCACHED_PORT}:11211"
+        command: '-m 512'
+    redis:
+        build:
+            context: ./docker/redis
+            dockerfile: Dockerfile
+            args:
+                redis_image: ${REDIS_IMAGE}
+        networks: 
+            - app-network
+        ports: 
+            - "${REDIS_PORT}:6379"
+
+#Docker Networks
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    postgres_data:
+    php_socket:
