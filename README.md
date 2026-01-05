@@ -1,3 +1,3 @@
-# PHP_2025
+# HW12
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Реализация паттерна DataMapper + IdentityMap
