@@ -1,0 +1,72 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+       - ./code:/data/mysite.local
+       - ./docker/nginx/logs:/var/log/nginx:delegated
+       - php-socket:/var/run
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: myapp/php 
+    container_name: app
+    volumes:
+       - ./code:/data/mysite.local
+       - php-socket:/var/run
+    depends_on:
+      - redis
+      - memcached
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis    
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./docker/redis/data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - app-network  
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "8001:5540"
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  #Контейнер с Memcached
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: memcached
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
+  php-socket:
+    driver: local
