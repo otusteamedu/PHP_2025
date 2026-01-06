@@ -2,25 +2,15 @@
 
 namespace App;
 
-use App\Services\ValidEmailsFilter;
+use App\Services\EmailsChecker;
 
 class App {
 
 	public function run(){
-
-		$emails = [
-		    "иван@ПОЧТА.РУС",
-		    "IVAN@ПОЧТА.РУС",
-		    "test@MAIL.RU",
-		    "иван@почта.рф",
-		    "IVAN@ПОЧТА.РФ",
-		    "test@google.COM",
-		    ".ivan@google.com",
-		    "ivan@.рус",
-		    "ivan@yandex.ru",
-		    "i van@ya.ru"
-		];
-		
-		$validEmail = (new ValidEmailsFilter())->getValidEmails($emails);
+		if (!empty($_POST['emails'])){
+			$emails = json_decode($_POST['emails']);
+			$checkedEmails = (new EmailsChecker())->getEmailsInfo($emails);
+			return json_encode($checkedEmails, JSON_UNESCAPED_UNICODE);
+		}
 	}
 }
