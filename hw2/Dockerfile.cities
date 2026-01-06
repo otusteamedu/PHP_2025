@@ -1,0 +1,17 @@
+FROM alpine:latest
+
+# Устанавливаем необходимые утилиты
+RUN apk add --no-cache bash coreutils
+
+# Копируем скрипт анализа
+COPY analyze_cities.sh /usr/local/bin/analyze_cities.sh
+RUN chmod +x /usr/local/bin/analyze_cities.sh
+
+# Создаем директорию для данных
+RUN mkdir -p /data
+
+# Устанавливаем рабочую директорию
+WORKDIR /data
+
+# Точка входа
+ENTRYPOINT ["analyze_cities.sh"]

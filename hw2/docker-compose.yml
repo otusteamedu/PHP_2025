@@ -1,0 +1,21 @@
+
+services:
+  # Контейнер для калькулятора суммы
+  sum-calculator:
+    build:
+      context: .
+      dockerfile: Dockerfile.sum
+    container_name: sum-calculator
+    stdin_open: true
+    tty: true
+
+  # Контейнер для анализа городов
+  city-analyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile.cities
+    container_name: city-analyzer
+    volumes:
+      - ./users.txt:/data/users.txt:ro
+    # Если нужно запускать сразу при старте, раскомментируйте:
+    # command: ["/usr/local/bin/analyze_cities.sh"]
