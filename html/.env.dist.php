@@ -1,5 +1,7 @@
 <?php
 
+putenv('STORE=memcached'); // memcached | redis (default)
+
 putenv('REDIS_HOST=redis');
 putenv('REDIS_PORT=6379');
 

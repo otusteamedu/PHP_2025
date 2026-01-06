@@ -9,7 +9,7 @@ if (!function_exists('env')) {
      *
      * @return mixed
      */
-    function env(string $env, mixed $default): mixed
+    function env(string $env, mixed $default = null): mixed
     {
         return getenv($env) ?: $default;
     }

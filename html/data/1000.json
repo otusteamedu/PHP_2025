@@ -1,0 +1,7 @@
+{
+    "priority": 1000,
+    "conditions": {
+        "param1": 1
+    },
+    "event": {}
+}

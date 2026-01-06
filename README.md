@@ -2,19 +2,6 @@
 
 https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
 
-# TODO
-
-- [x] Build
-- [x] Docker
-- [x] Composer
-- [x] ENV
-- [x] Namespace
-- [] Redis
-- [] Memcached
-- [] Console
-- [] Push
-- [] Search
-
 # Configuring
 
 ```shell
@@ -47,4 +34,24 @@ docker compose up -d
 
 ```shell
 docker compose down -v
+```
+
+# Push
+
+```shell
+docker compose exec application php bin/console.php push "$(cat html/data/1000.json)"
+```
+
+```shell
+docker compose exec application php bin/console.php push "$(cat html/data/2000.json)"
+```
+
+```shell
+docker compose exec application php bin/console.php push "$(cat html/data/3000.json)"
+```
+
+# Search
+
+```shell
+docker compose exec application php bin/console.php search "$(cat html/data/request.json)"
 ```
