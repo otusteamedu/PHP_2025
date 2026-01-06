@@ -1,0 +1,36 @@
+services:
+
+    application:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: compose
+            args:
+                UID: ${UID}
+                GID: ${GID}
+        command:
+            - php
+            - bin/console.php
+            - run
+        depends_on:
+            - redis
+            - memcached
+        volumes:
+            - ./html:/var/www/html:rw
+        networks:
+            private:
+
+    redis:
+        image: redis:8.4-bookworm
+        networks:
+            private:
+
+    memcached:
+        image: memcached:1.6-trixie
+        networks:
+            private:
+
+networks:
+    private:
+        name: otus-php-2025
+        driver: bridge
