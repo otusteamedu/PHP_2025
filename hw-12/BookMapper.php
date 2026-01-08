@@ -11,9 +11,13 @@ class BookMapper
     ) {
     }
 
-    public function findAll(): Books
+    public function findAll(int $limit = 50, int $offset = 0): Books
     {
-        $stmt = $this->pdo->query('SELECT id, title, author FROM books');
+        $stmt = $this->pdo->prepare('SELECT id, title, author FROM books LIMIT :limit OFFSET :offset');
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $books = array_map(fn($row) => new Book(
@@ -73,9 +77,27 @@ class BookMapper
         $stmt->execute(['title' => $title, 'author' => $author]);
     }
 
-    public function update(int $id, string $title, string $author): void
+    public function update(int $id, ?string $title = null, ?string $author = null): void
     {
-        $stmt = $this->pdo->prepare('UPDATE books SET title=:title, author=:author WHERE id=:id');
-        $stmt->execute(['id' => $id, 'title' => $title, 'author' => $author]);
+        $fields = [];
+        $params = ['id' => $id];
+
+        if ($title !== null) {
+            $fields[] = 'title = :title';
+            $params['title'] = $title;
+        }
+
+        if ($author !== null) {
+            $fields[] = 'author = :author';
+            $params['author'] = $author;
+        }
+
+        if (!$fields) {
+            return;
+        }
+
+        $sql = 'UPDATE books SET ' . implode(', ', $fields) . ' WHERE id = :id';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
     }
 }
