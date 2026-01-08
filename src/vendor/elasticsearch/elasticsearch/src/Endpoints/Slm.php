@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Slm extends AbstractEndpoint
 {
 	/**
-	 * Delete a policy
+	 * Deletes an existing snapshot lifecycle policy.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-delete-lifecycle
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-delete-policy.html
 	 *
 	 * @param array{
 	 *     policy_id: string, // (REQUIRED) The id of the snapshot lifecycle policy to remove
@@ -69,9 +69,9 @@ class Slm extends AbstractEndpoint
 
 
 	/**
-	 * Run a policy
+	 * Immediately creates a snapshot according to the lifecycle policy, without waiting for the scheduled time.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-execute-lifecycle
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-execute-lifecycle.html
 	 *
 	 * @param array{
 	 *     policy_id: string, // (REQUIRED) The id of the snapshot lifecycle policy to be executed
@@ -109,9 +109,9 @@ class Slm extends AbstractEndpoint
 
 
 	/**
-	 * Run a retention policy
+	 * Deletes any snapshots that are expired according to the policy's retention rules.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-execute-retention
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-execute-retention.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Explicit operation timeout for connection to master node
@@ -146,9 +146,9 @@ class Slm extends AbstractEndpoint
 
 
 	/**
-	 * Get policy information
+	 * Retrieves one or more snapshot lifecycle policy definitions and information about the latest snapshot attempts.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-lifecycle
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-get-policy.html
 	 *
 	 * @param array{
 	 *     policy_id?: string|array<string>, // Comma-separated list of snapshot lifecycle policies to retrieve
@@ -188,9 +188,9 @@ class Slm extends AbstractEndpoint
 
 
 	/**
-	 * Get snapshot lifecycle management statistics
+	 * Returns global and policy-level statistics about actions taken by snapshot lifecycle management.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-stats
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-stats.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Explicit operation timeout for connection to master node
@@ -225,9 +225,9 @@ class Slm extends AbstractEndpoint
 
 
 	/**
-	 * Get the snapshot lifecycle management status
+	 * Retrieves the status of snapshot lifecycle management (SLM).
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-status
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-get-status.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Explicit operation timeout for connection to master node
@@ -262,9 +262,9 @@ class Slm extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a policy
+	 * Creates or updates a snapshot lifecycle policy.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-put-lifecycle
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-put-policy.html
 	 *
 	 * @param array{
 	 *     policy_id: string, // (REQUIRED) The id of the snapshot lifecycle policy
@@ -275,7 +275,7 @@ class Slm extends AbstractEndpoint
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
 	 *     source?: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
 	 *     filter_path?: string|array<string>, // A comma-separated list of filters used to reduce the response.
-	 *     body: string|array<mixed>, // (REQUIRED) The snapshot lifecycle policy definition to register. If body is a string must be a valid JSON.
+	 *     body?: string|array<mixed>, // The snapshot lifecycle policy definition to register. If body is a string must be a valid JSON.
 	 * } $params
 	 *
 	 * @throws MissingParameterException if a required parameter is missing
@@ -288,7 +288,7 @@ class Slm extends AbstractEndpoint
 	public function putLifecycle(?array $params = null)
 	{
 		$params = $params ?? [];
-		$this->checkRequiredParameters(['policy_id','body'], $params);
+		$this->checkRequiredParameters(['policy_id'], $params);
 		$url = '/_slm/policy/' . $this->encode($params['policy_id']);
 		$method = 'PUT';
 
@@ -304,9 +304,9 @@ class Slm extends AbstractEndpoint
 
 
 	/**
-	 * Start snapshot lifecycle management
+	 * Turns on snapshot lifecycle management (SLM).
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-start
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-start.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Timeout for processing on master node
@@ -341,9 +341,9 @@ class Slm extends AbstractEndpoint
 
 
 	/**
-	 * Stop snapshot lifecycle management
+	 * Turns off snapshot lifecycle management (SLM).
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-stop
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-stop.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Timeout for processing on master node

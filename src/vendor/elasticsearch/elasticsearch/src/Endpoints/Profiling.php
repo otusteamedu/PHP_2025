@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Profiling extends AbstractEndpoint
 {
 	/**
-	 * Extracts a UI-optimized structure to render flamegraphs from Universal Profiling
+	 * Extracts a UI-optimized structure to render flamegraphs from Universal Profiling.
 	 *
-	 * @link https://www.elastic.co/guide/en/observability/current/universal-profiling.html
+	 * @see https://www.elastic.co/guide/en/observability/current/universal-profiling.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -67,9 +67,9 @@ class Profiling extends AbstractEndpoint
 
 
 	/**
-	 * Extracts raw stacktrace information from Universal Profiling
+	 * Extracts raw stacktrace information from Universal Profiling.
 	 *
-	 * @link https://www.elastic.co/guide/en/observability/current/universal-profiling.html
+	 * @see https://www.elastic.co/guide/en/observability/current/universal-profiling.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -105,9 +105,9 @@ class Profiling extends AbstractEndpoint
 
 
 	/**
-	 * Returns basic information about the status of Universal Profiling
+	 * Returns basic information about the status of Universal Profiling.
 	 *
-	 * @link https://www.elastic.co/guide/en/observability/current/universal-profiling.html
+	 * @see https://www.elastic.co/guide/en/observability/current/universal-profiling.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Explicit operation timeout for connection to master node
@@ -143,9 +143,9 @@ class Profiling extends AbstractEndpoint
 
 
 	/**
-	 * Extracts a list of topN functions from Universal Profiling
+	 * Extracts a list of topN functions from Universal Profiling.
 	 *
-	 * @link https://www.elastic.co/guide/en/observability/current/universal-profiling.html
+	 * @see https://www.elastic.co/guide/en/observability/current/universal-profiling.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)

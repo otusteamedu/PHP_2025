@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class License extends AbstractEndpoint
 {
 	/**
-	 * Delete the license
+	 * Deletes licensing information for the cluster
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-delete
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Timeout for processing on master node
@@ -66,10 +66,9 @@ class License extends AbstractEndpoint
 
 
 	/**
-	 * Get license information
+	 * Retrieves licensing information for the cluster
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-get
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html
 	 *
 	 * @param array{
 	 *     local?: bool, // Return local information, do not retrieve the state from master node (default: false)
@@ -104,9 +103,9 @@ class License extends AbstractEndpoint
 
 
 	/**
-	 * Get the basic license status
+	 * Retrieves information about the status of the basic license.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-get-basic-status
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -139,9 +138,9 @@ class License extends AbstractEndpoint
 
 
 	/**
-	 * Get the trial status
+	 * Retrieves information about the status of the trial license.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-get-trial-status
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -174,9 +173,9 @@ class License extends AbstractEndpoint
 
 
 	/**
-	 * Update the license
+	 * Updates the license for the cluster.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html
 	 *
 	 * @param array{
 	 *     acknowledge?: bool, // whether the user has acknowledged acknowledge messages (default: false)
@@ -214,9 +213,9 @@ class License extends AbstractEndpoint
 
 
 	/**
-	 * Start a basic license
+	 * Starts an indefinite basic license.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post-start-basic
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/start-basic.html
 	 *
 	 * @param array{
 	 *     acknowledge?: bool, // whether the user has acknowledged acknowledge messages (default: false)
@@ -252,9 +251,9 @@ class License extends AbstractEndpoint
 
 
 	/**
-	 * Start a trial
+	 * starts a limited time trial license.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post-start-trial
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trial.html
 	 *
 	 * @param array{
 	 *     type?: string, // The type of trial license to generate (default: "trial")

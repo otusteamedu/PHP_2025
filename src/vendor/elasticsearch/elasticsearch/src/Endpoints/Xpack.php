@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Xpack extends AbstractEndpoint
 {
 	/**
-	 * Get information
+	 * Retrieves information about the installed X-Pack features.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-info
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/info-api.html
 	 *
 	 * @param array{
 	 *     human?: bool, // Defines whether additional human-readable information is included in the response. In particular, it adds descriptions and a tag line. The default value is true.
@@ -67,9 +67,9 @@ class Xpack extends AbstractEndpoint
 
 
 	/**
-	 * Get usage information
+	 * Retrieves usage information about the installed X-Pack features.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-xpack
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/usage-api.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Specify timeout for watch write operation

@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Ml extends AbstractEndpoint
 {
 	/**
-	 * Clear trained model deployment cache
+	 * Clear the cached results from a trained model deployment
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-clear-trained-model-deployment-cache
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-trained-model-deployment-cache.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The unique identifier of the trained model.
@@ -68,10 +68,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Close anomaly detection jobs
+	 * Closes one or more anomaly detection jobs. A job can be opened and closed multiple times throughout its lifecycle.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-close-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-close-job.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The name of the job to close
@@ -112,10 +111,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete a calendar
+	 * Deletes a calendar.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-calendar
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar.html
 	 *
 	 * @param array{
 	 *     calendar_id: string, // (REQUIRED) The ID of the calendar to delete
@@ -151,10 +149,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete events from a calendar
+	 * Deletes scheduled events from a calendar.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-calendar-event
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar-event.html
 	 *
 	 * @param array{
 	 *     calendar_id: string, // (REQUIRED) The ID of the calendar to modify
@@ -191,10 +188,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete anomaly jobs from a calendar
+	 * Deletes anomaly detection jobs from a calendar.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-calendar-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar-job.html
 	 *
 	 * @param array{
 	 *     calendar_id: string, // (REQUIRED) The ID of the calendar to modify
@@ -231,10 +227,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete a data frame analytics job
+	 * Deletes an existing data frame analytics job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-data-frame-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-dfanalytics.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The ID of the data frame analytics to delete
@@ -272,10 +267,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete a datafeed
+	 * Deletes an existing datafeed.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-datafeed
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-datafeed.html
 	 *
 	 * @param array{
 	 *     datafeed_id: string, // (REQUIRED) The ID of the datafeed to delete
@@ -312,9 +306,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete expired ML data
+	 * Deletes expired and unused machine learning data.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-expired-data
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-expired-data.html
 	 *
 	 * @param array{
 	 *     job_id?: string, // The ID of the job(s) to perform expired data hygiene for
@@ -356,10 +350,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete a filter
+	 * Deletes a filter.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-filter
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-filter.html
 	 *
 	 * @param array{
 	 *     filter_id: string, // (REQUIRED) The ID of the filter to delete
@@ -395,9 +388,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete forecasts from a job
+	 * Deletes forecasts from a machine learning job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-forecast
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-forecast.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job from which to delete forecasts
@@ -440,10 +433,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete an anomaly detection job
+	 * Deletes an existing anomaly detection job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-job.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to delete
@@ -482,9 +474,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete a model snapshot
+	 * Deletes an existing model snapshot.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-model-snapshot
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-snapshot.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to fetch
@@ -521,10 +513,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete an unreferenced trained model
+	 * Deletes an existing trained inference model that is currently not referenced by an ingest pipeline.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-trained-model
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-trained-models.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The ID of the trained model to delete
@@ -562,10 +553,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Delete a trained model alias
+	 * Deletes a model alias that refers to the trained model
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-delete-trained-model-alias
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-trained-models-aliases.html
 	 *
 	 * @param array{
 	 *     model_alias: string, // (REQUIRED) The trained model alias to delete
@@ -603,10 +593,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Estimate job model memory usage
+	 * Estimates the model memory
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-estimate-model-memory
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-apis.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -642,10 +631,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Evaluate data frame analytics
+	 * Evaluates the data frame analytics for an annotated index.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-evaluate-data-frame
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/evaluate-dfanalytics.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -681,9 +669,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Explain data frame analytics config
+	 * Explains a data frame analytics config.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-explain-data-frame-analytics
+	 * @see http://www.elastic.co/guide/en/elasticsearch/reference/current/explain-dfanalytics.html
 	 *
 	 * @param array{
 	 *     id?: string, // The ID of the data frame analytics to explain
@@ -723,10 +711,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Force buffered data to be processed
+	 * Forces any buffered data to be processed by the job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-flush-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-flush-job.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The name of the job to flush
@@ -769,9 +756,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Predict future behavior of a time series
+	 * Predicts the future behavior of a time series by using its historical behavior.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-forecast
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-forecast.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to forecast for
@@ -812,9 +799,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get anomaly detection job results for buckets
+	 * Retrieves anomaly detection job results for one or more buckets.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-buckets
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-bucket.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) ID of the job to get bucket results from
@@ -866,10 +853,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get info about events in calendars
+	 * Retrieves information about the scheduled events in calendars.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-calendar-events
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-calendar-event.html
 	 *
 	 * @param array{
 	 *     calendar_id: string, // (REQUIRED) The ID of the calendar containing the events
@@ -910,10 +896,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get calendar configuration info
+	 * Retrieves configuration information for calendars.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-calendars
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-calendar.html
 	 *
 	 * @param array{
 	 *     calendar_id?: string, // The ID of the calendar to fetch
@@ -955,9 +940,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get anomaly detection job results for categories
+	 * Retrieves anomaly detection job results for one or more categories.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-categories
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-category.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The name of the job
@@ -1003,10 +988,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get data frame analytics job configuration info
+	 * Retrieves configuration information for data frame analytics jobs.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-data-frame-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics.html
 	 *
 	 * @param array{
 	 *     id?: string, // The ID of the data frame analytics to fetch
@@ -1048,10 +1032,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get data frame analytics job stats
+	 * Retrieves usage information for data frame analytics jobs.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-data-frame-analytics-stats
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics-stats.html
 	 *
 	 * @param array{
 	 *     id?: string, // The ID of the data frame analytics stats to fetch
@@ -1093,10 +1076,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get datafeed stats
+	 * Retrieves usage information for datafeeds.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-datafeed-stats
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed-stats.html
 	 *
 	 * @param array{
 	 *     datafeed_id?: string, // The ID of the datafeeds stats to fetch
@@ -1135,10 +1117,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get datafeeds configuration info
+	 * Retrieves configuration information for datafeeds.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-datafeeds
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed.html
 	 *
 	 * @param array{
 	 *     datafeed_id?: string, // The ID of the datafeeds to fetch
@@ -1178,10 +1159,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get filters
+	 * Retrieves filters.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-filters
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-filter.html
 	 *
 	 * @param array{
 	 *     filter_id?: string, // The ID of the filter to fetch
@@ -1221,9 +1201,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get anomaly detection job results for influencers
+	 * Retrieves anomaly detection job results for one or more influencers.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-influencers
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-influencer.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) Identifier for the anomaly detection job
@@ -1269,10 +1249,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get anomaly detection job stats
+	 * Retrieves usage information for anomaly detection jobs.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-job-stats
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job-stats.html
 	 *
 	 * @param array{
 	 *     job_id?: string, // The ID of the jobs stats to fetch
@@ -1311,10 +1290,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get anomaly detection jobs configuration info
+	 * Retrieves configuration information for anomaly detection jobs.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-jobs
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job.html
 	 *
 	 * @param array{
 	 *     job_id?: string, // The ID of the jobs to fetch
@@ -1354,9 +1332,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get machine learning memory usage info
+	 * Returns information on how ML is using memory.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-memory-stats
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/get-ml-memory.html
 	 *
 	 * @param array{
 	 *     node_id?: string, // Specifies the node or nodes to retrieve stats for.
@@ -1396,9 +1374,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get anomaly detection job model snapshot upgrade usage info
+	 * Gets stats for anomaly detection job model snapshot upgrades that are in progress.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-model-snapshot-upgrade-stats
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job-model-snapshot-upgrade-stats.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job. May be a wildcard, comma separated list or `_all`.
@@ -1436,9 +1414,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get model snapshots info
+	 * Retrieves information about model snapshots.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-model-snapshots
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-snapshot.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to fetch
@@ -1487,10 +1465,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get overall bucket results
+	 * Retrieves overall bucket results that summarize the bucket results of multiple anomaly detection jobs.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-overall-buckets
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-overall-buckets.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The job IDs for which to calculate overall bucket results
@@ -1535,9 +1512,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get anomaly records for an anomaly detection job
+	 * Retrieves anomaly records for an anomaly detection job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-records
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-record.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job
@@ -1583,15 +1560,15 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get trained model configuration info
+	 * Retrieves configuration information for a trained inference model.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-trained-models
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/get-trained-models.html
 	 *
 	 * @param array{
 	 *     model_id?: string, // The ID of the trained models to fetch
 	 *     allow_no_match?: bool, // Whether to ignore if a wildcard expression matches no trained models. (This includes `_all` string or when no trained models have been specified)
-	 *     include?: string, // A comma delimited string of optional fields to include in the responsebody.
+	 *     include?: string, // A comma-separate list of fields to optionally include. Valid options are 'definition' and 'total_feature_importance'. Default is none.
+	 *     include_model_definition?: bool, // Should the full model definition be included in the results. These definitions can be large. So be cautious when including them. Defaults to false.
 	 *     decompress_definition?: bool, // Should the model definition be decompressed into valid JSON or returned in a custom compressed format. Defaults to true.
 	 *     from?: int, // skips a number of trained models
 	 *     size?: int, // specifies a max number of trained models to get
@@ -1620,7 +1597,7 @@ class Ml extends AbstractEndpoint
 			$url = '/_ml/trained_models';
 			$method = 'GET';
 		}
-		$url = $this->addQueryString($url, $params, ['allow_no_match','include','decompress_definition','from','size','tags','exclude_generated','pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['allow_no_match','include','include_model_definition','decompress_definition','from','size','tags','exclude_generated','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 		];
@@ -1631,10 +1608,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get trained models usage info
+	 * Retrieves usage information for trained inference models.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-trained-models-stats
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/get-trained-models-stats.html
 	 *
 	 * @param array{
 	 *     model_id?: string, // The ID of the trained models stats to fetch
@@ -1675,10 +1651,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Evaluate a trained model
+	 * Evaluate a trained model.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-infer-trained-model
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/infer-trained-model.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The unique identifier of the trained model.
@@ -1717,9 +1692,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Get machine learning information
+	 * Returns defaults and limits used by machine learning.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-info
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/get-ml-info.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -1752,10 +1727,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Open anomaly detection jobs
+	 * Opens one or more anomaly detection jobs.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-open-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-open-job.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to open
@@ -1793,10 +1767,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Add scheduled events to the calendar
+	 * Posts scheduled events in a calendar.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-post-calendar-events
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-post-calendar-event.html
 	 *
 	 * @param array{
 	 *     calendar_id: string, // (REQUIRED) The ID of the calendar to modify
@@ -1834,9 +1807,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Send data to an anomaly detection job for analysis
+	 * Sends data to an anomaly detection job for analysis.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-post-data
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-post-data.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The name of the job receiving the data
@@ -1876,10 +1849,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Preview features used by data frame analytics
+	 * Previews that will be analyzed given a data frame analytics config.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-preview-data-frame-analytics
-	 * @group serverless
+	 * @see http://www.elastic.co/guide/en/elasticsearch/reference/current/preview-dfanalytics.html
 	 *
 	 * @param array{
 	 *     id?: string, // The ID of the data frame analytics to preview
@@ -1919,10 +1891,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Preview a datafeed
+	 * Previews a datafeed.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-preview-datafeed
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-preview-datafeed.html
 	 *
 	 * @param array{
 	 *     datafeed_id?: string, // The ID of the datafeed to preview
@@ -1964,10 +1935,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create a calendar
+	 * Instantiates a calendar.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-calendar
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-calendar.html
 	 *
 	 * @param array{
 	 *     calendar_id: string, // (REQUIRED) The ID of the calendar to create
@@ -2005,10 +1975,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Add anomaly detection job to calendar
+	 * Adds an anomaly detection job to a calendar.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-calendar-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-calendar-job.html
 	 *
 	 * @param array{
 	 *     calendar_id: string, // (REQUIRED) The ID of the calendar to modify
@@ -2045,10 +2014,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create a data frame analytics job
+	 * Instantiates a data frame analytics job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-data-frame-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/put-dfanalytics.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The ID of the data frame analytics to create
@@ -2086,10 +2054,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create a datafeed
+	 * Instantiates a datafeed.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-datafeed
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-datafeed.html
 	 *
 	 * @param array{
 	 *     datafeed_id: string, // (REQUIRED) The ID of the datafeed to create
@@ -2131,10 +2098,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create a filter
+	 * Instantiates a filter.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-filter
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-filter.html
 	 *
 	 * @param array{
 	 *     filter_id: string, // (REQUIRED) The ID of the filter to create
@@ -2172,10 +2138,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create an anomaly detection job
+	 * Instantiates an anomaly detection job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-job.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to create
@@ -2217,10 +2182,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create a trained model
+	 * Creates an inference trained model.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-trained-model
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-models.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The ID of the trained models to store
@@ -2260,10 +2224,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a trained model alias
+	 * Creates a new model alias (or reassigns an existing one) to refer to the trained model
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-trained-model-alias
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-models-aliases.html
 	 *
 	 * @param array{
 	 *     model_alias: string, // (REQUIRED) The trained model alias to update
@@ -2302,10 +2265,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create part of a trained model definition
+	 * Creates part of a trained model definition
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-trained-model-definition-part
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-model-definition-part.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The ID of the trained model for this definition part
@@ -2344,10 +2306,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Create a trained model vocabulary
+	 * Creates a trained model vocabulary
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-trained-model-vocabulary
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-model-vocabulary.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The ID of the trained model for this vocabulary
@@ -2385,10 +2346,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Reset an anomaly detection job
+	 * Resets an existing anomaly detection job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-reset-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-reset-job.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to reset
@@ -2426,9 +2386,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Revert to a snapshot
+	 * Reverts to a specific snapshot.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-revert-model-snapshot
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-revert-snapshot.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to fetch
@@ -2468,9 +2428,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Set upgrade_mode for ML indices
+	 * Sets a cluster wide upgrade_mode setting that prepares machine learning indices for an upgrade.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-set-upgrade-mode
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-set-upgrade-mode.html
 	 *
 	 * @param array{
 	 *     enabled?: bool, // Whether to enable upgrade_mode ML setting or not. Defaults to false.
@@ -2505,10 +2465,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Start a data frame analytics job
+	 * Starts a data frame analytics job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-start-data-frame-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/start-dfanalytics.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The ID of the data frame analytics to start
@@ -2547,10 +2506,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Start datafeeds
+	 * Starts one or more datafeeds.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-start-datafeed
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-start-datafeed.html
 	 *
 	 * @param array{
 	 *     datafeed_id: string, // (REQUIRED) The ID of the datafeed to start
@@ -2591,10 +2549,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Start a trained model deployment
+	 * Start a trained model deployment.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-start-trained-model-deployment
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trained-model-deployment.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The unique identifier of the trained model.
@@ -2605,7 +2562,7 @@ class Ml extends AbstractEndpoint
 	 *     priority?: string, // The deployment priority.
 	 *     queue_capacity?: int, // Controls how many inference requests are allowed in the queue at a time.
 	 *     timeout?: int|string, // Controls the amount of time to wait for the model to deploy.
-	 *     wait_for?: string, // Specifies the allocation status to wait for before returning.
+	 *     wait_for?: string, // The allocation status for which to wait
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human?: bool, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -2640,10 +2597,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Stop data frame analytics jobs
+	 * Stops one or more data frame analytics jobs.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-stop-data-frame-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-dfanalytics.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The ID of the data frame analytics to stop
@@ -2684,10 +2640,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Stop datafeeds
+	 * Stops one or more datafeeds.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-stop-datafeed
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-stop-datafeed.html
 	 *
 	 * @param array{
 	 *     datafeed_id: string, // (REQUIRED) The ID of the datafeed to stop
@@ -2728,10 +2683,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Stop a trained model deployment
+	 * Stop a trained model deployment.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-stop-trained-model-deployment
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-trained-model-deployment.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The unique identifier of the trained model.
@@ -2771,10 +2725,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Update a data frame analytics job
+	 * Updates certain properties of a data frame analytics job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-data-frame-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/update-dfanalytics.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The ID of the data frame analytics to update
@@ -2812,10 +2765,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Update a datafeed
+	 * Updates certain properties of a datafeed.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-datafeed
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-datafeed.html
 	 *
 	 * @param array{
 	 *     datafeed_id: string, // (REQUIRED) The ID of the datafeed to update
@@ -2857,10 +2809,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Update a filter
+	 * Updates the description of a filter, adds items, or removes items.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-filter
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-filter.html
 	 *
 	 * @param array{
 	 *     filter_id: string, // (REQUIRED) The ID of the filter to update
@@ -2898,10 +2849,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Update an anomaly detection job
+	 * Updates certain properties of an anomaly detection job.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-job
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-job.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to create
@@ -2939,9 +2889,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Update a snapshot
+	 * Updates certain properties of a snapshot.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-model-snapshot
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-snapshot.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job to fetch
@@ -2980,10 +2930,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Update a trained model deployment
+	 * Updates certain properties of trained model deployment.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-trained-model-deployment
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/update-trained-model-deployment.html
 	 *
 	 * @param array{
 	 *     model_id: string, // (REQUIRED) The unique identifier of the trained model.
@@ -3022,9 +2971,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Upgrade a snapshot
+	 * Upgrades a given job snapshot to the current major version.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-upgrade-job-snapshot
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-upgrade-job-model-snapshot.html
 	 *
 	 * @param array{
 	 *     job_id: string, // (REQUIRED) The ID of the job
@@ -3063,9 +3012,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Validate an anomaly detection job
+	 * Validates an anomaly detection job.
 	 *
-	 * @link https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html
+	 * @see https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -3101,8 +3050,9 @@ class Ml extends AbstractEndpoint
 
 
 	/**
-	 * Validate an anomaly detection job
+	 * Validates an anomaly detection detector.
 	 *
+	 * @see https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)

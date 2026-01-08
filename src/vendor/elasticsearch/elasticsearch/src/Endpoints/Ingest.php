@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Ingest extends AbstractEndpoint
 {
 	/**
-	 * Delete GeoIP database configurations
+	 * Deletes a geoip database configuration
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-delete-geoip-database
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-geoip-database-api.html
 	 *
 	 * @param array{
 	 *     id: string|array<string>, // (REQUIRED) A comma-separated list of geoip database configurations to delete
@@ -69,9 +69,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Delete IP geolocation database configurations
+	 * Deletes an ip location database configuration
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-delete-ip-location-database
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-ip-location-database-api.html
 	 *
 	 * @param array{
 	 *     id: string|array<string>, // (REQUIRED) A comma-separated list of ip location database configurations to delete
@@ -109,10 +109,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Delete pipelines
+	 * Deletes a pipeline.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-delete-pipeline
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-pipeline-api.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) Pipeline ID
@@ -150,9 +149,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Get GeoIP statistics
+	 * Returns statistical information about geoip databases
 	 *
-	 * @link https://www.elastic.co/docs/reference/enrich-processor/geoip-processor
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-stats-api.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -185,9 +184,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Get GeoIP database configurations
+	 * Returns geoip database configuration.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-get-geoip-database
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-geoip-database-api.html
 	 *
 	 * @param array{
 	 *     id?: string|array<string>, // A comma-separated list of geoip database configurations to get; use `*` to get all geoip database configurations
@@ -225,9 +224,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Get IP geolocation database configurations
+	 * Returns the specified ip location database configuration
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-get-ip-location-database
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ip-location-database-api.html
 	 *
 	 * @param array{
 	 *     id?: string|array<string>, // A comma-separated list of ip location database configurations to get; use `*` to get all ip location database configurations
@@ -265,10 +264,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Get pipelines
+	 * Returns a pipeline.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-get-pipeline
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html
 	 *
 	 * @param array{
 	 *     id?: string, // Comma separated list of pipeline ids. Wildcards supported
@@ -308,10 +306,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Run a grok processor
+	 * Returns a list of the built-in patterns.
 	 *
-	 * @link https://www.elastic.co/docs/reference/enrich-processor/grok-processor
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -344,9 +341,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a GeoIP database configuration
+	 * Puts the configuration for a geoip database to be downloaded
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-put-geoip-database
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-geoip-database-api.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The id of the database configuration
@@ -386,9 +383,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Create or update an IP geolocation database configuration
+	 * Puts the configuration for a ip location database to be downloaded
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-put-ip-location-database
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-ip-location-database-api.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The id of the database configuration
@@ -428,10 +425,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a pipeline
+	 * Creates or updates a pipeline.
 	 *
-	 * @link https://www.elastic.co/docs/manage-data/ingest/transform-enrich/ingest-pipelines
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-pipeline-api.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) Pipeline ID
@@ -472,10 +468,9 @@ class Ingest extends AbstractEndpoint
 
 
 	/**
-	 * Simulate a pipeline
+	 * Allows to simulate a pipeline with example documents.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-simulate
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html
 	 *
 	 * @param array{
 	 *     id?: string, // Pipeline ID

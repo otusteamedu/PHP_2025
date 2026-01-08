@@ -40,7 +40,6 @@ use Elastic\Elasticsearch\Endpoints\Ml;
 use Elastic\Elasticsearch\Endpoints\Monitoring;
 use Elastic\Elasticsearch\Endpoints\Nodes;
 use Elastic\Elasticsearch\Endpoints\Profiling;
-use Elastic\Elasticsearch\Endpoints\Project;
 use Elastic\Elasticsearch\Endpoints\QueryRules;
 use Elastic\Elasticsearch\Endpoints\Rollup;
 use Elastic\Elasticsearch\Endpoints\SearchApplication;
@@ -282,15 +281,6 @@ trait NamespaceTrait
 			$this->namespace['Profiling'] = new Profiling($this);
 		}
 		return $this->namespace['Profiling'];
-	}
-
-
-	public function project(): Project
-	{
-		if (!isset($this->namespace['Project'])) {
-			$this->namespace['Project'] = new Project($this);
-		}
-		return $this->namespace['Project'];
 	}
 
 

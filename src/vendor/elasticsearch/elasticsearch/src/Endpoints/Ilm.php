@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Ilm extends AbstractEndpoint
 {
 	/**
-	 * Delete a lifecycle policy
+	 * Deletes the specified lifecycle policy definition. A currently used policy cannot be deleted.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-delete-lifecycle
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-delete-lifecycle.html
 	 *
 	 * @param array{
 	 *     policy: string, // (REQUIRED) The name of the index lifecycle policy
@@ -69,9 +69,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Explain the lifecycle state
+	 * Retrieves information about the index's current lifecycle state, such as the currently executing phase, action, and step.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-explain-lifecycle
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-explain-lifecycle.html
 	 *
 	 * @param array{
 	 *     index: string, // (REQUIRED) The name of the index to explain
@@ -110,9 +110,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Get lifecycle policies
+	 * Returns the specified policy definition. Includes the policy version and last modified date.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-get-lifecycle
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-get-lifecycle.html
 	 *
 	 * @param array{
 	 *     policy?: string, // The name of the index lifecycle policy
@@ -152,9 +152,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Get the ILM status
+	 * Retrieves the current index lifecycle management (ILM) status.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-get-status
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-get-status.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -187,12 +187,11 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Migrate to data tiers routing
+	 * Migrates the indices and ILM policies away from custom node attribute allocation routing to data tiers routing
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-migrate-to-data-tiers
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-migrate-to-data-tiers.html
 	 *
 	 * @param array{
-	 *     master_timeout?: int|string, // Explicit operation timeout for connection to master node
 	 *     dry_run?: bool, // If set to true it will simulate the migration, providing a way to retrieve the ILM policies and indices that need to be migrated. The default is false
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human?: bool, // Return human readable values for statistics. (DEFAULT: true)
@@ -214,7 +213,7 @@ class Ilm extends AbstractEndpoint
 		$url = '/_ilm/migrate_to_data_tiers';
 		$method = 'POST';
 
-		$url = $this->addQueryString($url, $params, ['master_timeout','dry_run','pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['dry_run','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
@@ -226,9 +225,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Move to a lifecycle step
+	 * Manually moves an index into the specified step and executes that step.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-move-to-step
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-move-to-step.html
 	 *
 	 * @param array{
 	 *     index: string, // (REQUIRED) The name of the index whose lifecycle step is to change
@@ -237,7 +236,7 @@ class Ilm extends AbstractEndpoint
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
 	 *     source?: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
 	 *     filter_path?: string|array<string>, // A comma-separated list of filters used to reduce the response.
-	 *     body: string|array<mixed>, // (REQUIRED) The new lifecycle step to move to. If body is a string must be a valid JSON.
+	 *     body?: string|array<mixed>, // The new lifecycle step to move to. If body is a string must be a valid JSON.
 	 * } $params
 	 *
 	 * @throws MissingParameterException if a required parameter is missing
@@ -250,7 +249,7 @@ class Ilm extends AbstractEndpoint
 	public function moveToStep(?array $params = null)
 	{
 		$params = $params ?? [];
-		$this->checkRequiredParameters(['index','body'], $params);
+		$this->checkRequiredParameters(['index'], $params);
 		$url = '/_ilm/move/' . $this->encode($params['index']);
 		$method = 'POST';
 
@@ -266,9 +265,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a lifecycle policy
+	 * Creates a lifecycle policy
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-put-lifecycle
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-put-lifecycle.html
 	 *
 	 * @param array{
 	 *     policy: string, // (REQUIRED) The name of the index lifecycle policy
@@ -279,7 +278,7 @@ class Ilm extends AbstractEndpoint
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
 	 *     source?: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
 	 *     filter_path?: string|array<string>, // A comma-separated list of filters used to reduce the response.
-	 *     body: string|array<mixed>, // (REQUIRED) The lifecycle policy definition to register. If body is a string must be a valid JSON.
+	 *     body?: string|array<mixed>, // The lifecycle policy definition to register. If body is a string must be a valid JSON.
 	 * } $params
 	 *
 	 * @throws MissingParameterException if a required parameter is missing
@@ -292,7 +291,7 @@ class Ilm extends AbstractEndpoint
 	public function putLifecycle(?array $params = null)
 	{
 		$params = $params ?? [];
-		$this->checkRequiredParameters(['policy','body'], $params);
+		$this->checkRequiredParameters(['policy'], $params);
 		$url = '/_ilm/policy/' . $this->encode($params['policy']);
 		$method = 'PUT';
 
@@ -308,9 +307,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Remove policies from an index
+	 * Removes the assigned lifecycle policy and stops managing the specified index
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-remove-policy
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-remove-policy.html
 	 *
 	 * @param array{
 	 *     index: string, // (REQUIRED) The name of the index to remove policy on
@@ -346,9 +345,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Retry a policy
+	 * Retries executing the policy for an index that is in the ERROR step.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-retry
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-retry-policy.html
 	 *
 	 * @param array{
 	 *     index: string, // (REQUIRED) The name of the indices (comma-separated) whose failed lifecycle step is to be retry
@@ -384,9 +383,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Start the ILM plugin
+	 * Start the index lifecycle management (ILM) plugin.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-start
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-start.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Explicit operation timeout for connection to master node
@@ -421,9 +420,9 @@ class Ilm extends AbstractEndpoint
 
 
 	/**
-	 * Stop the ILM plugin
+	 * Halts all lifecycle management operations and stops the index lifecycle management (ILM) plugin
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-stop
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-stop.html
 	 *
 	 * @param array{
 	 *     master_timeout?: int|string, // Explicit operation timeout for connection to master node

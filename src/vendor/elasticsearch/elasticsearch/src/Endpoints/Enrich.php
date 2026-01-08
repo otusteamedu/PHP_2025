@@ -29,10 +29,9 @@ use Http\Promise\Promise;
 class Enrich extends AbstractEndpoint
 {
 	/**
-	 * Delete an enrich policy
+	 * Deletes an existing enrich policy and its enrich index.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-delete-policy
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-enrich-policy-api.html
 	 *
 	 * @param array{
 	 *     name: string, // (REQUIRED) The name of the enrich policy
@@ -69,10 +68,9 @@ class Enrich extends AbstractEndpoint
 
 
 	/**
-	 * Run an enrich policy
+	 * Creates the enrich index for an existing enrich policy.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-execute-policy
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/execute-enrich-policy-api.html
 	 *
 	 * @param array{
 	 *     name: string, // (REQUIRED) The name of the enrich policy
@@ -110,14 +108,13 @@ class Enrich extends AbstractEndpoint
 
 
 	/**
-	 * Get an enrich policy
+	 * Gets information about an enrich policy.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-get-policy
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/get-enrich-policy-api.html
 	 *
 	 * @param array{
 	 *     name?: string|array<string>, // A comma-separated list of enrich policy names
-	 *     master_timeout?: int|string, // Timeout for waiting for new cluster state in case it is blocked
+	 *     master_timeout?: int|string, // Timeout for processing on master node
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human?: bool, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -152,10 +149,9 @@ class Enrich extends AbstractEndpoint
 
 
 	/**
-	 * Create an enrich policy
+	 * Creates a new enrich policy.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-put-policy
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/put-enrich-policy-api.html
 	 *
 	 * @param array{
 	 *     name: string, // (REQUIRED) The name of the enrich policy
@@ -194,12 +190,12 @@ class Enrich extends AbstractEndpoint
 
 
 	/**
-	 * Get enrich stats
+	 * Gets enrich coordinator statistics and information about enrich policies that are currently executing.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-stats
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/enrich-stats-api.html
 	 *
 	 * @param array{
-	 *     master_timeout?: int|string, // Timeout for waiting for new cluster state in case it is blocked
+	 *     master_timeout?: int|string, // Timeout for processing on master node
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human?: bool, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)

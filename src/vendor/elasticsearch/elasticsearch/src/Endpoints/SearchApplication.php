@@ -29,10 +29,10 @@ use Http\Promise\Promise;
 class SearchApplication extends AbstractEndpoint
 {
 	/**
-	 * Delete a search application
+	 * Deletes a search application.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-delete
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-search-application.html
+	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     name: string, // (REQUIRED) The name of the search application
@@ -68,10 +68,9 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Delete a behavioral analytics collection
+	 * Delete a behavioral analytics collection.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-delete-behavioral-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-analytics-collection.html
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
@@ -108,10 +107,10 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Get search application details
+	 * Returns the details about a search application.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-get
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-search-application.html
+	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     name: string, // (REQUIRED) The name of the search application
@@ -147,10 +146,9 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Get behavioral analytics collections
+	 * Returns the existing behavioral analytics collections.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-get-behavioral-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/list-analytics-collection.html
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
@@ -189,10 +187,10 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Get search applications
+	 * Returns the existing search applications.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-get-behavioral-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/list-search-applications.html
+	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     q?: string, // Query in the Lucene query string syntax
@@ -228,9 +226,9 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Create a behavioral analytics collection event
+	 * Creates a behavioral analytics event for existing collection.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-post-behavioral-analytics-event
+	 * @see http://todo.com/tbd
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
@@ -271,10 +269,10 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a search application
+	 * Creates or updates a search application.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-put
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html
+	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     name: string, // (REQUIRED) The name of the search application to be created or updated
@@ -313,10 +311,9 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Create a behavioral analytics collection
+	 * Creates a behavioral analytics collection.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-put-behavioral-analytics
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-analytics-collection.html
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
@@ -353,9 +350,9 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Render a search application query
+	 * Renders a query for given search application search parameters
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-render-query
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-render-query.html
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
@@ -394,10 +391,10 @@ class SearchApplication extends AbstractEndpoint
 
 
 	/**
-	 * Run a search application search
+	 * Perform a search against a search application
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-search
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-search.html
+	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     name: string, // (REQUIRED) The name of the search application to be searched

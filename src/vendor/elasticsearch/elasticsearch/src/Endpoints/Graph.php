@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Graph extends AbstractEndpoint
 {
 	/**
-	 * Explore graph analytics
+	 * Explore extracted and summarized information about the documents and terms in an index.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-graph
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/graph-explore-api.html
 	 *
 	 * @param array{
 	 *     index: string|array<string>, // (REQUIRED) A comma-separated list of index names to search; use `_all` or empty string to perform the operation on all indices
@@ -42,7 +42,7 @@ class Graph extends AbstractEndpoint
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
 	 *     source?: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
 	 *     filter_path?: string|array<string>, // A comma-separated list of filters used to reduce the response.
-	 *     body: string|array<mixed>, // (REQUIRED) Graph Query DSL. If body is a string must be a valid JSON.
+	 *     body?: string|array<mixed>, // Graph Query DSL. If body is a string must be a valid JSON.
 	 * } $params
 	 *
 	 * @throws MissingParameterException if a required parameter is missing
@@ -55,7 +55,7 @@ class Graph extends AbstractEndpoint
 	public function explore(?array $params = null)
 	{
 		$params = $params ?? [];
-		$this->checkRequiredParameters(['index','body'], $params);
+		$this->checkRequiredParameters(['index'], $params);
 		$url = '/' . $this->encode($this->convertValue($params['index'])) . '/_graph/explore';
 		$method = empty($params['body']) ? 'GET' : 'POST';
 

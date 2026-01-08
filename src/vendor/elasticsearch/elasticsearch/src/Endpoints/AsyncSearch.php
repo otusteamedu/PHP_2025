@@ -29,10 +29,9 @@ use Http\Promise\Promise;
 class AsyncSearch extends AbstractEndpoint
 {
 	/**
-	 * Delete an async search
+	 * Deletes an async search by ID. If the search is still running, the search request will be cancelled. Otherwise, the saved search results are deleted.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-async-search-submit
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The async search ID
@@ -68,10 +67,9 @@ class AsyncSearch extends AbstractEndpoint
 
 
 	/**
-	 * Get async search results
+	 * Retrieves the results of a previously submitted async search request given its ID.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-async-search-submit
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The async search ID
@@ -110,10 +108,9 @@ class AsyncSearch extends AbstractEndpoint
 
 
 	/**
-	 * Get the async search status
+	 * Retrieves the status of a previously submitted async search request given its ID.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-async-search-submit
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The async search ID
@@ -150,10 +147,9 @@ class AsyncSearch extends AbstractEndpoint
 
 
 	/**
-	 * Run an async search
+	 * Executes a search request asynchronously.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-async-search-submit
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html
 	 *
 	 * @param array{
 	 *     index?: string|array<string>, // A comma-separated list of index names to search; use `_all` or empty string to perform the operation on all indices
@@ -177,7 +173,6 @@ class AsyncSearch extends AbstractEndpoint
 	 *     expand_wildcards?: string, // Whether to expand wildcard expression to concrete indices that are open, closed or both.
 	 *     lenient?: bool, // Specify whether format-based query failures (such as providing text to a numeric field) should be ignored
 	 *     preference?: string, // Specify the node or shard the operation should be performed on (default: random)
-	 *     project_routing?: string, // A Lucene query using project metadata tags to limit which projects to search, such as _alias:_origin or _alias:*pr*. Only supported in serverless.
 	 *     rest_total_hits_as_int?: bool, // Indicates whether hits.total should be rendered as an integer or an object in the rest search response
 	 *     q?: string, // Query in the Lucene query string syntax
 	 *     routing?: string|array<string>, // A comma-separated list of specific routing values
@@ -225,7 +220,7 @@ class AsyncSearch extends AbstractEndpoint
 			$url = '/_async_search';
 			$method = 'POST';
 		}
-		$url = $this->addQueryString($url, $params, ['wait_for_completion_timeout','keep_on_completion','keep_alive','batched_reduce_size','request_cache','analyzer','analyze_wildcard','ccs_minimize_roundtrips','default_operator','df','explain','stored_fields','docvalue_fields','from','ignore_unavailable','ignore_throttled','allow_no_indices','expand_wildcards','lenient','preference','project_routing','rest_total_hits_as_int','q','routing','search_type','size','sort','_source','_source_excludes','_source_includes','terminate_after','stats','suggest_field','suggest_mode','suggest_size','suggest_text','timeout','track_scores','track_total_hits','allow_partial_search_results','typed_keys','version','seq_no_primary_term','max_concurrent_shard_requests','pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['wait_for_completion_timeout','keep_on_completion','keep_alive','batched_reduce_size','request_cache','analyzer','analyze_wildcard','ccs_minimize_roundtrips','default_operator','df','explain','stored_fields','docvalue_fields','from','ignore_unavailable','ignore_throttled','allow_no_indices','expand_wildcards','lenient','preference','rest_total_hits_as_int','q','routing','search_type','size','sort','_source','_source_excludes','_source_includes','terminate_after','stats','suggest_field','suggest_mode','suggest_size','suggest_text','timeout','track_scores','track_total_hits','allow_partial_search_results','typed_keys','version','seq_no_primary_term','max_concurrent_shard_requests','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',

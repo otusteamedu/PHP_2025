@@ -9,7 +9,10 @@ class ComposerStaticInit41dc6267379546ee7163f4501dd673ae
     public static $files = array (
         '5897ea0ac4cccf14d323035e65887801' => __DIR__ . '/..' . '/symfony/polyfill-php82/bootstrap.php',
         '8e92226780215d0ec758aa7b73e0ede9' => __DIR__ . '/..' . '/open-telemetry/context/fiber/initialize_fiber_handler.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c7b4a5d8b94d270f0f9a84f81e1dd63d' => __DIR__ . '/..' . '/open-telemetry/api/Trace/functions.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -28,20 +31,26 @@ class ComposerStaticInit41dc6267379546ee7163f4501dd673ae
             'OpenTelemetry\\Context\\' => 22,
             'OpenTelemetry\\API\\' => 18,
         ),
-        'N' => 
-        array (
-            'Nyholm\\Psr7\\' => 12,
-        ),
         'H' => 
         array (
             'Http\\Promise\\' => 13,
             'Http\\Discovery\\' => 15,
             'Http\\Client\\' => 12,
         ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
+        ),
         'E' => 
         array (
             'Elastic\\Transport\\' => 18,
             'Elastic\\Elasticsearch\\' => 22,
+        ),
+        'A' => 
+        array (
+            'App\\' => 4,
         ),
     );
 
@@ -56,8 +65,8 @@ class ComposerStaticInit41dc6267379546ee7163f4501dd673ae
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -71,10 +80,6 @@ class ComposerStaticInit41dc6267379546ee7163f4501dd673ae
         array (
             0 => __DIR__ . '/..' . '/open-telemetry/api',
         ),
-        'Nyholm\\Psr7\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nyholm/psr7/src',
-        ),
         'Http\\Promise\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-http/promise/src',
@@ -87,6 +92,18 @@ class ComposerStaticInit41dc6267379546ee7163f4501dd673ae
         array (
             0 => __DIR__ . '/..' . '/php-http/httplug/src',
         ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
         'Elastic\\Transport\\' => 
         array (
             0 => __DIR__ . '/..' . '/elastic/transport/src',
@@ -94,6 +111,10 @@ class ComposerStaticInit41dc6267379546ee7163f4501dd673ae
         'Elastic\\Elasticsearch\\' => 
         array (
             0 => __DIR__ . '/..' . '/elasticsearch/elasticsearch/src',
+        ),
+        'App\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/',
         ),
     );
 

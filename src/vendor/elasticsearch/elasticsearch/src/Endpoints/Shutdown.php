@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Shutdown extends AbstractEndpoint
 {
 	/**
-	 * Cancel node shutdown preparations
+	 * Removes a node from the shutdown list. Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-shutdown-delete-node
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current
 	 *
 	 * @param array{
 	 *     node_id: string, // (REQUIRED) The node id of node to be removed from the shutdown state
@@ -70,9 +70,9 @@ class Shutdown extends AbstractEndpoint
 
 
 	/**
-	 * Get the shutdown status
+	 * Retrieve status of a node or nodes that are currently marked as shutting down. Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-shutdown-get-node
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current
 	 *
 	 * @param array{
 	 *     node_id?: string, // Which node for which to retrieve the shutdown status
@@ -112,9 +112,9 @@ class Shutdown extends AbstractEndpoint
 
 
 	/**
-	 * Prepare a node to be shut down
+	 * Adds a node to be shut down. Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-shutdown-put-node
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current
 	 *
 	 * @param array{
 	 *     node_id: string, // (REQUIRED) The node id of node to be shut down

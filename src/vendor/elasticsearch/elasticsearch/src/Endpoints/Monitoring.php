@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Monitoring extends AbstractEndpoint
 {
 	/**
-	 * Send monitoring data
+	 * Used by the monitoring features to send monitoring data.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/monitor-elasticsearch-cluster.html
 	 *
 	 * @param array{
 	 *     type?: string, // Default document type for items which don't provide one

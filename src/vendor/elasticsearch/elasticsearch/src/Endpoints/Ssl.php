@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Ssl extends AbstractEndpoint
 {
 	/**
-	 * Get SSL certificates
+	 * Retrieves information about the X.509 certificates used to encrypt communications in the cluster.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ssl-certificates
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-ssl.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)

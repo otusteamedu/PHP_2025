@@ -1,10 +1,12 @@
 <?php
 
-require './vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use Elastic\Elasticsearch\ClientBuilder;
 
-$client = ClientBuilder::create()->setHosts(['localhost:9200'])->build();
+$client = ClientBuilder::create()
+            ->setHosts(['elasticsearch:9200'])
+            ->build();
 
 $params = [
     'index' => 'books',

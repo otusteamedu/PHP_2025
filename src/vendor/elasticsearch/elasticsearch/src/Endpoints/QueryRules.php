@@ -29,10 +29,9 @@ use Http\Promise\Promise;
 class QueryRules extends AbstractEndpoint
 {
 	/**
-	 * Delete a query rule
+	 * Deletes an individual query rule within a ruleset.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-query-rules-delete-rule
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-query-rule.html
 	 *
 	 * @param array{
 	 *     ruleset_id: string, // (REQUIRED) The unique identifier of the query ruleset this rule exists in
@@ -69,10 +68,9 @@ class QueryRules extends AbstractEndpoint
 
 
 	/**
-	 * Delete a query ruleset
+	 * Deletes a query ruleset.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-query-rules-delete-ruleset
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-query-ruleset.html
 	 *
 	 * @param array{
 	 *     ruleset_id: string, // (REQUIRED) The unique identifier of the query ruleset to delete
@@ -108,10 +106,9 @@ class QueryRules extends AbstractEndpoint
 
 
 	/**
-	 * Get a query rule
+	 * Returns the details about an individual query rule within a ruleset.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-query-rules-get-rule
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-query-rule.html
 	 *
 	 * @param array{
 	 *     ruleset_id: string, // (REQUIRED) The unique identifier of the query ruleset the rule exists within
@@ -148,10 +145,9 @@ class QueryRules extends AbstractEndpoint
 
 
 	/**
-	 * Get a query ruleset
+	 * Returns the details about a query ruleset.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-query-rules-get-ruleset
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-query-ruleset.html
 	 *
 	 * @param array{
 	 *     ruleset_id: string, // (REQUIRED) The unique identifier of the query ruleset
@@ -187,10 +183,9 @@ class QueryRules extends AbstractEndpoint
 
 
 	/**
-	 * Get all query rulesets
+	 * Lists query rulesets.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-query-rules-list-rulesets
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/list-query-rulesets.html
 	 *
 	 * @param array{
 	 *     from?: int, // Starting offset (default: 0)
@@ -225,10 +220,9 @@ class QueryRules extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a query rule
+	 * Creates or updates a query rule within a ruleset.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-query-rules-put-rule
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-query-rule.html
 	 *
 	 * @param array{
 	 *     ruleset_id: string, // (REQUIRED) The unique identifier of the ruleset this rule should be added to. The ruleset will be created if it does not exist.
@@ -267,10 +261,9 @@ class QueryRules extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a query ruleset
+	 * Creates or updates a query ruleset.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-query-rules-put-ruleset
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-query-ruleset.html
 	 *
 	 * @param array{
 	 *     ruleset_id: string, // (REQUIRED) The unique identifier of the ruleset to be created or updated.
@@ -308,10 +301,10 @@ class QueryRules extends AbstractEndpoint
 
 
 	/**
-	 * Test a query ruleset
+	 * Tests a query ruleset to identify the rules that would match input criteria
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-query-rules-test
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/test-query-ruleset.html
+	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     ruleset_id: string, // (REQUIRED) The unique identifier of the ruleset to test.

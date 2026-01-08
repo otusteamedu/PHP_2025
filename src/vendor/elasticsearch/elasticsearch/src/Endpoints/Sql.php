@@ -29,10 +29,9 @@ use Http\Promise\Promise;
 class Sql extends AbstractEndpoint
 {
 	/**
-	 * Clear an SQL search cursor
+	 * Clears the SQL cursor
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-sql-clear-cursor
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-sql-cursor-api.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
@@ -68,10 +67,9 @@ class Sql extends AbstractEndpoint
 
 
 	/**
-	 * Delete an async SQL search
+	 * Deletes an async SQL search or a stored synchronous SQL search. If the search is still running, the API cancels it.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-sql-delete-async
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-async-sql-search-api.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The async search ID
@@ -107,10 +105,9 @@ class Sql extends AbstractEndpoint
 
 
 	/**
-	 * Get async SQL search results
+	 * Returns the current status and available results for an async SQL search or stored synchronous SQL search
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-sql-get-async
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-api.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The async search ID
@@ -150,10 +147,9 @@ class Sql extends AbstractEndpoint
 
 
 	/**
-	 * Get the async SQL search status
+	 * Returns the current status of an async SQL search or a stored synchronous SQL search
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-sql-get-async-status
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-status-api.html
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The async search ID
@@ -189,14 +185,12 @@ class Sql extends AbstractEndpoint
 
 
 	/**
-	 * Get SQL search results
+	 * Executes a SQL request
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-sql-query
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-search-api.html
 	 *
 	 * @param array{
-	 *     format?: string, // The format for the response.You can also specify a format using the `Accept` HTTP header.If you specify both this parameter and the `Accept` HTTP header, this parameter takes precedence.
-	 *     project_routing?: string, // A Lucene query using project metadata tags to limit which projects to search, such as _alias:_origin or _alias:*pr*. Only supported in serverless.
+	 *     format?: string, // a short version of the Accept header, e.g. json, yaml
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human?: bool, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -218,7 +212,7 @@ class Sql extends AbstractEndpoint
 		$url = '/_sql';
 		$method = empty($params['body']) ? 'GET' : 'POST';
 
-		$url = $this->addQueryString($url, $params, ['format','project_routing','pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['format','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
@@ -230,10 +224,9 @@ class Sql extends AbstractEndpoint
 
 
 	/**
-	 * Translate SQL into Elasticsearch queries
+	 * Translates SQL into Elasticsearch queries
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-sql-translate
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-translate-api.html
 	 *
 	 * @param array{
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)

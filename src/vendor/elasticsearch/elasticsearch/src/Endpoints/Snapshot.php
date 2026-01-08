@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Snapshot extends AbstractEndpoint
 {
 	/**
-	 * Clean up the snapshot repository
+	 * Removes stale data from repository.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-cleanup-repository
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name
@@ -69,9 +69,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Clone a snapshot
+	 * Clones indices from one snapshot into another snapshot in the same repository.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-clone
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name
@@ -112,9 +112,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Create a snapshot
+	 * Creates a snapshot in a repository.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-create
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name
@@ -155,9 +155,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Create or update a snapshot repository
+	 * Creates a repository.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-create-repository
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name
@@ -198,9 +198,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Delete snapshots
+	 * Deletes one or more snapshots.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-delete
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name
@@ -239,9 +239,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Delete snapshot repositories
+	 * Deletes a repository.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-delete-repository
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string|array<string>, // (REQUIRED) Name of the snapshot repository to unregister. Wildcard (`*`) patterns are supported.
@@ -279,9 +279,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Get snapshot information
+	 * Returns information about a snapshot.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-get
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name
@@ -299,7 +299,6 @@ class Snapshot extends AbstractEndpoint
 	 *     offset?: int, // Numeric offset to start pagination based on the snapshots matching the request. Defaults to 0
 	 *     slm_policy_filter?: string, // Filter snapshots by a comma-separated list of SLM policy names that snapshots belong to. Accepts wildcards. Use the special pattern '_none' to match snapshots without an SLM policy
 	 *     verbose?: bool, // Whether to show verbose snapshot info or only show the basic info found in the repository index blob
-	 *     state?: string|array<string>, // Filter snapshots by a comma-separated list of states. Valid state values are 'SUCCESS', 'IN_PROGRESS', 'FAILED', 'PARTIAL', or 'INCOMPATIBLE'.
 	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human?: bool, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -321,7 +320,7 @@ class Snapshot extends AbstractEndpoint
 		$url = '/_snapshot/' . $this->encode($params['repository']) . '/' . $this->encode($this->convertValue($params['snapshot']));
 		$method = 'GET';
 
-		$url = $this->addQueryString($url, $params, ['master_timeout','ignore_unavailable','index_names','index_details','include_repository','sort','size','order','from_sort_value','after','offset','slm_policy_filter','verbose','state','pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['master_timeout','ignore_unavailable','index_names','index_details','include_repository','sort','size','order','from_sort_value','after','offset','slm_policy_filter','verbose','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 		];
@@ -332,9 +331,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Get snapshot repository information
+	 * Returns information about a repository.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-get-repository
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository?: string|array<string>, // A comma-separated list of repository names
@@ -374,9 +373,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Analyze a snapshot repository
+	 * Analyzes a repository for correctness and performance
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-repository-analyze
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name
@@ -386,7 +385,7 @@ class Snapshot extends AbstractEndpoint
 	 *     read_node_count?: int, // Number of nodes on which to read a blob after writing. Defaults to 10.
 	 *     early_read_node_count?: int, // Number of nodes on which to perform an early read on a blob, i.e. before writing has completed. Early reads are rare actions so the 'rare_action_probability' parameter is also relevant. Defaults to 2.
 	 *     seed?: int, // Seed for the random number generator used to create the test workload. Defaults to a random value.
-	 *     rare_action_probability?: float, // Probability of taking a rare action such as an early read or an overwrite. Defaults to 0.02.
+	 *     rare_action_probability?: int, // Probability of taking a rare action such as an early read or an overwrite. Defaults to 0.02.
 	 *     max_blob_size?: string, // Maximum size of a blob to create during the test, e.g '1gb' or '100mb'. Defaults to '10mb'.
 	 *     max_total_data_size?: string, // Maximum total size of all blobs to create during the test, e.g '1tb' or '100gb'. Defaults to '1gb'.
 	 *     timeout?: int|string, // Explicit operation timeout. Defaults to '30s'.
@@ -424,56 +423,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Verify the repository integrity
+	 * Restores a snapshot.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-repository-verify-integrity
-	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
-	 *
-	 * @param array{
-	 *     repository: string, // (REQUIRED) A repository name
-	 *     meta_thread_pool_concurrency?: int, // Number of threads to use for reading metadata
-	 *     blob_thread_pool_concurrency?: int, // Number of threads to use for reading blob contents
-	 *     snapshot_verification_concurrency?: int, // Number of snapshots to verify concurrently
-	 *     index_verification_concurrency?: int, // Number of indices to verify concurrently
-	 *     index_snapshot_verification_concurrency?: int, // Number of snapshots to verify concurrently within each index
-	 *     max_failed_shard_snapshots?: int, // Maximum permitted number of failed shard snapshots
-	 *     verify_blob_contents?: bool, // Whether to verify the contents of individual blobs
-	 *     max_bytes_per_sec?: string, // Rate limit for individual blob verification
-	 *     pretty?: bool, // Pretty format the returned JSON response. (DEFAULT: false)
-	 *     human?: bool, // Return human readable values for statistics. (DEFAULT: true)
-	 *     error_trace?: bool, // Include the stack trace of returned errors. (DEFAULT: false)
-	 *     source?: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
-	 *     filter_path?: string|array<string>, // A comma-separated list of filters used to reduce the response.
-	 * } $params
-	 *
-	 * @throws MissingParameterException if a required parameter is missing
-	 * @throws NoNodeAvailableException if all the hosts are offline
-	 * @throws ClientResponseException if the status code of response is 4xx
-	 * @throws ServerResponseException if the status code of response is 5xx
-	 *
-	 * @return Elasticsearch|Promise
-	 */
-	public function repositoryVerifyIntegrity(?array $params = null)
-	{
-		$params = $params ?? [];
-		$this->checkRequiredParameters(['repository'], $params);
-		$url = '/_snapshot/' . $this->encode($params['repository']) . '/_verify_integrity';
-		$method = 'POST';
-
-		$url = $this->addQueryString($url, $params, ['meta_thread_pool_concurrency','blob_thread_pool_concurrency','snapshot_verification_concurrency','index_verification_concurrency','index_snapshot_verification_concurrency','max_failed_shard_snapshots','verify_blob_contents','max_bytes_per_sec','pretty','human','error_trace','source','filter_path']);
-		$headers = [
-			'Accept' => 'application/json',
-		];
-		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
-		$request = $this->addOtelAttributes($params, ['repository'], $request, 'snapshot.repository_verify_integrity');
-		return $this->client->sendRequest($request);
-	}
-
-
-	/**
-	 * Restore a snapshot
-	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-restore
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name
@@ -514,9 +466,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Get the snapshot status
+	 * Returns information about the status of a snapshot.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-status
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository?: string, // A repository name
@@ -560,9 +512,9 @@ class Snapshot extends AbstractEndpoint
 
 
 	/**
-	 * Verify a snapshot repository
+	 * Verifies a repository.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-verify-repository
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html
 	 *
 	 * @param array{
 	 *     repository: string, // (REQUIRED) A repository name

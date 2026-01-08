@@ -16,7 +16,6 @@ namespace Elastic\Elasticsearch\Response;
 
 use ArrayAccess;
 use DateTime;
-use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Exception\ArrayAccessException;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
@@ -45,7 +44,6 @@ class Elasticsearch implements ElasticsearchInterface, ResponseInterface, ArrayA
     protected array $asArray;
     protected object $asObject;
     protected string $asString;
-    protected bool $serverless = false;
 
     /**
      * The PSR-7 response
@@ -64,8 +62,6 @@ class Elasticsearch implements ElasticsearchInterface, ResponseInterface, ArrayA
     public function setResponse(ResponseInterface $response, bool $throwException = true): void
     {
         $this->productCheck($response);
-        // Check for Serverless response
-        $this->serverless = $this->isServerlessResponse($response);
         $this->response = $response;
         $status = $response->getStatusCode();
         if ($throwException && $status > 399 && $status < 500) {
@@ -81,22 +77,6 @@ class Elasticsearch implements ElasticsearchInterface, ResponseInterface, ArrayA
             );
             throw $error->setResponse($response);
         }
-    }
-
-    /**
-     * Check whether the response is from Serverless
-     */
-    private function isServerlessResponse(ResponseInterface $response): bool
-    {
-        return !empty($response->getHeader(Client::API_VERSION_HEADER));
-    }
-
-    /**
-     * Return true if the response is from Serverless
-     */
-    public function isServerless(): bool
-    {
-        return $this->serverless;
     }
 
     /**
@@ -138,7 +118,7 @@ class Elasticsearch implements ElasticsearchInterface, ResponseInterface, ArrayA
             return $this->asArray;
         }
         throw new UnknownContentTypeException(sprintf(
-            "Cannot deserialize the response as array with Content-Type: %s",
+            "Cannot deserialize the reponse as array with Content-Type: %s",
             $contentType
         ));
     }
@@ -171,7 +151,7 @@ class Elasticsearch implements ElasticsearchInterface, ResponseInterface, ArrayA
             return $this->asObject;
         }
         throw new UnknownContentTypeException(sprintf(
-            "Cannot deserialize the response as object with Content-Type: %s",
+            "Cannot deserialize the reponse as object with Content-Type: %s",
             $contentType
         ));
     }

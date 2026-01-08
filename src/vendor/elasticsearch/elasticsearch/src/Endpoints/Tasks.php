@@ -29,9 +29,9 @@ use Http\Promise\Promise;
 class Tasks extends AbstractEndpoint
 {
 	/**
-	 * Cancel a task
+	 * Cancels a task, if it can be cancelled through an API.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
@@ -74,10 +74,9 @@ class Tasks extends AbstractEndpoint
 
 
 	/**
-	 * Get task information
+	 * Returns information about a task.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks
-	 * @group serverless
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
@@ -116,9 +115,9 @@ class Tasks extends AbstractEndpoint
 
 
 	/**
-	 * Get all tasks
+	 * Returns a list of tasks.
 	 *
-	 * @link https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
