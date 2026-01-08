@@ -1,0 +1,36 @@
+
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./app:/data/application.local/app  # ← только app
+      - php_socket:/var/run/php
+    networks:
+      - app-network
+
+  php-fpm:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    container_name: app
+    user: "www-data:www-data"
+    volumes:
+      - ./app:/data/application.local/app  # ← только app
+      - ./packages:/data/packages          # ← пакеты отдельно
+      - ./composer.json:/opt/project/composer.json  # ← composer проекта отдельно
+      - php_socket:/var/run/php
+    # working_dir: /opt/project  # ← рабочая директория для composer
+    networks:
+      - app-network
+
+volumes:
+  php_socket:
+
+networks:
+  app-network:
+    driver: bridge
