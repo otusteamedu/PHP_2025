@@ -23,45 +23,6 @@ services:
     image: redis:latest
     networks:
       - app-network
-  memcached:
-    image: memcached:latest
-    networks:
-      - app-network
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB_NAME}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASS}
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./db/data:/var/lib/mysql
-    networks:
-      - app-network
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - "9200:9200"
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    networks:
-      - app-network
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.1
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-    networks:
-      - app-network 
 networks:
   app-network:
     driver: bridge

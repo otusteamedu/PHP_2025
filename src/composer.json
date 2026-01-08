@@ -1,15 +1,17 @@
 {
-    "require": {
-        "elasticsearch/elasticsearch": "^8.11"
-    },
+    "name": "igor/src",
     "autoload": {
         "psr-4": {
             "App\\": ""
         }
     },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
+    "authors": [
+        {
+            "name": "Igor Morozov",
+            "email": "GreekIgor87@gmail.com"
         }
+    ],
+    "require": {
+        "predis/predis": "^3.3"
     }
 }
