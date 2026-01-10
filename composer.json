@@ -1,0 +1,18 @@
+{
+    "name": "larkinov/random",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Larkinov\\Random\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Larkinov",
+            "email": "buyantolarkinov@gmail.com"
+        }
+    ],
+    "require":{
+        "php": ">=7.0"
+    }
+}
