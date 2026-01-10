@@ -1,0 +1,19 @@
+{
+    "name": "kkonshin/php_2025",
+    "authors": [
+        {
+            "name": "kkonshin",
+            "email": "kkonshin@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/kkonshin/php-2025-composer-package"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "kkonshin/php_2025_composer_package": "dev-main"
+    }
+}
