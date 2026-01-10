@@ -1,0 +1,200 @@
+openapi: 3.0.3
+info:
+  title: Task Queue API
+  description: |-
+    API for managing tasks through RabbitMQ queue.
+    
+    This API allows you to:
+    - Create new tasks for processing
+    - Check task status by ID
+    - Monitor task progress
+  version: 1.0.0
+  contact:
+    name: API Support
+    url: http://localhost
+    email: support@example.com
+
+servers:
+  - url: http://localhost
+    description: Development server
+
+paths:
+  /:
+    get:
+      summary: API information
+      description: Get basic API information and status
+      tags:
+        - Info
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Task Queue API is running"
+                  version:
+                    type: string
+                    example: "1.0.0"
+
+  /tasks:
+    post:
+      summary: Create a new task
+      description: Create a new task and add it to the processing queue
+      tags:
+        - Tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: object
+                  description: Task data to be processed
+                  example: {"type": "image_processing", "file": "image.jpg"}
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid input
+        '500':
+          description: Server error
+
+  /tasks/{id}:
+    get:
+      summary: Get task status
+      description: Retrieve the current status of a task by its ID
+      tags:
+        - Tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Task ID
+          schema:
+            type: string
+            example: "task_1234567890"
+      responses:
+        '200':
+          description: Task details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Task not found"
+
+  /docs:
+    get:
+      summary: Swagger UI
+      description: Interactive API documentation
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: Swagger UI page
+
+  /swagger.yaml:
+    get:
+      summary: Swagger YAML specification
+      description: Get the OpenAPI specification in YAML format
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: OpenAPI YAML specification
+          content:
+            application/x-yaml:
+              schema:
+                type: string
+
+components:
+  schemas:
+    Task:
+      type: object
+      required:
+        - id
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          description: Unique task identifier
+          example: "task_1234567890"
+        status:
+          type: string
+          enum:
+            - pending
+            - processing
+            - completed
+            - failed
+          description: Current task status
+          example: "processing"
+        data:
+          type: object
+          description: Original task data
+          example: {"type": "image_processing", "file": "image.jpg"}
+        result:
+          type: object
+          description: Task processing result (available when completed)
+          nullable: true
+          example: {"processed_at": "2023-01-01T12:00:00Z", "message": "Success"}
+        created_at:
+          type: string
+          format: date-time
+          description: Task creation timestamp
+          example: "2023-01-01T10:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2023-01-01T10:05:00Z"
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+tags:
+  - name: Tasks
+    description: Task management operations
+  - name: Info
+    description: API information endpoints
+  - name: Documentation
+    description: API documentation endpoints

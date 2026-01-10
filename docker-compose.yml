@@ -1,0 +1,87 @@
+services:
+  otus_nginx:
+    image: otus-nginx:alpine
+    build:
+      context: ./
+      dockerfile: docker/nginx/Dockerfile
+    container_name: 'otus_nginx'
+    ports:
+      - 80:80
+    volumes:
+      - ./src:/opt/app/src
+      - ./public:/opt/app/public
+      - ./docker/nginx/configs/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/configs/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/_logs/nginx:/var/log/nginx
+      - otus_phpsocket:/run/php
+    depends_on:
+      - otus_php_fpm
+      - otus_rabbit_mq
+    networks:
+      - otus_network
+
+  otus_php_fpm:
+    image: otus-php:8.4-fpm-alpine
+    build:
+      context: ./
+      dockerfile: docker/php_fpm/Dockerfile
+    container_name: 'otus_php_fpm'
+    working_dir: /opt/app
+    volumes:
+      - ./src:/opt/app/src
+      - ./public:/opt/app/public
+      - ./storage:/opt/app/storage
+      - ./.env:/opt/app/.env
+      - ./docker/php_fpm/configs/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./docker/php_fpm/configs/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+      - ./docker/_logs/php:/var/log/php
+      - otus_phpsocket:/run/php
+    depends_on:
+      - otus_rabbit_mq
+    networks:
+      - otus_network
+
+  otus_rabbit_mq:
+    image: otus_rabbitmq:3.13.7-management-alpine
+    build:
+      context: ./
+      dockerfile: docker/rabbitmq/Dockerfile
+    container_name: 'otus_rabbit_mq'
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RMQ_PASSWORD}
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - otus_network
+
+  otus_worker:
+    image: otus_worker:php8.4-fpm-alpine
+    build:
+      context: ./
+      dockerfile: docker/workers/Dockerfile
+    container_name: 'otus_worker'
+    command: php /opt/app/scripts/worker.php
+    restart: on-failure
+    volumes:
+      - ./src:/opt/app/src
+      - ./scripts:/opt/app/scripts
+      - ./storage:/opt/app/storage
+      - ./.env:/opt/app/.env
+      - ./docker/_logs/worker:/var/log/php
+    depends_on:
+      otus_rabbit_mq:
+        condition: service_healthy
+    networks:
+      - otus_network
+
+networks:
+  otus_network:
+    driver: bridge
+
+volumes:
+  otus_phpsocket:
