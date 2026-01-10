@@ -3,3 +3,9 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# Исключаем данные контейнеров
+/data/
+
+# Исключаем .env
+.env
