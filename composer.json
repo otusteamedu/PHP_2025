@@ -1,0 +1,19 @@
+{
+  "name": "root/html",
+  "autoload": {
+    "psr-4": {
+      "Root\\Html\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Adel"
+    }
+  ],
+  "require": {
+    "vlucas/phpdotenv": "^5.6",
+    "ext-memcached": "*",
+    "ext-pgsql": "*",
+    "ext-redis": "*"
+  }
+}
