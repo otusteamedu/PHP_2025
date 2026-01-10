@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\Services\PostgresService;
+use App\Infrastructure\Database\PostgresConnection;
 
 $migrationName = '001_create_movie_table';
 
@@ -16,7 +16,7 @@ $columns = [
 ];
 
 try {
-    $db = new PostgresService();
+    $db = new PostgresConnection();
     $db->createTable('movie', $columns);
     echo "[OK] {$migrationName} applied" . PHP_EOL;
 } catch (\PDOException $e) {

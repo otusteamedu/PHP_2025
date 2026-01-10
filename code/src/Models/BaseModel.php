@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Services\PostgresService;
+use App\Infrastructure\Database\PostgresConnection;
 
 abstract class BaseModel
 {
     protected ?int $id;
-    protected PostgresService $service;
+    protected PostgresConnection $connection;
     protected static array $identityMap = [];
 
-    public function __construct(?int $id = null, ?PostgresService $service = null)
+    public function __construct(?int $id = null, ?PostgresConnection $connection = null)
     {
         $this->id = $id;
-        $this->service = $service ?? new PostgresService();
+        $this->connection = $connection ?? new PostgresConnection();
     }
 
     /**
@@ -51,11 +51,11 @@ abstract class BaseModel
     /**
      * Найти модель по ID.
      * @param int $id Идентификатор модели
-     * @param ?PostgresService $db Сервис БД (если null, будет создан новый)
+     * @param ?PostgresConnection $db Коннектор к БД (если null, будет создан новый)
      * 
      * @return static|null
      */
-    public static function find(int $id, ?PostgresService $db = null): ?static
+    public static function find(int $id, ?PostgresConnection $db = null): ?static
     {
         if ($id <= 0) {
             return null;
@@ -65,15 +65,15 @@ abstract class BaseModel
             return $cached;
         }
 
-        $service = static::resolveDb($db);
-        $row = $service->findById(static::getTableName(), static::getSelectColumns(), $id);
+        $connection = static::resolveDb($db);
+        $row = $connection->findById(static::getTableName(), static::getSelectColumns(), $id);
 
         if ($row === null) {
             return null;
         }
 
         $model = static::fromArray($row);
-        $model->service = $service;
+        $model->connection = $connection;
 
         static::storeInIdentityMap($model);
 
@@ -82,14 +82,14 @@ abstract class BaseModel
 
     /**
      * Получить все модели из таблицы.
-     * @param ?PostgresService $db Сервис БД (если null, будет создан новый)
+     * @param ?PostgresConnection $db Коннектор к БД (если null, будет создан новый)
      * 
      * @return static[]
      */
-    public static function all(?PostgresService $db = null): array
+    public static function all(?PostgresConnection $db = null): array
     {
-        $service = static::resolveDb($db);
-        $rows = $service->fetchAll(static::getTableName(), static::getSelectColumns());
+        $connection = static::resolveDb($db);
+        $rows = $connection->fetchAll(static::getTableName(), static::getSelectColumns());
 
         $models = [];
 
@@ -104,7 +104,7 @@ abstract class BaseModel
             }
 
             $model = static::fromArray($row);
-            $model->service = $service;
+            $model->connection = $connection;
 
             if ($id !== null) {
                 static::storeInIdentityMap($model);
@@ -123,16 +123,16 @@ abstract class BaseModel
      */
     public function save(): int
     {
-        $service = $this->service;
+        $connection = $this->connection;
         $attributes = $this->getAttributes();
 
         if ($this->id === null) {
-            $this->id = (int)$service->insert(static::getTableName(), $attributes);
+            $this->id = (int)$connection->insert(static::getTableName(), $attributes);
             static::storeInIdentityMap($this);
             return 1;
         }
 
-        $cnt = $service->update(
+        $cnt = $connection->update(
             static::getTableName(),
             $attributes,
             '"id" = :id',
@@ -157,7 +157,7 @@ abstract class BaseModel
             return 0;
         }
 
-        $cnt = $this->service->delete(
+        $cnt = $this->connection->delete(
             static::getTableName(),
             '"id" = :id',
             ['id' => $this->id]
@@ -181,14 +181,14 @@ abstract class BaseModel
     }
 
     /**
-     * Cервис БД.
-     * @param ?PostgresService $db Сервис БД
+     * Коннектор к БД.
+     * @param ?PostgresConnection $db Коннектор к БД
      * 
-     * @return PostgresService
+     * @return PostgresConnection
      */
-    protected static function resolveDb(?PostgresService $db): PostgresService
+    protected static function resolveDb(?PostgresConnection $db): PostgresConnection
     {
-        return $db ?? new PostgresService();
+        return $db ?? new PostgresConnection();
     }
 
     /**

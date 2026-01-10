@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace App\Infrastructure\Database;
 
 use InvalidArgumentException;
 use PDO;
 use PDOException;
 
-class PostgresService
+class PostgresConnection
 {
     private PDO $pdo;
 

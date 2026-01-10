@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\Services\PostgresService;
+use App\Infrastructure\Database\PostgresConnection;
 
 $migrationName = '002_seed_movie_table';
 
@@ -27,7 +27,7 @@ $movies = [
 ];
 
 try {
-    $db = new PostgresService();
+    $db = new PostgresConnection();
     $inserted = 0;
 
     foreach ($movies as $movie) {
