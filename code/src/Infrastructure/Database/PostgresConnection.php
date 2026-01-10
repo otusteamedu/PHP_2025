@@ -7,6 +7,7 @@ namespace App\Infrastructure\Database;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Generator;
 
 class PostgresConnection
 {
@@ -159,26 +160,56 @@ class PostgresConnection
     }
 
     /**
-     * Возвращает все строки, отсортированные по id.
+     * Возвращает все строки, отсортированные по id, по частям (батчами).
      * @param string $table Таблица
      * @param string[] $columns Колонки для выборки
+     * @param int $batchSize Размер батча
+     * @param int $cursorId Начать после id
      * 
-     * @return array[]
+     * @return Generator<array>
      */
-    public function fetchAll(string $table, array $columns): array
+    public function fetchChunked(string $table, array $columns, int $batchSize = 1000, int $cursorId = 0): Generator
     {
         if ($columns === []) {
             throw new InvalidArgumentException('Select columns must not be empty');
         }
 
+        if ($batchSize <= 0) {
+            throw new InvalidArgumentException('Batch size must be positive');
+        }
+
         $columnList = implode(', ', array_map([$this, 'quoteIdentifier'], $columns));
         $orderColumn = $this->quoteIdentifier('id');
 
-        $stmt = $this->pdo->query(
-            sprintf('SELECT %s FROM %s ORDER BY %s', $columnList, $this->quoteIdentifier($table), $orderColumn)
-        );
+        while (true) {
+            $stmt = $this->pdo->prepare(
+                sprintf(
+                    'SELECT %s FROM %s WHERE %s > :after ORDER BY %s LIMIT :limit',
+                    $columnList,
+                    $this->quoteIdentifier($table),
+                    $orderColumn,
+                    $orderColumn
+                )
+            );
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->bindValue(':after', $cursorId, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', $batchSize, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if ($rows === []) {
+                break;
+            }
+
+            foreach ($rows as $row) {
+                yield $row;
+
+                if (isset($row['id'])) {
+                    $cursorId = (int) $row['id'];
+                }
+            }
+        }
     }
 
     /**

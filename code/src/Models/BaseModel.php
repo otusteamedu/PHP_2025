@@ -89,7 +89,7 @@ abstract class BaseModel
     public static function all(?PostgresConnection $db = null): array
     {
         $connection = static::resolveDb($db);
-        $rows = $connection->fetchAll(static::getTableName(), static::getSelectColumns());
+        $rows = $connection->fetchChunked(static::getTableName(), static::getSelectColumns());
 
         $models = [];
 
