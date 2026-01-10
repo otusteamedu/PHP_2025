@@ -1,0 +1,11 @@
+/.env
+/nginx/logs/
+
+/db/data/
+/supervisor/log/
+
+/nginx*/logs/
+/redis*/data/
+/redis*/logs/
+
+/elasticsearch/data/
