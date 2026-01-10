@@ -1,0 +1,72 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+       - ./code:/data/mysite.local
+       - ./docker/nginx/logs:/var/log/nginx:delegated
+       - php-socket:/var/run
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: myapp/php 
+    container_name: app
+    volumes:
+       - ./code:/data/mysite.local
+       - php-socket:/var/run
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./docker/postgres/data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_PORT}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - app-network     
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  php-socket:
+    driver: local
+  pgadmin-data:
+    driver: local

@@ -3,3 +3,8 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+/code/vendor/
+/code/composer.lock
+/docker/nginx/logs/
+/docker/postgres/data/
+.env
