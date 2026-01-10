@@ -1,33 +1,20 @@
-# PHP_2025
-
-ДЗ по уроку #7 Проектирование базы даннных для кинотеатра
-
-В рамках ДЗ выполнена схема и DDL базы данных, учитывающая разные залы, разные фильмы
-
-
-Так же реализован SQL скрипт для поиска самого кассового фильма
-
-
-
-
-```mermaid
 erDiagram
     direction TB
     movies {
         BIGINT id PK ""
-        NVARCHAR TITLE 
-        TEXT DESCRIPTION
-        DATE GLOBAL_RELEASE_DATE 
+        NVARCHAR TITLE  NOT NULL
+        TEXT DESCRIPTION NOT NULL
+        DATE GLOBAL_RELEASE_DATE  NOT NULL
         DATE GLOBAL_END_DATE  ""  
-        INTEGER DURATION_MINUTES 
+        INTEGER DURATION_MINUTES NOT NULL 
         NUMERIC BASE_COST
         INTEGER AGE_RESTRICTION  ""
     }
 
     customers {
         SEQUENCE id PK ""  
-        NVARCHAR FIRST_NAME 
-        NVARCHAR SURNAME 
+        NVARCHAR FIRST_NAME  NOT NULL
+        NVARCHAR SURNAME NOT NULL 
         VARCHAR MAIL  ""  
         VARCHAR PHONE  ""  
     }
@@ -44,16 +31,16 @@ erDiagram
         BIGINT id PK ""
         INTEGER MOVIES_ID  "REFERENCES movies(id)"  
         INTEGER HALS_ID  "REFERENCES hals(id)"  
-        TIMESTAMP START_SESSION   
-        TIMESTAMP END_SESSION  
+        TIMESTAMP START_SESSION  NOT NULL  
+        TIMESTAMP END_SESSION NOT NULL  
         INTEGER COST_MODIFIER  ""  
     }
 
     hals {
         BIGINT id PK ""
-        NVARCHAR HALS_NAME 
-        INTEGER CAPACITY  
-        INTEGER AMOUNT_ROW   
+        NVARCHAR HALS_NAME  NOT NULL
+        INTEGER CAPACITY   NOT NULL
+        INTEGER AMOUNT_ROW   NOT NULL 
         INTEGER COST_MODIFIER  
     }
 
@@ -73,5 +60,3 @@ erDiagram
     movie_sessions}|--|{hals:"  "
     tickets}|--||customers:"  "
     tickets}|--||movie_sessions:"  "
-
-
