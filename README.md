@@ -1,3 +1,7 @@
-# PHP_2025
+# Unit-тестирование
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Разработка кейсов тестирования для приложения онлайн-оплаты
+
+[Текст задания](Task.md)
+
+[Описание тестов](TestingDescription.md)
