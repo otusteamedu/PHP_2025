@@ -1,3 +1,3 @@
 # PHP_2025
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Алгоритмическая сложность - O (n + m), где n и m - размеры списков list1, list2
