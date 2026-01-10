@@ -1,3 +1,13 @@
-# PHP_2025
+### Описание выполненного домашнего задания №8
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Была реализована EAV-схема хранения данных для базы данных кинотеатра на PostgreSQL.
+
+#### Струтура выполненного задания:
+
+```bash
+cinema_eav/
+├── create_indexes.sql  — создание индексов
+├── create_tables.sql   — создание таблиц
+├── create_views.sql    — создание представлений (VIEW)
+└── fill_data.sql       — наполнение тестовыми данными
+```
