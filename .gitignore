@@ -3,3 +3,7 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# Исключение файлов Docker'a
+*.yaml
+Dockerfile
