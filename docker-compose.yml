@@ -1,0 +1,59 @@
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: "${DOCKER_COMPOSE_APP_NAME}__nginx"
+    restart: always
+    depends_on:
+      - app
+    volumes:
+      - ./public:/var/www/public
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - "127.0.0.1:${DOCKER_COMPOSE_APP_PORT}:80"
+    networks:
+      - backend
+
+  app:
+    build:
+      context: ./docker/app
+    restart: always
+    working_dir: /var/www/public
+    container_name: "${DOCKER_COMPOSE_APP_NAME}__app"
+    volumes:
+      - ./public:/var/www/public
+    networks:
+      - backend
+
+  redis:
+    image: redis
+    container_name: "${DOCKER_COMPOSE_APP_NAME}__redis"
+    networks:
+      - backend
+
+  memcached:
+    image: memcached
+    container_name: "${DOCKER_COMPOSE_APP_NAME}__memcached"
+    networks:
+      - backend
+
+  db:
+    image: mysql:8.0
+    container_name: "${DOCKER_COMPOSE_APP_NAME}__mysql"
+    restart: always
+    volumes:
+      - ./docker/db/.data:/var/lib/mysql
+      - ./docker/db/mysql.cnf:/etc/mysql.cnf
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE_NAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_USER: "${DB_USERNAME}"
+    networks:
+      - backend
+
+    ports:
+      - "${DB_PORT}:3306"
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci' ]
+
+networks:
+  backend:
+    driver: bridge
