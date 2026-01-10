@@ -1,0 +1,15 @@
+services:
+  nginx:
+    image: otus-php-hw01/nginx:latest
+
+  php:
+    image: otus-php-hw01/php-fpm:latest
+    environment:
+      - APP_ENV=production
+
+  postgres:
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+volumes:
+  postgres_db:

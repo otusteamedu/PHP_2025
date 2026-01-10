@@ -1,0 +1,81 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/nginx.Dockerfile
+    restart: unless-stopped
+    container_name: nginx
+    ports:
+      - "${NGINX_PORT:-8000}:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      php:
+        condition: service_healthy
+    networks:
+      - otus-hw01
+    volumes:
+      - php_fpm_socket:/var/run/php
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/php.Dockerfile
+    restart: unless-stopped
+    container_name: php
+    networks:
+      - otus-hw01
+    volumes:
+      - php_fpm_socket:/var/run/php
+    healthcheck:
+      test: ["CMD", "php-fpm", "-t"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    container_name: redis
+    networks:
+      - otus-hw01
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  memcached:
+    image: memcached:alpine
+    restart: unless-stopped
+    container_name: memcached
+    networks:
+      - otus-hw01
+    healthcheck:
+      test: ["CMD", "echo", "stats", "|", "nc", "localhost", "11211"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - otus-hw01
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  otus-hw01:
+    driver: bridge
+
+volumes:
+  php_fpm_socket:

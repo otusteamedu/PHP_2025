@@ -1,5 +1,37 @@
+# IDE settings
 .idea/
-/vendor/
+.vscode/
+
+# macOS system files
 .DS_Store
 .AppleDouble
 .LSOverride
+Icon?
+
+# PHP & Composer
+/vendor/
+composer.lock
+
+# Docker-related files
+docker/*.log
+docker/nginx/*.log
+docker/php/*.log
+data/redis/
+data/memcached/
+*.sql
+
+# Postgres data
+docker/postgres/data/
+
+# Environment configuration
+*.env
+!.env.example
+
+# Logs & temporary files
+*.log
+*.swp
+*.swo
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
