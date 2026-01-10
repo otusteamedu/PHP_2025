@@ -3,3 +3,6 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+/.env
+/data/redisdata/dump.rdb
+/data/redisdata/
