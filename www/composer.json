@@ -1,0 +1,20 @@
+{
+    "name": "larkinov/myapp",
+    "type": "project",
+    "autoload": {
+        "files": [
+            "src/utils/auth.php",
+            "src/utils/validate.php"
+        ],
+        "psr-4": {
+            "Larkinov\\Myapp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Larkinov",
+            "email": "buyantolarkinov@gmail.com"
+        }
+    ],
+    "require": {}
+}
