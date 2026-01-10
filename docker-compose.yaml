@@ -1,0 +1,35 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: ${CONTAINER_NGINX}
+    restart: always
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - .:/data
+      - php_socket:/var/run/php
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+  app:
+    build:
+      context: docker/fpm
+    container_name: ${CONTAINER_APP}
+    restart: always
+    volumes:
+      - php_socket:/var/run/php
+      - .:/data
+    networks:
+      - app_network
+
+volumes:
+  php_socket:
+  esdata:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge
