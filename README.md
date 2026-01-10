@@ -1,3 +1,9 @@
-# PHP_2025
+Сформирован composer.json с подключенным пакетом
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Пример использования после composer install:
+
+require_once 'vendor/autoload.php';
+
+use \Shoronovivan\OtusPackage\Rounder;
+
+echo Rounder::roundNumber(12.43, 2);
