@@ -1,0 +1,29 @@
+services:
+
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/var/www/html"
+    networks:
+      - projectNetwork
+
+  mysql:
+    image: "mysql:latest"
+    restart: always
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - "./docker/mysql/data:/var/lib/mysql/"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_PASS}"
+      - "MYSQL_DATABASE=${MYSQL_DB}"
+      - "MYSQL_USER=${MYSQL_USER}"
+      - "MYSQL_PASSWORD=${MYSQL_PASS}"
+    networks:
+      - projectNetwork
+
+networks:
+  projectNetwork:
+    driver: bridge
