@@ -24,6 +24,7 @@ CREATE TABLE movie_values (
 	value_text TEXT,
 	value_date DATETIME,
 	value_integer INT,
+    value_float FLOAT,
 	value_boolean BOOLEAN
 );
 
@@ -43,7 +44,8 @@ INSERT INTO attribute_types (attribute_type_name) VALUES
 ('Рецензии'),
 ('Важные даты'),
 ('Служебная дата'),
-('Цена');
+('Цена'),
+('Продолжительность');
 
 INSERT INTO attributes (attribute_name) VALUES
 ('Рецензия зрителя'),
@@ -51,17 +53,18 @@ INSERT INTO attributes (attribute_name) VALUES
 ('Дата премьеры в России'),
 ('Дата продажи билетов'),
 ('Цена в день премьеры'),
-('Цена в обычный день');
+('Цена в обычный день'),
+('Продолжительность фильма');
 
 INSERT INTO movie_values (movie_id, attribute_type_id, attribute_id, value_text) VALUES
-(1, 1, 1, "Ваууу!"),
-(1, 1, 2, "Потрясающий сериал"),
-(4, 1, 2, "Рецензия академоков");
+(1, 1, 1, 'Ваууу!'),
+(1, 1, 2, 'Потрясающий сериал'),
+(4, 1, 2, 'Рецензия академоков');
 
 INSERT INTO movie_values (movie_id, attribute_type_id, attribute_id, value_date) VALUES
 (1, 2, 3, '2006-01-01'),
 (1, 3, 4, '2026-01-20'),
-(5, 3, 4, '2026-01-8'),
+(5, 3, 4, '2026-01-08'),
 (4, 3, 4, '2016-01-15'),
 (4, 2, 3, '2015-01-28');
 
@@ -72,6 +75,13 @@ INSERT INTO movie_values (movie_id, attribute_type_id, attribute_id, value_integ
 (1, 4, 6, 30000),
 (4, 4, 5, 50000),
 (4, 4, 6, 50000);
+
+INSERT INTO movie_values (movie_id, attribute_type_id, attribute_id, value_float) VALUES
+(1, 5, 7, 36345/3600),
+(2, 5, 7, 7224/3600),
+(3, 5, 7, 7748/3600),
+(4, 5, 7, 21349/3600),
+(5, 5, 7, 5645/3600);
 
 CREATE OR REPLACE VIEW service_data_view AS
 SELECT 
@@ -116,6 +126,7 @@ SELECT
                 ' руб.'
             )
         WHEN mv.value_integer IS NOT NULL THEN CAST(mv.value_integer AS CHAR)
+        WHEN mv.value_float IS NOT NULL THEN CONCAT(FORMAT(mv.value_float, 2), ' ч.')
         WHEN mv.value_boolean IS NOT NULL THEN 
             CASE 
                 WHEN mv.value_boolean = 1 THEN 'Да' 
