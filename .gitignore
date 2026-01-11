@@ -1,5 +1,28 @@
+# IDE settings
 .idea/
-/vendor/
+.vscode/
+
+# macOS system files
 .DS_Store
 .AppleDouble
 .LSOverride
+Icon?
+
+# Docker-related files
+docker/*.log
+*.log
+
+# Bash script artifacts
+*.swp
+*.swo
+
+# Data & temp files
+scripts/users.txt
+
+# Environment configuration (если появятся)
+.env*
+.env.*
+
+# Windows system files
+Thumbs.db
+ehthumbs.db

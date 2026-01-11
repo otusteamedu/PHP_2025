@@ -1,0 +1,11 @@
+services:
+  bash:
+    build:
+      context: .
+      dockerfile: docker/bash.Dockerfile
+    container_name: bash-hw02
+    volumes:
+      - ./scripts:/app/scripts      # доступ к файлам напрямую
+      - ./data:/app/data            # доступ к файлу users.txt
+    stdin_open: true
+    tty: true
