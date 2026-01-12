@@ -14,13 +14,13 @@ $repository->clearAll();
 $repository->addEvent([
     'priority' => 1000,
     'conditions' => ['param1' => 1],
-    'event' => 'Small Event'
+    'event' => 'не особо важное событие'
 ]);
 
 $repository->addEvent([
     'priority' => 3000,
     'conditions' => ['param1' => 1, 'param2' => 2],
-    'event' => 'Important Event'
+    'event' => 'Важное событие'
 ]);
 
 $userRequest = ['param1' => 1, 'param2' => 2];

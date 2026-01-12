@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Services;
+
+use App\Interfaces\EventRepositoryInterface;
 class EventMatcher {
     private $repository;
 

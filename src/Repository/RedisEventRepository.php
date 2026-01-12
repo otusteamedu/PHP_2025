@@ -1,6 +1,7 @@
 <?php
 namespace App\Repository;
 
+use App\Interfaces\EventRepositoryInterface;
 use Predis\client;
 
 class RedisEventRepository implements EventRepositoryInterface {
