@@ -65,8 +65,26 @@ class App
         ];
     }
 
-    public function fillStorage(): void
+    public function search(array $args): void
     {
 
     }
+
+    public function importFromFile(string $filePath): void
+    {
+        $body = [];
+
+        foreach (file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+            $body[] = json_decode($line, true);
+        }
+
+        $response = $this->client->bulk(['body' => $body]);
+
+        if ($response->asArray()['errors']) {
+            throw new \RuntimeException('Import failed');
+        }
+
+        echo "Import completed\n";
+    }
+
 }

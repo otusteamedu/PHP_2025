@@ -1,3 +1,7 @@
-# PHP_2025
+Для запуска программы:
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+1. cd .\app
+2. composer install
+3. cd ..
+4. docker compose up -rm app
+5. docker compose run --rm app php app.php import data/products.json - создать индекс
