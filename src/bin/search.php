@@ -40,7 +40,7 @@ foreach ($results['hits']['hits'] as $hit) {
     
     $title = mb_strimwidth($source['title'], 0, 43, "...");
     $category = mb_strimwidth($source['category'], 0, 18, "...");
-    $price = $source['price'] . ' руб.';
+    $price = $source['price'] . ' тенге.';
     $score = round($hit['_score'], 2);
 
     printf("%-45s | %-20s | %-10s | %-10s\n", 
