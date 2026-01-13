@@ -1,56 +1,69 @@
 volumes:
-  es_data:
+  redis_data:
+    driver: local
+  redis_insight_data:
+    driver: local
+  php_socket:
+    driver: local
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
-    container_name: 'elasticsearch'
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=true
-      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
-      - xpack.security.http.ssl.enabled=false
-      - xpack.security.transport.ssl.enabled=false
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: ${APP_NAME}/php
+    container_name: app
     volumes:
-      - es_data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+      - ${WWW_ROOT_DIR}:/data/${APP_DOMAIN}
+      - php_socket:/var/run/php-fpm
     networks:
       - app-network
-    restart: unless-stopped
 
-  es-init:
-    image: curlimages/curl:8.11.0
-    depends_on:
-      - elasticsearch
-    environment:
-      ES_URL: http://elasticsearch:9200
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      KIBANA_PASSWORD: ${KIBANA_PASSWORD}
-    volumes:
-      - ./init-es.sh:/usr/local/bin/init-es.sh:ro
-    entrypoint: ["/usr/local/bin/init-es.sh"]
-    restart: "on-failure"
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.15.0
-    container_name: 'kibana'
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-      - SERVERNAME=kibana
-      - SERVER_HOST="0.0.0.0"
+  webserver:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: ${APP_NAME}/nginx
+    container_name: webserver
     ports:
-      - "5601:5601"
+      - "80:80"
+    volumes:
+      - ${WWW_ROOT_DIR}:/data/${APP_DOMAIN}
+      - php_socket:/var/run/php-fpm
+    depends_on:
+      - app
     networks:
       - app-network
-    restart: unless-stopped
+
+  memcached:
+    image: memcached:latest
+    container_name: memcached
+    ports:
+      - "11211:11211"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.2.12
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  redis-insight:
+    image: redis/redisinsight:2.70.1
+    container_name: redis-insight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis_insight_data:/data
     depends_on:
-      - elasticsearch
-      - es-init
+      - redis
+    networks:
+      - app-network
 
 networks:
   app-network:

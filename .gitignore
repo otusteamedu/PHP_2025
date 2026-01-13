@@ -1,5 +1,5 @@
 .idea/
-/vendor/
+vendor/
 *.bak
 *.orig
 composer.lock
