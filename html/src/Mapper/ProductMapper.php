@@ -74,6 +74,7 @@ final class ProductMapper
 
     /**
      * @param Command $command
+     *
      * @return PDOStatement
      */
     public function find(Command $command): PDOStatement
@@ -90,6 +91,7 @@ final class ProductMapper
 
     /**
      * @param Command $command
+     *
      * @return Lazy
      */
     public function lazy(Command $command): Lazy
@@ -101,6 +103,7 @@ final class ProductMapper
 
     /**
      * @param Command $command
+     *
      * @return Eager
      */
     public function eager(Command $command): Eager

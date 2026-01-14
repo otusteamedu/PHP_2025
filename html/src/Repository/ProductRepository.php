@@ -21,6 +21,7 @@ readonly class ProductRepository
 
     /**
      * @param Command $command
+     *
      * @return Lazy
      */
     public function lazy(Command $command): Lazy
@@ -30,6 +31,7 @@ readonly class ProductRepository
 
     /**
      * @param Command $command
+     *
      * @return Eager
      */
     public function eager(Command $command): Eager
