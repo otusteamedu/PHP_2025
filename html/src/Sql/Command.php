@@ -26,6 +26,11 @@ final class Command
      */
     private ?Limit $limit = null;
 
+    public function __construct()
+    {
+        $this->select = new Select();
+    }
+
     /**
      * @param Select $select
      *
@@ -80,7 +85,7 @@ final class Command
     public function toSql(): string
     {
         return implode(' ', array_filter([
-            $this->select->toSql(),
+            $this->select?->toSql(),
             $this->from?->toSql(),
             $this->where?->toSql(),
             $this->limit?->toSql(),

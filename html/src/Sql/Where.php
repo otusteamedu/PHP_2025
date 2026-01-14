@@ -20,7 +20,7 @@ final readonly class Where
      */
     public function toSql(): string
     {
-        return $this->condition->toSql();
+        return sprintf('WHERE %s', $this->condition->toSql());
     }
 
     /**
