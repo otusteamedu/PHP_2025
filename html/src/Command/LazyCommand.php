@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Sql\Command;
+namespace Otus\DataMapper\Command;
 
 use Otus\DataMapper\Collection\Lazy;
-use Otus\DataMapper\Condition\Condition;
-use Otus\DataMapper\Condition\Equal;
-use Otus\DataMapper\Condition\In;
 use Otus\DataMapper\Entity\Product;
 use Otus\DataMapper\Factory\RepositoryFactory;
 use Otus\DataMapper\Repository\ProductRepository;
 use Otus\DataMapper\Sql\Command;
+use Otus\DataMapper\Sql\Condition\Condition;
+use Otus\DataMapper\Sql\Condition\Equal;
+use Otus\DataMapper\Sql\Condition\In;
 use Otus\DataMapper\Sql\Limit;
 use Otus\DataMapper\Sql\Where;
 

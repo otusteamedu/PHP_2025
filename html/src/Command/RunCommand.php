@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Sql\Command;
+namespace Otus\DataMapper\Command;
 
 readonly class RunCommand
 {

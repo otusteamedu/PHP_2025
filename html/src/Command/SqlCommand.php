@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Sql\Command;
+namespace Otus\DataMapper\Command;
 
-use Otus\DataMapper\Condition\Condition;
-use Otus\DataMapper\Condition\Equal;
-use Otus\DataMapper\Condition\In;
 use Otus\DataMapper\Sql\Command;
+use Otus\DataMapper\Sql\Condition\Condition;
+use Otus\DataMapper\Sql\Condition\Equal;
+use Otus\DataMapper\Sql\Condition\In;
 use Otus\DataMapper\Sql\From;
 use Otus\DataMapper\Sql\Limit;
 use Otus\DataMapper\Sql\Select;

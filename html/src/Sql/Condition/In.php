@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Condition;
+namespace Otus\DataMapper\Sql\Condition;
 
 use Otus\DataMapper\Factory\CastFactory;
 

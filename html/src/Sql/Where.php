@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Otus\DataMapper\Sql;
 
-use Otus\DataMapper\Condition\ConditionInterface;
+use Otus\DataMapper\Sql\Condition\ConditionInterface;
 
 final readonly class Where
 {
