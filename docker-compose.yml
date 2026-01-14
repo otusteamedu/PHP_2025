@@ -1,73 +1,71 @@
-version: '3.8'
-
 services:
-  php-fpm:
-    image: otus/php
-    container_name: app-otus
-    build:
-      context: ./fpm
-      dockerfile: Dockerfile
-    volumes:
-      - ./code:/data/otus.local
-      - php-sock:/var/run/php
-    networks:
-      - otus-network
-    depends_on:
-      - memcached
-      - redis
-      - db
-
-  webserver:
+  nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    image: otus/nginx
-    container_name: webserver
+    container_name: nginx-hw5
     ports:
-      - "80:80"
+      - "8000:80"
       - "443:443"
     volumes:
-      - ./code:/data/otus.local
-      - php-sock:/var/run/php
+      - ./code:/data/webserver
+      - ./nginx/logs:/var/log/nginx:delegated
+
+    working_dir: /var/www/webserver
+
     networks:
-      - otus-network
+      - app5-network
     depends_on:
       - php-fpm
 
-  db:
-    image: mysql:8.4.0
-    container_name: db
-    ports:
-      - "3306:3306"
+  php-fpm:
+    container_name: php-fpm
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
     volumes:
-      - ./dbdata:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - ./code:/data/webserver
     networks:
-      - otus-network
+      - app5-network
+    depends_on:
+      - db
+    environment: # Added environment variables
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+
+  db:
+    image: postgres:13-alpine
+    container_name: postgres-server
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./code/db:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - app5-network
 
   redis:
     build:
       context: ./redis
       dockerfile: Dockerfile
     image: redis:alpine
-    container_name: otus-redis
+    container_name: redis-server
     volumes:
       - ./redis/data:/data
     networks:
-      - otus-network
-
-  memcached:
-    container_name: memcached
-    build:
-      context: ./memcache
-      dockerfile: Dockerfile
-    networks:
-      - otus-network
+      - app5-network
 
 networks:
-  otus-network:
+  app5-network:
     driver: bridge
 volumes:
   php-sock:
