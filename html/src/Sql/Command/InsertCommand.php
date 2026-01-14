@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Command;
+namespace Otus\DataMapper\Sql\Command;
 
 use Otus\DataMapper\Entity\Product;
 use Otus\DataMapper\Factory\RepositoryFactory;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Command;
+namespace Otus\DataMapper\Sql\Command;
 
-use Otus\DataMapper\Collection\Lazy;
+use Otus\DataMapper\Collection\Eager;
 use Otus\DataMapper\Condition\Condition;
 use Otus\DataMapper\Condition\Equal;
 use Otus\DataMapper\Condition\In;
@@ -15,7 +15,7 @@ use Otus\DataMapper\Sql\Command;
 use Otus\DataMapper\Sql\Limit;
 use Otus\DataMapper\Sql\Where;
 
-readonly class LazyCommand
+readonly class EagerCommand
 {
     /**
      * @return int
@@ -50,7 +50,7 @@ readonly class LazyCommand
             ->limit(new Limit(0, 100));
 
         $result = $repository
-            ->lazy($command);
+            ->eager($command);
 
         $this->render($result);
 
@@ -58,9 +58,9 @@ readonly class LazyCommand
     }
 
     /**
-     * @param Lazy $list
+     * @param Eager $list
      */
-    protected function render(Lazy $list): void
+    protected function render(Eager $list): void
     {
         foreach ($list as $row) {
             print_r($row);

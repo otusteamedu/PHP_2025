@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Command;
+namespace Otus\DataMapper\Sql\Command;
 
-use Otus\DataMapper\Condition\Condition;
 use Otus\DataMapper\Condition\Equal;
 use Otus\DataMapper\Entity\Product;
 use Otus\DataMapper\Factory\RepositoryFactory;
 use Otus\DataMapper\Repository\ProductRepository;
 
-readonly class DeleteCommand
+readonly class UpdateCommand
 {
     /**
      * @return int
@@ -20,10 +19,24 @@ readonly class DeleteCommand
         /** @var ProductRepository $repository */
         $repository = RepositoryFactory::factory(Product::class);
 
-        $result = $repository->eager(new Condition('AND', new Equal('brand', 'Apple')));
+        $result = $repository->eager(new Equal('id', 1));
 
-        $repository->delete($result->current());
+        $product = $result->current();
+
+        $product->price = 1000;
+
+        $repository->update($product);
+
+        $this->render($product);
 
         return 0;
+    }
+
+    /**
+     * @param Product $product
+     */
+    protected function render(Product $product): void
+    {
+        print_r($product);
     }
 }
