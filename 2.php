@@ -31,7 +31,9 @@ class Solution
     }
 }
 
-// Example usage:
+// Сложность O(n log n) из-за сортировки
+
+// Пример использования:
 $solution = new Solution();
 
 $result1 = $solution->frequencySort([1, 1, 2, 2, 2, 3]);

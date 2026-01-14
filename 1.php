@@ -22,7 +22,9 @@ class Solution
     }
 }
 
-// Example usage:
+// Сложность O(n) проходим по массиву одним циклом
+
+// Пример использования:
 $solution = new Solution();
 
 $result1 = $solution->twoSum([2, 7, 11, 15], 9);

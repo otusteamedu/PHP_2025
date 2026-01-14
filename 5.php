@@ -20,8 +20,6 @@ class Solution
             $hash[$i] += $hash[$i - 1];
         }
 
-        print_r($hash);
-
         foreach ($nums as $num) {
             $result[] = $hash[$num - 1] ?? 0;
         }
@@ -30,7 +28,9 @@ class Solution
     }
 }
 
-// Example usage:
+// Сложность O(n) проходим по массиву двумя циклами
+
+// Пример использования:
 $solution = new Solution();
 
 $result1 = $solution->smallerNumbersThanCurrent([8, 1, 2, 2, 3]);

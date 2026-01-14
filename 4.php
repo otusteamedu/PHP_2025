@@ -23,7 +23,9 @@ class Solution
     }
 }
 
-// Example usage:
+// Сложность O(n) проходим по массиву одним циклом
+
+// Пример использования:
 $solution = new Solution();
 
 $result1 = $solution->findMaxK([-1, 2, -3, 3]);

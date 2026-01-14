@@ -27,7 +27,9 @@ class Solution
     }
 }
 
-// Example usage:
+// Сложность O(n) проходим по массивам двумя циклами
+
+// Пример использования:
 $solution = new Solution();
 
 $result1 = $solution->intersection([1, 2, 2, 1], [2, 2]);
