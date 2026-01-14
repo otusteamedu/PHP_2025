@@ -6,9 +6,9 @@ namespace Otus\DataMapper\Repository;
 
 use Otus\DataMapper\Collection\Eager;
 use Otus\DataMapper\Collection\Lazy;
-use Otus\DataMapper\Condition\ConditionInterface;
 use Otus\DataMapper\Entity\Product;
 use Otus\DataMapper\Mapper\ProductMapper;
+use Otus\DataMapper\Sql\Command;
 
 readonly class ProductRepository
 {
@@ -20,23 +20,21 @@ readonly class ProductRepository
     }
 
     /**
-     * @param ConditionInterface $criteria
-     *
+     * @param Command $command
      * @return Lazy
      */
-    public function lazy(ConditionInterface $criteria): Lazy
+    public function lazy(Command $command): Lazy
     {
-        return $this->mapper->lazy($criteria);
+        return $this->mapper->lazy($command);
     }
 
     /**
-     * @param ConditionInterface $criteria
-     *
+     * @param Command $command
      * @return Eager
      */
-    public function eager(ConditionInterface $criteria): Eager
+    public function eager(Command $command): Eager
     {
-        return $this->mapper->eager($criteria);
+        return $this->mapper->eager($command);
     }
 
     /**

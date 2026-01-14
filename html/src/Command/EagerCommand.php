@@ -11,6 +11,9 @@ use Otus\DataMapper\Condition\In;
 use Otus\DataMapper\Entity\Product;
 use Otus\DataMapper\Factory\RepositoryFactory;
 use Otus\DataMapper\Repository\ProductRepository;
+use Otus\DataMapper\Sql\Command;
+use Otus\DataMapper\Sql\Limit;
+use Otus\DataMapper\Sql\Where;
 
 readonly class EagerCommand
 {
@@ -22,26 +25,32 @@ readonly class EagerCommand
         /** @var ProductRepository $repository */
         $repository = RepositoryFactory::factory(Product::class);
 
-        $result = $repository
-            ->eager(
-                new Condition(
-                    'OR',
+        $command = new Command()
+            ->where(
+                new Where(
                     new Condition(
-                        'AND',
+                        'OR',
                         new Condition(
                             'AND',
-                            new Equal('id', 1),
-                            new Equal('brand', 'Apple'),
+                            new Condition(
+                                'AND',
+                                new Equal('id', 1),
+                                new Equal('brand', 'Apple'),
+                            ),
+                            new Condition(
+                                'AND',
+                                new Equal('id', 2),
+                                new Equal('brand', 'XPS'),
+                            ),
                         ),
-                        new Condition(
-                            'AND',
-                            new Equal('id', 2),
-                            new Equal('brand', 'XPS'),
-                        ),
-                    ),
-                    new In('id', [1, 2]),
+                        new In('id', [1, 2]),
+                    )
                 )
-            );
+            )
+            ->limit(new Limit(0, 100));
+
+        $result = $repository
+            ->eager($command);
 
         $this->render($result);
 

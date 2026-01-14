@@ -7,6 +7,7 @@ use Otus\DataMapper\Command\EagerCommand;
 use Otus\DataMapper\Command\InsertCommand;
 use Otus\DataMapper\Command\LazyCommand;
 use Otus\DataMapper\Command\RunCommand;
+use Otus\DataMapper\Command\SqlCommand;
 use Otus\DataMapper\Command\UpdateCommand;
 use Otus\DataMapper\Kernel\Console;
 
@@ -16,6 +17,7 @@ $kernel = new Console([
     'run' => new RunCommand(),
 ]);
 
+$kernel->register('sql', new SqlCommand());
 $kernel->register('insert', new InsertCommand());
 $kernel->register('lazy', new LazyCommand());
 $kernel->register('eager', new EagerCommand());

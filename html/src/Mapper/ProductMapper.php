@@ -7,8 +7,9 @@ namespace Otus\DataMapper\Mapper;
 use Otus\DataMapper\Cast\DateTime;
 use Otus\DataMapper\Collection\Eager;
 use Otus\DataMapper\Collection\Lazy;
-use Otus\DataMapper\Condition\ConditionInterface;
 use Otus\DataMapper\Entity\Product;
+use Otus\DataMapper\Sql\Command;
+use Otus\DataMapper\Sql\From;
 use PDO;
 use PDOStatement;
 
@@ -72,39 +73,39 @@ final class ProductMapper
     }
 
     /**
-     * @param ConditionInterface $condition
-     *
+     * @param Command $command
      * @return PDOStatement
      */
-    public function find(ConditionInterface $condition): PDOStatement
+    public function find(Command $command): PDOStatement
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM ' . $this->table . ' WHERE ' . $condition->toSql() . ';');
+        $command
+            ->from(new From($this->table));
 
-        $stmt->execute($condition->toValues());
+        $stmt = $this->pdo->prepare($command->toSql());
+
+        $stmt->execute($command->toValues());
 
         return $stmt;
     }
 
     /**
-     * @param ConditionInterface $condition
-     *
+     * @param Command $command
      * @return Lazy
      */
-    public function lazy(ConditionInterface $condition): Lazy
+    public function lazy(Command $command): Lazy
     {
-        $stmt = $this->find($condition);
+        $stmt = $this->find($command);
 
         return new Lazy($stmt->getIterator());
     }
 
     /**
-     * @param ConditionInterface $condition
-     *
+     * @param Command $command
      * @return Eager
      */
-    public function eager(ConditionInterface $condition): Eager
+    public function eager(Command $command): Eager
     {
-        $stmt = $this->find($condition);
+        $stmt = $this->find($command);
 
         return new Eager($stmt->fetchAll());
     }
