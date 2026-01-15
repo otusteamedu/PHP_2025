@@ -1,67 +1,25 @@
 volumes:
-  redis_data:
+  pg_dump:
     driver: local
-  redis_insight_data:
-    driver: local
-  php_socket:
+  pg_data:
     driver: local
 
 services:
-  app:
-    build:
-      context: ./fpm
-      dockerfile: Dockerfile
-    image: ${APP_NAME}/php
-    container_name: app
-    volumes:
-      - ${WWW_ROOT_DIR}:/data/${APP_DOMAIN}
-      - php_socket:/var/run/php-fpm
-    networks:
-      - app-network
-
-  webserver:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    image: ${APP_NAME}/nginx
-    container_name: webserver
+  postgres:
+    image: postgres:17
     ports:
-      - "80:80"
+      - 5432:5432
+    container_name: 'postgres'
+    working_dir: /app
+    restart: always
+    environment:
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
     volumes:
-      - ${WWW_ROOT_DIR}:/data/${APP_DOMAIN}
-      - php_socket:/var/run/php-fpm
-    depends_on:
-      - app
-    networks:
-      - app-network
-
-  memcached:
-    image: memcached:latest
-    container_name: memcached
-    ports:
-      - "11211:11211"
-    networks:
-      - app-network
-
-  redis:
-    image: redis:7.2.12
-    container_name: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - app-network
-
-  redis-insight:
-    image: redis/redisinsight:2.70.1
-    container_name: redis-insight
-    ports:
-      - "5540:5540"
-    volumes:
-      - redis_insight_data:/data
-    depends_on:
-      - redis
+      - pg_dump:/app/dump
+      - pg_data:/var/lib/postgresql/data
+      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
     networks:
       - app-network
 
