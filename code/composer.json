@@ -1,17 +1,21 @@
 {
-    "name": "ak/hw-4",
-    "type": "project",
-    "autoload": {
-        "psr-4": {
-            "Ak\\Hw4\\": "src/"
-        }
+  "name": "ak/hw",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Ak\\Hw\\": "src/"
     },
-    "authors": [
-        {
-            "name": "Alexander Kanapatski"
-        }
-    ],
-    "require": {
-        "ak14/exchange": "^1.0"
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "Alexander Kanapatski"
     }
+  ],
+  "require": {
+    "ext-pdo": "*",
+    "ext-mbstring": "*"
+  }
 }
