@@ -1,1 +1,3 @@
-# Leetcode практикум.1 (HW#13)
+# Паттерны работы с данными (HW#12)
+
+## Реализован DataMapper+IdentityMap
