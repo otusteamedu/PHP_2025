@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Otus\DataMapper\Command;
+
+use Otus\DataMapper\Collection\Eager;
+use Otus\DataMapper\Entity\Product;
+use Otus\DataMapper\Factory\RepositoryFactory;
+use Otus\DataMapper\Repository\ProductRepository;
+use Otus\DataMapper\Sql\Command;
+use Otus\DataMapper\Sql\Condition\Condition;
+use Otus\DataMapper\Sql\Condition\Equal;
+use Otus\DataMapper\Sql\Condition\In;
+use Otus\DataMapper\Sql\Limit;
+use Otus\DataMapper\Sql\Where;
+
+readonly class EagerCommand
+{
+    /**
+     * @return int
+     */
+    public function __invoke(): int
+    {
+        /** @var ProductRepository $repository */
+        $repository = RepositoryFactory::factory(Product::class);
+
+        $command = new Command()
+            ->where(
+                new Where(
+                    new Condition(
+                        'OR',
+                        new Condition(
+                            'AND',
+                            new Condition(
+                                'AND',
+                                new Equal('id', 1),
+                                new Equal('brand', 'Apple'),
+                            ),
+                            new Condition(
+                                'AND',
+                                new Equal('id', 2),
+                                new Equal('brand', 'XPS'),
+                            ),
+                        ),
+                        new In('id', [1, 2]),
+                    )
+                )
+            )
+            ->limit(new Limit(0, 100));
+
+        $result = $repository
+            ->eager($command);
+
+        $this->render($result);
+
+        return 0;
+    }
+
+    /**
+     * @param Eager $list
+     */
+    protected function render(Eager $list): void
+    {
+        foreach ($list as $row) {
+            print_r($row);
+        }
+    }
+}
