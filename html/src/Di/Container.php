@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Otus\DataMapper\Di;
 
 use ReflectionClass;
@@ -23,8 +25,31 @@ class Container
     private array $definitions = [];
 
     /**
+     * @var Container|null
+     */
+    private static ?Container $instance = null;
+
+    private function __construct()
+    {
+    }
+
+    /**
+     * @return Container
+     */
+    public static function getInstance(): self
+    {
+        if (!self::$instance instanceof self) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * @param string $class
+     *
      * @return object
+     *
      * @throws ReflectionException
      * @throws UnresolveParameterException
      */
@@ -54,7 +79,6 @@ class Container
     /**
      * @param string $class
      * @param callable $callback
-     * @return void
      */
     public function setSingleton(string $class, callable $callback): void
     {
@@ -64,7 +88,6 @@ class Container
     /**
      * @param string $class
      * @param callable $callback
-     * @return void
      */
     public function setDefinition(string $class, callable $callback): void
     {
@@ -73,7 +96,9 @@ class Container
 
     /**
      * @param string $class
+     *
      * @return object
+     *
      * @throws ReflectionException
      * @throws UnresolveParameterException
      */
