@@ -7,9 +7,9 @@ namespace Otus\DataMapper\Sql;
 final class Command
 {
     /**
-     * @var Select|null
+     * @var Select
      */
-    private ?Select $select = null;
+    private Select $select;
 
     /**
      * @var From|null
