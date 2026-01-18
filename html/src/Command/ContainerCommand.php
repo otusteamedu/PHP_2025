@@ -9,7 +9,7 @@ use Otus\DataMapper\ABC\C;
 use Otus\DataMapper\Di\UnresolveParameterException;
 use ReflectionException;
 
-class ContainerCommand
+readonly class ContainerCommand
 {
     /**
      * @return int
@@ -19,17 +19,21 @@ class ContainerCommand
      */
     public function __invoke(): int
     {
-        /** @var C $c */
-        $c = resolve(C::class);
+        (static function (): void {
+            /** @var C $c */
+            $c = resolve(C::class);
 
-        print_r($c->toArray());
+            print_r($c->toArray());
+        })();
 
         resolve(A::class)->debug = false;
 
-        /** @var C $c */
-        $c = resolve(C::class);
+        (static function (): void {
+            /** @var C $c */
+            $c = resolve(C::class);
 
-        print_r($c->toArray());
+            print_r($c->toArray());
+        })();
 
         return 0;
     }

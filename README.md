@@ -2,21 +2,6 @@
 
 https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
 
-# TODO
-
-- [x] Composer
-- [x] Docker
-- [x] Build
-- [x] Namespace
-- [x] PDO
-- [x] ENV
-- [x] README
-- [x] Migration
-- [x] DataMapper
-- [x] Products
-- [x] Lazy
-- [x] Eager
-
 # Configuring
 
 ```shell

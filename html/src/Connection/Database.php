@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Otus\DataMapper\Connection;
 
+use Otus\DataMapper\Di\UnresolveParameterException;
 use PDO;
+use ReflectionException;
 
 final class Database
 {
@@ -18,6 +20,10 @@ final class Database
      */
     private readonly PDO $pdo;
 
+    /**
+     * @throws UnresolveParameterException
+     * @throws ReflectionException
+     */
     private function __construct()
     {
         $this->pdo = new PDO(env('DATABASE_DSN'), env('DATABASE_USERNAME'), env('DATABASE_PASSWORD'));
