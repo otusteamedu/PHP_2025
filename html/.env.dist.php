@@ -1,5 +1,7 @@
 <?php
 
-putenv('DATABASE_DSN=pgsql:host=postgres;port=5432;dbname=otus');
-putenv('DATABASE_USERNAME=otus');
-putenv('DATABASE_PASSWORD=otus');
+return [
+    'DATABASE_DSN' => 'pgsql:host=postgres;port=5432;dbname=otus',
+    'DATABASE_USERNAME' => 'otus',
+    'DATABASE_PASSWORD' => 'otus',
+];

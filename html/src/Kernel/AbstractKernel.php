@@ -4,19 +4,32 @@ declare(strict_types=1);
 
 namespace Otus\DataMapper\Kernel;
 
+use Otus\DataMapper\Di\Container;
+
 abstract class AbstractKernel
 {
-    public function __construct()
+    /**
+     * @param array $config
+     */
+    public function __construct(array $config)
     {
-        $this->env();
+        $this->setContainer($config['container'] ?? []);
     }
 
-    protected function env(): void
+    /**
+     * @param array $container
+     */
+    protected function setContainer(array $container): void
     {
-        $path = __DIR__ . '/../../.env.php';
+        $singletons = $container['singletons'] ?? [];
+        $definitions = $container['definitions'] ?? [];
 
-        if (file_exists($path)) {
-            include_once $path;
+        foreach ($singletons as $class => $callback) {
+            Container::getInstance()->setSingleton($class, $callback);
+        }
+
+        foreach ($definitions as $class => $callback) {
+            Container::getInstance()->setDefinition($class, $callback);
         }
     }
 }

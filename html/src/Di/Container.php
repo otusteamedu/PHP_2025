@@ -7,7 +7,7 @@ namespace Otus\DataMapper\Di;
 use ReflectionClass;
 use ReflectionException;
 
-class Container
+final class Container
 {
     /**
      * @var array
