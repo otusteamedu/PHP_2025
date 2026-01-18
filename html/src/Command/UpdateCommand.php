@@ -7,7 +7,9 @@ namespace Otus\DataMapper\Command;
 use Otus\DataMapper\Entity\Product;
 use Otus\DataMapper\Factory\RepositoryFactory;
 use Otus\DataMapper\Repository\ProductRepository;
+use Otus\DataMapper\Sql\Command;
 use Otus\DataMapper\Sql\Condition\Equal;
+use Otus\DataMapper\Sql\Where;
 
 readonly class UpdateCommand
 {
@@ -19,7 +21,14 @@ readonly class UpdateCommand
         /** @var ProductRepository $repository */
         $repository = RepositoryFactory::factory(Product::class);
 
-        $result = $repository->eager(new Equal('id', 1));
+        $command = new Command()
+            ->where(
+                new Where(
+                    new Equal('id', 1)
+                )
+            );
+
+        $result = $repository->eager($command);
 
         $product = $result->current();
 
