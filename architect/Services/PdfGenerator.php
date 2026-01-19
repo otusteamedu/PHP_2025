@@ -1,8 +1,9 @@
 <?php
 
-namespace Fatnev\Price;
+namespace Fatnev\Price\Services;
 
 use Dompdf\Dompdf;
+use Fatnev\Price\Config\Config;
 
 class PdfGenerator
 {

@@ -1,8 +1,9 @@
 <?php
 
-namespace Fatnev\Price;
+namespace Fatnev\Price\Services;
 
 use Bitrix\Main\Loader;
+use Fatnev\Price\Config\Config;
 
 class ProductService
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Fatnev\Price;
+namespace Fatnev\Price\Config;
 
 class Config
 {

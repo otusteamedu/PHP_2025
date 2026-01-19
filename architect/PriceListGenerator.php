@@ -2,6 +2,10 @@
 
 namespace Fatnev\Price;
 
+use Fatnev\Price\Config\Config;
+use Fatnev\Price\Services\ProductService;
+use Fatnev\Price\Services\PdfGenerator;
+
 class PriceListGenerator
 {
     public static function generate(): array
