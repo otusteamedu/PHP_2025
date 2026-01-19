@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Здесь идет временная сложность: подсчет частот, сортировка и сравнение
+ * Здесь идет временная сложность: подсчет частот, хэш-таблица, сортировка и сравнение
  */
 
 class Solution {
@@ -13,25 +13,31 @@ class Solution {
 
     function frequencySort($nums) {
 
-        // Считаем сколько раз встречается каждый элемент
+        // Подсчет частоты
         $count = [];
         foreach ($nums as $num) {
             $count[$num] = ($count[$num] ?? 0) + 1;
         }
         
-        // Сортируем по правилу: частота по возрастанию, значение по убыванию
-        usort($nums, function($a, $b) use ($count) {
-
-            // Если частоты разные - сортируем по частоте
+        // Получаем все уникальные числа
+        $uniqueNums = array_keys($count);
+        
+        // Сортируем уникальные числа по частоте и значению
+        usort($uniqueNums, function($a, $b) use ($count) {
             if ($count[$a] !== $count[$b]) {
-                return $count[$a] - $count[$b];
+                return $count[$a] - $count[$b]; // Частота по возрастанию
             }
-
-            // Если частоты одинаковые - сортируем по значению наоборот
-            return $b - $a;
-
+            return $b - $a; // Значение по убыванию
         });
         
-        return $nums;
+        // Получаем результат
+        $result = [];
+        foreach ($uniqueNums as $num) {
+            for ($i = 0; $i < $count[$num]; $i++) {
+                $result[] = $num;
+            }
+        }
+        
+        return $result;
     }
 }
