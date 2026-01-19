@@ -100,14 +100,12 @@ HTML;
         $logoUrl = $this->config->getLogoUrl();
         $logoPath = $_SERVER['DOCUMENT_ROOT'] . '/upload/managers/logo/logo.png';
         
-        // Вариант 1: Используем base64 если файл существует локально
+        // Используем base64, если файл существует локально
         if (file_exists($logoPath)) {
             $logoData = base64_encode(file_get_contents($logoPath));
             return '<img src="data:image/png;base64,' . $logoData . '" class="logo">';
         }
-        
-        // Вариант 2: Используем абсолютный URL (может не работать в DomPDF)
-        return '<img src="' . $logoUrl . '" class="logo">';
+
     }
     
     private function createPdf(string $html): string
