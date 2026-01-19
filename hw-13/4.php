@@ -1,6 +1,6 @@
 <?php
 
-//Алгоритмическая сложность O(n log n) из за krsort
+//Алгоритмическая сложность O(n)
 
 declare(strict_types=1);
 
@@ -17,14 +17,15 @@ class Solution {
             $counterNums[$num]++;
         }
 
-        krsort($counterNums);
-
+        $maxNum = null;
         foreach ($counterNums as $key => $value) {
             if (array_key_exists(-$key, $counterNums)) {
-                return $key;
+                if ($maxNum === null || $key > $maxNum) {
+                    $maxNum = $key;
+                }
             }
         }
 
-        return -1;
+        return $maxNum ?? -1;
     }
 }
