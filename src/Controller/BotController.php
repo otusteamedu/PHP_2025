@@ -47,7 +47,6 @@ class BotController
             echo 'User is empty';
             return;
         }
-        // file_put_contents('./logs.log', print_r($this->message, true), FILE_APPEND);
         $user = $this->getCurrentUser();
         
         
@@ -165,7 +164,6 @@ class BotController
     }
 
     public function checkDealOptionCallbackRequest() {
-        // file_put_contents('./logs.log', print_r($this->message, true), FILE_APPEND);
         $result = null;
         if (empty($this->message)) {
             http_response_code(400);
@@ -202,59 +200,9 @@ class BotController
         $result = $this->bot->processCountDealMessage($this->message, $user, $currState);
         if ($result) {
             $this->bot->showDealDefaultMessage($this->message,$result);
-            // file_put_contents('./logs.log', print_r($user, true), FILE_APPEND);
             $userId = $user->getId();
             $stateController = new StateController();
             $stateController->setUserState($userId, "deals");
         }
     }
-    // public function handleWebhook(): void
-    // {
-    //     try {
-    //         $input = file_get_contents('php://input');
-    //         $update = json_decode($input, true);
-
-    //         if (empty($update)) {
-    //             http_response_code(400);
-    //             echo 'Invalid request';
-    //             return;
-    //         }
-
-    //         // Логируем входящий запрос
-    //         error_log('Telegram Update: ' . print_r($update, true));
-
-    //         // Обрабатываем обновление
-    //         $this->bot->handleUpdate($update);
-
-    //         echo 'OK';
-            
-    //     } catch (\Exception $e) {
-    //         error_log('Bot error: ' . $e->getMessage());
-    //         http_response_code(500);
-    //         echo 'Internal server error';
-    //     }
-    // }
-
-    // public function setWebhook(): void
-    // {
-    //     header('Content-Type: application/json');
-    //     $result = $this->bot->setWebhook();
-    //     echo json_encode($result, JSON_PRETTY_PRINT);
-    // }
-
-    // public function deleteWebhook(): void
-    // {
-    //     header('Content-Type: application/json');
-    //     $result = $this->bot->deleteWebhook();
-    //     echo json_encode($result, JSON_PRETTY_PRINT);
-    // }
-
-    // public function test(): void
-    // {
-    //     echo json_encode([
-    //         'status' => 'ok',
-    //         'message' => 'Bot is running',
-    //         'timestamp' => date('Y-m-d H:i:s')
-    //     ], JSON_PRETTY_PRINT);
-    // }
 }
