@@ -25,7 +25,8 @@ class ValidateEmailsUseCase implements ValidateEmailsUseCaseInterface
 
         foreach ($request->emails as $email) {
             $isValid = $this->emailValidator->validate($email);
-            $results[] = new EmailValidationResult($email, $isValid);
+            $error = $this->emailValidator->getError();
+            $results[] = new EmailValidationResult($email, $isValid, $error);
         }
 
         return $results;

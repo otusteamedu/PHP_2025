@@ -5,45 +5,39 @@ declare(strict_types=1);
 namespace App\Domain\Validators;
 
 use App\Domain\Interfaces\EmailValidatorInterface;
+use App\Domain\Validators\FormatEmailValidator;
+use App\Domain\Validators\MxRecordEmailValidator;
+
 
 class EmailValidator implements EmailValidatorInterface
 {
-    private const EMAIL_REGEX = '/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i';
+    private array $fieldValidators = [];
+    private string $error = '';
 
-    /**
-     * Проверяет формат email адреса
-     * @param string $email Email адрес 
-     * @return bool true - если формат валиден, false - если не валиден
-     */
-    private function isFormatValid(string $email): bool
+    public function __construct()
     {
-        return (bool)preg_match(self::EMAIL_REGEX, $email);
-    }
-
-    /**
-     * Проверяет наличие MX записи для домена email адреса
-     * @param string $email Email адрес
-     * @return bool true - если MX запись существует, false - если не существует
-     */
-    private function hasMxRecord(string $email): bool
-    {
-        $domain = substr(strstr($email, '@'), 1);
-
-        if (!$domain) {
-            return false;
-        }
-
-        return checkdnsrr($domain, 'MX');
+        $this->fieldValidators = [
+            new FormatEmailValidator(),
+            new MxRecordEmailValidator(),
+        ];
     }
 
     public function validate(mixed $email): bool
     {
-        if (!is_string($email)) {
-            return false;
+        $this->error = '';
+
+        foreach ($this->fieldValidators as $validator) {
+            if (!$validator->validate($email, 'email')) {
+                $this->error = $validator->getError();
+                return false;
+            }
         }
 
-        $isFormatValid = $this->isFormatValid($email);
+        return true;
+    }
 
-        return $isFormatValid ? $this->hasMxRecord($email) : false;
+    public function getError(): string
+    {
+        return $this->error;
     }
 }

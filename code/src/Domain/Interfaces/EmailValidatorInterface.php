@@ -12,4 +12,9 @@ interface EmailValidatorInterface
      * @return bool true - если email валиден, false - если не валиден
      */
     public function validate(mixed $email): bool;
+
+    /**
+     * @return string
+     */
+    public function getError(): string;
 }

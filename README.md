@@ -262,10 +262,11 @@ interface EmailValidatorInterface
 interface EmailValidatorInterface
 {
     public function validate(mixed $email): bool;
+    public function getError(): string;
 }
 ```
 
-Интерфейс содержит только один метод атомарной валидации.
+Интерфейс содержит только методы атомарной валидации одного email и получения ошибки.
 
 ---
 
@@ -294,6 +295,7 @@ public function supports(Request $request): bool
 ```php
 // EmailValidator.php — только валидация
 public function validate(mixed $email): bool { ... }
+public function getError(): string { ... }
 
 // ValidateEmailsUseCase.php — бизнес-сценарий с DTO
 public function execute(EmailValidationRequest $request): array
@@ -301,7 +303,8 @@ public function execute(EmailValidationRequest $request): array
     $results = [];
     foreach ($request->emails as $email) {
         $isValid = $this->emailValidator->validate($email);
-        $results[] = new EmailValidationResult($email, $isValid);
+        $error = $this->emailValidator->getError();
+        $results[] = new EmailValidationResult($email, $isValid, $error);
     }
     return $results;
 }
@@ -339,6 +342,16 @@ readonly class EmailValidationRequest
     public function __construct(public array $emails) {}
 }
 
+// Domain/DTO/EmailValidationResult.php — DTO с опциональной ошибкой
+readonly class EmailValidationResult
+{
+    public function __construct(
+        public mixed $email,
+        public bool $isValid,
+        public string $error = ''
+    ) {}
+}
+
 // Application/UseCases/ValidateEmailsUseCase.php — бизнес-сценарий
 class ValidateEmailsUseCase implements ValidateEmailsUseCaseInterface
 {
@@ -349,6 +362,106 @@ class ValidateEmailsUseCase implements ValidateEmailsUseCaseInterface
     public function execute(EmailValidationRequest $request): array { ... }
 }
 ```
+
+---
+
+### 8. Паттерн Chain of Responsibility — цепочка валидаторов
+
+**Было:** Вся логика валидации в одном классе `EmailValidator`:
+
+```php
+class EmailValidator
+{
+    private function isFormatValid(string $email): bool { ... }
+    private function hasMxRecord(string $email): bool { ... }
+
+    public function validate(mixed $email): bool
+    {
+        return $this->isFormatValid($email) && $this->hasMxRecord($email);
+    }
+}
+```
+
+**Стало:** Валидация разбита на независимые валидаторы с общим базовым классом:
+
+```php
+// BaseValidator.php — абстрактный базовый класс
+abstract class BaseValidator
+{
+    protected string $error = '';
+
+    public function getError(): string { return $this->error; }
+    protected function addError(string $error): void { $this->error = $error; }
+    public function resetErrors(): void { $this->error = ''; }
+
+    abstract public function validate(mixed $value, string $fieldName): bool;
+}
+
+// FormatEmailValidator.php — проверка формата
+class FormatEmailValidator extends BaseValidator
+{
+    private const EMAIL_REGEX = '/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i';
+
+    public function validate(mixed $value, string $fieldName): bool
+    {
+        if (!is_string($value)) {
+            $this->addError("Поле {$fieldName} должно быть строкой");
+            return false;
+        }
+        if (!preg_match(self::EMAIL_REGEX, $value)) {
+            $this->addError("Поле {$fieldName} должно быть валидным email адресом");
+            return false;
+        }
+        return true;
+    }
+}
+
+// MxRecordEmailValidator.php — проверка MX записи
+class MxRecordEmailValidator extends BaseValidator
+{
+    public function validate(mixed $value, string $fieldName): bool
+    {
+        $domain = substr(strstr($value, '@'), 1);
+        if (!checkdnsrr($domain, 'MX')) {
+            $this->addError("Для домена в поле {$fieldName} отсутствует MX запись");
+            return false;
+        }
+        return true;
+    }
+}
+
+// EmailValidator.php — композиция валидаторов
+class EmailValidator implements EmailValidatorInterface
+{
+    private array $fieldValidators = [];
+
+    public function __construct()
+    {
+        $this->fieldValidators = [
+            new FormatEmailValidator(),
+            new MxRecordEmailValidator(),
+        ];
+    }
+
+    public function validate(mixed $email): bool
+    {
+        foreach ($this->fieldValidators as $validator) {
+            if (!$validator->validate($email, 'email')) {
+                $this->error = $validator->getError();
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+**Преимущества:**
+
+- **OCP** — новые валидаторы добавляются без изменения существующего кода
+- **SRP** — каждый валидатор отвечает за одну проверку
+- **DRY** — общая логика ошибок в `BaseValidator`
+- **Информативность** — каждый валидатор возвращает понятное сообщение об ошибке
 
 ## API
 
@@ -370,10 +483,16 @@ class ValidateEmailsUseCase implements ValidateEmailsUseCaseInterface
   "data": [
     { "email": "user@example.com", "is_valid": true },
     { "email": "admin@mail.ru", "is_valid": true },
-    { "email": "invalid-email", "is_valid": false }
+    {
+      "email": "invalid-email",
+      "is_valid": false,
+      "error": "Поле email должно быть валидным email адресом"
+    }
   ]
 }
 ```
+
+**Примечание:** Поле `error` добавляется только для невалидных email-адресов.
 
 **Ошибка — неверный формат (400):**
 

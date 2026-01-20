@@ -88,13 +88,33 @@ classDiagram
         class EmailValidatorInterface {
             <<interface>>
             +validate(email) bool
+            +getError() string
+        }
+
+        class BaseValidator {
+            <<abstract>>
+            #string error
+            +getError() string
+            #addError(error) void
+            +resetErrors() void
+            +validate(value, fieldName)* bool
+        }
+
+        class FormatEmailValidator {
+            -EMAIL_REGEX string
+            +validate(value, fieldName) bool
+        }
+
+        class MxRecordEmailValidator {
+            +validate(value, fieldName) bool
         }
 
         class EmailValidator {
-            -EMAIL_REGEX string
-            -isFormatValid(email) bool
-            -hasMxRecord(email) bool
+            -BaseValidator[] fieldValidators
+            -string error
+            +__construct()
             +validate(email) bool
+            +getError() string
         }
 
         class EmailValidationRequest {
@@ -107,7 +127,8 @@ classDiagram
             <<readonly DTO>>
             +mixed email
             +bool isValid
-            +__construct(email, isValid)
+            +string error
+            +__construct(email, isValid, error)
             +toArray() array
         }
     }
@@ -192,8 +213,12 @@ classDiagram
 
     %% ===== RELATIONSHIPS =====
 
-    %% Domain Layer (внутренние связи)
+    %% Domain Layer - Validators (Chain of Responsibility)
+    FormatEmailValidator --|> BaseValidator : extends
+    MxRecordEmailValidator --|> BaseValidator : extends
     EmailValidator ..|> EmailValidatorInterface : implements
+    EmailValidator --> FormatEmailValidator : uses
+    EmailValidator --> MxRecordEmailValidator : uses
 
     %% Application Layer
     ValidateEmailsUseCase ..|> ValidateEmailsUseCaseInterface : implements
