@@ -1,6 +1,6 @@
 <?php
 
-namespace Fatnev\Price\Services;
+namespace Fatnev\Price\Domain;
 
 use Bitrix\Main\Loader;
 use Fatnev\Price\Config\Config;

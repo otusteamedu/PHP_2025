@@ -1,6 +1,6 @@
 <?php
 
-namespace Fatnev\Price\Services;
+namespace Fatnev\Price\Factory;
 
 use Dompdf\Dompdf;
 use Fatnev\Price\Config\Config;
