@@ -15,3 +15,8 @@ end loop;
 return result;
 end;
 $$ language plpgsql;
+
+insert into cinema.movie(name)
+    select
+        random_string((1 + random()*99)::integer)
+    from generate_series(1,10000) as gs(id);
