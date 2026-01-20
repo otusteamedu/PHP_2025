@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace App\Domain\Validators;
 
-use App\Domain\Interfaces\EmailValidatorInterface;
-use App\Domain\Validators\FormatEmailValidator;
-use App\Domain\Validators\MxRecordEmailValidator;
+use App\Domain\Interfaces\ValidatorInterface;
 
-
-class EmailValidator implements EmailValidatorInterface
+class EmailValidator
 {
-    private array $fieldValidators = [];
+    /** @var ValidatorInterface[] */
+    private array $validators = [];
     private string $error = '';
 
-    public function __construct()
+    public function __construct(array $validators)
     {
-        $this->fieldValidators = [
-            new FormatEmailValidator(),
-            new MxRecordEmailValidator(),
-        ];
+        $this->validators = $validators;
     }
 
     public function validate(mixed $email): bool
     {
         $this->error = '';
 
-        foreach ($this->fieldValidators as $validator) {
+        foreach ($this->validators as $validator) {
             if (!$validator->validate($email, 'email')) {
                 $this->error = $validator->getError();
                 return false;

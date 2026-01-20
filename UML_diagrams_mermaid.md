@@ -85,9 +85,9 @@ classDiagram
 
     %% ===== DOMAIN LAYER (Ядро) =====
     namespace Domain {
-        class EmailValidatorInterface {
+        class ValidatorInterface {
             <<interface>>
-            +validate(email) bool
+            +validate(value, fieldName) bool
             +getError() string
         }
 
@@ -110,9 +110,9 @@ classDiagram
         }
 
         class EmailValidator {
-            -BaseValidator[] fieldValidators
+            -ValidatorInterface[] validators
             -string error
-            +__construct()
+            +__construct(validators)
             +validate(email) bool
             +getError() string
         }
@@ -141,7 +141,7 @@ classDiagram
         }
 
         class ValidateEmailsUseCase {
-            -EmailValidatorInterface emailValidator
+            -EmailValidator emailValidator
             +__construct(emailValidator)
             +execute(request) EmailValidationResult[]
         }
@@ -214,15 +214,14 @@ classDiagram
     %% ===== RELATIONSHIPS =====
 
     %% Domain Layer - Validators (Chain of Responsibility)
+    BaseValidator ..|> ValidatorInterface : implements
     FormatEmailValidator --|> BaseValidator : extends
     MxRecordEmailValidator --|> BaseValidator : extends
-    EmailValidator ..|> EmailValidatorInterface : implements
-    EmailValidator --> FormatEmailValidator : uses
-    EmailValidator --> MxRecordEmailValidator : uses
+    EmailValidator --> ValidatorInterface : uses[]
 
     %% Application Layer
     ValidateEmailsUseCase ..|> ValidateEmailsUseCaseInterface : implements
-    ValidateEmailsUseCase --> EmailValidatorInterface : depends on
+    ValidateEmailsUseCase --> EmailValidator : depends on
     ValidateEmailsUseCase --> EmailValidationRequest : uses
     ValidateEmailsUseCase --> EmailValidationResult : creates
 

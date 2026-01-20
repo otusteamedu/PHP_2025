@@ -7,12 +7,12 @@ namespace App\Application\UseCases;
 use App\Application\Interfaces\ValidateEmailsUseCaseInterface;
 use App\Domain\DTO\EmailValidationRequest;
 use App\Domain\DTO\EmailValidationResult;
-use App\Domain\Interfaces\EmailValidatorInterface;
+use App\Domain\Validators\EmailValidator;
 
 class ValidateEmailsUseCase implements ValidateEmailsUseCaseInterface
 {
     public function __construct(
-        private readonly EmailValidatorInterface $emailValidator
+        private readonly EmailValidator $emailValidator
     ) {}
 
     /**

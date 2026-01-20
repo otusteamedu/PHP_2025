@@ -6,7 +6,8 @@ namespace App\Infrastructure\Container;
 
 use App\Application\Interfaces\ValidateEmailsUseCaseInterface;
 use App\Application\UseCases\ValidateEmailsUseCase;
-use App\Domain\Interfaces\EmailValidatorInterface;
+use App\Domain\Validators\FormatEmailValidator;
+use App\Domain\Validators\MxRecordEmailValidator;
 use App\Domain\Validators\EmailValidator;
 use App\Presentation\Controllers\Actions\ValidateEmailsAction;
 use App\Presentation\Controllers\Controller;
@@ -17,13 +18,18 @@ class ContainerBuilder
     {
         $container = new Container();
 
-        $container->singleton(EmailValidatorInterface::class, function () {
-            return new EmailValidator();
+        $container->singleton(EmailValidator::class, function () {
+            return new EmailValidator(
+                [
+                    new FormatEmailValidator(),
+                    new MxRecordEmailValidator(),
+                ]
+            );
         });
 
         $container->singleton(ValidateEmailsUseCaseInterface::class, function (Container $c) {
             return new ValidateEmailsUseCase(
-                $c->get(EmailValidatorInterface::class)
+                $c->get(EmailValidator::class)
             );
         });
 

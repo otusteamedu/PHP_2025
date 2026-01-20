@@ -259,14 +259,15 @@ interface EmailValidatorInterface
 **Стало:**
 
 ```php
-interface EmailValidatorInterface
+// ValidatorInterface.php — универсальный интерфейс для всех валидаторов
+interface ValidatorInterface
 {
-    public function validate(mixed $email): bool;
+    public function validate(mixed $value, string $fieldName): bool;
     public function getError(): string;
 }
 ```
 
-Интерфейс содержит только методы атомарной валидации одного email и получения ошибки.
+Интерфейс стал универсальным для любых валидаторов, принимает значение и имя поля для формирования сообщения об ошибке.
 
 ---
 
@@ -430,22 +431,30 @@ class MxRecordEmailValidator extends BaseValidator
     }
 }
 
-// EmailValidator.php — композиция валидаторов
-class EmailValidator implements EmailValidatorInterface
+// ValidatorInterface.php — интерфейс для всех валидаторов
+interface ValidatorInterface
 {
-    private array $fieldValidators = [];
+    public function validate(mixed $value, string $fieldName): bool;
+    public function getError(): string;
+}
 
-    public function __construct()
+// BaseValidator.php — реализует ValidatorInterface
+abstract class BaseValidator implements ValidatorInterface { ... }
+
+// EmailValidator.php — композиция валидаторов через DI
+class EmailValidator
+{
+    /** @var ValidatorInterface[] */
+    private array $validators = [];
+
+    public function __construct(array $validators)  // Валидаторы инжектируются!
     {
-        $this->fieldValidators = [
-            new FormatEmailValidator(),
-            new MxRecordEmailValidator(),
-        ];
+        $this->validators = $validators;
     }
 
     public function validate(mixed $email): bool
     {
-        foreach ($this->fieldValidators as $validator) {
+        foreach ($this->validators as $validator) {
             if (!$validator->validate($email, 'email')) {
                 $this->error = $validator->getError();
                 return false;
@@ -454,6 +463,14 @@ class EmailValidator implements EmailValidatorInterface
         return true;
     }
 }
+
+// ContainerBuilder.php — конфигурация валидаторов
+$container->singleton(EmailValidator::class, function () {
+    return new EmailValidator([
+        new FormatEmailValidator(),
+        new MxRecordEmailValidator(),
+    ]);
+});
 ```
 
 **Преимущества:**
@@ -461,7 +478,9 @@ class EmailValidator implements EmailValidatorInterface
 - **OCP** — новые валидаторы добавляются без изменения существующего кода
 - **SRP** — каждый валидатор отвечает за одну проверку
 - **DRY** — общая логика ошибок в `BaseValidator`
+- **DIP** — `EmailValidator` получает валидаторы через конструктор, а не создаёт их
 - **Информативность** — каждый валидатор возвращает понятное сообщение об ошибке
+- **Тестируемость** — можно подменить валидаторы в тестах
 
 ## API
 

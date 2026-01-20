@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Validators;
 
-abstract class BaseValidator
+use App\Domain\Interfaces\ValidatorInterface;
+
+abstract class BaseValidator implements ValidatorInterface
 {
     protected string $error = '';
 
