@@ -1,3 +1,15 @@
-# PHP_2025
+# Telegram Bot на PHP
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Простой Telegram бот с сохранением пользователей в SQLite.
+
+## Быстрый старт
+
+1. Клонируйте репозиторий
+2. Создайте бота через @BotFather и получите токен
+3. Настройте переменные окружения:
+4. Запуск сборки проекта
+
+```bash
+cp .env.example .env
+# Отредактируйте .env файл, добавьте ваш BOT_TOKEN
+./rebuild-and-test.sh
