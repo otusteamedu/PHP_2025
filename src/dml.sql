@@ -16,7 +16,15 @@ return result;
 end;
 $$ language plpgsql;
 
+set my.max_chars_varying_20 = 20;
+set my.max_chars_varying_50 = 50;
+set my.max_chars_varying_100 = 100;
+
+set my.amount_data_to_generate_smallserial = 32; -- 32000
+set my.amount_data_to_generate_serial = 10000; -- 10000000
+set my.amount_data_to_generate_bigserial = 10000; -- 10000000
+
 insert into cinema.movie(name)
     select
-        random_string((1 + random()*99)::integer)
-    from generate_series(1,10000) as gs(id);
+        random_string(1 + floor(random() * current_setting('my.max_chars_varying_100')::int)::int)
+    from generate_series(1,current_setting('my.amount_data_to_generate_bigserial')::int) as gs(id);
