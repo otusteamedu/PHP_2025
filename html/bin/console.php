@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Otus\DataMapper\Kernel\Console;
+use Otus\DataMapper\Infrastructure\Kernel\Console;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

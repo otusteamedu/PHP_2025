@@ -9,9 +9,8 @@ services:
                 UID: ${UID}
                 GID: ${GID}
         command:
-            - php
-            - bin/console.php
-            - run
+            - sleep
+            - infinity
         depends_on:
             - postgres
         volumes:
