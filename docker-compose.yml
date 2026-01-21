@@ -1,0 +1,45 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8081:80"    # Изменил 8081:8081 на 8081:80 (nginx слушает 80)
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./public:/var/www/html/public
+      - ./logs/nginx:/var/log/nginx
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - php
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile  # Убедитесь, что путь правильный
+    volumes:
+      - ./:/var/www/html
+      - ./logs/php:/var/log/php
+      - ./data:/var/www/html/data
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DB_PATH=/var/www/html/data/bot_database.sqlite
+    networks:
+      - app-network
+    working_dir: /var/www/html
+    restart: unless-stopped
+    # Добавляем команду для инициализации базы данных
+    command: >
+      sh -c "
+      mkdir -p /var/www/html/data &&
+      touch /var/www/html/data/bot_database.sqlite &&
+      chmod 666 /var/www/html/data/bot_database.sqlite &&
+      sqlite3 /var/www/html/data/bot_database.sqlite < /var/www/html/init.sql &&
+      php-fpm
+      "
+
+networks:
+  app-network:
+    driver: bridge
