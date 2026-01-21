@@ -1,36 +1,21 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.4-fpm
 
-RUN apk add \
-      curl-dev \
-      libmemcached-dev \
-      cyrus-sasl-dev \
-      zlib-dev \
-      build-base \
-      autoconf \
-      dos2unix \
-      libjpeg-turbo-dev \
-      libpng-dev \
-      freetype-dev \
-      icu-dev
+RUN apt-get update && apt-get install -y nano \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pecl install memcached redis \
-    && docker-php-ext-enable memcached redis \
-    && docker-php-ext-install curl
+# Install PDO and PDO PostgreSQL extensions
+RUN docker-php-ext-install pdo pdo_pgsql
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-      gd \
-      pdo_mysql \
-      intl
+# Redis extension
+RUN pecl install redis && docker-php-ext-enable redis
+
+# Xdebug
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+# Redis session configuration
+COPY redis-session.ini /usr/local/etc/php/conf.d/redis-session.ini
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-COPY zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
-
-WORKDIR /data
-VOLUME /data
-
-EXPOSE 9000
-
-CMD ["php-fpm"]
