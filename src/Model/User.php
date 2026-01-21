@@ -54,8 +54,9 @@ class User
                 ]);
                 file_put_contents('./logs.log', print_r( $userData, true), FILE_APPEND);
             } catch (PDOException $e) {
-                file_put_contents('./logs.log', print_r($e->getMessage(), true), FILE_APPEND);
-                die('Database connection failed: ' . $e->getMessage());
+                http_response_code(500);
+                error_log($e->getMessage());
+                throw new Exception('Database connection failed: ' . $e->getMessage());
             }
             return self::findByBitrixId($userData['bitrix_id']);
         }
@@ -136,4 +137,5 @@ class User
     public function getBitrixId(): int { return $this->bitrixId; }
     public function getFIO(): ?string { return $this->FIO; }
     public function getUsername(): ?string { return $this->username; }
+
 }
