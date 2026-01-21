@@ -32,7 +32,9 @@ class Database
                 self::initializeDatabase();
                 
             } catch (PDOException $e) {
-                die('Database connection failed: ' . $e->getMessage());
+                http_response_code(500);
+                error_log($e->getMessage());
+                throw new Exception('Database connection failed: ' . $e->getMessage());
             }
         }
 
@@ -44,4 +46,5 @@ class Database
         $sql = file_get_contents(__DIR__ . '/../../init.sql');
         self::$connection->exec($sql);
     }
+
 }
