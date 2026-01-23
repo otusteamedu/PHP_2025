@@ -1,0 +1,12 @@
+{
+    "name": "alex/hw5",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.3"
+    }
+}
