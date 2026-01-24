@@ -36,11 +36,4 @@ class EmailVerificationController
 
         return Response::html('Page not found. Path: ' . $request->getPath() . ', Method: ' . $request->getMethod(), 404);
     }
-
-    public function run(): void
-    {
-        $request = Request::fromGlobals();
-        $response = $this->handleRequest($request);
-        $response->send();
-    }
 }

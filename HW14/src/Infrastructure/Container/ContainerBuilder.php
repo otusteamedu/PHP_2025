@@ -10,6 +10,7 @@ use App\Domain\Validators\EmailMxRecordValidator;
 use App\Domain\Validators\EmailValidator;
 use App\Presentation\Actions\TemplateRenderAction;
 use App\Presentation\Actions\VerifyEmailsAction;
+use App\Presentation\Controllers\App;
 use App\Presentation\Controllers\EmailVerificationController;
 use App\Presentation\Views\ViewRenderer;
 
@@ -51,6 +52,12 @@ class ContainerBuilder
                 $c->get(TemplateRenderAction::class),
                 $c->get(VerifyEmailsAction::class)
             ]);
+        });
+
+        $container->set(App::class, function (Container $c) {
+            return new App(
+                $c->get(EmailVerificationController::class)
+            );
         });
 
         return $container;

@@ -31,19 +31,13 @@ class Response
         return new self('', $statusCode, ['Location' => $url]);
     }
 
-    public function send(): void
+    public function sendHeaders(): void
     {
         http_response_code($this->statusCode);
 
         foreach ($this->headers as $name => $value) {
             header("$name: $value");
         }
-
-        if ($this->statusCode >= 300 && $this->statusCode < 400) {
-            exit;
-        }
-
-        echo $this->content;
     }
 
     public function getContent(): string
@@ -54,5 +48,14 @@ class Response
     public function getStatusCode(): int
     {
         return $this->statusCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function send(): string
+    {
+        $this->sendHeaders();
+        return $this->getContent();
     }
 }
