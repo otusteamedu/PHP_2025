@@ -34,3 +34,10 @@ insert into cinema.cinema(city, address)
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_50')::int)::int),
         random_string(1 + floor(random() * 200))
     from generate_series(1,current_setting('my.amount_data_to_generate_smallserial')::int) as gs(id);
+
+insert into cinema.customer(name, email, phone)
+    select
+        random_string(1 + floor(random() * current_setting('my.max_chars_varying_50')::int)::int),
+        random_string(1 + floor(random() * current_setting('my.max_chars_varying_50')::int)::int),
+        random_string(1 + floor(random() * current_setting('my.max_chars_varying_20')::int)::int)
+    from generate_series(1, current_setting('my.amount_data_to_generate_bigserial')::int) as gs(id);
