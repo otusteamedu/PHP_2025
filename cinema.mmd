@@ -1,0 +1,74 @@
+---
+config:
+  theme: redux-color
+  layout: dagre
+---
+erDiagram
+	direction TB
+	SESSION {
+		bigserial id PK ""
+		bigserial movie_id FK ""
+		bigserial order_id FK ""
+		smallserial hall_id FK ""
+		timestamp start_time  ""
+	}
+
+	HALL {
+		smallserial id PK ""
+		smallint cinema-id FK ""
+		smallint number  ""
+	}
+
+	CINEMA {
+		smallserial id PK ""
+		character-varying city  ""
+		text address  ""
+	}
+
+	MOVIE {
+		bigserial id PK ""
+		character-varying name  ""
+	}
+
+	ORDER {
+		bigserial id PK ""
+		bigint customer_id FK ""
+		bigint session_id FK ""
+		integer place_id FK ""
+		money ticket-price  ""
+		timestamp time  ""
+	}
+
+	PRICE {
+		bigserial id PK ""
+		bigint move-id FK ""
+		money price  ""
+		enum part-of-day-id  "Утро, день, вечер, ночь"
+	}
+
+	CUSTOMER {
+		bigserial id PK ""
+		character-varying name  ""
+		character-varying email  ""
+		character-varying phone  ""
+	}
+
+	PLACE {
+		serial id PK ""
+		smallint hall_id FK ""
+		smallint order-id FK ""
+		bigint price_id FK ""
+		smallint row  ""
+		smallint place  ""
+		enum category  "'в центре', 'с краю', 'в центре, далеко', 'с краю далеко'"
+	}
+
+	HALL||--|{PLACE:"  "
+	ORDER}|--|{CUSTOMER:"  "
+	SESSION||--|{ORDER:"  "
+	MOVIE||--|{SESSION:"  "
+	SESSION}|--||HALL:"  "
+	ORDER}|--|{PLACE:"  "
+	CINEMA||--|{HALL:"  "
+	PRICE}|--|{PLACE:"  "
+	MOVIE||--|{PRICE:"  "
