@@ -24,6 +24,8 @@ set my.amount_data_to_generate_smallserial = 32; -- 32000
 set my.amount_data_to_generate_serial = 10000; -- 10000000
 set my.amount_data_to_generate_bigserial = 10000; -- 10000000
 
+set my.max_count_halls = 30;
+
 insert into cinema.movie(name)
     select
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_100')::int)::int)
@@ -41,3 +43,17 @@ insert into cinema.customer(name, email, phone)
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_50')::int)::int),
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_20')::int)::int)
     from generate_series(1, current_setting('my.amount_data_to_generate_bigserial')::int) as gs(id);
+
+insert into cinema.hall(cinemaId, number)
+    select c.id, h.num
+    from (
+             select
+                 id,
+                 floor(
+                     random()
+                         * current_setting('my.max_count_halls')::int
+                 )::int + 1 as hall_count
+             from cinema.cinema
+         ) as c
+             join lateral generate_series(1, c.hall_count) as h(num) on true
+    order by c.id, h.num
