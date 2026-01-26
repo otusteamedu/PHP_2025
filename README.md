@@ -8,48 +8,45 @@ https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_
 
 ```
 src/
-├── Domain/                    # Доменный слой (ядро)
-│   ├── Entity/               # Сущности
-│   │   └── Product.php
-│   └── Repository/           # Интерфейсы репозиториев
-│       └── ProductRepositoryInterface.php
-│
-├── Application/              # Слой приложения
-│   └── UseCase/              # Use Cases (бизнес-логика)
-│       └── Product/
+├── Application
+│   └── UseCase
+│       └── Product
 │           ├── CreateProductUseCase.php
+│           ├── DeleteProductUseCase.php
 │           ├── GetProductsUseCase.php
-│           ├── UpdateProductUseCase.php
-│           └── DeleteProductUseCase.php
-│
-├── Infrastructure/           # Инфраструктурный слой
-│   ├── Bus/                 # Шина команд
+│           └── UpdateProductUseCase.php
+├── Domain
+│   ├── Entity
+│   │   └── Product.php
+│   └── Repository
+│       └── ProductRepositoryInterface.php
+├── Infrastructure
+│   ├── Bus
 │   │   └── Bus.php
-│   ├── Config/              # Конфигурация
+│   ├── Config
 │   │   ├── ArrayReader.php
 │   │   ├── Config.php
 │   │   ├── ConfigInterface.php
 │   │   └── ReaderInterface.php
-│   ├── Database/            # Подключение к БД
-│   │   └── DatabaseConnection.php
-│   ├── Di/                  # Контейнер зависимостей
+│   ├── Database
+│   │   └── Connection.php
+│   ├── Dic
 │   │   ├── Container.php
 │   │   └── UnresolveParameterException.php
-│   ├── Kernel/              # Ядро приложения
+│   ├── Kernel
 │   │   ├── AbstractKernel.php
 │   │   └── Console.php
-│   └── Persistence/         # Реализации репозиториев
-│       ├── Mapper/
+│   └── Persistence
+│       ├── Mapper
 │       │   └── ProductMapper.php
-│       └── Repository/
+│       └── Repository
 │           └── ProductRepository.php
-│
-└── Presentation/            # Слой представления
-    └── Console/             # Консольные команды
+└── Presentation
+    └── Console
+        ├── DeleteProductCommand.php
         ├── InsertProductCommand.php
         ├── ListProductsCommand.php
-        ├── UpdateProductCommand.php
-        └── DeleteProductCommand.php
+        └── UpdateProductCommand.php
 ```
 
 ### Принципы:
