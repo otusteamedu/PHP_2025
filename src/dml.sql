@@ -57,3 +57,45 @@ insert into cinema.hall(cinemaId, number)
          ) as c
              join lateral generate_series(1, c.hall_count) as h(num) on true
     order by c.id, h.num
+
+
+set my.minimum_price_range = 200;
+set my.maximum_price_range = 600;
+set my.place_category_count = 4;
+
+set my.step_price = 50;
+set my.min_price = 200;
+-- 600 - 3 * 5
+set my.max_price = 450;
+
+with settings as (
+    select
+        current_setting('my.minimum_price_range')::int as min_price,
+        current_setting('my.maximum_price_range')::int as max_price,
+        current_setting('my.place_category_count')::int as count_categories,
+        current_setting('my.step_price')::int as step_price
+),
+
+base_prices as (
+    -- для каждой пары (movie, partOfDay) выбираем одну базовую цену
+    select
+     m.id as movie_id,
+     p.partOfDay,
+     (
+         floor(
+             random() * (
+                     (s.max_price - (s.step_price * (s.count_categories - 1)))
+                     - s.min_price
+                 + 1
+             )
+         )::int
+         + s.min_price
+     ) as base_price
+    from cinema.movie m
+    cross join (
+        select unnest(enum_range(null::partOfDay)) as partOfDay
+        ) p
+    cross join settings s
+    )
+    
+    select * from base_prices
