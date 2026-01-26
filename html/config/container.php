@@ -78,7 +78,7 @@ return [
             );
         },
         PDO::class => static function (Container $container): PDO {
-            return $container->get(Connection::class)->getPdo();
+            return $container->get(Connection::class)->getConnection();
         },
         ProductMapper::class => static function (Container $container): ProductMapper {
             return new ProductMapper(

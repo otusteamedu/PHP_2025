@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Otus\DataMapper\Infrastructure\Persistence\Repository;
 
+use DateMalformedStringException;
 use Otus\DataMapper\Domain\Entity\Product;
 use Otus\DataMapper\Domain\Repository\ProductRepositoryInterface;
 use Otus\DataMapper\Infrastructure\Persistence\Mapper\ProductMapper;
@@ -19,7 +20,11 @@ final readonly class ProductRepository implements ProductRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     *
+     * @return Product|null
+     *
+     * @throws DateMalformedStringException
      */
     public function findById(int $id): ?Product
     {
@@ -27,7 +32,13 @@ final readonly class ProductRepository implements ProductRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * @param array $criteria
+     * @param int $limit
+     * @param int $offset
+     *
+     * @return iterable
+     *
+     * @throws DateMalformedStringException
      */
     public function findAll(array $criteria = [], int $limit = 100, int $offset = 0): iterable
     {
@@ -35,7 +46,9 @@ final readonly class ProductRepository implements ProductRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * @param Product $product
+     *
+     * @return bool
      */
     public function save(Product $product): bool
     {
@@ -47,7 +60,9 @@ final readonly class ProductRepository implements ProductRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * @param Product $product
+     *
+     * @return bool
      */
     public function delete(Product $product): bool
     {

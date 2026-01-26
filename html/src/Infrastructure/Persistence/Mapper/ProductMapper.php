@@ -85,6 +85,8 @@ final class ProductMapper
      * @param int $id
      *
      * @return Product|null
+     *
+     * @throws DateMalformedStringException
      */
     public function findById(int $id): ?Product
     {
@@ -106,6 +108,8 @@ final class ProductMapper
      * @param int $offset
      *
      * @return iterable<Product>
+     *
+     * @throws DateMalformedStringException
      */
     public function findAll(array $criteria = [], int $limit = 100, int $offset = 0): iterable
     {
