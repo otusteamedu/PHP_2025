@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Infrastructure\Persistence\Mapper;
+namespace Otus\DataMapper\Application\Persistence\Mapper;
 
 use DateMalformedStringException;
 use DateTime;

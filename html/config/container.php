@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Otus\DataMapper\Application\Persistence\Mapper\ProductMapper;
+use Otus\DataMapper\Application\Persistence\Repository\ProductRepository;
 use Otus\DataMapper\Application\UseCase\Product\CreateProductUseCase;
 use Otus\DataMapper\Application\UseCase\Product\DeleteProductUseCase;
 use Otus\DataMapper\Application\UseCase\Product\GetProductsUseCase;
@@ -14,8 +16,6 @@ use Otus\DataMapper\Infrastructure\Config\ConfigInterface;
 use Otus\DataMapper\Infrastructure\Config\ReaderInterface;
 use Otus\DataMapper\Infrastructure\Database\Connection;
 use Otus\DataMapper\Infrastructure\Dic\Container;
-use Otus\DataMapper\Infrastructure\Persistence\Mapper\ProductMapper;
-use Otus\DataMapper\Infrastructure\Persistence\Repository\ProductRepository;
 use Otus\DataMapper\Presentation\Console\DeleteProductCommand;
 use Otus\DataMapper\Presentation\Console\InsertProductCommand;
 use Otus\DataMapper\Presentation\Console\ListProductsCommand;
@@ -30,6 +30,12 @@ return [
             );
         },
         // Application
+        ProductMapper::class => static function (Container $container): ProductMapper {
+            return new ProductMapper(
+                $container->get(PDO::class),
+                'products'
+            );
+        },
         CreateProductUseCase::class => static function (Container $container): CreateProductUseCase {
             return new CreateProductUseCase(
                 $container->get(ProductRepositoryInterface::class)
@@ -79,12 +85,6 @@ return [
         },
         PDO::class => static function (Container $container): PDO {
             return $container->get(Connection::class)->getConnection();
-        },
-        ProductMapper::class => static function (Container $container): ProductMapper {
-            return new ProductMapper(
-                $container->get(PDO::class),
-                'products'
-            );
         },
         // Presentation
         InsertProductCommand::class => static function (Container $container): InsertProductCommand {

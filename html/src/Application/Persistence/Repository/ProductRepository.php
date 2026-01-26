@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Otus\DataMapper\Infrastructure\Persistence\Repository;
+namespace Otus\DataMapper\Application\Persistence\Repository;
 
 use DateMalformedStringException;
+use Otus\DataMapper\Application\Persistence\Mapper\ProductMapper;
 use Otus\DataMapper\Domain\Entity\Product;
 use Otus\DataMapper\Domain\Repository\ProductRepositoryInterface;
-use Otus\DataMapper\Infrastructure\Persistence\Mapper\ProductMapper;
 
 final readonly class ProductRepository implements ProductRepositoryInterface
 {

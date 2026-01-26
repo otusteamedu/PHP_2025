@@ -9,6 +9,11 @@ https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_
 ```
 src/
 ├── Application
+│   ├── Persistence
+│   │   ├── Mapper
+│   │   │   └── ProductMapper.php
+│   │   └── Repository
+│   │       └── ProductRepository.php
 │   └── UseCase
 │       └── Product
 │           ├── CreateProductUseCase.php
@@ -33,14 +38,9 @@ src/
 │   ├── Dic
 │   │   ├── Container.php
 │   │   └── UnresolveParameterException.php
-│   ├── Kernel
-│   │   ├── AbstractKernel.php
-│   │   └── Console.php
-│   └── Persistence
-│       ├── Mapper
-│       │   └── ProductMapper.php
-│       └── Repository
-│           └── ProductRepository.php
+│   └── Kernel
+│       ├── AbstractKernel.php
+│       └── Console.php
 └── Presentation
     └── Console
         ├── DeleteProductCommand.php
