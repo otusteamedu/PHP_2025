@@ -1,0 +1,39 @@
+services:
+
+    application:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: compose
+            args:
+                UID: ${UID}
+                GID: ${GID}
+        command:
+            - sleep
+            - infinity
+        depends_on:
+            - postgres
+        volumes:
+            - ./html:/var/www/html:rw
+        networks:
+            private:
+
+    postgres:
+        image: postgres:18.0-trixie
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+        volumes:
+            - postgres:/var/lib/postgresql/:rw
+        networks:
+            private:
+
+volumes:
+    postgres:
+        name: otus-php-2025_postgres
+
+networks:
+    private:
+        name: otus-php-2025
+        driver: bridge
