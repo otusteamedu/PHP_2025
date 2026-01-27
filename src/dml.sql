@@ -83,14 +83,15 @@ base_prices as (
      m.id as movie_id,
      p.partOfDay,
      (
-         floor(
-             random() * (
-                     (s.max_price - (s.step_price * (s.count_categories - 1)))
-                     - s.min_price
-                 + 1
-             )
-         )::int
-         + s.min_price
+         (floor( random()
+                     * (
+                          (s.max_price - (s.step_price * (s.count_categories - 1)))
+                          - s.min_price
+                      + 1
+                  )
+              )::int
+             + s.min_price
+         )::money
      ) as base_price
     from cinema.movie m
     cross join (
