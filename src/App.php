@@ -1,24 +1,46 @@
 <?php
 
 namespace App;
+use App\Controller\Analytics\EventAddController;
+use App\Controller\Analytics\EventGetController;
 use App\Controller\EmailValidatorController;
 use App\Controller\StringController;
 use App\Exception\IApplicationException;
 use App\Http\Request;
 use App\Http\Response;
+use App\Provider\Event\RedisRepository;
 
 class App
 {
-    private static array $routes = [
-        '/' => [
-            'METHOD' => 'POST',
-            'CONTROLLER' => StringController::class,
-        ],
-        '/emails/validate' => [
-            'METHOD' => 'POST',
-            'CONTROLLER' => EmailValidatorController::class,
-        ],
-    ];
+    private static function getRoutes(): array
+    {
+        return [
+            '/' => [
+                'URL' => '/',
+                'METHOD' => 'POST',
+                'CONTROLLER' => StringController::class,
+            ],
+            '/emails/validate' => [
+                'URL' => '/emails/validate',
+                'METHOD' => 'POST',
+                'CONTROLLER' => EmailValidatorController::class,
+            ],
+            'event_add' => [
+                'URL' => '/event/add',
+                'METHOD' => 'POST',
+                'CONTROLLER' => EventAddController::class,
+                'ARGS' => new RedisRepository()
+            ],
+            'event_get' => [
+                'URL' => '/event/get',
+                'METHOD' => 'POST',
+                'CONTROLLER' => EventGetController::class,
+                'ARGS' => new RedisRepository()
+            ],
+        ];
+
+    }
+
     public function run(): string
     {
         try {
@@ -27,10 +49,15 @@ class App
             $method = $request->getMethod();
             $pathRequest = $request->getPath();
 
-            foreach (self::$routes as $path => $route) {
+            foreach (self::getRoutes() as $key => $route) {
+                $path = $route['URL'];
                 if (isset($route['METHOD']) && preg_match("#^{$path}$#", $pathRequest) && $method == $route['METHOD']) {
                     if (isset($route['CONTROLLER']) && class_exists($route['CONTROLLER'])) {
-                        $objController = new $route['CONTROLLER']();
+                        if ($route['ARGS']){
+                            $objController = new $route['CONTROLLER']($route['ARGS']);
+                        } else {
+                            $objController = new $route['CONTROLLER']();
+                        }
                         $response = $objController($request);
                     }
                     break;
