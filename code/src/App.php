@@ -3,17 +3,28 @@
 namespace App;
 
 use App\Response\Response;
+use App\Response\ResponseInterface;
 use App\Service\Validator;
+use App\Service\ValidatorInterface;
 
-class App {
+class App
+{
 
-	public function run(){
+	private ValidatorInterface $validator;
+	private ResponseInterface $response;
+
+    public function __construct(ValidatorInterface $validator, ResponseInterface $response)
+    {
+		$this->validator = $validator;
+    	$this->response = $response;
+    }
+
+	public function run()
+	{
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$string = $_POST['string'] ? $_POST['string'] : '';
-			$validator = new Validator();
-			$result = $validator->validate($string);
-			$response = new Response();
-   			return $response->send($result->getMessage(), $result->getCode());
+			$result = $this->validator->validate($string);
+   			return $this->response->send($result->getMessage(), $result->getCode());
 		}
 	}
 }
