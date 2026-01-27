@@ -1,0 +1,25 @@
+{
+    "name": "dinargab/homework10",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Dinargab\\Homework12\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DinarGab",
+            "email": "Dinar@reaspekt.ru"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "symfony/console": "^7.3",
+        "elasticsearch/elasticsearch": "^9.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
