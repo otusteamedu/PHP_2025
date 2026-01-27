@@ -110,5 +110,27 @@ inserted_prices as (
     cross join generate_series(0, s.count_categories - 1) as g(step)
 
     returning id, movieId, partOfDay, price
+),
+places as (
+    select
+        h.id as hall_id,
+        r.row_number as row,
+        pl.place_number as place,
+        c.category as category
+    from cinema.hall as h
+
+    cross join generate_series(1, 10) as r(row_number)
+    cross join generate_series(1, 30) as pl(place_number)
+    cross join lateral (
+        select
+            case
+                when pl.place_number between 3 and 5 then 'С краю далеко'::placecategory
+                when pl.place_number between 6 and 9 then 'В центре, далеко'::placecategory
+                when pl.place_number between 10 and 20 then 'В центре'::placecategory
+                when pl.place_number between 21 and 24 then 'В центре, далеко'::placecategory
+                when pl.place_number between 25 and 28 then 'С краю далеко'::placecategory
+            else 'С краю'::placecategory
+            end as category
+    ) c;
 )
-select * from inserted_prices
+select * from places
