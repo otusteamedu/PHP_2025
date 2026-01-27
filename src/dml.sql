@@ -83,7 +83,7 @@ base_prices as (
      m.id as movie_id,
      p.partOfDay,
      (
-         (floor( random()
+         floor( random()
                      * (
                           (s.max_price - (s.step_price * (s.count_categories - 1)))
                           - s.min_price
@@ -91,13 +91,24 @@ base_prices as (
                   )
               )::int
              + s.min_price
-         )::money
+
      ) as base_price
     from cinema.movie m
     cross join (
         select unnest(enum_range(null::partOfDay)) as partOfDay
         ) p
-    cross join settings s
-    )
-    
-    select * from base_prices
+    cross join settings as s
+),
+inserted_prices as (
+    insert into cinema.price (movieid, partofday, price)
+    select
+        bp.movie_id,
+        bp.partofday,
+        (bp.base_price + (g.step * 50))::money as price
+    from base_prices as bp
+    cross join settings as s
+    cross join generate_series(0, s.count_categories - 1) as g(step)
+
+    returning id, movieId, partOfDay, price
+)
+select * from inserted_prices
