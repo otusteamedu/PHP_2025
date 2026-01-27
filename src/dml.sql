@@ -16,6 +16,7 @@ return result;
 end;
 $$ language plpgsql;
 
+set lc_monetary = "ru_RU.UTF-8";
 set my.max_chars_varying_20 = 20;
 set my.max_chars_varying_50 = 50;
 set my.max_chars_varying_100 = 100;
