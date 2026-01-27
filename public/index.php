@@ -2,6 +2,5 @@
 
 use App\App;
 
-require  __DIR__ . '/../vendor/autoload.php';
-
+require $_SERVER['DOCUMENT_ROOT'] . '/init/bootstrap.php';
 echo (new App)->run();

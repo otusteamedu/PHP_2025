@@ -71,6 +71,8 @@ services:
       - ./data/redis:/data
     networks:
       - app-network
+    ports:
+      - "${REDIS_PORT}:6379"
   memcached:
     image: memcached:alpine
     container_name: app_memcached
