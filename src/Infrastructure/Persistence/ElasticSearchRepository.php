@@ -8,7 +8,6 @@ use Dinargab\Homework14\Domain\Entity\Book;
 use Dinargab\Homework14\Domain\Factory\BookFactoryInterface;
 use Dinargab\Homework14\Domain\Repository\BookSearchRepositoryInterface;
 use Dinargab\Homework14\Infrastructure\App\Configuration;
-use Dinargab\Homework14\Infrastructure\Factory\BookFactory;
 
 class ElasticSearchRepository implements BookSearchRepositoryInterface
 {
@@ -90,7 +89,7 @@ class ElasticSearchRepository implements BookSearchRepositoryInterface
         $result      = $this->elasticSearchClient->getClient()->search($params)->asArray();
         $resultBooks = [];
         foreach ($result["hits"]["hits"] as $bookDbItem) {
-            $bookInfo = $bookDbItem["_source"];
+            $bookInfo      = $bookDbItem["_source"];
             $resultBooks[] = $this->bookFactory->create(
                 $bookInfo['title'],
                 $bookInfo['sku'],
@@ -148,27 +147,24 @@ class ElasticSearchRepository implements BookSearchRepositoryInterface
         $params = ['body' => []];
 
         foreach ($books as $book) {
-            // Заголовок действия (Index)
             $params['body'][] = [
                 'index' => [
                     '_index' => $this->config->getIndexName(),
-                    '_id'    => $book->getSku()->getValue() // Используем SKU как ID документа
+                    '_id'    => $book->getSku()->getValue()
                 ]
             ];
 
-            // Тело документа
             $params['body'][] = $this->convertToArray($book);
         }
 
-        // Отправляем текущую пачку
         $this->elasticSearchClient->getClient()->bulk($params);
-
     }
 
     public function clear(): void
     {
         $indexName = $this->config->getIndexName();
-        if ($this->elasticSearchClient->getClient()->indices()->exists(['index' => $indexName])->getStatusCode() === 200) {
+        if ($this->elasticSearchClient->getClient()->indices()->exists(['index' => $indexName])->getStatusCode(
+            ) === 200) {
             $this->elasticSearchClient->getClient()->indices()->delete(['index' => $indexName]);
         }
 
@@ -199,7 +195,6 @@ class ElasticSearchRepository implements BookSearchRepositoryInterface
                 ]
             ]
         ]);
-
     }
 
     private function convertToArray(Book $book): array

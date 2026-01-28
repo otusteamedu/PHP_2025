@@ -9,12 +9,11 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Exception;
 
 #[AsCommand(name: "app:import")]
 class ImportBooksCommand extends Command
 {
-    protected static $defaultName = 'app:import';
-
     public function __construct(
         private ImportBooksUseCase $importBooksUseCase
     ) {
@@ -33,9 +32,11 @@ class ImportBooksCommand extends Command
         try {
             ($this->importBooksUseCase)();
             $output->writeln("<info>Книги успешно импортированы.</info>");
+
             return Command::SUCCESS;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $output->writeln("<error>Ошибка импорта: " . $e->getMessage() . "</error>");
+
             return Command::FAILURE;
         }
     }

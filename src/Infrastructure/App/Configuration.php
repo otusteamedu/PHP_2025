@@ -13,8 +13,8 @@ class Configuration
     public function __construct()
     {
         $this->elasticHost = getenv("ELASTIC_HOST");
-        $this->indexName = getenv("INDEX_NAME") ? getenv("INDEX_NAME") : "otus-shop";
-        $this->filePath = getenv("FILE_PATH") ? getenv("FILE_PATH") : "./books.json";
+        $this->indexName   = getenv("INDEX_NAME") ? getenv("INDEX_NAME") : "otus-shop";
+        $this->filePath    = getenv("FILE_PATH") ? getenv("FILE_PATH") : "./books.json";
     }
 
     public function getFilePath(): string

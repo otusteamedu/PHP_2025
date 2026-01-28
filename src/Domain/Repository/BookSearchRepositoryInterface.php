@@ -8,7 +8,13 @@ use Dinargab\Homework14\Domain\Entity\Book;
 
 interface BookSearchRepositoryInterface
 {
-    public function search(string $searchQuery, ?int $minPrice = null, ?int $maxPrice = null, ?string $category = null, bool $inStock = false): array;
+    public function search(
+        string $searchQuery,
+        ?int $minPrice = null,
+        ?int $maxPrice = null,
+        ?string $category = null,
+        bool $inStock = false
+    ): array;
 
     public function getBySku(string $sku): ?Book;
 

@@ -9,6 +9,5 @@ class SearchBookResponseDTO
     public function __construct(
         public readonly array $books,
     ) {
-
     }
 }

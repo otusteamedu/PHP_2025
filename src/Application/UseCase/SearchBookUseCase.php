@@ -32,8 +32,7 @@ class SearchBookUseCase
         );
 
         return new SearchBookResponseDTO(
-            array_map(fn (Book $book) => BookDTO::fromBook($book), $books),
+            array_map(fn(Book $book) => BookDTO::fromBook($book), $books),
         );
-
     }
 }

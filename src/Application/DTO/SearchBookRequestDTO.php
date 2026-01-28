@@ -12,8 +12,6 @@ class SearchBookRequestDTO
         public readonly ?int $maxPrice,
         public readonly ?string $category,
         public readonly bool $inStock,
-    )
-    {
-
+    ) {
     }
 }

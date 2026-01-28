@@ -6,6 +6,7 @@ namespace Dinargab\Homework14\Infrastructure\DataProvider;
 
 use Dinargab\Homework14\Application\DataProvider\BookDataProviderInterface;
 use Dinargab\Homework14\Application\DTO\BookDTO;
+use Generator;
 use InvalidArgumentException;
 use SplFileObject;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -22,11 +23,10 @@ class FileBookDataProvider implements BookDataProviderInterface
         }
     }
 
-    public function load(): \Generator
+    public function load(): Generator
     {
         $file = new SplFileObject($this->filePath);
 
-        // Настройки для удобного чтения: пропускать пустые строки, удалять переносы
         $file->setFlags(
             SplFileObject::READ_AHEAD |
             SplFileObject::SKIP_EMPTY |

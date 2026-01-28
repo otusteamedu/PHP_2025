@@ -19,8 +19,8 @@ class ImportBooksUseCase
     ) {
     }
 
-    public function __invoke(
-    ): void {
+    public function __invoke(): void
+    {
         $this->bookSearchRepository->clear();
 
         $batch = [];
@@ -36,7 +36,7 @@ class ImportBooksUseCase
         }
 
         // Сохраняем остатки
-        if (!empty($batch)) {
+        if ( ! empty($batch)) {
             $this->bookSearchRepository->bulkSave($batch);
         }
     }

@@ -11,10 +11,10 @@ use Elastic\Elasticsearch\ClientBuilder;
 class ElasticClient
 {
     private Client $client;
+
     public function __construct(
         private Configuration $configuration,
-    )
-    {
+    ) {
         $this->client = ClientBuilder::create()->setHosts([$this->configuration->getElasticHost()])->build();
     }
 
