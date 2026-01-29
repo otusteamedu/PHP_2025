@@ -62,18 +62,16 @@ create table cinema.session
     foreign key (movieId) references cinema.movie (id)
 );
 
-create table cinema.order
+create table cinema.orders
 (
     id bigserial primary key,
     customerId bigint not null,
     sessionId bigint not null,
-    placeId int not null,
     ticketPrice money not null,
-    time timestamp not null,
+    created_at  timestamp not null default now(),
 
     foreign key (customerId) references cinema.customer (id),
-    foreign key (sessionId) references cinema.session (id),
-    foreign key (placeId) references cinema.place (id)
+    foreign key (sessionId) references cinema.session (id)
 );
 
 CREATE TYPE partOfDay AS ENUM ('Утро', 'День', 'Вечер', 'Ночь');
@@ -94,10 +92,10 @@ CREATE TABLE cinema.customer_order (
     PRIMARY KEY (orderId, customerId)
 );
 
-CREATE TABLE cinema.order_place (
-    orderId bigint references cinema.place,
-    placeId int references cinema.order,
-    PRIMARY KEY (orderId, placeId)
+create table cinema.orders_place (
+    placeId bigint references cinema.place,
+    orderId int references cinema.orders,
+    primary key (orderId, placeId)
 );
 
 CREATE TABLE cinema.place_price (
