@@ -4,33 +4,31 @@ declare(strict_types=1);
 
 namespace Dinargab\Homework14\Infrastructure\Console;
 
+use Dinargab\Homework14\Application\DTO\TableRowInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractCommand extends Command
 {
-    protected function renderBooksTable(OutputInterface $output, array $books): void
+    /**
+     * @param OutputInterface $output
+     * @param TableRowInterface $items
+     *
+     * @return void
+     */
+    protected function renderTable(OutputInterface $output, array $items): void
     {
         $table = new Table($output);
-        $table->setHeaders(['Title', 'SKU', 'Category', 'Price', 'Stock Info']);
+
+        $firstElement = reset($items);
+
+        $table->setHeaders($firstElement::getTableHeaders());
 
         $rows = [];
-        foreach ($books as $book) {
-            $stockSummary = [];
-            foreach ($book->stock as $item) {
-                $shop           = $item['shop'];
-                $qty            = $item['stock'];
-                $stockSummary[] = "$shop: $qty";
-            }
-
-            $rows[] = [
-                $book->title,
-                $book->sku,
-                $book->category,
-                $book->price,
-                implode(", ", $stockSummary)
-            ];
+        /** @var TableRowInterface $item */
+        foreach ($items as $item) {
+            $rows[] = $item->toTableRow();
         }
 
         $table->addRows($rows);

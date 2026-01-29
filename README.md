@@ -31,8 +31,8 @@ https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_
 
 ```php
 
-# Показать книгу по SKU
-php app.php app:get-by-sku "509-062"
+# Показать книгу по id
+php app.php app:get-by-id "509-062"
 
 # Поиск по названию
 php app.php app:search "Кто подставил поручика Ржевского за границей"

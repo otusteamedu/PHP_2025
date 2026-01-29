@@ -21,6 +21,6 @@ services:
     public: true
     arguments: [ 'Book Search App', '1.0.0' ]
     calls:
-      - [ add, [ '@Dinargab\Homework14\Infrastructure\Console\ImportBooksCommand' ] ]
-      - [ add, [ '@Dinargab\Homework14\Infrastructure\Console\SearchBookCommand' ] ]
-      - [ add, [ '@Dinargab\Homework14\Infrastructure\Console\GetBySkuCommand' ] ]
+      - [ add, [ '@Dinargab\Homework14\Infrastructure\Console\ImportItemsCommand' ] ]
+      - [ add, [ '@Dinargab\Homework14\Infrastructure\Console\SearchItemCommand' ] ]
+      - [ add, [ '@Dinargab\Homework14\Infrastructure\Console\GetByIdCommand' ] ]

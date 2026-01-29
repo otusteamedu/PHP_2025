@@ -13,8 +13,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'app:get-by-sku', description: 'Get book by SKU')]
-class GetBySkuCommand extends AbstractCommand
+#[AsCommand(name: 'app:get-by-id', description: 'Get item by identificator')]
+class GetByIdCommand extends AbstractCommand
 {
     public function __construct(
         private GetBySkuUseCase $getBySkuUseCase
@@ -24,26 +24,26 @@ class GetBySkuCommand extends AbstractCommand
 
     protected function configure(): void
     {
-        $this->setDescription('Получить книгу по SKU')
-             ->addArgument("sku", InputArgument::REQUIRED, "SKU книги");
+        $this->setDescription('Получить элемент по индентификатору')
+             ->addArgument("id", InputArgument::REQUIRED, "ID элемента");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $requestDto = new GetBySkuRequestDTO(
-            sku: $input->getArgument("sku")
+            sku: $input->getArgument("id")
         );
 
         try {
             $bookDto = ($this->getBySkuUseCase)($requestDto);
 
             if ( ! $bookDto) {
-                $output->writeln("<error>Книга не найдена.</error>");
+                $output->writeln("<error>Элемент не найден.</error>");
 
                 return Command::FAILURE;
             }
 
-            $this->renderBooksTable($output, [$bookDto]);
+            $this->renderTable($output, [$bookDto]);
 
             return Command::SUCCESS;
         } catch (Exception $e) {

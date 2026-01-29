@@ -13,8 +13,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'app:search', description: 'Search Book')]
-class SearchBookCommand extends AbstractCommand
+#[AsCommand(name: 'app:search', description: 'Search Item')]
+class SearchItemCommand extends AbstractCommand
 {
 
     public function __construct(
@@ -25,7 +25,7 @@ class SearchBookCommand extends AbstractCommand
 
     protected function configure(): void
     {
-        $this->setDescription('Поиск книг')
+        $this->setDescription('Поиск')
              ->addArgument("query", InputArgument::REQUIRED, "Поиск по названию")
              ->addOption("category", "c", InputOption::VALUE_REQUIRED, "Фильтр по категории")
              ->addOption("min-price", null, InputOption::VALUE_REQUIRED, "Фильтр - минимальная цена")
@@ -50,7 +50,7 @@ class SearchBookCommand extends AbstractCommand
             return Command::SUCCESS;
         }
 
-        $this->renderBooksTable($output, $responseDto->books);
+        $this->renderTable($output, $responseDto->books);
 
         return Command::SUCCESS;
     }

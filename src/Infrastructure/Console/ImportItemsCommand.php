@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Exception;
 
 #[AsCommand(name: "app:import")]
-class ImportBooksCommand extends Command
+class ImportItemsCommand extends Command
 {
     public function __construct(
         private ImportBooksUseCase $importBooksUseCase
@@ -22,7 +22,7 @@ class ImportBooksCommand extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Импорт книг из файла (JSON) в ElasticSearch');
+        $this->setDescription('Импорт данных из файла (JSON) в ElasticSearch');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
