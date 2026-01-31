@@ -3,6 +3,7 @@ namespace Pryaniki\App;
 
 use Pryaniki\App\Exceptions;
 use Pryaniki\App\Exceptions\EmptyFieldException;
+use Pryaniki\App\Exceptions\NotExistDomain;
 use Pryaniki\App\Exceptions\NotValidException;
 
 class EmailValidator
@@ -46,8 +47,24 @@ class EmailValidator
             throw new Exceptions\NotValidException('email');
         }
     }
+
+    /**
+     * @throws NotExistDomain
+     */
     private function checkDns(): void
     {
+        if (!$this->isExistsDomain()) {
+            throw new Exceptions\NotExistDomain('DNS record not found');
+        }
+    }
 
+    private function isExistsDomain(): bool
+    {
+        return checkdnsrr(self::getDomainFromEmail(), 'MX');
+    }
+
+    private function getDomainFromEmail(): string
+    {
+        return array_last(explode('@', $this->email));
     }
 }
