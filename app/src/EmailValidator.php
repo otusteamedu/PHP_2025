@@ -7,13 +7,23 @@ use Pryaniki\App\Exceptions\NotValidException;
 
 class EmailValidator
 {
-    public static function validate(string $email): bool
+    private string $email;
+
+    /**
+     * @param string $email
+     */
+    public function __construct(string $email)
+    {
+        $this->email = $email;
+    }
+
+    public function validate(): bool
     {
         $isValid = false;
 
         try {
-            self::checkEmail($email);
-            self::checkDns($email);
+            self::checkEmail();
+            self::checkDns();
             $isValid = true;
         } catch (\Exception $e) {
             echo $e->getMessage() . PHP_EOL;
@@ -26,17 +36,17 @@ class EmailValidator
      * @throws NotValidException
      * @throws EmptyFieldException
      */
-    private static function checkEmail(string $email): void
+    private function checkEmail(): void
     {
-        if ($email === '') {
+        if ($this->email === '') {
             throw new Exceptions\EmptyFieldException('email');
         }
 
-        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        if (filter_var($this->email, FILTER_VALIDATE_EMAIL) === false) {
             throw new Exceptions\NotValidException('email');
         }
     }
-    private static function checkDns(string $email): void
+    private function checkDns(): void
     {
 
     }

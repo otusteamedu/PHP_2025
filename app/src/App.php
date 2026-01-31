@@ -9,7 +9,8 @@ class App
     public function run(): void
     {
         $this->initEmail();
-        $isValid = EmailValidator::validate($this->email);
+        $emailValidator = new EmailValidator($this->email);
+        $isValid = $emailValidator->validate();
         $this->printAnswer($isValid);
     }
 
