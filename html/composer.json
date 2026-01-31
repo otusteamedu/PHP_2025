@@ -1,0 +1,29 @@
+{
+    "name": "otus/food",
+    "type": "project",
+    "require": {
+        "friendsofphp/php-cs-fixer": "^3.93",
+        "rector/rector": "^2.3"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Otus\\Food\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alexander",
+            "email": "system.bin@yandex.ru"
+        }
+    ],
+    "minimum-stability": "stable",
+    "scripts": {
+        "rector": "vendor/bin/rector",
+        "php-cs-fixer": "vendor/bin/php-cs-fixer fix",
+        "fix": [
+            "@rector",
+            "@php-cs-fixer"
+        ]
+    }
+}
