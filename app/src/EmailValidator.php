@@ -1,5 +1,5 @@
 <?php
-
+namespace Pryaniki\App;
 class EmailValidator
 {
     public static function validate(string $email): bool

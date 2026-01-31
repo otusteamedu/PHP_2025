@@ -1,0 +1,21 @@
+{
+  "name": "maksim-skoropispcev/online-bookstore-search",
+  "description": "Task 6. Email валидатор",
+  "type": "project",
+  "autoload": {
+	"psr-4": {
+	  "Pryaniki\\App\\": "src/"
+	}
+  },
+  "authors": [
+	{
+	  "name": "Maksim Skoropiscev",
+	  "email": "maksim.sckoropistsev@ya.ru"
+	}
+  ],
+  "config": {
+	"allow-plugins": {
+	  "php-http/discovery": false
+	}
+  }
+}

@@ -1,3 +1,6 @@
-# PHP_2025
+# Email validator
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Для запуска приложения необходимо:
+- Перейти в папку app (`cd app`);
+- Запустить `composer install`;
+- Запустить скрипт командой `php app.php test@test`.
