@@ -13,6 +13,9 @@
 	  "email": "maksim.sckoropistsev@ya.ru"
 	}
   ],
+  "require": {
+	"php": ">=8.5"
+  },
   "config": {
 	"allow-plugins": {
 	  "php-http/discovery": false
