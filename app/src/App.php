@@ -27,9 +27,12 @@ class App
 
     private function printAnswer(bool $isValidEmail): void
     {
-        $answer = $isValidEmail
-            ? 'Email is valid'
-            : 'Email is not valid';
-        echo $answer;
+        $answer = 'is';
+
+        if (!$isValidEmail) {
+            $answer .= ' not';
+        }
+
+        echo "Email $this->email $answer valid" . PHP_EOL;
     }
 }
