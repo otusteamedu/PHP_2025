@@ -80,7 +80,7 @@ classDiagram
 - `Domain` - Email, ValidationError, Validators, EmailValidationInterface, MxCheckerInterface
 - `Application` - VerificationResultDTO, CompositeValidator, ValidationStrategyInterface, VerifyEmailsUseCaseInterface, VerifyEmailsUseCase
 - `Infrastructure` - MxChecker, ValidationStrategyFactory
-- `Presentation` - ConsoleRunner, EmailVerificationController, VerificationResultProcessor, ResultPrinter
+- `Presentation` - ConsoleRunner, EmailVerificationController, VerificationResultProcessor, ResultPrinter, AppFactory
 
 ### UML-диаграмма классов после рефакторинга:
 ```mermaid
@@ -190,6 +190,10 @@ classDiagram
         +printResults(array results) void
     }
 
+    class AppFactory {
+        +createConsoleRunner() ConsoleRunner
+        +createEmailVerificationController() EmailVerificationController
+    }
 
     %% Связи
     EmailValidationInterface ..> Email : использует
@@ -219,4 +223,8 @@ classDiagram
     EmailVerificationController ..> VerificationResultProcessor : использует
     VerificationResultProcessor ..> VerificationResultDTO : обрабатывает
     ResultPrinter ..> VerificationResultProcessor : использует
+    AppFactory ..> ConsoleRunner : создает
+    AppFactory ..> EmailVerificationController : создает
+    AppFactory ..> ValidationStrategyFactory : использует
+    AppFactory ..> VerifyEmailsUseCase : использует
 ```

@@ -2,16 +2,10 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use EmailsVerifier\Infrastructure\ValidationStrategyFactory;
-use EmailsVerifier\Application\UseCases\VerifyEmailsUseCase;
-use EmailsVerifier\Presentation\Controllers\EmailVerificationController;
+use EmailsVerifier\Presentation\Services\AppFactory;
 use EmailsVerifier\Presentation\Views\ResultPrinter;
 
-// --- DI
-$validationStrategy = ValidationStrategyFactory::createStrategy();
-$verifyEmailsUseCase = new VerifyEmailsUseCase($validationStrategy);
-$controller = new EmailVerificationController($verifyEmailsUseCase);
-// ---
+$controller = AppFactory::createEmailVerificationController();
 
 $emails = [
     // Валидные
