@@ -4,16 +4,25 @@ namespace Pryaniki\App;
 
 class App
 {
+    private string $email;
+
     public function run(): void
     {
-        $email = $this->getEmail();
-        $isValid = EmailValidator::validate($email);
+        $this->initEmail();
+        $isValid = EmailValidator::validate($this->email);
         $this->printAnswer($isValid);
+    }
+
+    private function initEmail(): void
+    {
+        $this->email = $this->getEmail();
     }
 
     private function getEmail(): string
     {
-        return '';
+        $argv = $_SERVER['argv'];
+
+        return $argv[1] ?? '';
     }
 
     private function printAnswer(bool $isValidEmail): void
