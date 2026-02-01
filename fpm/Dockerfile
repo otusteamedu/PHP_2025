@@ -1,7 +1,10 @@
 FROM php:8.4-fpm
 
-RUN apt-get update && apt-get install -y nano \
+# Add git to the list of installed packages
+RUN apt-get update && apt-get install -y \
+    nano \
     libpq-dev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PDO and PDO PostgreSQL extensions
