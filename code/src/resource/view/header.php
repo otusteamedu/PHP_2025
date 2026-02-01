@@ -25,32 +25,24 @@
             <ul class="nav navbar-nav">
                 <li class="dropdown"><a class="dropdown-toggle" href="http://new/busket">Товары</a></li>
                 <li class="dropdown"><a class="dropdown-toggle" href="">Статьи</a></li>
-                <?php if($_SESSION['user']['role'] == 'admin') :?>
-                    <li class="dropdown"><a class="dropdown-toggle" href="/admin">Админка</a></li>
-                <?php endif ?>
+
             </ul>
 
             <!--  ссылка на вход в систему -->
             <ul class="nav navbar-nav navbar-right">
                 <!--  Авторизация пользователя, запись данных о пользователе в сессию -->
-                <?php
-                if(!isset($_SESSION['user'])):?>
-                    <li><a href="/login"> Войти </a></li>
-                <?php else : ?>
+
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <?php echo htmlspecialchars($_SESSION['user']['name'])?> <span class="caret"></span>
                         </a>
                     </li>
                     <!-- ссылка на выход -->
-                    <li>
+                    <!--<li>
                         <a href="http://new/login/logout"> Выйти</a>
-                    </li>
-                <?php endif ?>
+                    </li>-->
                 </ul>
         </div>
 
 
     </div>
 </div>
-
