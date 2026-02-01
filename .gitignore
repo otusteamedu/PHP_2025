@@ -3,3 +3,11 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+.env
+/.vscode
+/_ide_helper.php
+/_ide_helper_models.php
+/access.log
+/error.log
+.editorconfig
+
