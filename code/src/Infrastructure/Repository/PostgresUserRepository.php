@@ -10,53 +10,47 @@ use PDO;
 
 class PostgresUserRepository implements UserRepositoryInterface
 {
-    public function __construct(private PDO $pdo)
+    public function __construct(private readonly PDO $pdo)
     {
-    }
-
-    public function findBy(array $criteria): ?User
-    {
-        $query = 'SELECT u.id, u.name, u.surname, u.role, p.title as post_title
-                  FROM users u
-                  LEFT JOIN post p ON u.id_post = p.id_post';
-
-        if (!empty($criteria)) {
-            $query .= ' WHERE ';
-            $whereConditions = [];
-            foreach (array_keys($criteria) as $key) {
-                $whereConditions[] = "u.{$key} = :{$key}";
-            }
-            $query .= implode(' AND ', $whereConditions);
-        }
-
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute($criteria);
-
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$data) {
-            return null;
-        }
-
-        return $this->mapToUser($data);
     }
 
     public function findById(int $id): ?User
     {
-        return $this->findBy(['id' => $id]);
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $data ? $this->mapToUser($data) : null;
     }
 
-    /**
-     * Преобразует массив данных из БД в объект User.
-     */
+    public function findByLogin(string $login): ?User
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE login = :login');
+        $stmt->execute(['login' => $login]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $data ? $this->mapToUser($data) : null;
+    }
+
     private function mapToUser(array $data): User
     {
-        return new User(
-            id: (int)$data['id'],
-            name: $data['name'],
-            surname: $data['surname'],
-            role: $data['role'],
-            postTitle: $data['post_title'] ?? null
-        );
+        return User::fromState($data);
+    }
+
+    public function findBy(array $criteria): ?User
+    {
+        $conditions = [];
+        $params = [];
+        foreach ($criteria as $key => $value) {
+            $conditions[] = "$key = :$key";
+            $params[$key] = $value;
+        }
+        $whereClause = implode(' AND ', $conditions);
+
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE $whereClause");
+        $stmt->execute($params);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $data ? $this->mapToUser($data) : null;
     }
 }

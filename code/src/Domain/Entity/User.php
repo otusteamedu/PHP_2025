@@ -15,6 +15,18 @@ class User
     ) {
     }
 
+    public static function fromState(array $data)
+    {
+        return new self(
+            $data['id'],
+            $data['name'],
+            $data['surname'],
+            $data['role'],
+            $data['postTitle'] ?? null
+        );
+
+    }
+
     public function getId(): int
     {
         return $this->id;
