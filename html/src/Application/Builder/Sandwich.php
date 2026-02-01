@@ -4,30 +4,22 @@ declare(strict_types=1);
 
 namespace Otus\Food\Application\Builder;
 
-use Otus\Food\Domain\Kitchen\Decorator\Chicken;
-use Otus\Food\Domain\Kitchen\Decorator\Cucumber;
-use Otus\Food\Domain\Kitchen\Decorator\Lactuca;
-use Otus\Food\Domain\Kitchen\Decorator\Mayonnaise;
-use Otus\Food\Domain\Kitchen\Decorator\Tomato;
+use Otus\Food\Domain\Kitchen\Entity\Meal;
 
 final class Sandwich extends AbstractBuilder
 {
     /**
-     * @return Mayonnaise
+     * @return Meal
      */
-    public function cooking(): Mayonnaise
+    public function cooking(): Meal
     {
         return
-            new Mayonnaise(
-                new Cucumber(
-                    new Tomato(
-                        new Lactuca(
-                            new Chicken(
-                                $this->getMeal()
-                            )
-                        )
-                    )
-                )
-            );
+            $this
+                ->getMeal()
+                ->chicken()
+                ->lactuca()
+                ->tomato()
+                ->cucumber()
+                ->mayonnaise();
     }
 }
