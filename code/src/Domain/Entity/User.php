@@ -9,8 +9,8 @@ class User
     public function __construct(
         private int $id,
         private string $name,
-        private string $surname,
-        private string $role,
+        private ?string $surname,
+        private ?string $role,
         private ?string $postTitle = null
     ) {
     }
@@ -20,8 +20,8 @@ class User
         return new self(
             $data['id'],
             $data['name'],
-            $data['surname'],
-            $data['role'],
+            $data['surname'] ?? null,
+            $data['role'] ?? null,
             $data['postTitle'] ?? null
         );
 
@@ -37,12 +37,12 @@ class User
         return $this->name;
     }
 
-    public function getSurname(): string
+    public function getSurname(): ?string
     {
         return $this->surname;
     }
 
-    public function getRole(): string
+    public function getRole(): ?string
     {
         return $this->role;
     }
