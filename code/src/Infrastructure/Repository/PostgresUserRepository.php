@@ -53,4 +53,12 @@ class PostgresUserRepository implements UserRepositoryInterface
 
         return $data ? $this->mapToUser($data) : null;
     }
+
+    public function findAll(): array
+    {
+        $stmt = $this->pdo->query('SELECT * FROM users');
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([$this, 'mapToUser'], $data);
+    }
 }
