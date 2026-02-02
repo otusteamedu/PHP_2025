@@ -94,6 +94,7 @@ class Container implements ContainerInterface
                 return new indexController(
                     $c->get(TextProcessingServiceInterface::class),
                     $c->get(ViewInterface::class),
+                    $c->get(UserRepositoryInterface::class)
                 );
             },
         ];

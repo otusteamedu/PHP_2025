@@ -1,27 +1,31 @@
 <?php
 namespace App\Controllers;
 
+use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\Service\Text\TextProcessingServiceInterface;
 use App\Domain\Service\View\ViewInterface;
 
 class indexController extends Controller
 {
     private TextProcessingServiceInterface $textService;
+    private UserRepositoryInterface $userRepository;
 
     // Внедряем все зависимости через конструктор
     public function __construct(
         TextProcessingServiceInterface $textService,
         ViewInterface $view,
+        UserRepositoryInterface $userRepository,
     ) {
         // Передаем зависимости в родительский конструктор
         parent::__construct($view);
         $this->textService = $textService;
+        $this->userRepository = $userRepository;
     }
 
     public function indexAction()
     {
-        // Теперь render возвращает строку, которую нужно вывести
-        echo $this->render('index_page');
+        $users = $this->userRepository->findAll();
+        echo $this->render('index_page', ['users' => $users]);
     }
 
     public function hello()
