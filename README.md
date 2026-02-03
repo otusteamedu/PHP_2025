@@ -1,3 +1,1 @@
-# PHP_2025
-
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Задача описана в файле [Task.md](Task.md), решение находится в файле [Solution.md](Solution.md).
