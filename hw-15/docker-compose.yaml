@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: hw15/app
+    container_name: hw15-app
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/php-socket:/var/run/php
+    networks:
+      - otus-network
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: hw15/nginx
+    container_name: hw15-nginx
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/php-socket:/var/run/php
+    ports:
+      - "8000:80"
+    networks:
+      - otus-network
+
+
+networks:
+  otus-network:
+    driver: bridge
