@@ -1,0 +1,14 @@
+{
+    "name": "gnvs/fastfood",
+    "description": "FastFood System",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "psr/container": "^2.0",
+        "php-di/php-di": "^7.0",
+        "monolog/monolog": "^3.0"
+    }
+}
