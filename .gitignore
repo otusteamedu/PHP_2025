@@ -65,3 +65,16 @@ docker-compose.override.yml
 
 # Миграции (если не хранить в репозитории)
 /migrations/*.php
+
+
+# Laravel специфичное (в подпапке src)
+app/src/vendor/
+app/src/node_modules/
+app/src/.env
+app/src/storage/*.key
+app/src/storage/framework/cache/data/*
+app/src/storage/framework/sessions/*
+app/src/storage/framework/testing/*
+app/src/storage/framework/views/*
+app/src/storage/logs/*
+app/src/bootstrap/cache/*
