@@ -28,5 +28,5 @@ interface UserRepositoryInterface
      *
      * @return User[]
      */
-    public function findAll(): array;
+    public function findAll(int $limit, int $offset): array;
 }
