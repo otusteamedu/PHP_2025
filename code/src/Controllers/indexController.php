@@ -7,6 +7,8 @@ use App\Domain\Service\View\ViewInterface;
 
 class indexController extends Controller
 {
+    private const USERS_PER_PAGE = 20;
+
     private TextProcessingServiceInterface $textService;
     private UserRepositoryInterface $userRepository;
 
@@ -24,8 +26,21 @@ class indexController extends Controller
 
     public function indexAction()
     {
-        $users = $this->userRepository->findAll();
-        echo $this->render('index_page', ['users' => $users]);
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = self::USERS_PER_PAGE;
+        $offset = ($page - 1) * $limit;
+
+        $users = $this->userRepository->findAll($limit, $offset);
+        
+        // Для пагинации также нужно общее количество пользователей.
+        // Давай добавим метод count() в репозиторий.
+        // А пока просто передадим номер страницы.
+        
+        echo $this->render('index_page', [
+            'users' => $users,
+            'currentPage' => $page,
+            // 'totalPages' => $totalPages // Это нужно будет добавить
+        ]);
     }
 
     public function hello()

@@ -54,9 +54,12 @@ class PostgresUserRepository implements UserRepositoryInterface
         return $data ? $this->mapToUser($data) : null;
     }
 
-    public function findAll(): array
+    public function findAll(int $limit, int $offset): array
     {
-        $stmt = $this->pdo->query('SELECT * FROM users');
+        $stmt = $this->pdo->prepare('SELECT * FROM users LIMIT :limit OFFSET :offset');
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return array_map([$this, 'mapToUser'], $data);
