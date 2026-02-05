@@ -7,4 +7,7 @@ use \Pryaniki\App\App;
 require __DIR__ . '/app/vendor/autoload.php';
 
 $app = new App();
-$app->run();
+
+$result = $app->run();
+echo $result;
+

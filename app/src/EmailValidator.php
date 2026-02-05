@@ -10,6 +10,8 @@ class EmailValidator
 {
     private string $email;
 
+    private string $validationError = '';
+
     /**
      * @param string $email
      */
@@ -27,7 +29,7 @@ class EmailValidator
             self::checkDns();
             $isValid = true;
         } catch (\Exception $e) {
-            echo $e->getMessage() . PHP_EOL;
+            $this->validationError = $e->getMessage() . PHP_EOL;
         }
 
         return $isValid;
@@ -66,5 +68,10 @@ class EmailValidator
     private function getDomainFromEmail(): string
     {
         return array_last(explode('@', $this->email));
+    }
+
+    public function getValidationError(): string
+    {
+        return $this->validationError;
     }
 }

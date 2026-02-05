@@ -6,12 +6,10 @@ class App
 {
     private string $email;
 
-    public function run(): void
+    public function run(): string
     {
         $this->initEmail();
-        $emailValidator = new EmailValidator($this->email);
-        $isValid = $emailValidator->validate();
-        $this->printAnswer($isValid);
+        return $this->getAnswer();
     }
 
     private function initEmail(): void
@@ -26,14 +24,19 @@ class App
         return $argv[1] ?? '';
     }
 
-    private function printAnswer(bool $isValidEmail): void
+    private function getAnswer(): string
     {
+        $emailValidator = new EmailValidator($this->email);
+        $isValidEmail = $emailValidator->validate();
         $answer = 'is';
 
         if (!$isValidEmail) {
             $answer .= ' not';
         }
 
-        echo "Email $this->email $answer valid" . PHP_EOL;
+        $answerText = "Email $this->email $answer valid" . PHP_EOL;
+        $answerText .= $emailValidator->getValidationError();
+
+        return $answerText;
     }
 }
