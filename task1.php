@@ -2,20 +2,31 @@
 
 declare(strict_types=1);
 
-function twoSum(array $nums, int $target) {
-    $hash = [];
-    foreach ($nums as $key => $num) {
-        $hash[$num][] = $key;
-    }
+class Solution {
 
-    foreach ($hash as $number => $indexes) {
-        $n = $target - $number;
-        if ($number == $n && count($indexes) >= 2) {
-            return [$indexes[0], $indexes[1]];
+    /**
+     * @param Integer[] $nums
+     * @param Integer $target
+     * @return Integer[]
+     */
+    public function twoSum($nums, $target)
+    {
+
+        $hash = [];
+        foreach ($nums as $key => $num) {
+            $hash[$num][] = $key;
         }
 
-        if ($number != $n && isset($hash[$n])) {
-            return [$indexes[0], $hash[$n][0]];
+        foreach ($hash as $number => $indexes) {
+            $n = $target - $number;
+            if ($number == $n && count($indexes) >= 2) {
+                return [$indexes[0], $indexes[1]];
+            }
+
+            if ($number != $n && isset($hash[$n])) {
+                return [$indexes[0], $hash[$n][0]];
+            }
+
         }
     }
 }
