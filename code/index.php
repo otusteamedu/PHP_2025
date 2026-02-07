@@ -32,4 +32,7 @@ if (!method_exists($controller, $actionMethod)) {
 }
 
 $params = array_values(array_diff_key($_GET, ['controller' => '', 'action' => '']));
-call_user_func_array([$controller, $actionMethod], $params);
+
+$content = call_user_func_array([$controller, $actionMethod], $params);
+
+echo $content;
