@@ -1,0 +1,50 @@
+services:
+  #контейнер с Nginx
+#  nginx:
+  #  build:
+  #    context: ./nginx
+#      dockerfile: Dockerfile
+ #   image: myapp/nginx
+ #   container_name: ${CONTAINER_NAME}
+#    ports:
+#      - "80:80"
+#    volumes:
+#       - ./code:/data/mysite.local
+#    depends_on:
+#      - app
+#      - elasticsearch
+#    networks:
+#      - app-network
+
+  #Контейнер с PHP-FPM
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    image: myapp/php # имя будущего образа
+    container_name: app # имя контейнера после запуска
+    volumes:
+       - ./code:/data/mysite.local
+    networks:
+      - app-network
+
+  elasticsearch:
+    image: elasticsearch:9.2.3
+    container_name: elasticsearch
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      discovery.type: single-node
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - app-network   
+
+# Docker Networks
+networks:
+  app-network:
+    driver: bridge

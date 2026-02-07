@@ -1,0 +1,17 @@
+{
+    "name": "otus/code",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Otus\\Code\\": "src/"
+        }
+    },
+    "require": {
+        "elasticsearch/elasticsearch": "^9.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
