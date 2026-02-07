@@ -2,7 +2,7 @@
 
 https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
 
-# Запуск контейнеров сс пересборкой изменений
+# Запуск контейнеров с пересборкой изменений
 ```shell
 docker-compose up --build
 ```
@@ -25,7 +25,8 @@ docker-compose down
 php console.php --title 'рыцори' --category 'Фантастика' --price 2000 --inStock 1
 ```
 
-**Warning**: для корректной работы обызательно задать хотя бы один из перечисленных параметров
+```markdown
+**Warning**: для корректной работы обязательно задать хотя бы один из перечисленных параметров
 
 **Note**: Параметр category может принимать значения
 - Исторический роман
@@ -35,3 +36,4 @@ php console.php --title 'рыцори' --category 'Фантастика' --price
 - Сад и огород
 - Детская литература
 - Искусство
+```
