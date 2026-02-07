@@ -18,7 +18,6 @@ class indexController extends Controller
         ViewInterface $view,
         UserRepositoryInterface $userRepository,
     ) {
-        // Передаем зависимости в родительский конструктор
         parent::__construct($view);
         $this->textService = $textService;
         $this->userRepository = $userRepository;
@@ -31,16 +30,13 @@ class indexController extends Controller
         $offset = ($page - 1) * $limit;
 
         $users = $this->userRepository->findAll($limit, $offset);
+
         
-        // Для пагинации также нужно общее количество пользователей.
-        // Давай добавим метод count() в репозиторий.
-        // А пока просто передадим номер страницы.
-        
-        echo $this->render('index_page', [
+        return $this->render('index_page', [
             'users' => $users,
             'currentPage' => $page,
-            // 'totalPages' => $totalPages // Это нужно будет добавить
         ]);
+
     }
 
     public function hello()
@@ -60,6 +56,6 @@ class indexController extends Controller
         );
 
         // Передаем данные в шаблон и выводим результат
-        echo $this->render('index_page', ['text' => $text]);
+        return $this->render('index_page', ['text' => $text]);
     }
 }
