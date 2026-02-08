@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Otus\Food\Domain\Kitchen\Decorator;
 
-final class Mayonnaise extends Cooking
+final class Mayonnaise extends Ingredient
 {
     /**
      * @return string[]

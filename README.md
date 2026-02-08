@@ -25,3 +25,9 @@ php html/bin/console.php kitchen sandwich me 2
 ```shell
 php html/bin/console.php kitchen pizza:chef you 3
 ```
+
+# Test
+
+```shell
+composer --working-dir=html test
+```

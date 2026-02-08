@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Otus\Food\Domain\Kitchen\Decorator;
 
-final class Ketchup extends Cooking
+final class Ketchup extends Ingredient
 {
     /**
      * @return string[]

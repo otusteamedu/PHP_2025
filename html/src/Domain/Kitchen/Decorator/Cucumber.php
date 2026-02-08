@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Otus\Food\Domain\Kitchen\Decorator;
 
-final class Cucumber extends Cooking
+final class Cucumber extends Ingredient
 {
     /**
      * @return string[]
