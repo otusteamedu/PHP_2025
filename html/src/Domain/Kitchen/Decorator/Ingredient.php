@@ -6,7 +6,7 @@ namespace Otus\Food\Domain\Kitchen\Decorator;
 
 use Otus\Food\Domain\Kitchen\Entity\Meal;
 
-abstract class Cooking extends Meal
+abstract class Ingredient extends Meal
 {
     /**
      * @param Meal $meal

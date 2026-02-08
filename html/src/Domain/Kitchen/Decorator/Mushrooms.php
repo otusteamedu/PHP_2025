@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Otus\Food\Domain\Kitchen\Decorator;
 
-final class Mushrooms extends Cooking
+final class Mushrooms extends Ingredient
 {
     /**
      * @return string[]

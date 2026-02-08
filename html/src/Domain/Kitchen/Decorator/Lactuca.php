@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Otus\Food\Domain\Kitchen\Decorator;
 
-final class Lactuca extends Cooking
+final class Lactuca extends Ingredient
 {
     /**
      * @return string[]
