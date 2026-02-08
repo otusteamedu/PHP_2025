@@ -1,0 +1,6 @@
+/vendor/
+# PHPUnit
+/.phpunit.cache/
+/coverage/
+# Codeception
+/tests/Codeception/_support/_generated/

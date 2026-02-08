@@ -1,0 +1,14 @@
+namespace: Tests\Codeception
+support_namespace: Support
+actor_suffix: Tester
+
+paths:
+  tests: tests/Codeception
+  output: tests/Codeception/_output
+  data: tests/Codeception/_data
+  support: tests/Codeception/_support
+  envs: tests/Codeception/_envs
+
+extensions:
+  enabled:
+    - Codeception\Extension\RunFailed
