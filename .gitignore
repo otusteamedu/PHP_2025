@@ -3,6 +3,3 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-# Codeception
-tests/Codeception/_support/_generated/
-tests/Codeception/_output/
