@@ -2,6 +2,7 @@
     "name": "otus/food",
     "type": "project",
     "require": {
+        "php": "^8.4.0",
         "friendsofphp/php-cs-fixer": "^3.93",
         "rector/rector": "^2.3"
     },
@@ -14,6 +15,11 @@
             "Otus\\Food\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Otus\\Food\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Alexander",
@@ -22,11 +28,15 @@
     ],
     "minimum-stability": "stable",
     "scripts": {
+        "test": "vendor/bin/phpunit",
         "rector": "vendor/bin/rector",
         "php-cs-fixer": "vendor/bin/php-cs-fixer fix",
         "fix": [
             "@rector",
             "@php-cs-fixer"
         ]
+    },
+    "config": {
+        "sort-packages": true
     }
 }

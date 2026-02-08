@@ -17,6 +17,7 @@ use Rector\Set\ValueObject\SetList;
 return RectorConfig::configure()
     ->withPaths([
         'src',
+        'tests',
     ])
     ->withSets([
         LevelSetList::UP_TO_PHP_84,
