@@ -1,0 +1,16 @@
+{
+    "name": "arlex2305k/restaurant",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Restaurant\\": "src/",
+            "Restaurant\\Config\\": "config/"
+        }
+    },
+    "require": {
+        "php": ">=8.2",
+        "psr/container": "^2.0",
+        "php-di/php-di": "^7.1",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
