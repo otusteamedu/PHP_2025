@@ -1,0 +1,21 @@
+{
+  "name": "ak/hw",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Ak\\Hw\\": "src/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "Alexander Kanapatski"
+    }
+  ],
+  "require": {
+    "ext-pdo": "*",
+    "ext-mbstring": "*"
+  }
+}
