@@ -11,3 +11,6 @@ memcached/
 .gitignore
 /redis/data/
 /code/vendor/
+/esdata/*
+/nginx/logs/*
+/pgdata/*
