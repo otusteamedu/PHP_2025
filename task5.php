@@ -10,50 +10,44 @@ class Solution
      * @return Integer[]
      */
 
-    private array $arHash = [];
+    private array $arFrequencyCounter;
+    private array $arPrefixSum = [];
     public function smallerNumbersThanCurrent(array $arNumber)
     {
         $this->init($arNumber);
         return $this->getAnswer($arNumber);
     }
 
-    public function init(array $arNumber): void
+    private function init(array $arNumber): void
     {
+        $this->arFrequencyCounter = array_fill(0, 100, 0);
+
         foreach ($arNumber as $number) {
-            $this->arHash[$number] ++;
+            $this->arFrequencyCounter[$number] ++;
         }
-        $this->sortArray($this->arHash);
 
+        $this->initPrefixSum();
     }
 
-    private function sortArray(array &$array): void
+    private function initPrefixSum(): void
     {
-        ksort($array);
+        $sum = 0;
+        foreach ($this->arFrequencyCounter as $number => $frequency) {
+            $this->arPrefixSum[$number] = $sum;
+            $sum += $this->arFrequencyCounter[$number];
+        }
     }
 
-    public function getAnswer(array $arNumber): array
+    private function getAnswer(array $arNumber): array
     {
         $arResult = [];
 
-        $arForAnswer = $this->getArrayForAnswer();
-
         foreach ($arNumber as $number) {
-            $arResult[] = $arForAnswer[$number];
-        }
-
-        return $arResult;
-    }
-
-    private function getArrayForAnswer(): array
-    {
-        $arResult = [];
-        $numberCount = 0;
-
-        foreach ($this->arHash as $number => $count) {
-            $arResult[$number] = $numberCount;
-            $numberCount += $count;
+            $arResult[] = $this->arPrefixSum[$number];
         }
 
         return $arResult;
     }
 }
+
+//var_dump((new Solution())->smallerNumbersThanCurrent([8,1,2,2,3]));
