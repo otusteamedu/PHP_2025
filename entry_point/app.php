@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use \Pryaniki\App\App;
 
-require __DIR__ . '/app/vendor/autoload.php';
+require '../app/vendor/autoload.php';
 
 $app = new App();
 
