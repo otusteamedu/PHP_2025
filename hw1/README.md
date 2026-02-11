@@ -10,7 +10,7 @@
 3. БД соединяется по порту (не забудьте про директории с данными)
 4. Можно установить Composer
 
-### Проверить что установлен Composer можно слдеующим способом
+### 1. Проверить что установлен Composer можно слдеующим способом
 
 ```
     docker exec -it app bash          
@@ -20,7 +20,7 @@
     Run the "diagnose" command to get more detailed diagnostics output.
 ```
 
-5. Соединить FPM и Nginx через unix-сокет
+### 2. Соединить FPM и Nginx через unix-сокет
 
 ## Документация по настройке Unix-сокета между PHP-FPM и Nginx
 
@@ -40,7 +40,7 @@
 
 Ключевые конфигурационные файлы
 
-## 1. PHP-FPM Конфигурация (docker/fpm/php-fpm.conf)
+## 2.1. PHP-FPM Конфигурация (docker/fpm/php-fpm.conf)
 
 ```
 ini
@@ -49,89 +49,56 @@ user = www-data
 group = www-data
 ```
 
-### Ключевая настройка: путь к Unix-сокету
+### 2.2. Ключевая настройка: путь к Unix-сокету
 ```
 listen = /var/run/php/php-fpm.sock
 ```
 
-### Права доступа к сокету
+### 2.3. Права доступа к сокету
 ```
 listen.owner = www-data
 listen.group = www-data
 listen.mode = 0660  # Режим доступа (0666 для отладки)
 ```
 
-### Настройки пула процессов
+### 2.4. Создание директории для сокета с правильными правами
+В образе Alpine по умолчанию нет usermod. Мы устанавливаем пакет shadow, чтобы изменить ID стандартного пользователя nginx:
 ```
-pm = dynamic
-pm.max_children = 5
-pm.start_servers = 2
-pm.min_spare_servers = 1
-pm.max_spare_servers = 3
+RUN apk add --no-cache shadow && \
+    usermod -u $UID nginx && \
+    groupmod -g $GID nginx
 ```
-
-## 2. Dockerfile для PHP-FPM (docker/fpm/Dockerfile)
-
-dockerfile
-### Создание директории для сокета с правильными правами
+### 2.5. PHP-FPM (Dockerfile)
+Для PHP-FPM используется аналогичный подход для пользователя www-data:
 ```
-RUN mkdir -p /var/run/php && \
-    chown www-data:www-data /var/run/php && \
-    chmod 755 /var/run/php
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 ```
 
-### Копирование конфигурации (ЗАМЕЩАЕТ стандартный конфиг)
+## 3. Документация по настройке прав пользователей (Docker)
+Обзор концепции
+В данном проекте реализована архитектура Non-root контейнеров. Это означает, что все основные процессы (Nginx, PHP-FPM) запущены от имени обычного пользователя с ограниченными привилегиями.
+Для обеспечения бесшовного взаимодействия между контейнерами и хост-машиной используется единый системный идентификатор — UID/GID 1000.
 
+### 3.1 Проверка прав на сокет внутри контейнеров
 ```
-COPY php-fpm.conf /usr/local/etc/php-fpm.conf
+docker exec -it hw1-nginx-1 ls -la /var/run/php/
 ```
-
-## 3. Конфигурация Nginx (docker/nginx/hosts/application.local.conf)
-
+### Числовые идентификаторы
+Чтобы проверить числовые идентификаторы пользователя внутри контейнера, используйте команду id. Она выводит и UID (пользователь), и GID (группа).
 ```
-nginx
-server {
-    listen 80;
-    server_name application.local;
-    root /data/application.local;
-    
-    location ~ \.php$ {
-        # Ключевая настройка: путь к Unix-сокету PHP-FPM
-        fastcgi_pass unix:/var/run/php/php-fpm.sock;
-        
-        # Обязательные параметры
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
-        include fastcgi_params;
-        
-        # Оптимизация
-        fastcgi_buffers 16 16k;
-        fastcgi_buffer_size 32k;
-        fastcgi_read_timeout 300;
-    }
-}
-```
-## 4. Docker Compose (docker-compose.yml)
-
-```
-yaml
-services:
-  php-fpm:
-    volumes:
-      # Общий volume для Unix-сокета
-      - php_socket:/var/run/php
-  
-  nginx:
-    volumes:
-      # Тот же volume для доступа к сокету
-      - php_socket:/var/run/php
-
-volumes:
-  # Определение общего volume для сокета
-  php_socket:
+docker exec -it hw1-php-fpm-1 id www-data
 ```
 
-### Виртуальные машины.
-1.  Развернуть `Homestead VM` при помощи `Vagrant` и `VirtualBox`.
-2.  Сайт должен отвечать на доменное имя **application.local**.
-3.  Должна быть поддержка проброса директорий.
+### 3.2 Посмотреть список запущенных процессов 
+```
+docker exec -it hw1-php-fpm-1 sh
+```
+где hw1-php-fpm-1 имя контейнера
+
+Используемые пользователи
+Контейнер	  ОС (База)	    Имя пользователя	UID:GID (внутри)
+Nginx	      Alpine Linux	nginx	            1000:1000
+PHP-FPM	    Debian/Ubuntu	www-data	        1000:1000
+
+### 3.3 Посмотреть от имени какго пользователя запускается postgres
+docker exec -it postgres id
