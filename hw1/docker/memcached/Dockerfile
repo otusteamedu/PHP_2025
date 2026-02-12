@@ -1,2 +1,0 @@
-ARG MEMCACHED_IMAGE=memcached:latest
-FROM ${MEMCACHED_IMAGE}
