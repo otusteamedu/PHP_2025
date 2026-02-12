@@ -16,6 +16,8 @@
   ],
   "require": {
     "ext-pdo": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "phpunit/phpunit": "^11.1",
+    "mockery/mockery": "^1.6"
   }
 }

@@ -11,10 +11,11 @@ RUN apk add \
       libjpeg-turbo-dev \
       libpng-dev \
       freetype-dev \
-      icu-dev
+      icu-dev \
+      git
 
-RUN pecl install memcached redis \
-    && docker-php-ext-enable memcached redis \
+RUN pecl install memcached redis pcov \
+    && docker-php-ext-enable memcached redis pcov \
     && docker-php-ext-install curl
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
