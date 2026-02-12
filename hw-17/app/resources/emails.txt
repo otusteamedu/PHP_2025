@@ -1,0 +1,5 @@
+test@mail.ru
+wrong-email
+info@github.com
+nope@bad-domain.something
+otus.mail@test.ru

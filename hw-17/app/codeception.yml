@@ -1,0 +1,25 @@
+namespace: App\Tests
+coverage:
+  enabled: true
+  show_uncovered: true
+  include:
+    - src/Application/*
+    - src/Domain/*
+    - src/Infrastructure/*
+    - src/UserInterface/*
+
+  exclude:
+    - src/Infrastructure/DI/*
+    - src/Infrastructure/Config/*
+paths:
+  tests: tests
+  output: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
+actor_suffix: Tester
+extensions:
+  enabled:
+    - Codeception\Extension\RunFailed
+params:
+  - .env
