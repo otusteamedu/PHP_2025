@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "ba16c5cbd5bc81ac1a911de0e694f496",
+    "packages": [
+        {
+            "name": "senishinaleksey/validator",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SenishinAleksey/validator.git",
+                "reference": "48566d43b586a6a08b0d6e90a988b439b3bbb719"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SenishinAleksey/validator/zipball/48566d43b586a6a08b0d6e90a988b439b3bbb719",
+                "reference": "48566d43b586a6a08b0d6e90a988b439b3bbb719",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SenishinAleksey\\Validator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Aleksey Senishin",
+                    "email": "senishin@inbox.ru"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/SenishinAleksey/validator/issues",
+                "source": "https://github.com/SenishinAleksey/validator/tree/1.0.0"
+            },
+            "time": "2025-09-22T17:52:56+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
