@@ -1,0 +1,2 @@
+CREATE TABLE
+    client (id INT PRIMARY KEY auto_increment);

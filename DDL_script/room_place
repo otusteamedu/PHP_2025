@@ -1,0 +1,8 @@
+CREATE TABLE
+    room_place (
+        id INT PRIMARY KEY auto_increment,
+        id_room INT NOT NULL,
+        extra_price FLOAT NOT NULL,
+        is_busy tinyINT (1) NOT NULL,
+        FOREIGN KEY (id_room) REFERENCES room (id)
+    );

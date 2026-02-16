@@ -1,0 +1,2 @@
+CREATE TABLE
+    cinema.room (id INT PRIMARY KEY auto_increment);

@@ -1,0 +1,26 @@
+select
+    film.name,
+    sum(film.price * count_session * extra_price) as all_price
+from
+    (
+        select
+            film_session.id_film as id_film,
+            count(id_film_session) as count_session,
+            (room_place.extra_price + film_session.extra_price) as extra_price
+        from
+            orders
+            inner join room_place on orders.id_room_place = room_place.id
+            inner join film_session on orders.id_film_session = film_session.id
+        group by
+            film_session.id_film,
+            id_film_session,
+            extra_price,
+            id_room_place
+    ) as price_detail
+    inner join film on film.id = price_detail.id_film
+group by
+    film.name
+ORDER BY
+    all_price ASC
+LIMIT
+    1;

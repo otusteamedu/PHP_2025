@@ -1,0 +1,48 @@
+erDiagram
+    ROOM ||--|{ TICKET : contains
+    ROOM ||--|{ ROOM_PLACE : contains
+     ROOM ||--|{ FILM_SESSION : contains
+    ROOM_PLACE ||--|{ TICKET : contains
+    FILM ||--|{ FILM_SESSION : contains
+    CLIENT ||--|{ TICKET : creates
+    FILM_SESSION ||--|{ TICKET : contains
+
+    ROOM {
+        int id PK
+    }
+
+
+    FILM {
+        int id PK
+        varchar(255) name
+        float price
+    }
+
+    ROOM_PLACE {
+        int id PK
+        int id_room FK 
+        int number_row
+        int number_place
+        float extra_price
+    }
+
+    CLIENT {
+        int id PK
+        DATETIME date_buy
+    }
+
+    FILM_SESSION {
+        int id PK
+        int id_room FK 
+        int id_film FK 
+        DATETIME start
+        DATETIME end
+    }
+
+    TICKET {
+        int id PK
+        int id_client FK
+        int id_room_place FK
+        int id_session FK
+        DECIMAL price
+    }
