@@ -9,6 +9,11 @@
       "src/functions.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Ak\\Hw\\Test\\": "test/"
+    }
+  },
   "authors": [
     {
       "name": "Alexander Kanapatski"
@@ -18,6 +23,7 @@
     "ext-pdo": "*",
     "ext-mbstring": "*",
     "phpunit/phpunit": "^11.1",
-    "mockery/mockery": "^1.6"
+    "mockery/mockery": "^1.6",
+    "guzzlehttp/guzzle": "^7.0"
   }
 }
