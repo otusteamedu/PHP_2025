@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure;
+namespace Ak\Hw\Infrastructure;
 
-use App\Domain\OrderRepository;
+use Ak\Hw\Domain\OrderRepository;
 
 class MockOrderRepository implements OrderRepository
 {

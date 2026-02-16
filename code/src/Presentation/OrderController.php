@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation;
+namespace Ak\Hw\Presentation;
 
-use App\Application\Validator;
-use App\Infrastructure\ApiService;
-use App\Domain\OrderRepository;
+use Ak\Hw\Application\Validator;
+use Ak\Hw\Domain\OrderRepository;
+use Ak\Hw\Infrastructure\ApiService;
 
 class OrderController
 {
@@ -21,27 +21,52 @@ class OrderController
         $this->orderRepository = $orderRepository;
     }
 
+    public function showOrderForm(array $errors = [], array $data = [], ?string $successMessage = null): void
+    {
+        OrderFormView::render($errors, $data, $successMessage);
+    }
+
     public function processOrder(array $orderData): void
     {
+        // Для запросов через форму, а не через API
+        if (isset($orderData['sum'])) {
+            $orderData['sum'] = (float) str_replace(',', '.', $orderData['sum']);
+        }
+
         $errors = $this->validator->validate($orderData);
         if (count($errors) > 0) {
             http_response_code(400);
-            echo json_encode(['errors' => $errors]);
+            // Если это AJAX-запрос, вернем JSON, иначе покажем форму с ошибками
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                echo json_encode(['errors' => $errors]);
+            } else {
+                $this->showOrderForm($errors, $orderData);
+            }
             return;
         }
 
         try {
             $this->apiService->charge($orderData);
             if ($this->orderRepository->setOrderIsPaid((string)$orderData['order_number'], (float)$orderData['sum'])) {
-                http_response_code(200);
-                echo json_encode(['status' => 'success']);
+                // Если это AJAX-запрос, вернем JSON, иначе покажем форму с успехом
+                if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                    http_response_code(200);
+                    echo json_encode(['status' => 'success']);
+                } else {
+                    $this->showOrderForm([], [], 'Payment was successful!');
+                }
             } else {
-                http_response_code(400);
-                echo json_encode(['status' => 'error', 'message' => 'Order validation failed after payment.']);
+                throw new \Exception('Order validation failed after payment.');
             }
         } catch (\Exception $e) {
             http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+            $error_message = $e->getMessage();
+            // Если это AJAX-запрос, вернем JSON, иначе покажем форму с ошибкой
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                echo json_encode(['status' => 'error', 'message' => $error_message]);
+            } else {
+                $this->showOrderForm(['general' => $error_message], $orderData);
+            }
         }
     }
 }
