@@ -1,0 +1,52 @@
+classDiagram
+direction TB
+	namespace Pryaniki_App_Exceptions {
+        class Exception {
+	        + __construct($message = '', $code = 0, ?Throwable $previous = null)
+        }
+
+        class FieldException {
+	        # fieldName: string
+	        + __construct($fieldName, $code = 0, ?Throwable $previous = null) Exception
+	        # getMessageText() string*
+        }
+
+        class NotExistDomain {
+        }
+
+        class NotValidException {
+	        # getMessageText() string*
+        }
+
+        class EmptyFieldException {
+	        # getMessageText() string*
+        }
+
+	}
+    class App {
+	    +run()
+	    -initEmail()
+	    -getEmail()
+	    -getAnswer()
+    }
+
+    class EmailValidator {
+	    -string $email
+	    -string $validationError
+	    +__construct($email)
+	    +validate()
+	    - checkEmail()
+	    - checkDns()
+	    - isExistsDomain()
+	    - getDomainFromEmail()
+	    - getValidationError()
+    }
+
+    Exception --|> FieldException
+    FieldException --|> EmptyFieldException
+    Exception --|> NotExistDomain
+    FieldException --|> NotValidException
+    App --> EmailValidator : email
+    EmailValidator --> NotValidException : fieldName
+    EmailValidator --> EmptyFieldException
+    EmailValidator --> NotExistDomain

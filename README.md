@@ -34,3 +34,7 @@
 Необходимо изменить название класса на `NotValidFieldException` и переместить его в `app/src/Exceptions/Validation/Field`
 ### EmptyFieldException.php
 Класс можно вынести в папку `app/src/Exceptions/Validation/Field`, поскольку Exception относится к полю.
+
+## Uml-диаграмма приложения AS-IS
+![Uml-диаграмма приложения AS-IS](uml/uml-diagrams-of-the-email-validator-before-refactoring.svg)
+
