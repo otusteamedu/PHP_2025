@@ -1,5 +1,5 @@
 <?php
-namespace Pryaniki\App;
+namespace Pryaniki\App\Validators\Fields;
 
 use Pryaniki\App\Exceptions;
 use Pryaniki\App\Exceptions\EmptyFieldException;

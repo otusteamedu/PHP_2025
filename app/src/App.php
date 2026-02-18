@@ -2,6 +2,8 @@
 
 namespace Pryaniki\App;
 
+use Pryaniki\App\Validators\Fields\EmailValidator;
+
 class App
 {
     private string $email;
