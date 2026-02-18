@@ -2,7 +2,7 @@
 
 namespace Pryaniki\App;
 
-use Pryaniki\App\Validators\Fields\EmailValidator;
+use Pryaniki\App\Domain\Validators\Fields\EmailValidator;
 
 class App
 {

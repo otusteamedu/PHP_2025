@@ -1,12 +1,12 @@
 <?php
-namespace Pryaniki\App\Validators\Fields;
+namespace Pryaniki\App\Domain\Validators\Fields;
 
 use Pryaniki\App\Exceptions;
 use Pryaniki\App\Exceptions\EmptyFieldException;
 use Pryaniki\App\Exceptions\NotExistDomain;
 use Pryaniki\App\Exceptions\NotValidException;
 
-use Pryaniki\App\Validators\ValidatorInterface;
+use Pryaniki\App\Domain\Interfaces\ValidatorInterface;
 
 class EmailValidator implements ValidatorInterface
 {

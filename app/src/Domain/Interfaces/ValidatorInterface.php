@@ -1,6 +1,6 @@
 <?php
 
-namespace Pryaniki\App\Validators;
+namespace Pryaniki\App\Domain\Interfaces;
 
 interface ValidatorInterface
 {
