@@ -6,7 +6,9 @@ use Pryaniki\App\Exceptions\EmptyFieldException;
 use Pryaniki\App\Exceptions\NotExistDomain;
 use Pryaniki\App\Exceptions\NotValidException;
 
-class EmailValidator
+use Pryaniki\App\Validators\ValidatorInterface;
+
+class EmailValidator implements ValidatorInterface
 {
     private string $email;
 
