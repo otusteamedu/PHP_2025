@@ -1,0 +1,17 @@
+{
+    "name": "kamalo/balancer",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Kamalo\\Balancer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Алсу Камалова",
+            "email": "camalovalsu@outlook.com"
+        }
+    ],
+    "require": {}
+}
