@@ -1,10 +1,10 @@
 <?php
 
-namespace Pryaniki\App;
+namespace Pryaniki\App\Presentation\Console;
 
 use Pryaniki\App\Domain\Validators\Fields\EmailValidator;
 
-class App
+class ConsoleEmailValidatorRunner
 {
     private string $email;
 
