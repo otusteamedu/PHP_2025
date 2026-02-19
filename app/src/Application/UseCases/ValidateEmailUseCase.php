@@ -2,18 +2,18 @@
 namespace Pryaniki\App\Application\UseCases;
 
 use Pryaniki\App\Domain\Validators\Fields\EmailValidator;
+use Pryaniki\App\Application\DTO\ValidationResultDTO;
 
 class ValidateEmailUseCase
 {
-    public function execute(string $email): string
+    public function execute(string $email): ValidationResultDTO
     {
         $emailValidator = new EmailValidator($email);
         $isValidEmail = $emailValidator->validate();
+        $validationError = $emailValidator->getValidationError();
 
-        if (!$isValidEmail) {
-            return "Email $email is not valid: {$emailValidator->getValidationError()}" . PHP_EOL;
-        }
-
-        return "Email $email is valid" . PHP_EOL;
+        return new ValidationResultDTO($isValidEmail,
+            $validationError
+        );
     }
 }
