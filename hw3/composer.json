@@ -1,0 +1,16 @@
+{
+    "name": "url/helper",
+    "description": "Библиотека для работы с url строкой",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Url\\Helper\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "otus"
+        }
+    ],
+    "require": {}
+}
