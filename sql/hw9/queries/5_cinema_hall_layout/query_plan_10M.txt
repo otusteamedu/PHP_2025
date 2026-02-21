@@ -1,0 +1,37 @@
++-----------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                     |
++-----------------------------------------------------------------------------------------------------------------------------------------------+
+|Sort  (cost=79996.63..79996.85 rows=88 width=84) (actual time=101.878..103.967 rows=30 loops=1)                                                |
+|  Sort Key: seat.row_number, seat.seat_number                                                                                                  |
+|  Sort Method: quicksort  Memory: 27kB                                                                                                         |
+|  InitPlan 1                                                                                                                                   |
+|    ->  Limit  (cost=4000.82..4000.82 rows=1 width=16) (actual time=6.898..6.940 rows=1 loops=1)                                               |
+|          ->  Sort  (cost=4000.82..4002.78 rows=783 width=16) (actual time=6.897..6.939 rows=1 loops=1)                                        |
+|                Sort Key: (random())                                                                                                           |
+|                Sort Method: top-N heapsort  Memory: 25kB                                                                                      |
+|                ->  Gather  (cost=1000.00..3996.90 rows=783 width=16) (actual time=6.765..6.918 rows=60 loops=1)                               |
+|                      Workers Planned: 1                                                                                                       |
+|                      Workers Launched: 1                                                                                                      |
+|                      ->  Parallel Seq Scan on session s_1  (cost=0.00..2916.65 rows=461 width=8) (actual time=5.699..5.768 rows=30 loops=2)   |
+|                            Filter: ((start_time)::date = CURRENT_DATE)                                                                        |
+|                            Rows Removed by Filter: 78250                                                                                      |
+|  ->  Nested Loop Left Join  (cost=1008.45..75992.97 rows=88 width=84) (actual time=101.584..103.900 rows=30 loops=1)                          |
+|        Join Filter: (seat.id = t.seat_id)                                                                                                     |
+|        Rows Removed by Join Filter: 435                                                                                                       |
+|        ->  Hash Join  (cost=8.45..26.56 rows=88 width=24) (actual time=7.014..7.023 rows=30 loops=1)                                          |
+|              Hash Cond: (seat.hall_id = s.hall_id)                                                                                            |
+|              ->  Seq Scan on seat  (cost=0.00..14.82 rows=882 width=16) (actual time=0.003..0.036 rows=882 loops=1)                           |
+|              ->  Hash  (cost=8.44..8.44 rows=1 width=12) (actual time=6.924..6.924 rows=1 loops=1)                                            |
+|                    Buckets: 1024  Batches: 1  Memory Usage: 9kB                                                                               |
+|                    ->  Index Scan using session_pkey on session s  (cost=0.42..8.44 rows=1 width=12) (actual time=6.920..6.921 rows=1 loops=1)|
+|                          Index Cond: (id = (InitPlan 1).col1)                                                                                 |
+|        ->  Materialize  (cost=1000.00..75888.45 rows=58 width=20) (actual time=3.152..3.228 rows=15 loops=30)                                 |
+|              ->  Gather  (cost=1000.00..75888.16 rows=58 width=20) (actual time=94.561..96.827 rows=15 loops=1)                               |
+|                    Workers Planned: 2                                                                                                         |
+|                    Workers Launched: 2                                                                                                        |
+|                    ->  Parallel Seq Scan on ticket t  (cost=0.00..74882.36 rows=24 width=20) (actual time=93.036..93.093 rows=5 loops=3)      |
+|                          Filter: (session_id = (InitPlan 1).col1)                                                                             |
+|                          Rows Removed by Filter: 1843238                                                                                      |
+|Planning Time: 0.557 ms                                                                                                                        |
+|Execution Time: 104.036 ms                                                                                                                     |
++-----------------------------------------------------------------------------------------------------------------------------------------------+

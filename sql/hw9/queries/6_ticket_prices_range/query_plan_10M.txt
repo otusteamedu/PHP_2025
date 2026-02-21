@@ -1,0 +1,29 @@
++---------------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                         |
++---------------------------------------------------------------------------------------------------------------------------------------------------+
+|Finalize GroupAggregate  (cost=5001.24..11288.54 rows=1 width=40) (actual time=19.441..20.883 rows=1 loops=1)                                      |
+|  InitPlan 1                                                                                                                                       |
+|    ->  Limit  (cost=4000.82..4000.82 rows=1 width=16) (actual time=7.222..7.261 rows=1 loops=1)                                                   |
+|          ->  Sort  (cost=4000.82..4002.78 rows=783 width=16) (actual time=7.221..7.260 rows=1 loops=1)                                            |
+|                Sort Key: (random())                                                                                                               |
+|                Sort Method: top-N heapsort  Memory: 25kB                                                                                          |
+|                ->  Gather  (cost=1000.00..3996.90 rows=783 width=16) (actual time=7.076..7.232 rows=60 loops=1)                                   |
+|                      Workers Planned: 1                                                                                                           |
+|                      Workers Launched: 1                                                                                                          |
+|                      ->  Parallel Seq Scan on session s_1  (cost=0.00..2916.65 rows=461 width=8) (actual time=5.783..5.852 rows=30 loops=2)       |
+|                            Filter: ((start_time)::date = CURRENT_DATE)                                                                            |
+|                            Rows Removed by Filter: 78250                                                                                          |
+|  ->  Gather  (cost=1000.42..7287.68 rows=2 width=72) (actual time=19.410..20.838 rows=1 loops=1)                                                  |
+|        Workers Planned: 2                                                                                                                         |
+|        Workers Launched: 2                                                                                                                        |
+|        ->  Partial GroupAggregate  (cost=0.42..6287.48 rows=1 width=72) (actual time=10.141..10.141 rows=0 loops=3)                               |
+|              ->  Nested Loop  (cost=0.42..6287.47 rows=1 width=13) (actual time=10.112..10.137 rows=1 loops=3)                                    |
+|                    ->  Parallel Seq Scan on session_price sp  (cost=0.00..6283.02 rows=1 width=13) (actual time=10.094..10.118 rows=1 loops=3)    |
+|                          Filter: (session_id = (InitPlan 1).col1)                                                                                 |
+|                          Rows Removed by Filter: 166720                                                                                           |
+|                    ->  Index Only Scan using session_pkey on session s  (cost=0.42..4.44 rows=1 width=8) (actual time=0.013..0.013 rows=1 loops=4)|
+|                          Index Cond: (id = (InitPlan 1).col1)                                                                                     |
+|                          Heap Fetches: 0                                                                                                          |
+|Planning Time: 0.435 ms                                                                                                                            |
+|Execution Time: 20.936 ms                                                                                                                          |
++---------------------------------------------------------------------------------------------------------------------------------------------------+

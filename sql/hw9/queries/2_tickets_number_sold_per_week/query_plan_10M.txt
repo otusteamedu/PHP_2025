@@ -1,0 +1,23 @@
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                          |
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+|Finalize Aggregate  (cost=134585.65..134585.66 rows=1 width=8) (actual time=298.086..301.904 rows=1 loops=1)                                        |
+|  ->  Gather  (cost=134585.43..134585.64 rows=2 width=8) (actual time=297.989..301.896 rows=3 loops=1)                                              |
+|        Workers Planned: 2                                                                                                                          |
+|        Workers Launched: 2                                                                                                                         |
+|        ->  Partial Aggregate  (cost=133585.43..133585.44 rows=1 width=8) (actual time=288.506..288.507 rows=1 loops=3)                             |
+|              ->  Parallel Hash Join  (cost=58401.73..133572.11 rows=5331 width=0) (actual time=284.878..288.357 rows=4402 loops=3)                 |
+|                    Hash Cond: (t.order_id = o.id)                                                                                                  |
+|                    ->  Parallel Seq Scan on ticket t  (cost=0.00..69122.29 rows=2304029 width=8) (actual time=0.023..85.732 rows=1843243 loops=3)  |
+|                    ->  Parallel Hash  (cost=58362.16..58362.16 rows=3166 width=8) (actual time=62.762..62.763 rows=2601 loops=3)                   |
+|                          Buckets: 8192  Batches: 1  Memory Usage: 416kB                                                                            |
+|                          ->  Parallel Seq Scan on "order" o  (cost=0.00..58362.16 rows=3166 width=8) (actual time=61.326..62.395 rows=2601 loops=3)|
+|                                Filter: ((created_at >= (CURRENT_DATE - 7)) AND (created_at <= (CURRENT_DATE - 1)))                                 |
+|                                Rows Removed by Filter: 1092188                                                                                     |
+|Planning Time: 0.498 ms                                                                                                                             |
+|JIT:                                                                                                                                                |
+|  Functions: 41                                                                                                                                     |
+|  Options: Inlining false, Optimization false, Expressions true, Deforming true                                                                     |
+|  Timing: Generation 1.172 ms (Deform 0.425 ms), Inlining 0.000 ms, Optimization 0.645 ms, Emission 14.505 ms, Total 16.322 ms                      |
+|Execution Time: 314.401 ms                                                                                                                          |
++----------------------------------------------------------------------------------------------------------------------------------------------------+
