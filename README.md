@@ -1,3 +1,9 @@
-# PHP_2025
+# HW18
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Leetcode практикум #2
+
+---
+
+1) https://leetcode.com/problems/intersection-of-two-linked-lists/  
+2) https://leetcode.com/problems/fraction-to-recurring-decimal/
+
