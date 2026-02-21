@@ -1,0 +1,20 @@
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                                |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+|GroupAggregate  (cost=10.67..22.81 rows=1 width=40) (actual time=0.112..0.113 rows=1 loops=1)                                                             |
+|  InitPlan 1                                                                                                                                              |
+|    ->  Limit  (cost=9.82..9.82 rows=1 width=16) (actual time=0.063..0.064 rows=1 loops=1)                                                                |
+|          ->  Sort  (cost=9.82..9.97 rows=60 width=16) (actual time=0.062..0.062 rows=1 loops=1)                                                          |
+|                Sort Key: (random())                                                                                                                      |
+|                Sort Method: top-N heapsort  Memory: 25kB                                                                                                 |
+|                ->  Index Scan using idx_session_start_date on session s_1  (cost=0.30..9.52 rows=60 width=16) (actual time=0.026..0.042 rows=60 loops=1) |
+|                      Index Cond: ((start_time)::date = CURRENT_DATE)                                                                                     |
+|  ->  Nested Loop  (cost=0.84..12.94 rows=3 width=13) (actual time=0.106..0.108 rows=4 loops=1)                                                           |
+|        ->  Index Only Scan using session_pkey on session s  (cost=0.42..4.44 rows=1 width=8) (actual time=0.083..0.084 rows=1 loops=1)                   |
+|              Index Cond: (id = (InitPlan 1).col1)                                                                                                        |
+|              Heap Fetches: 0                                                                                                                             |
+|        ->  Index Scan using idx_session_price_session_id on session_price sp  (cost=0.42..8.47 rows=3 width=13) (actual time=0.022..0.023 rows=4 loops=1)|
+|              Index Cond: (session_id = (InitPlan 1).col1)                                                                                                |
+|Planning Time: 0.504 ms                                                                                                                                   |
+|Execution Time: 0.149 ms                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
