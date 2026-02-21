@@ -1,0 +1,60 @@
+Количество строк в таблицах в схеме cinema:
++-----------------------+---------+
+|table_name             |row_count|
++-----------------------+---------+
+|hall_type              |3        |
+|session_period         |4        |
+|seat_type              |8        |
+|hall                   |10       |
+|seat                   |882      |
+|movie                  |1500     |
+|client                 |10000    |
+|session                |156560   |
+|session_price          |500164   |
+|order                  |3284367  |
+|ticket                 |5529669  |
+|all_tables (total_rows)|9483167  |
++-----------------------+---------+
+
+ТОП-15 самых больших объектов БД в порядке убывания:
++------+----------------------------+-------+-------+
+|schema|db_object                   |type   |size   |
++------+----------------------------+-------+-------+
+|cinema|ticket                      |таблица|616 MB |
+|cinema|order                       |таблица|322 MB |
+|cinema|ticket_pkey                 |индекс |118 MB |
+|cinema|idx_ticket_order_id         |индекс |99 MB  |
+|cinema|order_pkey                  |индекс |70 MB  |
+|cinema|idx_order_created_at        |индекс |63 MB  |
+|cinema|session_price               |таблица|46 MB  |
+|cinema|idx_ticket_session_id       |индекс |39 MB  |
+|cinema|session                     |таблица|16 MB  |
+|cinema|session_price_pkey          |индекс |11 MB  |
+|cinema|idx_session_price_session_id|индекс |7024 kB|
+|cinema|session_pkey                |индекс |3456 kB|
+|cinema|idx_session_start_date      |индекс |1064 kB|
+|cinema|idx_session_movie_id        |индекс |1064 kB|
+|cinema|client                      |таблица|1024 kB|
++------+----------------------------+-------+-------+
+
+ТОП-5 наиболее часто используемых индексов в порядке убывания:
++------+---------+--------------+--------+-----------+------------+
+|schema|table    |index         |scans   |tuples_read|tuples_fetch|
++------+---------+--------------+--------+-----------+------------+
+|cinema|session  |session_pkey  |12366119|12366119   |12366046    |
+|cinema|seat     |seat_pkey     |11168346|11168346   |11168332    |
+|cinema|order    |order_pkey    |11167524|11167524   |11167450    |
+|cinema|client   |client_pkey   |6630653 |6630653    |6630653     |
+|cinema|seat_type|seat_type_pkey|1012936 |1012936    |1012936     |
++------+---------+--------------+--------+-----------+------------+
+
+ТОП-5 наиболее редко используемых индексов в порядке возрастания:
++------+-------------+----------------------------+-----+-----------+------------+
+|schema|table        |index                       |scans|tuples_read|tuples_fetch|
++------+-------------+----------------------------+-----+-----------+------------+
+|cinema|session_price|idx_session_price_session_id|1    |4          |4           |
+|cinema|session      |idx_session_start_date      |8    |480        |180         |
+|cinema|session      |idx_session_movie_id        |28   |28         |0           |
+|cinema|ticket       |idx_ticket_session_id       |31   |48         |18          |
+|cinema|order        |idx_order_created_at        |73   |182873     |55216       |
++------+-------------+----------------------------+-----+-----------+------------+
