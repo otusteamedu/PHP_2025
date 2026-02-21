@@ -1,0 +1,18 @@
++--------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                |
++--------------------------------------------------------------------------------------------------------------------------+
+|Unique  (cost=34.83..34.86 rows=6 width=8) (actual time=0.152..0.159 rows=10 loops=1)                                     |
+|  ->  Sort  (cost=34.83..34.85 rows=6 width=8) (actual time=0.151..0.153 rows=50 loops=1)                                 |
+|        Sort Key: m.name                                                                                                  |
+|        Sort Method: quicksort  Memory: 25kB                                                                              |
+|        ->  Hash Join  (cost=1.34..34.75 rows=6 width=8) (actual time=0.025..0.112 rows=50 loops=1)                       |
+|              Hash Cond: (s.movie_id = m.id)                                                                              |
+|              ->  Seq Scan on session s  (cost=0.00..33.40 rows=6 width=8) (actual time=0.011..0.092 rows=50 loops=1)     |
+|                    Filter: ((start_time)::date = CURRENT_DATE)                                                           |
+|                    Rows Removed by Filter: 1230                                                                          |
+|              ->  Hash  (cost=1.15..1.15 rows=15 width=16) (actual time=0.007..0.007 rows=15 loops=1)                     |
+|                    Buckets: 1024  Batches: 1  Memory Usage: 9kB                                                          |
+|                    ->  Seq Scan on movie m  (cost=0.00..1.15 rows=15 width=16) (actual time=0.002..0.003 rows=15 loops=1)|
+|Planning Time: 0.398 ms                                                                                                   |
+|Execution Time: 0.195 ms                                                                                                  |
++--------------------------------------------------------------------------------------------------------------------------+
