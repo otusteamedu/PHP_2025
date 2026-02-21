@@ -1,0 +1,31 @@
++---------------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                         |
++---------------------------------------------------------------------------------------------------------------------------------------------------+
+|Limit  (cost=2091.57..2091.58 rows=3 width=48) (actual time=13.452..13.455 rows=3 loops=1)                                                         |
+|  ->  Sort  (cost=2091.57..2091.61 rows=15 width=48) (actual time=13.451..13.453 rows=3 loops=1)                                                   |
+|        Sort Key: (sum(t.price)) DESC                                                                                                              |
+|        Sort Method: top-N heapsort  Memory: 25kB                                                                                                  |
+|        ->  HashAggregate  (cost=2091.19..2091.37 rows=15 width=48) (actual time=13.427..13.432 rows=10 loops=1)                                   |
+|              Group Key: m.id                                                                                                                      |
+|              Batches: 1  Memory Usage: 24kB                                                                                                       |
+|              ->  Hash Join  (cost=1002.95..2037.45 rows=10748 width=21) (actual time=3.713..12.065 rows=10773 loops=1)                            |
+|                    Hash Cond: (s.movie_id = m.id)                                                                                                 |
+|                    ->  Hash Join  (cost=1001.61..1999.92 rows=10748 width=13) (actual time=3.697..10.947 rows=10773 loops=1)                      |
+|                          Hash Cond: (t.session_id = s.id)                                                                                         |
+|                          ->  Hash Join  (cost=961.81..1931.82 rows=10748 width=13) (actual time=3.489..9.483 rows=10773 loops=1)                  |
+|                                Hash Cond: (t.order_id = o.id)                                                                                     |
+|                                ->  Seq Scan on ticket t  (cost=0.00..848.56 rows=46256 width=21) (actual time=0.003..1.884 rows=46256 loops=1)    |
+|                                ->  Hash  (cost=882.62..882.62 rows=6335 width=8) (actual time=3.243..3.244 rows=6344 loops=1)                     |
+|                                      Buckets: 8192  Batches: 1  Memory Usage: 312kB                                                               |
+|                                      ->  Seq Scan on "order" o  (cost=0.00..882.62 rows=6335 width=8) (actual time=0.072..2.610 rows=6344 loops=1)|
+|                                            Filter: ((created_at >= (CURRENT_DATE - 7)) AND (created_at <= (CURRENT_DATE - 1)))                    |
+|                                            Rows Removed by Filter: 20921                                                                          |
+|                          ->  Hash  (cost=23.80..23.80 rows=1280 width=16) (actual time=0.199..0.200 rows=1280 loops=1)                            |
+|                                Buckets: 2048  Batches: 1  Memory Usage: 76kB                                                                      |
+|                                ->  Seq Scan on session s  (cost=0.00..23.80 rows=1280 width=16) (actual time=0.002..0.084 rows=1280 loops=1)      |
+|                    ->  Hash  (cost=1.15..1.15 rows=15 width=16) (actual time=0.008..0.009 rows=15 loops=1)                                        |
+|                          Buckets: 1024  Batches: 1  Memory Usage: 9kB                                                                             |
+|                          ->  Seq Scan on movie m  (cost=0.00..1.15 rows=15 width=16) (actual time=0.003..0.005 rows=15 loops=1)                   |
+|Planning Time: 0.713 ms                                                                                                                            |
+|Execution Time: 13.511 ms                                                                                                                          |
++---------------------------------------------------------------------------------------------------------------------------------------------------+

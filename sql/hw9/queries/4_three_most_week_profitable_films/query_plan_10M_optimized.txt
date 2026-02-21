@@ -1,0 +1,38 @@
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                                                               |
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|Limit  (cost=45747.69..45747.70 rows=3 width=50) (actual time=13.761..14.344 rows=3 loops=1)                                                                                             |
+|  ->  Sort  (cost=45747.69..45751.44 rows=1500 width=50) (actual time=13.761..14.343 rows=3 loops=1)                                                                                     |
+|        Sort Key: (sum(t.price)) DESC                                                                                                                                                    |
+|        Sort Method: top-N heapsort  Memory: 25kB                                                                                                                                        |
+|        ->  Finalize GroupAggregate  (cost=45279.22..45728.31 rows=1500 width=50) (actual time=13.263..14.337 rows=15 loops=1)                                                           |
+|              Group Key: m.id                                                                                                                                                            |
+|              ->  Gather Merge  (cost=45279.22..45687.06 rows=3000 width=50) (actual time=13.210..14.319 rows=41 loops=1)                                                                |
+|                    Workers Planned: 2                                                                                                                                                   |
+|                    Workers Launched: 2                                                                                                                                                  |
+|                    ->  Partial GroupAggregate  (cost=44279.20..44340.76 rows=1500 width=50) (actual time=11.017..11.483 rows=14 loops=3)                                                |
+|                          Group Key: m.id                                                                                                                                                |
+|                          ->  Sort  (cost=44279.20..44293.47 rows=5708 width=23) (actual time=10.988..11.106 rows=4291 loops=3)                                                          |
+|                                Sort Key: m.id                                                                                                                                           |
+|                                Sort Method: quicksort  Memory: 379kB                                                                                                                    |
+|                                Worker 0:  Sort Method: quicksort  Memory: 254kB                                                                                                         |
+|                                Worker 1:  Sort Method: quicksort  Memory: 256kB                                                                                                         |
+|                                ->  Hash Join  (cost=213.44..43923.05 rows=5708 width=23) (actual time=0.453..10.393 rows=4291 loops=3)                                                  |
+|                                      Hash Cond: (s.movie_id = m.id)                                                                                                                     |
+|                                      ->  Nested Loop  (cost=164.69..43859.27 rows=5708 width=13) (actual time=0.173..9.559 rows=4291 loops=3)                                           |
+|                                            ->  Nested Loop  (cost=164.27..41354.85 rows=5708 width=13) (actual time=0.166..4.191 rows=4291 loops=3)                                     |
+|                                                  ->  Parallel Bitmap Heap Scan on "order" o  (cost=163.83..16885.67 rows=3390 width=8) (actual time=0.153..0.369 rows=2557 loops=3)     |
+|                                                        Recheck Cond: ((created_at >= (CURRENT_DATE - 7)) AND (created_at <= (CURRENT_DATE - 1)))                                        |
+|                                                        Heap Blocks: exact=33                                                                                                            |
+|                                                        ->  Bitmap Index Scan on idx_order_created_at  (cost=0.00..161.80 rows=8136 width=0) (actual time=0.394..0.394 rows=7671 loops=1)|
+|                                                              Index Cond: ((created_at >= (CURRENT_DATE - 7)) AND (created_at <= (CURRENT_DATE - 1)))                                    |
+|                                                  ->  Index Scan using idx_ticket_order_id on ticket t  (cost=0.43..7.19 rows=3 width=21) (actual time=0.001..0.001 rows=2 loops=7671)   |
+|                                                        Index Cond: (order_id = o.id)                                                                                                    |
+|                                            ->  Index Scan using session_pkey on session s  (cost=0.42..0.44 rows=1 width=16) (actual time=0.001..0.001 rows=1 loops=12873)              |
+|                                                  Index Cond: (id = t.session_id)                                                                                                        |
+|                                      ->  Hash  (cost=30.00..30.00 rows=1500 width=18) (actual time=0.264..0.264 rows=1500 loops=3)                                                      |
+|                                            Buckets: 2048  Batches: 1  Memory Usage: 98kB                                                                                                |
+|                                            ->  Seq Scan on movie m  (cost=0.00..30.00 rows=1500 width=18) (actual time=0.010..0.102 rows=1500 loops=3)                                  |
+|Planning Time: 0.559 ms                                                                                                                                                                  |
+|Execution Time: 14.402 ms                                                                                                                                                                |
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

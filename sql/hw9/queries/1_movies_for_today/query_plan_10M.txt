@@ -1,0 +1,23 @@
++----------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                    |
++----------------------------------------------------------------------------------------------------------------------------------------------+
+|Unique  (cost=3987.01..4042.33 rows=461 width=10) (actual time=8.014..9.423 rows=15 loops=1)                                                  |
+|  ->  Gather Merge  (cost=3987.01..4041.18 rows=461 width=10) (actual time=8.014..9.420 rows=15 loops=1)                                      |
+|        Workers Planned: 1                                                                                                                    |
+|        Workers Launched: 1                                                                                                                   |
+|        ->  Unique  (cost=2987.00..2989.31 rows=461 width=10) (actual time=6.760..6.765 rows=8 loops=2)                                       |
+|              ->  Sort  (cost=2987.00..2988.16 rows=461 width=10) (actual time=6.759..6.761 rows=30 loops=2)                                  |
+|                    Sort Key: m.name                                                                                                          |
+|                    Sort Method: quicksort  Memory: 25kB                                                                                      |
+|                    Worker 0:  Sort Method: quicksort  Memory: 25kB                                                                           |
+|                    ->  Hash Join  (cost=48.75..2966.61 rows=461 width=10) (actual time=6.641..6.714 rows=30 loops=2)                         |
+|                          Hash Cond: (s.movie_id = m.id)                                                                                      |
+|                          ->  Parallel Seq Scan on session s  (cost=0.00..2916.65 rows=461 width=8) (actual time=6.283..6.352 rows=30 loops=2)|
+|                                Filter: ((start_time)::date = CURRENT_DATE)                                                                   |
+|                                Rows Removed by Filter: 78250                                                                                 |
+|                          ->  Hash  (cost=30.00..30.00 rows=1500 width=18) (actual time=0.313..0.313 rows=1500 loops=2)                       |
+|                                Buckets: 2048  Batches: 1  Memory Usage: 98kB                                                                 |
+|                                ->  Seq Scan on movie m  (cost=0.00..30.00 rows=1500 width=18) (actual time=0.015..0.122 rows=1500 loops=2)   |
+|Planning Time: 0.467 ms                                                                                                                       |
+|Execution Time: 9.466 ms                                                                                                                      |
++----------------------------------------------------------------------------------------------------------------------------------------------+

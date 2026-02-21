@@ -1,0 +1,31 @@
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                           |
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+|Sort  (cost=1029.81..1030.03 rows=89 width=84) (actual time=2.312..2.316 rows=60 loops=1)                                                            |
+|  Sort Key: seat.row_number, seat.seat_number                                                                                                        |
+|  Sort Method: quicksort  Memory: 29kB                                                                                                               |
+|  InitPlan 1                                                                                                                                         |
+|    ->  Limit  (cost=33.45..33.45 rows=1 width=16) (actual time=0.095..0.096 rows=1 loops=1)                                                         |
+|          ->  Sort  (cost=33.45..33.46 rows=6 width=16) (actual time=0.095..0.095 rows=1 loops=1)                                                    |
+|                Sort Key: (random())                                                                                                                 |
+|                Sort Method: top-N heapsort  Memory: 25kB                                                                                            |
+|                ->  Seq Scan on session s_1  (cost=0.00..33.42 rows=6 width=16) (actual time=0.010..0.088 rows=50 loops=1)                           |
+|                      Filter: ((start_time)::date = CURRENT_DATE)                                                                                    |
+|                      Rows Removed by Filter: 1230                                                                                                   |
+|  ->  Hash Right Join  (cost=27.55..993.48 rows=89 width=84) (actual time=1.235..2.287 rows=60 loops=1)                                              |
+|        Hash Cond: (t.seat_id = seat.id)                                                                                                             |
+|        ->  Seq Scan on ticket t  (cost=0.00..964.20 rows=36 width=20) (actual time=1.015..2.049 rows=18 loops=1)                                    |
+|              Filter: (session_id = (InitPlan 1).col1)                                                                                               |
+|              Rows Removed by Filter: 46238                                                                                                          |
+|        ->  Hash  (cost=26.43..26.43 rows=89 width=24) (actual time=0.213..0.214 rows=60 loops=1)                                                    |
+|              Buckets: 1024  Batches: 1  Memory Usage: 12kB                                                                                          |
+|              ->  Hash Join  (cost=8.31..26.43 rows=89 width=24) (actual time=0.192..0.206 rows=60 loops=1)                                          |
+|                    Hash Cond: (seat.hall_id = s.hall_id)                                                                                            |
+|                    ->  Seq Scan on seat  (cost=0.00..14.82 rows=882 width=16) (actual time=0.004..0.037 rows=882 loops=1)                           |
+|                    ->  Hash  (cost=8.29..8.29 rows=1 width=12) (actual time=0.105..0.106 rows=1 loops=1)                                            |
+|                          Buckets: 1024  Batches: 1  Memory Usage: 9kB                                                                               |
+|                          ->  Index Scan using session_pkey on session s  (cost=0.28..8.29 rows=1 width=12) (actual time=0.102..0.103 rows=1 loops=1)|
+|                                Index Cond: (id = (InitPlan 1).col1)                                                                                 |
+|Planning Time: 0.194 ms                                                                                                                              |
+|Execution Time: 2.348 ms                                                                                                                             |
++-----------------------------------------------------------------------------------------------------------------------------------------------------+

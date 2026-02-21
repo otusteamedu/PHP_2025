@@ -1,0 +1,21 @@
++---------------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                         |
++---------------------------------------------------------------------------------------------------------------------------------------------------+
+|GroupAggregate  (cost=1294.84..1335.95 rows=783 width=98) (actual time=0.650..0.689 rows=15 loops=1)                                               |
+|  Group Key: m.name, m.description, m.duration, m.rating                                                                                           |
+|  ->  Sort  (cost=1294.84..1296.80 rows=783 width=42) (actual time=0.565..0.570 rows=60 loops=1)                                                   |
+|        Sort Key: m.name, m.description, m.duration, m.rating, s.start_time                                                                        |
+|        Sort Method: quicksort  Memory: 28kB                                                                                                       |
+|        ->  Hash Join  (cost=59.12..1257.21 rows=783 width=42) (actual time=0.466..0.505 rows=60 loops=1)                                          |
+|              Hash Cond: (s.movie_id = m.id)                                                                                                       |
+|              ->  Bitmap Heap Scan on session s  (cost=10.37..1206.39 rows=783 width=16) (actual time=0.018..0.042 rows=60 loops=1)                |
+|                    Recheck Cond: ((start_time)::date = CURRENT_DATE)                                                                              |
+|                    Heap Blocks: exact=13                                                                                                          |
+|                    ->  Bitmap Index Scan on idx_session_start_date  (cost=0.00..10.17 rows=783 width=0) (actual time=0.011..0.011 rows=60 loops=1)|
+|                          Index Cond: ((start_time)::date = CURRENT_DATE)                                                                          |
+|              ->  Hash  (cost=30.00..30.00 rows=1500 width=42) (actual time=0.438..0.439 rows=1500 loops=1)                                        |
+|                    Buckets: 2048  Batches: 1  Memory Usage: 133kB                                                                                 |
+|                    ->  Seq Scan on movie m  (cost=0.00..30.00 rows=1500 width=42) (actual time=0.005..0.160 rows=1500 loops=1)                    |
+|Planning Time: 0.595 ms                                                                                                                            |
+|Execution Time: 0.753 ms                                                                                                                           |
++---------------------------------------------------------------------------------------------------------------------------------------------------+

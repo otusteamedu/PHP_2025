@@ -1,0 +1,13 @@
++--------------------------------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                                        |
++--------------------------------------------------------------------------------------------------------------------------------------------------+
+|Aggregate  (cost=27557.05..27557.06 rows=1 width=8) (actual time=10.992..10.992 rows=1 loops=1)                                                   |
+|  ->  Nested Loop  (cost=0.87..27525.15 rows=12760 width=0) (actual time=0.073..10.581 rows=13028 loops=1)                                        |
+|        ->  Index Scan using idx_order_created_at on "order" o  (cost=0.44..289.97 rows=7579 width=8) (actual time=0.063..2.029 rows=7687 loops=1)|
+|              Index Cond: ((created_at >= (CURRENT_DATE - 7)) AND (created_at <= (CURRENT_DATE - 1)))                                             |
+|        ->  Index Only Scan using idx_ticket_order_id on ticket t  (cost=0.43..3.56 rows=3 width=8) (actual time=0.001..0.001 rows=2 loops=7687)  |
+|              Index Cond: (order_id = o.id)                                                                                                       |
+|              Heap Fetches: 0                                                                                                                     |
+|Planning Time: 4.749 ms                                                                                                                           |
+|Execution Time: 11.042 ms                                                                                                                         |
++--------------------------------------------------------------------------------------------------------------------------------------------------+

@@ -1,0 +1,15 @@
++---------------------------------------------------------------------------------------------------------------------------+
+|QUERY PLAN                                                                                                                 |
++---------------------------------------------------------------------------------------------------------------------------+
+|Aggregate  (cost=1958.69..1958.70 rows=1 width=8) (actual time=9.663..9.664 rows=1 loops=1)                                |
+|  ->  Hash Join  (cost=961.81..1931.82 rows=10748 width=0) (actual time=4.030..9.368 rows=10773 loops=1)                   |
+|        Hash Cond: (t.order_id = o.id)                                                                                     |
+|        ->  Seq Scan on ticket t  (cost=0.00..848.56 rows=46256 width=8) (actual time=0.006..1.724 rows=46256 loops=1)     |
+|        ->  Hash  (cost=882.62..882.62 rows=6335 width=8) (actual time=3.778..3.778 rows=6344 loops=1)                     |
+|              Buckets: 8192  Batches: 1  Memory Usage: 312kB                                                               |
+|              ->  Seq Scan on "order" o  (cost=0.00..882.62 rows=6335 width=8) (actual time=0.113..3.067 rows=6344 loops=1)|
+|                    Filter: ((created_at >= (CURRENT_DATE - 7)) AND (created_at <= (CURRENT_DATE - 1)))                    |
+|                    Rows Removed by Filter: 20921                                                                          |
+|Planning Time: 0.188 ms                                                                                                    |
+|Execution Time: 9.685 ms                                                                                                   |
++---------------------------------------------------------------------------------------------------------------------------+
