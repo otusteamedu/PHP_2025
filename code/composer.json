@@ -1,0 +1,29 @@
+{
+  "name": "ak/hw",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Ak\\Hw\\": "src/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Ak\\Hw\\Test\\": "test/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Alexander Kanapatski"
+    }
+  ],
+  "require": {
+    "ext-pdo": "*",
+    "ext-mbstring": "*",
+    "phpunit/phpunit": "^11.1",
+    "mockery/mockery": "^1.6",
+    "guzzlehttp/guzzle": "^7.0"
+  }
+}
