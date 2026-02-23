@@ -5,29 +5,18 @@ use Pryaniki\App\Exceptions;
 use Pryaniki\App\Exceptions\EmptyFieldException;
 use Pryaniki\App\Exceptions\NotExistDomain;
 use Pryaniki\App\Exceptions\NotValidException;
+use Pryaniki\App\Domain\Validators\BaseValidator;
 
-use Pryaniki\App\Domain\Interfaces\ValidatorInterface;
-
-class EmailValidator implements ValidatorInterface
+class EmailValidator extends BaseValidator
 {
-    private string $email;
-
     private string $validationError = '';
 
-    /**
-     * @param string $email
-     */
-    public function __construct(string $email)
-    {
-        $this->email = $email;
-    }
-
-    public function validate(): bool
+    public function validate(mixed $value, string $fieldName): bool
     {
         $isValid = false;
 
         try {
-            self::checkEmail();
+            self::checkEmail($value, $fieldName);
             self::checkDns();
             $isValid = true;
         } catch (\Exception $e) {
@@ -41,14 +30,14 @@ class EmailValidator implements ValidatorInterface
      * @throws NotValidException
      * @throws EmptyFieldException
      */
-    private function checkEmail(): void
+    private function checkEmail(string $email, string $fieldName): void
     {
-        if ($this->email === '') {
-            throw new Exceptions\EmptyFieldException('email');
+        if ($email === '') {
+            throw new Exceptions\EmptyFieldException($fieldName);
         }
 
-        if (filter_var($this->email, FILTER_VALIDATE_EMAIL) === false) {
-            throw new Exceptions\NotValidException('email');
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            throw new Exceptions\NotValidException($fieldName);
         }
     }
 

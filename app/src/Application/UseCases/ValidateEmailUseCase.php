@@ -8,8 +8,8 @@ class ValidateEmailUseCase
 {
     public function execute(string $email): ValidationResultDTO
     {
-        $emailValidator = new EmailValidator($email);
-        $isValidEmail = $emailValidator->validate();
+        $emailValidator = new EmailValidator();
+        $isValidEmail = $emailValidator->validate($email, 'Email');
         $validationError = $emailValidator->getValidationError();
 
         return new ValidationResultDTO($isValidEmail,
