@@ -1,6 +1,7 @@
 <?php
 
-namespace Pryaniki\App\Exceptions;
+namespace Pryaniki\App\Exceptions\Validation\Field;
+
 
 class NotValidException extends FieldException
 {

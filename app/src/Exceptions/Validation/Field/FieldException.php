@@ -1,6 +1,8 @@
 <?php
 
-namespace Pryaniki\App\Exceptions;
+namespace Pryaniki\App\Exceptions\Validation\Field;
+
+use Pryaniki\App\Exceptions\Exception;
 
 abstract class FieldException extends Exception
 {
