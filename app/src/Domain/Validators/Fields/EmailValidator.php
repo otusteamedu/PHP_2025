@@ -3,6 +3,7 @@ namespace Pryaniki\App\Domain\Validators\Fields;
 
 use Pryaniki\App\Exceptions;
 use Pryaniki\App\Exceptions\EmptyFieldException;
+use Pryaniki\App\Exceptions\FieldException;
 use Pryaniki\App\Exceptions\NotValidException;
 use Pryaniki\App\Domain\Validators\BaseValidator;
 
@@ -17,7 +18,7 @@ class EmailValidator extends BaseValidator
         try {
             self::checkEmail($value, $fieldName);
             $isValid = true;
-        } catch (\Exception $e) {
+        } catch (FieldException $e) {
             $this->validationError = $e->getMessage() . PHP_EOL;
         }
 
