@@ -1,3 +1,3 @@
-# PHP_2025
-
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+# Практикум решения алгоритмических задач 2
+- task1.php - https://leetcode.com/problems/intersection-of-two-linked-lists/
+- task2.php - https://leetcode.com/problems/fraction-to-recurring-decimal/
