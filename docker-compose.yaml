@@ -1,0 +1,58 @@
+# в этом блоке мы описываем контейнеры, которые будут запускаться
+services:
+  nginx:
+    build:
+      context: nginx
+      dockerfile: nginx/Dockerfile
+    image: nginx
+    container_name: "${CONTAINER_NAME}"
+    ports:
+      - "80:80"
+    volumes:
+      - ./code:/data/mysite.local
+    networks:
+      - my_network  # Подключение к внутренней сети
+
+  php-fpm:
+    build:
+      context: php-fpm
+      dockerfile: php-fpm/Dockerfile
+    image: php:8.4-fpm
+    container_name: php-fpm
+    volumes:
+      - ./code:/data/mysite.local
+    networks:
+      - my_network  # Подключение к внутренней сети
+
+  redis:
+    build:
+      context: redis
+      dockerfile: redis/Dockerfile
+    image: redis
+    container_name: redis
+    volumes:
+      - ./code:/data/mysite.local
+    networks:
+      - my_network  # Подключение к внутренней сети
+
+  memcached:
+    build:
+      context: memcached
+      dockerfile: memcached/Dockerfile
+    image: memcached
+    container_name: memcached
+    networks:
+      - my_network  # Подключение к внутренней сети
+
+  postgres:
+    build:
+      context: postgres
+      dockerfile: postgres/Dockerfile
+    image: postgres
+    container_name: postgres
+    networks:
+      - my_network  # Подключение к внутренней сети
+
+networks:
+  my_network: # Определение внутренней сети
+    driver: bridge  # Используется драйвер bridge по умолчанию
