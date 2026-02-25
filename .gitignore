@@ -1,5 +1,7 @@
 .idea/
-/vendor/
+/composer/vendor/
+/docker/redis/data/
+/docker/redis/logs/
 .DS_Store
 .AppleDouble
 .LSOverride

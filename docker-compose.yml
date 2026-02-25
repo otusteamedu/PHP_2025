@@ -1,0 +1,56 @@
+version: '1.0.2'
+
+name: 'PHP 2025 homework'
+
+services:
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: app/nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - './public:/var/www/mysite/public'
+      - './app:/var/www/mysite/app'
+      - './composer/vendor:/var/www/mysite/composer/vendor'
+    depends_on:
+      - php_fpm
+    networks:
+      - app-network
+
+  php_fpm:
+    build:
+      context: docker/fpm
+      dockerfile: Dockerfile
+    image: app/php_fpm
+    container_name: php_fpm
+    restart: always
+    depends_on:
+      redis:
+        condition: service_started
+    volumes:
+      - './public:/var/www/mysite/public'
+      - './app:/var/www/mysite/app'
+      - './composer/vendor:/var/www/mysite/composer/vendor'
+    networks:
+      - app-network
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+    volumes:
+      - './docker/redis/data/:/data:rw'
+      - './docker/redis/logs:/var/log/redis:rw'
+      - './docker/redis/config/redis.conf:/usr/local/etc/redis/redis.conf:rw'
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
