@@ -1,0 +1,14 @@
+# Codeception Test Suite Configuration
+actor: AcceptanceTester
+# bootstrap: /data/webserver/tests/_bootstrap.php # Temporarily disabled for debugging
+modules:
+    enabled:
+        - PhpBrowser:
+            url: http://nginx-hw5/
+        # The REST module provides JSON response assertions
+        - REST:
+            depends: PhpBrowser
+            part: Json
+        - Db
+        - Asserts
+        - \Ak\Hw\Tests\Helper\Acceptance
