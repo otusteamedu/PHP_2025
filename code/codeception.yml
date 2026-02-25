@@ -1,0 +1,41 @@
+# ===================================================================
+# DEBUGGING CONFIGURATION
+# This is a temporary setup to isolate the bootstrap loading issue.
+# ===================================================================
+namespace: Ak\Hw\Tests
+actor: Tester
+paths:
+    tests: tests
+    log: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+    output: tests/_output
+
+# The 'params' and 'bootstrap' settings are removed for this test.
+settings:
+    colors: true
+    memory_limit: 1024M
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+
+modules:
+    config:
+        Db:
+            # IMPORTANT: Replace these placeholders with your actual database credentials.
+            dsn: 'pgsql:host=db;port=5432;dbname=site' # <-- Replace 'app' if needed
+            user: 'AK' # <-- Replace 'app' with your POSTGRES_USER
+            password: 'secret' # <-- Replace 'password' with your POSTGRES_PASSWORD
+            dump: 'tests/_data/dump.sql'
+            populate: true
+            cleanup: true
+        WebDriver:
+            url: 'http://nginx-hw5/'
+            host: 'nginx-hw5'
+            port: 80
+            browser: chrome
+            window_size: 1920x1080
+            capabilities:
+                "goog:chromeOptions":
+                    args: [ "--headless", "--disable-gpu", "--no-sandbox" ]
