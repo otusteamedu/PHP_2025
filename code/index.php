@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-use Ak\Hw\Models\EmailFinder;
+use Ak\Hw\Services\EmailFinder;
 
 /**
  * Отправляет JSON-ответ клиенту и завершает выполнение скрипта.
