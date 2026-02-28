@@ -1,0 +1,16 @@
+FROM alpine:latest
+
+# Установка bash и bc
+RUN apk add --no-cache bash bc
+
+# Копируем скрипт в текущую директорию
+COPY sum.sh /app/sum.sh
+
+# Делаем исполняемым
+RUN chmod +x /app/sum.sh
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Запускаем скрипт
+ENTRYPOINT ["/app/sum.sh"]
