@@ -7,24 +7,49 @@ require __DIR__ . '/vendor/autoload.php';
 $app = new App();
 $app->createIndex();
 
-$command = $argv[1] ?? '';
+$argv = $_SERVER['argv'];
+
+$command = end($argv) ?? null;
+
+$args = getopt('', [
+    'query::',
+    'title::',
+    'category::',
+    'price::',
+    'price-from::',
+    'price-to::',
+    'stock::',
+    'stock-from::',
+    'stock-to::',
+    'shop::'
+]);
+
+//var_dump($argv);
+//var_dump($args);
+
 
 if ($command === '') {
     echo "Usage:\n";
-    echo "  php app.php import <file>\n";
+    echo "  php app.php <query> search\n";
+    echo "  php app.php <file> import\n";
     exit(1);
 }
 
 switch ($command) {
     case 'import':
-        $file = $argv[2] ?? '';
+        $file = $argv[1] ?? '';
+
         if ($file === '' || !file_exists($file)) {
             echo "File not found\n";
             exit(1);
         }
+
         $app->importFromFile($file);
         break;
-
+    case 'reset-index':
+        $app->resetIndex();
+        echo "Index has been reset\n";
+        break;
     default:
         echo "Unknown command: $command\n";
         exit(1);

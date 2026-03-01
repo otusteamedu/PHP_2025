@@ -36,7 +36,16 @@ class App
                 ->create($config);
         }
     }
+    public function resetIndex(): void
+    {
+        if ($this->client->indices()->exists(['index' => self::INDEX_NAME])->asBool()) {
+            $this->client->indices()->delete([
+                'index' => self::INDEX_NAME
+            ]);
+        }
 
+        $this->createIndex();
+    }
     private function getSettingsArray(): array
     {
         return [
