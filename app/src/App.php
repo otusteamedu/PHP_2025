@@ -108,7 +108,45 @@ class App
 
     public function search(array $args): void
     {
+        $must = [];
+        $filter = [];
+        $should = [];
 
+
+        if (!empty($args['query'])) {
+            $should[] = [
+                'multi_match' => [
+                    'query' => $args['query'],
+                    'fields' => [
+                        'title^3',
+                        'category'
+                    ],
+                    'fuzziness' => 'AUTO'
+                ]
+            ];
+        }
+
+        $query = [
+            'bool' => array_filter([
+                'must' => $must,
+                'filter' => $filter,
+                'should' => $should,
+                'minimum_should_match' => $should ? 1 : null
+            ])
+        ];
+
+        if (!$should) {
+            $query = ['match_all' => (object)[]];
+        }
+
+//        var_dump($query);
+
+        $response = $this->client->search([
+            'index' => self::INDEX_NAME,
+            'body' => ['query' => $query]
+        ]);
+
+        $this->printTable($response['hits']['hits']);
     }
 
     private function limitColumnSize(string $text, int $width): string

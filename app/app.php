@@ -50,6 +50,14 @@ switch ($command) {
         $app->resetIndex();
         echo "Index has been reset\n";
         break;
+    case 'search':
+        $query = $argv[1] ?? '';
+        if ($query === '') {
+            echo "Search query is required\n";
+            exit(1);
+        }
+        $app->search($args);
+        break;
     default:
         echo "Unknown command: $command\n";
         exit(1);
