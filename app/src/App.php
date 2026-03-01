@@ -24,40 +24,72 @@ class App
             ->exists(['index' => self::INDEX_NAME])
             ->asBool();
         if(!$isExists) {
+            $config = [];
+            $config['index'] = self::INDEX_NAME;
+            $config['body'] = [
+                'mappings' => $this->getMappingArray(),
+                'settings' => $this->getSettingsArray()
+            ];
+
             $this->client
                 ->indices()
-                ->create($this->getMappingArray());
+                ->create($config);
         }
     }
+
+    private function getSettingsArray(): array
+    {
+        return [
+            'analysis' => [
+                'filter' => [
+                    'ru_stop' => [
+                        'type' => 'stop',
+                        'stopwords' => '_russian_'
+                    ],
+                    'ru_stemmer' => [
+                        'type' => 'stemmer',
+                        'language' => 'russian'
+                    ]
+                ],
+                'analyzer' => [
+                    'my_russian' => [
+                        'tokenizer' => 'standard',
+                        'filter' => [
+                            'lowercase',
+                            'ru_stop',
+                            'ru_stemmer'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
     private function getMappingArray(): array
     {
         return [
-            'index' => self::INDEX_NAME,
-            'body' => [
-                'mappings' => [
+            'properties' => [
+                'title' => [
+                    'type' => 'text',
+                    'analyzer' => 'my_russian'
+                ],
+                'sku' => [
+                    'type' => 'keyword'
+                ],
+                'category' => [
+                    'type' => 'keyword'
+                ],
+                'price' => [
+                    'type' => 'integer'
+                ],
+                'stock' => [
+                    'type' => 'nested',
                     'properties' => [
-                        'title' => [
-                            'type' => 'text'
-                        ],
-                        'sku' => [
+                        'shop' => [
                             'type' => 'keyword'
-                        ],
-                        'category' => [
-                            'type' => 'keyword'
-                        ],
-                        'price' => [
-                            'type' => 'integer'
                         ],
                         'stock' => [
-                            'type' => 'nested',
-                            'properties' => [
-                                'shop' => [
-                                    'type' => 'keyword'
-                                ],
-                                'stock' => [
-                                    'type' => 'integer'
-                                ]
-                            ]
+                            'type' => 'integer'
                         ]
                     ]
                 ]
@@ -73,14 +105,14 @@ class App
     public function importFromFile(string $filePath): void
     {
         $body = [];
+        $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-        foreach (file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        foreach ($lines as $line) {
             $body[] = json_decode($line, true);
         }
+        $response = $this->client->bulk(['body' => $body])->asArray();
 
-        $response = $this->client->bulk(['body' => $body]);
-
-        if ($response->asArray()['errors']) {
+        if ($response['errors']) {
             throw new \RuntimeException('Import failed');
         }
 
