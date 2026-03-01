@@ -111,6 +111,37 @@ class App
 
     }
 
+    private function limitColumnSize(string $text, int $width): string
+    {
+        $text = mb_strimwidth($text, 0, $width, '…');
+        $padLength = $width - mb_strwidth($text);
+
+        return $text . str_repeat(' ', max(0, $padLength));
+    }
+
+    private function printTable(array $hits): void
+    {
+        $wTitle = 60;
+        $wCategory = 25;
+        $wPrice = 8;
+
+        echo
+            $this->limitColumnSize('Название', $wTitle) . ' | ' .
+            $this->limitColumnSize('Категория', $wCategory) . ' | ' .
+            $this->limitColumnSize('Цена', $wPrice) . PHP_EOL;
+
+        echo str_repeat('-', $wTitle + $wCategory + $wPrice + 6) . PHP_EOL;
+
+        foreach ($hits as $hit) {
+            $src = $hit['_source'];
+
+            echo
+                $this->limitColumnSize($src['title'], $wTitle) . ' | ' .
+                $this->limitColumnSize($src['category'], $wCategory) . ' | ' .
+                $this->limitColumnSize((string)$src['price'], $wPrice) . PHP_EOL;
+        }
+    }
+
     public function importFromFile(string $filePath): void
     {
         $body = [];
