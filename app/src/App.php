@@ -125,6 +125,14 @@ class App
             ];
         }
 
+        if (!empty($args['category'])) {
+            $filter[] = [
+                'term' => [
+                    'category' => $args['category']
+                ]
+            ];
+        }
+
         $query = [
             'bool' => array_filter([
                 'must' => $must,
