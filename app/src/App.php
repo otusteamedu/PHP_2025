@@ -118,8 +118,7 @@ class App
                 'multi_match' => [
                     'query' => $args['query'],
                     'fields' => [
-                        'title^3',
-                        'category'
+                        'title'
                     ],
                     'fuzziness' => 'AUTO'
                 ]
