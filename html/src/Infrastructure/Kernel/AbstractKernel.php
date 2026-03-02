@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Otus\Food\Infrastructure\Kernel;
+namespace Otus\Queue\Infrastructure\Kernel;
 
-use Otus\Food\Infrastructure\Dic\Container;
+use Otus\Queue\Infrastructure\Component\Collection;
+use Otus\Queue\Infrastructure\Dic\Container;
 
 abstract class AbstractKernel
 {
@@ -13,16 +14,18 @@ abstract class AbstractKernel
      */
     public function __construct(array $config)
     {
-        $this->setContainer($config['container'] ?? []);
+        $this->setContainer(
+            Collection::make($config)->wrap('container', [])
+        );
     }
 
     /**
-     * @param array $container
+     * @param Collection $container
      */
-    protected function setContainer(array $container): void
+    protected function setContainer(Collection $container): void
     {
-        $singletons = $container['singletons'] ?? [];
-        $definitions = $container['definitions'] ?? [];
+        $singletons = $container->wrap('singletons', []);
+        $definitions = $container->wrap('definitions', []);
 
         foreach ($singletons as $class => $callback) {
             Container::getInstance()->setSingleton($class, $callback);

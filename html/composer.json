@@ -1,14 +1,17 @@
 {
-    "name": "otus/food",
+    "name": "otus/queue",
     "type": "project",
     "require": {
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*",
         "friendsofphp/php-cs-fixer": "^3.93",
+        "php-amqplib/php-amqplib": "^3.7",
         "rector/rector": "^2.3"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Otus\\Food\\": "src/"
+            "Otus\\Queue\\": "src/"
         }
     },
     "authors": [
@@ -25,5 +28,10 @@
             "@rector",
             "@php-cs-fixer"
         ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
     }
 }

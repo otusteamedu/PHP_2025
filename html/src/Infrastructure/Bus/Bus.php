@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Otus\Food\Infrastructure\Bus;
+namespace Otus\Queue\Infrastructure\Bus;
 
-use Otus\Food\Infrastructure\Dic\Container;
-use Otus\Food\Infrastructure\Dic\UnresolveParameterException;
+use Otus\Queue\Infrastructure\Dic\Container;
+use Otus\Queue\Infrastructure\Dic\UnresolveParameterException;
 use ReflectionException;
 
 final class Bus

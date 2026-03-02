@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Otus\Food\Infrastructure\Kernel\Console;
+namespace Otus\Queue\Infrastructure\Kernel\Console;
 
 use Exception;
 

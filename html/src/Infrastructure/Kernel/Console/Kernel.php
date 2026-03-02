@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Otus\Food\Infrastructure\Kernel\Console;
+namespace Otus\Queue\Infrastructure\Kernel\Console;
 
-use Otus\Food\Infrastructure\Bus\Bus;
-use Otus\Food\Infrastructure\Dic\Container;
-use Otus\Food\Infrastructure\Dic\UnresolveParameterException;
-use Otus\Food\Infrastructure\Kernel\AbstractKernel;
+use Otus\Queue\Infrastructure\Bus\Bus;
+use Otus\Queue\Infrastructure\Dic\Container;
+use Otus\Queue\Infrastructure\Dic\UnresolveParameterException;
+use Otus\Queue\Infrastructure\Kernel\AbstractKernel;
 use ReflectionException;
 use Throwable;
 

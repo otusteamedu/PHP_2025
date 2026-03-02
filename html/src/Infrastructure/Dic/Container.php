@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Otus\Food\Infrastructure\Dic;
+namespace Otus\Queue\Infrastructure\Dic;
 
 use ReflectionClass;
 use ReflectionException;

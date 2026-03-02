@@ -2,26 +2,70 @@
 
 https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
 
-# Example
+# Configure
 
-```
-php html/bin/console.php kitchen __MEAL__ __USER__ __COUNT__
-```
-
-# Burger
+## Docker
 
 ```shell
-php html/bin/console.php kitchen burger me
+cp .env.dist .env
 ```
 
-# Sandwich
+## Application
 
 ```shell
-php html/bin/console.php kitchen sandwich me 2
+cp html/.env.dist.php html/.env.php
 ```
 
-# Pizza
+# Docker
+
+## Build
 
 ```shell
-php html/bin/console.php kitchen pizza:chef you 3
+docker compose build
+```
+
+## Composer install
+
+```shell
+docker compose run --rm php composer install
+```
+
+## Database migration
+
+```shell
+docker compose run --rm php php bin/console.php database:migrate
+```
+
+## Up
+
+```shell
+docker compose up -d
+```
+
+# Available
+
+## Application
+
+```
+http://localhost:8000/
+```
+
+## RabbitMQ
+
+```
+http://localhost:15672/
+```
+
+# Advanced
+
+## Console consumer
+
+```shell
+docker compose exec php php bin/console.php queue:consumer
+```
+
+## Console publisher
+
+```shell
+docker compose exec php php bin/console.php queue:publisher Example
 ```
