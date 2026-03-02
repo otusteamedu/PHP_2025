@@ -4,6 +4,7 @@ namespace Pryaniki\App;
 
 use Elastic\Elasticsearch\ClientBuilder;
 use Elastic\Elasticsearch\Client;
+
 class App
 {
     const INDEX_NAME = 'otus-shop';
@@ -11,19 +12,20 @@ class App
 
     public function __construct()
     {
-        $host = getenv('ELASTICSEARCH_HOST')?:'http://elasticsearch:9200';
+        $host = getenv('ELASTICSEARCH_HOST') ?: 'http://elasticsearch:9200';
 
         $this->client = ClientBuilder::create()
             ->setHosts([$host])
             ->build();
     }
 
-    public function createIndex(): void {
+    public function createIndex(): void
+    {
         $isExists = $this->client
             ->indices()
             ->exists(['index' => self::INDEX_NAME])
             ->asBool();
-        if(!$isExists) {
+        if (!$isExists) {
             $config = [];
             $config['index'] = self::INDEX_NAME;
             $config['body'] = [
@@ -36,6 +38,7 @@ class App
                 ->create($config);
         }
     }
+
     public function resetIndex(): void
     {
         if ($this->client->indices()->exists(['index' => self::INDEX_NAME])->asBool()) {
@@ -46,6 +49,7 @@ class App
 
         $this->createIndex();
     }
+
     private function getSettingsArray(): array
     {
         return [
@@ -132,7 +136,27 @@ class App
                 ]
             ];
         }
-
+        
+        if (!empty($args['price'])) {
+            $filter[] = [
+                'term' => [
+                    'price' => (int)$args['price']
+                ]
+            ];
+        } elseif (!empty($args['price-from']) || !empty($args['price-to'])) {
+            $range = [];
+            if (!empty($args['price-from'])) {
+                $range['gte'] = (int)$args['price-from'];
+            }
+            if (!empty($args['price-to'])) {
+                $range['lte'] = (int)$args['price-to'];
+            }
+            $filter[] = [
+                'range' => [
+                    'price' => $range
+                ]
+            ];
+        }
         $query = [
             'bool' => array_filter([
                 'must' => $must,
@@ -141,10 +165,6 @@ class App
                 'minimum_should_match' => $should ? 1 : null
             ])
         ];
-
-        if (!$should) {
-            $query = ['match_all' => (object)[]];
-        }
 
 //        var_dump($query);
 
