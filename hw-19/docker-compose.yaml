@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: hw19/app
+    container_name: hw19-app
+    working_dir: /var/www/html/app
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/php-socket:/var/run/php
+    networks:
+      - otus-network
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: hw19/nginx
+    container_name: hw19-nginx
+    volumes:
+      - ./app:/var/www/html/app
+      - ./docker/php/php-socket:/var/run/php
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - otus-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./docker/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - otus-network
+
+
+networks:
+  otus-network:
+    driver: bridge
