@@ -6,7 +6,7 @@ namespace Pryaniki\App\Domain\Validators;
 
 use Pryaniki\App\Domain\Interfaces\ValidatorInterface;
 
-abstract class BaseValidator
+abstract class BaseValidator implements ValidatorInterface
 {
     protected array $errors = [];
 
