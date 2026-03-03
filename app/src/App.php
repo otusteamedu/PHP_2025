@@ -213,8 +213,6 @@ class App
             ])
         ];
 
-//        var_dump($query);
-
         $response = $this->client->search([
             'index' => self::INDEX_NAME,
             'body' => ['query' => $query]

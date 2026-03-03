@@ -13,7 +13,6 @@ $command = end($argv) ?? null;
 
 $args = getopt('', [
     'query::',
-    'title::',
     'category::',
     'price::',
     'price-from::',
@@ -23,10 +22,6 @@ $args = getopt('', [
     'stock-to::',
     'shop::'
 ]);
-
-//var_dump($argv);
-//var_dump($args);
-
 
 if ($command === '') {
     echo "Usage:\n";
