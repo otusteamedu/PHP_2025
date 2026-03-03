@@ -136,7 +136,7 @@ class App
                 ]
             ];
         }
-        
+
         if (!empty($args['price'])) {
             $filter[] = [
                 'term' => [
@@ -157,6 +157,48 @@ class App
                 ]
             ];
         }
+
+        $isNeedAddStockParameters = !empty($args['stock']) || !empty($args['stock-from']) || !empty($args['stock-to']);
+        if ($isNeedAddStockParameters) {
+            $stockMust = [];
+            if (!empty($args['stock'])) {
+                $stockMust[] = [
+                    'term' => [
+                        'stock.stock' => (int)$args['stock']
+                    ]
+                ];
+            } else {
+                $range = [];
+                if (!empty($args['stock-from'])) {
+                    $range['gte'] = (int)$args['stock-from'];
+                }
+
+                if (!empty($args['stock-to'])) {
+                    $range['lte'] = (int)$args['stock-to'];
+                }
+
+                if ($range) {
+                    $stockMust[] = [
+                        'range' => [
+                            'stock.stock' => $range
+                        ]
+                    ];
+                }
+            }
+
+            $filter[] = [
+                'nested' => [
+                    'path' => 'stock',
+                    'query' => [
+                        'bool' => [
+                            'must' => $stockMust
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+
         $query = [
             'bool' => array_filter([
                 'must' => $must,
