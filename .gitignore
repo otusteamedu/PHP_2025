@@ -65,3 +65,7 @@ docker-compose.override.yml
 
 # Миграции (если не хранить в репозитории)
 /migrations/*.php
+
+#
+
+/hw6/terms.md
