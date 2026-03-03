@@ -116,7 +116,6 @@ class App
         $filter = [];
         $should = [];
 
-
         if (!empty($args['query'])) {
             $should[] = [
                 'multi_match' => [
@@ -158,9 +157,16 @@ class App
             ];
         }
 
-        $isNeedAddStockParameters = !empty($args['stock']) || !empty($args['stock-from']) || !empty($args['stock-to']);
-        if ($isNeedAddStockParameters) {
+        $isNeedAddStockAndShopParameters = !empty($args['stock']) || !empty($args['stock-from']) || !empty($args['stock-to']) || !empty($args['shop']);
+        if ($isNeedAddStockAndShopParameters) {
             $stockMust = [];
+            if (!empty($args['shop'])) {
+                $stockMust[] = [
+                    'term' => [
+                        'stock.shop' => $args['shop']
+                    ]
+                ];
+            }
             if (!empty($args['stock'])) {
                 $stockMust[] = [
                     'term' => [
@@ -197,7 +203,6 @@ class App
                 ]
             ];
         }
-
 
         $query = [
             'bool' => array_filter([
