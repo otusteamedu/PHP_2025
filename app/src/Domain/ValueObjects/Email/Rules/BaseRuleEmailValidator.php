@@ -18,7 +18,7 @@ abstract class BaseRuleEmailValidator implements EmailRuleInterface
         $isValid = $this->applyRule($email);
 
         if (!$isValid) {
-            $this->validationResult->addError('Field email is not valid');
+            $this->validationResult->addError($this->getValidationErrorMessage($email));
         }
 
         $this->validationResult->setIsValid($isValid);
