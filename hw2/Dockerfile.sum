@@ -1,7 +1,7 @@
 FROM alpine:latest
 
-# Установка bash и bc
-RUN apk add --no-cache bash bc
+# Установка bash
+RUN apk add --no-cache bash
 
 # Копируем скрипт в текущую директорию
 COPY sum.sh /app/sum.sh
