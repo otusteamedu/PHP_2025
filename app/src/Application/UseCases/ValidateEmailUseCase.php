@@ -1,6 +1,7 @@
 <?php
 namespace Pryaniki\App\Application\UseCases;
 
+use Pryaniki\App\Application\DTO\ValidateEmailRequestDTO;
 use Pryaniki\App\Domain\Models\Email;
 use Pryaniki\App\Application\DTO\ValidationEmailResponseDTO;
 use Pryaniki\App\Domain\ValueObjects\Email\Rules\CompositeStringValidator;
@@ -11,6 +12,16 @@ use Pryaniki\App\Infrastructure\Services\DnsDomainChecker;
 
 class ValidateEmailUseCase
 {
+    private string $email;
+
+    /**
+     * @param ValidateEmailRequestDTO $dto
+     */
+    public function __construct(ValidateEmailRequestDTO $dto)
+    {
+        $this->email = $dto->email;
+    }
+
     public function execute(string $email): ValidationEmailResponseDTO
     {
         $emailModel = new Email($email);

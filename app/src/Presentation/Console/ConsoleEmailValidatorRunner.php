@@ -2,22 +2,27 @@
 
 namespace Pryaniki\App\Presentation\Console;
 
-
 use Pryaniki\App\Application\UseCases\ValidateEmailUseCase;
-
+use Pryaniki\App\Application\DTO\ValidateEmailRequestDTO;
 
 class ConsoleEmailValidatorRunner
 {
     public function run(string $email): string
     {
-        $useCase = new ValidateEmailUseCase();
+        $requestDto = new ValidateEmailRequestDTO($email);
 
-        $resultDto = $useCase->execute($email);
+        $useCase = new ValidateEmailUseCase($requestDto);
 
-        if (!$resultDto->success) {
-            return implode(PHP_EOL, $resultDto->error);
+        $responseDto = $useCase->execute($email);
+
+        if (!$responseDto->success) {
+            return implode(PHP_EOL, $responseDto->error);
         } else {
             return "Email $email is valid";
         }
+    }
+
+    private function ValidateEmailRequestDTO(string $email)
+    {
     }
 }
