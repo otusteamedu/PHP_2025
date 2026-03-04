@@ -4,7 +4,7 @@ namespace Pryaniki\App\Domain\ValueObjects\Email;
 
 class ValidationResult
 {
-    private bool $isValid;
+    private bool $isValid = false;
     private array $error = [];
 
     /**

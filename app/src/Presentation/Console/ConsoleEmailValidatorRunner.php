@@ -4,7 +4,6 @@ namespace Pryaniki\App\Presentation\Console;
 
 
 use Pryaniki\App\Application\UseCases\ValidateEmailUseCase;
-use Pryaniki\App\Exceptions\NotExistDomainException;
 
 
 class ConsoleEmailValidatorRunner
@@ -13,14 +12,10 @@ class ConsoleEmailValidatorRunner
     {
         $useCase = new ValidateEmailUseCase();
 
-        try {
-            $resultDto = $useCase->execute($email);
-        } catch (NotExistDomainException $e) {
-            return $e->getMessage();
-        }
+        $resultDto = $useCase->execute($email);
 
         if (!$resultDto->success) {
-            return "Email $email is invalid: {$resultDto->error}";
+            return implode(PHP_EOL, $resultDto->error);
         } else {
             return "Email $email is valid";
         }
