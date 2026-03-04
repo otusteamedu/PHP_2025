@@ -11,6 +11,6 @@ class EmailFormatRule extends BaseRuleEmailValidator
 
     protected function getValidationErrorMessage(string $email): string
     {
-        return 'Field email is not valid';
+        return 'Field email "' . $email . '" is not valid';
     }
 }
