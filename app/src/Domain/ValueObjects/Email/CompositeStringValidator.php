@@ -1,10 +1,10 @@
 <?php
 
-namespace Pryaniki\App\Domain\ValueObjects\Email\Rules;
+namespace Pryaniki\App\Domain\ValueObjects\Email;
 
-use Pryaniki\App\Domain\ValueObjects\Email\ValidationResult;
+use Pryaniki\App\Domain\ValueObjects\Email\Rules\EmailRuleInterface;
 
-class CompositeStringValidator implements EmailRuleInterface
+class CompositeStringValidator implements EmailValidatorInterface
 {
     /** @var EmailRuleInterface[] $rules */
     private array $rules;

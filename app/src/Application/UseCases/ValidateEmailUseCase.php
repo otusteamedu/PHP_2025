@@ -4,7 +4,7 @@ namespace Pryaniki\App\Application\UseCases;
 use Pryaniki\App\Application\DTO\ValidateEmailRequestDTO;
 use Pryaniki\App\Domain\Models\Email;
 use Pryaniki\App\Application\DTO\ValidationEmailResponseDTO;
-use Pryaniki\App\Domain\ValueObjects\Email\Rules\CompositeStringValidator;
+use Pryaniki\App\Domain\ValueObjects\Email\CompositeStringValidator;
 use Pryaniki\App\Domain\ValueObjects\Email\Rules\EmailFormatRule;
 use Pryaniki\App\Domain\ValueObjects\Email\Rules\NotEmptyRule;
 use Pryaniki\App\Infrastructure\Services\DnsDomainChecker;
