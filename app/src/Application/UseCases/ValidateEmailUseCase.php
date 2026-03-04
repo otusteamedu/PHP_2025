@@ -2,7 +2,7 @@
 namespace Pryaniki\App\Application\UseCases;
 
 use Pryaniki\App\Domain\Models\Email;
-use Pryaniki\App\Application\DTO\ValidationResultDTO;
+use Pryaniki\App\Application\DTO\ValidationEmailResponseDTO;
 use Pryaniki\App\Domain\ValueObjects\Email\Rules\CompositeStringValidator;
 use Pryaniki\App\Domain\ValueObjects\Email\Rules\EmailFormatRule;
 use Pryaniki\App\Domain\ValueObjects\Email\Rules\NotEmptyRule;
@@ -11,7 +11,7 @@ use Pryaniki\App\Infrastructure\Services\DnsDomainChecker;
 
 class ValidateEmailUseCase
 {
-    public function execute(string $email): ValidationResultDTO
+    public function execute(string $email): ValidationEmailResponseDTO
     {
         $emailModel = new Email($email);
         $validationRules = [
@@ -25,7 +25,7 @@ class ValidateEmailUseCase
              $validationResult->addError('DNS record not found');
          }
 
-        return new ValidationResultDTO($validationResult->isValid(),
+        return new ValidationEmailResponseDTO($validationResult->isValid(),
             $validationResult->getError()
         );
     }

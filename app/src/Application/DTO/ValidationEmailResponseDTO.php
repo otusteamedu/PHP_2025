@@ -2,7 +2,7 @@
 
 namespace Pryaniki\App\Application\DTO;
 
-class ValidationResultDTO
+class ValidationEmailResponseDTO
 {
     public function __construct(
         public bool $success,
