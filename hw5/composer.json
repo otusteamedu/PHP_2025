@@ -1,0 +1,19 @@
+{
+    "name": "validation/email",
+    "description": "приложение для верификации email",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Validation\\Email\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "aleksey"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=8.0"
+    }
+}
