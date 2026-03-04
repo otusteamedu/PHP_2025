@@ -39,7 +39,7 @@ class CompositeStringValidator implements EmailValidatorInterface
     {
         if ($validationResult->isValid() === false) {
             $this->validationResult->setIsValid(false);
-            $errors = $validationResult->getError();
+            $errors = $validationResult->getErrors();
             foreach ($errors as $error) {
                 $this->validationResult->addError($error);
             }

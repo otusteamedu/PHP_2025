@@ -37,7 +37,7 @@ class ValidateEmailUseCase
          }
 
         return new ValidationEmailResponseDTO($validationResult->isValid(),
-            $validationResult->getError()
+            $validationResult->getErrors()
         );
     }
 }
