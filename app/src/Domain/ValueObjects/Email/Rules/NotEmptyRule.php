@@ -2,21 +2,15 @@
 
 namespace Pryaniki\App\Domain\ValueObjects\Email\Rules;
 
-use Pryaniki\App\Domain\ValueObjects\Email\ValidationResult;
-
 class NotEmptyRule extends BaseRuleEmailValidator
 {
-
-    public function validate(string $email): ValidationResult
+    protected function applyRule(string $email): bool
     {
-        $isValid = $email !== '';
+        return $email !== '';
+    }
 
-        if (!$isValid) {
-            $this->validationResult->addError('Field email is empty');
-        }
-
-        $this->validationResult->setIsValid($isValid);
-
-        return $this->validationResult;
+    protected function getValidationErrorMessage(string $email): string
+    {
+        return 'Field email is empty';
     }
 }

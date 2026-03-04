@@ -13,5 +13,20 @@ abstract class BaseRuleEmailValidator implements EmailRuleInterface
         $this->validationResult = new ValidationResult();
     }
 
-    abstract public function validate(string $email): ValidationResult;
+    public function validate(string $email): ValidationResult
+    {
+        $isValid = $this->applyRule($email);
+
+        if (!$isValid) {
+            $this->validationResult->addError('Field email is not valid');
+        }
+
+        $this->validationResult->setIsValid($isValid);
+
+        return $this->validationResult;
+    }
+
+    abstract protected function applyRule(string $email): bool;
+    abstract protected function getValidationErrorMessage(string $email): string;
+
 }
