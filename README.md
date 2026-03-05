@@ -49,14 +49,14 @@ curl http://localhost:8080/api/status/1
 docker-compose logs -f worker
 ```
 
-## 📡 Эндпоинты API
+## Эндпоинты API
 
 | Метод | URL | Описание |
 |-------|-----|----------|
 | POST | `/api/submit` | Отправить задачу |
 | GET | `/api/status/{id}` | Проверить статус |
 
-## 🧪 Примеры запросов
+## Примеры запросов
 
 **POST /api/submit**
 ```json
