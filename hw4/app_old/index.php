@@ -1,3 +1,10 @@
+<?php
+    require_once __DIR__ . "/src/Controller.php";
+
+    $request = new Controller();
+    $request->handleRequest();
+
+?>
 <!doctype html>
 <html lang="ru">
 <head>

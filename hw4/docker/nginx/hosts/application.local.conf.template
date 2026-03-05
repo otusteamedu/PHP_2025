@@ -5,9 +5,9 @@ upstream php-fpm-backend {
 }
 server {
     # указываем 80 порт для соединения
-    listen 80;
+    listen 8080 default_server;
     server_name _; 
-    root /var/www/html/src/public;
+    root /var/www/html;
     index index.php;
 
     # при обращении к статическим файлам логи не нужны, равно как и обращение к fpm
