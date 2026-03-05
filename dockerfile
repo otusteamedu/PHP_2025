@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     librabbitmq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка PHP расширений (ДОБАВЛЯЕМ sockets)
+# Установка PHP расширений
 RUN docker-php-ext-install zip sockets
 
 # Установка Composer
@@ -19,7 +19,7 @@ WORKDIR /app
 # Копируем composer файлы
 COPY composer.json composer.lock* ./
 
-# Устанавливаем зависимости (теперь sockets есть)
+# Устанавливаем зависимости
 RUN composer install --no-interaction --no-scripts
 
 # Копируем остальной код

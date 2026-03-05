@@ -7,8 +7,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * Простой класс для работы с RabbitMQ
- * 
- * Зачем нужен: инкапсулирует всю сложность работы с очередью
  */
 class Queue
 {
@@ -63,7 +61,7 @@ class Queue
             $this->queueName,
             '',
             false,
-            false,  // manual ack
+            false,
             false,
             false,
             function($message) use ($callback) {

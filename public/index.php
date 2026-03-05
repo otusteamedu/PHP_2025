@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <form method="POST">
             <div class="form-group">
-                <label>👤 ФИО пациента</label>
+                <label>ФИО пациента</label>
                 <input type="text" name="patient" required 
                        value="<?= htmlspecialchars($_POST['patient'] ?? '') ?>"
                        placeholder="Иванов Иван Иванович">
