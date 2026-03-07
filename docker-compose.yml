@@ -1,0 +1,56 @@
+services:
+
+    nginx:
+        build:
+            context: .
+            dockerfile: docker/build/nginx/Dockerfile
+            target: compose
+            args:
+                UID: ${UID}
+                GID: ${GID}
+        volumes:
+            - php-fpm-sock:/var/www/run/:rw
+            - ./html:/var/www/html/:ro
+        depends_on:
+            - php
+        ports:
+            -   target: 80
+                published: 8080
+        networks:
+            private:
+
+    php:
+        build:
+            context: .
+            dockerfile: docker/build/php/Dockerfile
+            target: compose
+            args:
+                UID: ${UID}
+                GID: ${GID}
+        volumes:
+            - php-fpm-sock:/var/www/run/:rw
+            - ./html:/var/www/html/:rw
+        depends_on:
+            - rabbitmq
+        networks:
+            private:
+
+    rabbitmq:
+        image: rabbitmq:4.2-management
+        environment:
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+        ports:
+            -   target: 15672
+                published: 15672
+        networks:
+            private:
+
+volumes:
+    php-fpm-sock:
+        name: otus-php-2025_php-fpm-sock
+
+networks:
+    private:
+        name: otus-php-2025
+        driver: bridge
