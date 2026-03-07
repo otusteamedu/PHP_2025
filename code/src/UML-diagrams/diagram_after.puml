@@ -1,0 +1,151 @@
+@startuml
+' Перечисления
+enum DeviceModel {
+  counter_cold
+  counter_hot
+  counter_heat
+  counter-gas
+  counter_electricity
+  skaut-cold-water-counter
+  skaut-hot-water-counter
+  skaut-heat-counter
+  skaut-electricity-counter
+  svk-15-3-2-md
+}
+
+enum CheckDeadlineStatus {
+  OK
+  WARNING
+  EXPIRED
+}
+
+' Пакет Infrastructure Model
+package "Infrastructure Model" {
+  class Apartment {
+    + {static} getByUserId(userdataId: int): array
+  }
+
+  class Building {
+    + {static} getByApartmentId(apartmentId: int): array
+    + {static} getIsReportValuesForOverduedCounters(buildingId: int, complexId: int, isAutomated: bool): bool
+    + {static} hasBuildingAutomatedAccounting(buildingId: int): bool
+  }
+
+  class Device {
+    + {static} getCountersFromApartment(apartmentId: int, onlyActive: bool, showArchive: bool): array
+  }
+
+  class Signal {
+    + {static} SIGNAL_DICT: array
+    + {static} getUnitName(signalName: string): string
+    + {static} getByDeviceId(deviceId: int): array
+    + {static} getByTime(signalId: int, timestamp: int): array
+  }
+
+  class Counter {
+    + {static} NOTIFICATION_TEXTS: array
+    + {static} getCounterCheckDateAndInterval(serialNumber: string, token: string): array
+    + {static} getNextCheckDate(lastCheckDate: ?DateTime, interval: int): ?DateTime
+    + {static} getCheckDeadlineStatus(nextCheckDate: ?DateTime): CheckDeadlineStatus
+  }
+
+  class Tags {
+    + {static} getTags(type: string, identifier: string): array
+  }
+}
+
+' Пакет Shared Infrastructure
+package "Shared Infrastructure" {
+  class API {
+    + {static} throwInvalidRequestParams(message: string): void
+  }
+
+  class ValueHelper {
+    + {static} firstNotEmpty(...values: mixed): mixed
+  }
+}
+
+' Пакет Application Service
+package "Application Service" {
+  class CounterGrouper {
+    + group(rows: array): array
+  }
+
+  class CounterProcessor {
+    + __construct(token: string, isAutomated: bool, reportValuesForOverduedCounters: bool)
+    + process(counters: array): array
+  }
+
+  class CounterRowBuilder {
+    + __construct(counter: array, token: string)
+    + build(reportValuesForOverduedCounters: bool): array
+  }
+
+  class CounterSorter {
+    + {static} sort(counters: array): array
+  }
+
+  interface CounterHandlerInterface {
+    + handle(counter: array, signals: array, baseRow: array, isAutomated: bool): array
+  }
+
+  class ElectricityCounterHandler implements CounterHandlerInterface {
+    + handle(counter: array, signals: array, baseRow: array, isAutomated: bool): array
+  }
+
+  class StandardCounterHandler implements CounterHandlerInterface {
+    + handle(counter: array, signals: array, baseRow: array, isAutomated: bool): array
+  }
+
+  class CounterHandlerFactory {
+    + {static} create(modelName: DeviceModel): CounterHandlerInterface
+  }
+
+  class SignalDataCollector {
+    + {static} collect(signals: array, isAutomated: bool, signalName: string): ?array
+  }
+}
+
+' Пакет Interface Controllers
+package "Interface Controllers" {
+  class MeasureTable {
+    - apartment: ?array
+    + __construct(userdata_id: int, token: string, show_archive: int, group: int)
+    + validate(): void
+    + get(): array
+  }
+}
+
+' Ассоциации между моделями
+Building "1" -- "0..*" Apartment : contains
+Apartment "1" -- "0..*" Device : has
+Device "1" -- "0..*" Signal : has
+
+' Зависимости контроллера
+MeasureTable ..> Apartment : uses
+MeasureTable ..> Building : uses
+MeasureTable ..> Device : uses
+MeasureTable ..> CounterGrouper : uses
+MeasureTable ..> CounterProcessor : uses
+MeasureTable ..> API : uses
+
+' Зависимости сервисов
+CounterProcessor ..> CounterSorter : uses
+CounterProcessor ..> CounterHandlerFactory : uses
+CounterProcessor ..> CounterRowBuilder : uses
+CounterProcessor ..> Signal : uses
+
+CounterHandlerFactory ..> CounterHandlerInterface : creates
+CounterHandlerFactory ..> ElectricityCounterHandler : creates
+CounterHandlerFactory ..> StandardCounterHandler : creates
+
+ElectricityCounterHandler ..> SignalDataCollector : uses
+StandardCounterHandler ..> SignalDataCollector : uses
+
+CounterRowBuilder ..> Counter : uses
+CounterRowBuilder ..> ValueHelper : uses
+CounterRowBuilder ..> Tags : uses
+
+SignalDataCollector ..> Signal : uses
+
+@enduml

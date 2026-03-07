@@ -1,0 +1,91 @@
+@startuml
+' Перечисления
+enum DeviceModel {
+  counter_cold
+  counter_hot
+  counter_heat
+  counter-gas
+  counter_electricity
+  skaut-cold-water-counter
+  skaut-hot-water-counter
+  skaut-heat-counter
+  skaut-electricity-counter
+  svk-15-3-2-md
+}
+
+enum CheckDeadlineStatus {
+  OK
+  WARNING
+  EXPIRED
+}
+
+' Классы-сущности
+class Apartment {
+  + apartment_id: int {id}
+  + user_id: int
+  + building_id: int
+}
+
+class Building {
+  + building_id: int {id}
+  + complex_id: int
+}
+
+class Device {
+  + device_id: int {id}
+  + device_model_name: DeviceModel
+  + device_serialnumber: String
+  + device_original_serialnumber: String
+  + device_ext_guid: String
+  + ext_guid: String
+}
+
+class Signal {
+  + signal_id: int {id}
+  + signal_name: String
+  + signal_label: String
+  + signal_custom_name: String
+  + signal_value_float: Real
+  + signal_update_dt: Date
+  + signal_update_dt_attempt: Date
+}
+
+' Вспомогательные классы (сервисы)
+class Counter {
+  + {static} NOTIFICATION_TEXTS: Map
+  + {static} getCounterCheckDateAndInterval(serialNumber: String, token: String): [int, Date]
+  + {static} getNextCheckDate(lastCheckDate: Date, interval: int): Date
+  + {static} getCheckDeadlineStatus(nextCheckDate: Date): CheckDeadlineStatus
+}
+
+class API {
+  + {static} throwInvalidRequestParams(message: String): void
+}
+
+class Helpers <<utility>> {
+  + {static} hasBuildingAutomatedAccounting(buildingId: int): bool
+  + {static} get_tags(type: String, identifier: String): String[]
+  + {static} firstNotEmpty(...values: any): any
+  + {static} count_adapter(var: any): int
+}
+
+' Главный класс
+class MeasureTable {
+  + {static} get(userdataId: int, token: String, showArchive: int, group: int): array
+}
+
+' Ассоциации между сущностями
+Building "1" -- "0..*" Apartment : contains
+Apartment "1" -- "0..*" Device : has
+Device "1" -- "0..*" Signal : has
+
+' Зависимости MeasureTable от других классов
+MeasureTable ..> Apartment : uses
+MeasureTable ..> Building : uses
+MeasureTable ..> Device : uses
+MeasureTable ..> Signal : uses
+MeasureTable ..> Counter : uses
+MeasureTable ..> API : uses
+MeasureTable ..> Helpers : uses
+
+@enduml
