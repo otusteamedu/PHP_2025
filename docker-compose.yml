@@ -28,7 +28,6 @@ services:
                 UID: ${UID}
                 GID: ${GID}
         volumes:
-            - composer:/var/www/.composer/:rw
             - php-fpm-sock:/var/www/run/:rw
             - ./html:/var/www/html/:rw
         depends_on:
@@ -48,8 +47,6 @@ services:
             private:
 
 volumes:
-    composer:
-        name: composer
     php-fpm-sock:
         name: otus-php-2025_php-fpm-sock
 
