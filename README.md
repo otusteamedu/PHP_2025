@@ -31,7 +31,7 @@
 * Нарушение KISS: сложная логика в методе get.
 
 ## Код после
-находится в папках Application, Unfrastructure, Interface, Shared
+находится в папках Application, Infrastructure, Interface, Shared
 
 ## План решения
 
