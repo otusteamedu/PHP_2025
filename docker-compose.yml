@@ -49,8 +49,7 @@ services:
 
 volumes:
     composer:
-        name: composer-v2
-        external: true
+        name: composer
     php-fpm-sock:
         name: otus-php-2025_php-fpm-sock
 
