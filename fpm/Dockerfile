@@ -1,6 +1,13 @@
 FROM php:8.4-fpm
 
-RUN apt-get update && apt-get install nano -y
+# Install system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y \
+        nano \
+        unzip \
+        libzip-dev \
+        libpq-dev \
+    && docker-php-ext-install zip \
+    && docker-php-ext-install pdo pdo_pgsql
 
 # расширение Redis
 RUN pecl install redis && docker-php-ext-enable redis
