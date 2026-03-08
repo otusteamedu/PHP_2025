@@ -8,6 +8,7 @@ use Closure;
 use Otus\Queue\Infrastructure\Http\Exception\AbstractHttpException;
 use Otus\Queue\Infrastructure\Http\Response\Html;
 use Otus\Queue\Infrastructure\Http\Response\Json;
+use Otus\Queue\Infrastructure\Http\Response\Raw;
 use Otus\Queue\Infrastructure\Http\Response\ResponseInterface;
 use Otus\Queue\Infrastructure\Http\Response\Stream;
 
@@ -28,6 +29,22 @@ final class ResponseFactory
 
             default => self::toHtml($exception->getMessage(), $exception->getStatusCode()),
         };
+    }
+
+    /**
+     * @param string $body
+     * @param int $statusCode
+     * @param array $headers
+     *
+     * @return ResponseInterface
+     */
+    public static function toRaw(string $body, int $statusCode = 200, array $headers = []): ResponseInterface
+    {
+        return Raw::create(
+            body: $body,
+            statusCode: $statusCode,
+            headers: $headers,
+        );
     }
 
     /**
@@ -81,6 +98,6 @@ final class ResponseFactory
      */
     private static function getAccept(Request $request): ?string
     {
-        return $request->headers['Accept'] ?? null;
+        return $request->headers->get('Accept');
     }
 }

@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     let STORAGE_KEY = 'chat_username';
+    let HISTORY_URL = '/api/history';
+    let STORE_URL = '/api/store';
     let overlay = document.getElementById('name-overlay');
     let nameInput = document.getElementById('name-input');
     let nameSubmitBtn = document.getElementById('name-submit');
@@ -126,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
         sendBtn.disabled = true;
         sendBtn.textContent = '...';
 
-        fetch('/', {
+        fetch(STORE_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -161,10 +163,73 @@ document.addEventListener('DOMContentLoaded', function () {
         div.innerHTML =
             '<div class="message-author">' + escapeHtml(msg.author) + '</div>' +
             '<div class="message-text">' + escapeHtml(msg.text).replace(/\n/g, '<br>') + '</div>' +
-            '<div class="message-time">' + escapeHtml(msg.created_at ? new Date(msg.created_at * 1000).toISOString().slice(0, 19).replace('T', ' ') : '') + '</div>';
+            '<div class="message-time">' + escapeHtml(formatCreatedAt(msg.created_at)) + '</div>';
 
         messagesContainer.appendChild(div);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function normalizeMessage(raw) {
+        let createdAt = Number(raw.created_at ?? raw.createdAt ?? 0);
+
+        return {
+            author: String(raw.author ?? ''),
+            text: String(raw.text ?? ''),
+            created_at: Number.isFinite(createdAt) ? createdAt : 0,
+        };
+    }
+
+    function formatCreatedAt(createdAt) {
+        if (!createdAt) {
+            return '';
+        }
+
+        return new Date(createdAt * 1000).toISOString().slice(0, 19).replace('T', ' ');
+    }
+
+    function renderEmptyState() {
+        if (document.getElementById('empty-state')) {
+            return;
+        }
+
+        let empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.id = 'empty-state';
+        empty.textContent = 'Сообщений пока нет. Напишите первое!';
+
+        messagesContainer.appendChild(empty);
+    }
+
+    function loadHistory() {
+        return fetch(HISTORY_URL, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        })
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки истории');
+                }
+
+                return response.json();
+            })
+            .then(function (payload) {
+                let history = Array.isArray(payload) ? payload : [];
+                messagesContainer.innerHTML = '';
+
+                if (history.length === 0) {
+                    renderEmptyState();
+                    return;
+                }
+
+                history.forEach(function (message) {
+                    appendMessage(normalizeMessage(message));
+                });
+            })
+            .catch(function (err) {
+                console.error(err);
+            });
     }
 
     function escapeHtml(str) {
@@ -178,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         source.onmessage = function (event) {
             try {
-                let msg = JSON.parse(event.data);
+                let msg = normalizeMessage(JSON.parse(event.data));
                 appendMessage(msg);
             } catch (e) {
                 // ignore non-JSON messages
@@ -191,8 +256,11 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    connectSse();
-
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
     initChat();
+
+    loadHistory().finally(function () {
+        connectSse();
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        markExistingMessages();
+    });
 });
