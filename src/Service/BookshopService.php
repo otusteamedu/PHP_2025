@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Infrastructure\Repository\BookshopRepository;
+use App\Model\BookshopSearchModel;
 
 class BookshopService
 {
@@ -33,5 +34,10 @@ class BookshopService
     public function loadBulkDocuments(array $data): bool
     {
         return $this->bookshopRepository->loadBulkDocuments($data);
+    }
+
+    public function searchDocuments(string $indexName, BookshopSearchModel $bookshopSearchModel): array
+    {
+        return $this->bookshopRepository->searchDocuments($indexName, $bookshopSearchModel);
     }
 }
