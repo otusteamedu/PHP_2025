@@ -1,0 +1,25 @@
+{
+    "name": "slim/slim-skeleton",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "ext-json": "*",
+        "monolog/monolog": "^2.8",
+        "php-di/php-di": "^7.1",
+        "slim/psr7": "^1.5",
+        "slim/slim": "^4.10",
+        "symfony/messenger": "^8.0"
+    },
+    "config": {
+        "process-timeout": 0,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "scripts": {
+        "start": "php -S localhost:8080 -t public",
+        "test": "phpunit"
+    }
+}
