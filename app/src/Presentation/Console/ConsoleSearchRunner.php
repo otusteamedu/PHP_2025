@@ -6,7 +6,9 @@ namespace Pryaniki\App\Presentation\Console;
 use Elastic\Elasticsearch\ClientBuilder;
 use Pryaniki\App\Infrastructure\Elasticsearch\ElasticsearchIndexManager;
 use Pryaniki\App\Infrastructure\Elasticsearch\ElasticsearchProductRepository;
+use Pryaniki\App\Presentation\Controllers\Commands\Elasticsearch\CreateIndexAction;
 use Pryaniki\App\Presentation\Controllers\Commands\Elasticsearch\ImportAction;
+use Pryaniki\App\Presentation\Controllers\Commands\Elasticsearch\ResetIndexAction;
 use Pryaniki\App\Presentation\Controllers\Commands\Elasticsearch\SearchAction;
 use Pryaniki\App\Presentation\Views\TableView;
 
@@ -28,7 +30,9 @@ class ConsoleSearchRunner
 
         switch ($command) {
             case 'import':
-                $indexManager->createIndex();
+                $createIndexAction = new CreateIndexAction($indexManager);
+                $createIndexAction->run();
+
                 $file = $argv[1] ?? '';
 
                 if ($file === '' || !file_exists($file)) {
@@ -46,11 +50,13 @@ class ConsoleSearchRunner
                 echo "Import completed\n";
                 break;
             case 'create-index':
-                $indexManager->createIndex();
+                $action = new CreateIndexAction($indexManager);
+                $action->run();
                 echo "Index has been created\n";
                 break;
             case 'reset-index':
-                $indexManager->resetIndex();
+                $action = new ResetIndexAction($indexManager);
+                $action->run();
                 echo "Index has been reset\n";
                 break;
             case 'search':
