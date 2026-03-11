@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Pryaniki\App\Presentation\Console;
 
 use Elastic\Elasticsearch\ClientBuilder;
-use \Pryaniki\App\App;
 use Pryaniki\App\Infrastructure\Elasticsearch\ElasticsearchIndexManager;
 use Pryaniki\App\Infrastructure\Elasticsearch\ElasticsearchProductRepository;
+use Pryaniki\App\Presentation\Controllers\Commands\Elasticsearch\ImportAction;
 use Pryaniki\App\Presentation\Controllers\Commands\Elasticsearch\SearchAction;
 use Pryaniki\App\Presentation\Views\TableView;
 
@@ -15,9 +15,6 @@ class ConsoleSearchRunner
 
     public function run(): void
     {
-
-        $app = new App();
-
         $argv = $_SERVER['argv'];
 
         $command = end($argv) ?? null;
@@ -38,8 +35,14 @@ class ConsoleSearchRunner
                     echo "File not found\n";
                     exit(1);
                 }
+                $action = new ImportAction($client);
+                try {
+                    $action->import($file);
 
-                $app->importFromFile($file);
+                } catch (\RuntimeException $e) {
+                    echo $e->getMessage() . "\n";
+                    exit(1);
+                }
                 echo "Import completed\n";
                 break;
             case 'create-index':
