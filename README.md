@@ -1,8 +1,8 @@
 Для запуска программы:
 1. `docker compose up -d`
 2. `docker compose run --rm composer install`
-3. `docker compose exec app php entry_point/app.php data/products.json import` - создать индекс
-  
+3. `docker compose exec app php entry_point/app.php data/products.json import` - импортировать данные 
+
 Команда `docker compose exec app php entry_point/app.php reset-index` позволит пересоздать индекс.
 
 Для проверки поиска:
