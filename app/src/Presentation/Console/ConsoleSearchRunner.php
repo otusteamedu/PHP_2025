@@ -6,6 +6,9 @@ namespace Pryaniki\App\Presentation\Console;
 use Elastic\Elasticsearch\ClientBuilder;
 use \Pryaniki\App\App;
 use Pryaniki\App\Infrastructure\Elasticsearch\ElasticsearchIndexManager;
+use Pryaniki\App\Infrastructure\Elasticsearch\ElasticsearchProductRepository;
+use Pryaniki\App\Presentation\Controllers\Commands\Elasticsearch\SearchAction;
+use Pryaniki\App\Presentation\Views\TableView;
 
 class ConsoleSearchRunner
 {
@@ -24,6 +27,7 @@ class ConsoleSearchRunner
             ->build();
 
         $indexManager = new ElasticsearchIndexManager($client);
+        $productRepository = new ElasticsearchProductRepository($client);
 
         switch ($command) {
             case 'import':
@@ -52,7 +56,23 @@ class ConsoleSearchRunner
                     echo "Search query is required\n";
                     exit(1);
                 }
-                $app->search($args);
+
+                $args = getopt('', [
+                    'query::',
+                    'category::',
+                    'price::',
+                    'price-from::',
+                    'price-to::',
+                    'stock::',
+                    'stock-from::',
+                    'stock-to::',
+                    'shop::'
+                ]);
+
+                $action = new SearchAction($productRepository);
+                $searchData = $action->run($args);
+                $view = new TableView();
+                $view->printTable($searchData);
                 break;
             default:
                 echo "Unknown command: $command\n";
