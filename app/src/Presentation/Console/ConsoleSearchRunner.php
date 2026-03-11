@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Pryaniki\App\Presentation\Console;
 
+use Elastic\Elasticsearch\ClientBuilder;
 use \Pryaniki\App\App;
+use Pryaniki\App\Infrastructure\Elasticsearch\ElasticsearchIndexManager;
 
 class ConsoleSearchRunner
 {
@@ -12,33 +14,20 @@ class ConsoleSearchRunner
     {
 
         $app = new App();
-        $app->createIndex();
 
         $argv = $_SERVER['argv'];
 
         $command = end($argv) ?? null;
 
-        $args = getopt('', [
-            'query::',
-            'category::',
-            'price::',
-            'price-from::',
-            'price-to::',
-            'stock::',
-            'stock-from::',
-            'stock-to::',
-            'shop::'
-        ]);
+        $client = ClientBuilder::create()
+            ->setHosts([getenv('ELASTICSEARCH_HOST') ?: 'http://elasticsearch:9200'])
+            ->build();
 
-        if ($command === '') {
-            echo "Usage:\n";
-            echo "  php app.php <query> search\n";
-            echo "  php app.php <file> import\n";
-            exit(1);
-        }
+        $indexManager = new ElasticsearchIndexManager($client);
 
         switch ($command) {
             case 'import':
+                $indexManager->createIndex();
                 $file = $argv[1] ?? '';
 
                 if ($file === '' || !file_exists($file)) {
@@ -47,9 +36,14 @@ class ConsoleSearchRunner
                 }
 
                 $app->importFromFile($file);
+                echo "Import completed\n";
+                break;
+            case 'create-index':
+                $indexManager->createIndex();
+                echo "Index has been created\n";
                 break;
             case 'reset-index':
-                $app->resetIndex();
+                $indexManager->resetIndex();
                 echo "Index has been reset\n";
                 break;
             case 'search':
