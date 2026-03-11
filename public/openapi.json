@@ -1,0 +1,178 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Task Processing API",
+        "description": "REST API for queuing tasks and checking processing",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://app.local",
+            "description": "App local"
+        }
+    ],
+    "paths": {
+        "/api/v1/tasks": {
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a task for asynchronous processing",
+                "operationId": "createTask",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": true
+                            },
+                            "example": {
+                                "email": "user@example.com",
+                                "priority": "high"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "The task has been queued",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreatedTaskResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tasks/{request_id}": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Get task status by request_id",
+                "operationId": "getTaskStatus",
+                "parameters": [
+                    {
+                        "name": "request_id",
+                        "in": "path",
+                        "description": "Request UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Task status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskStatusResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request_id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ErrorResponse": {
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "request_id must be a valid UUID"
+                    }
+                },
+                "type": "object"
+            },
+            "CreatedTaskResponse": {
+                "required": [
+                    "request_id",
+                    "status"
+                ],
+                "properties": {
+                    "request_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "01958674-f8e1-7db1-9d3f-0db4c9f4d8f3"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "queued"
+                    }
+                },
+                "type": "object"
+            },
+            "TaskStatusResponse": {
+                "required": [
+                    "request_id",
+                    "status"
+                ],
+                "properties": {
+                    "request_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "01958674-f8e1-7db1-9d3f-0db4c9f4d8f3"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "processing",
+                        "enum": [
+                            "queued",
+                            "processing",
+                            "completed"
+                        ]
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Tasks",
+            "description": "Operations with asynchronous tasks"
+        }
+    ]
+}
