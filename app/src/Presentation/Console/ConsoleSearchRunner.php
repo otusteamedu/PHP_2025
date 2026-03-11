@@ -74,7 +74,21 @@ class ConsoleSearchRunner
 
                 $action = new SearchAction($productRepository);
                 $searchData = $action->run($args);
-                $view = new TableView();
+                $tableConfig = [
+                    'title' => [
+                        'name' => 'Название',
+                        'width' => 60
+                    ],
+                    'category' => [
+                        'name' => 'Категория',
+                        'width' => 25
+                    ],
+                    'price' => [
+                        'name' => 'Цена',
+                        'width' => 8
+                    ]
+                ];
+                $view = new TableView($tableConfig);
                 $view->printTable($searchData);
                 break;
             default:

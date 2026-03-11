@@ -6,62 +6,55 @@ namespace Pryaniki\App\Presentation\Views;
 
 class TableView
 {
-    private int $titleColumnWidth;
-    private int $categoryColumnWidth;
-    private int $priceColumnWidth;
-
     const COLUMN_SEPARATOR = ' | ';
+    const BORDER_LINE_SYMBOL = '-';
 
-    /**
-     * @param int $titleColumnWidth
-     * @param int $categoryColumnWidth
-     * @param int $priceColumnWidth
-     */
-    public function __construct(int $titleColumnWidth = 60, int $categoryColumnWidth = 25, int $priceColumnWidth = 8)
+    private array $config;
+
+
+    public function __construct(array $config)
     {
-        $this->titleColumnWidth = $titleColumnWidth;
-        $this->categoryColumnWidth = $categoryColumnWidth;
-        $this->priceColumnWidth = $priceColumnWidth;
-        //todo принимать объект с настройками
-        // нужно получить список ключей, которые нужно взять из _source и ширину столбца
-        // $config =
-        // title => [
-        // 'column-size' => 60,
-        // 'column-name' => 'Название',
-        // ],
-        // ...
-        //
-        // В printHead вместо 6 вычислять $countSeparator = (count($config) - 1) * 2;
-
-
+        $this->config = $config;
     }
 
-    public function printTable(array $hits): void
+    public function printTable(array $data): void
     {
         $this->printHead();
-        foreach ($hits as $hit) {
-            $src = $hit['_source'];
-
-            echo
-                $this->limitColumnSize($src['title'], $this->titleColumnWidth) . self::COLUMN_SEPARATOR .
-                $this->limitColumnSize($src['category'], $this->categoryColumnWidth) . self::COLUMN_SEPARATOR .
-                $this->limitColumnSize((string)$src['price'], $this->priceColumnWidth) . PHP_EOL;
+        foreach ($data as $value) {
+            $rowData = $value['_source'];
+            $this->printRow($rowData);
         }
     }
 
     private function printHead(): void
     {
-        echo
-            $this->limitColumnSize('Название', $this->titleColumnWidth) . self::COLUMN_SEPARATOR .
-            $this->limitColumnSize('Категория', $this->categoryColumnWidth) . self::COLUMN_SEPARATOR .
-            $this->limitColumnSize('Цена', $this->priceColumnWidth) . PHP_EOL;
+        $sizeBorderLine = count($this->config) * 2;
+        $rowData = [];
 
-        echo str_repeat('-', $this->titleColumnWidth + $this->categoryColumnWidth + $this->priceColumnWidth + 6) . PHP_EOL;
+        foreach ($this->config as $columnKey => $columnSetting) {
+            $rowData[$columnKey] = $columnSetting['name'];
+            $sizeBorderLine += (int)$columnSetting['width'];
+        }
+
+        $this->printRow($rowData);
+        $this->printBorderLine($sizeBorderLine);
     }
 
-    private function printRow(): void
+    private function printRow($data): void
     {
-        //todo вынести печать таблицы
+        $arRow = [];
+
+        foreach ($this->config as $columnKey => $columnSetting) {
+            $value = $data[$columnKey] ?? '';
+            $arRow[] = $this->limitColumnSize((string)$value, $columnSetting['width']);
+        }
+
+        echo implode(self::COLUMN_SEPARATOR, $arRow) . PHP_EOL;
+    }
+
+    private function printBorderLine(int $borderLineSize): void
+    {
+        echo str_repeat(self::BORDER_LINE_SYMBOL, $borderLineSize) . PHP_EOL;
     }
 
     private function limitColumnSize(string $text, int $width): string
