@@ -15,3 +15,5 @@ memcached/
 /code/vendor/
 /esdata/*
 /pgdata/*
+/rabbitmq/data/
+/rabbitmq/logs/

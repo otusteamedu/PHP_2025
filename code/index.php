@@ -1,40 +1,32 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-use Ak\Hw\Models\EmailFinder;
+declare(strict_types=1);
 
-/**
- * Отправляет JSON-ответ клиенту и завершает выполнение скрипта.
- *
- * @param bool $isSuccess Успешен ли был запрос.
- * @param array $data Данные для включения в ответ.
- * @param int $statusCode HTTP-код ответа.
- * @throws JsonException
- */
-function sendJsonResponse(bool $isSuccess, array $data, int $statusCode = 200): void
-{
-    http_response_code($statusCode);
-    header('Content-Type: application/json; charset=utf-8');
-    $response = ['success' => $isSuccess];
-    if ($isSuccess) {
-        $response['data'] = $data;
-    } else {
-        $response['error'] = $data;
-    }
-    echo json_encode($response, JSON_THROW_ON_ERROR);
-    exit();
-}
+// 1. Подключаем автозагрузчик Composer
+require_once __DIR__ . '/vendor/autoload.php';
 
+use Ak\Hw\Routing\Router;
+use Ak\Hw\Controllers\UserReportController;
 
-$text = htmlspecialchars($_REQUEST['text'] ?? '');
+// 2. Получение данных запроса
+$uri = $_SERVER['REQUEST_URI'];
+$method = $_SERVER['REQUEST_METHOD'];
 
-if (empty($text)) {
-    sendJsonResponse(false, ['message' => 'Text parameter is required.'], 400);
-}
+// 3. Инициализация и настройка роутера
+$router = new Router();
 
+// Регистрируем наш маршрут для POST-запроса
+$router->add('POST', '/api/user-report', [UserReportController::class, 'handleReportRequest']);
+
+// 4. Диспетчеризация запроса
 try {
-    $validEmails = new EmailFinder()->getEmailsByText($text);
-    sendJsonResponse(true, ['emails' => $validEmails]);
-} catch (Exception $e) {
-    sendJsonResponse(false, ['message' => $e->getMessage()], $e->getCode());
+    $router->dispatch($uri, $method);
+} catch (\Exception $e) {
+    $code = $e->getCode() ?: 500;
+    if ($code < 100 || $code > 599) {
+        $code = 500;
+    }
+    http_response_code($code);
+    header('Content-Type: application/json');
+    echo json_encode(['error' => $e->getMessage()]);
 }
