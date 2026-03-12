@@ -78,22 +78,49 @@ services:
     volumes:
       - redis_data:/data
 
+  elasticsearch_init:
+    build:
+      context: .
+      dockerfile: docker/elasticsearch/Dockerfile
+    environment:
+      - ELASTIC_HOST=${ELASTIC_HOST}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_NODE_NAME=${ELASTIC_NODE_NAME}
+      - ELASTIC_HTTP_CERT_PASSWORD=${ELASTIC_HTTP_CERT_PASSWORD}
+      - ELASTIC_TRANSPORT_CERT_PASSWORD=${ELASTIC_TRANSPORT_CERT_PASSWORD}
+    volumes:
+      - ./docker/elasticsearch/config/certs:/usr/share/elasticsearch/config/certs
+      - ./docker/elasticsearch/config/keystore:/usr/share/elasticsearch/config/keystore
+    healthcheck:
+      test: [ "CMD", "test", "-f", "/tmp/elasticsearch_init_complete" ]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+      start_period: 60s
+
   elasticsearch:
     image: elasticsearch:9.2.5
-    hostname: elasticsearch
-    command: >
-      bash -c '
-        /usr/local/bin/copy-certs.sh &
-        exec /usr/local/bin/docker-entrypoint.sh eswrapper
-      '
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
+      - cluster.name=docker-cluster
+      - network.host=0.0.0.0
       - discovery.type=single-node
+      - node.name=${ELASTIC_NODE_NAME}
       - ES_JAVA_OPTS=-Xms2g -Xmx2g
       - bootstrap.memory_lock=true
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    entrypoint:
+      - /bin/tini
+      - --
+      - bash
+      - -c
+      - |
+        if [ ! -f /usr/share/elasticsearch/config/elasticsearch.keystore ]; then
+          cp /usr/share/elasticsearch/config/keystore/elasticsearch.keystore /usr/share/elasticsearch/config;
+        fi
+        exec /usr/local/bin/docker-entrypoint.sh;
     mem_limit: 4g
     cpus: 2.0
     ulimits:
@@ -101,9 +128,22 @@ services:
         soft: -1
         hard: -1
     volumes:
+      - ./docker/elasticsearch/config/certs:/usr/share/elasticsearch/config/certs
+      - ./docker/elasticsearch/config/keystore:/usr/share/elasticsearch/config/keystore
+      - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - es_data:/usr/share/elasticsearch/data
-      - ./docker/elasticsearch/bin/copy-certs.sh:/usr/local/bin/copy-certs.sh
-      - ./docker/elasticsearch/config/certs:/usr/share/elasticsearch/config/copied-certs
+    depends_on:
+      elasticsearch_init:
+        condition: service_healthy
+    healthcheck:
+      test: [
+        "CMD", "bash", "-c",
+        "curl -f --insecure -u ${ELASTIC_USER}:${ELASTIC_PASSWORD} https://localhost:9200/_cluster/health"
+      ]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
 
 volumes:
   php_1_socket:

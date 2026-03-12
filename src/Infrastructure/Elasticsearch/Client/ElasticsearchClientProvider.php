@@ -21,7 +21,7 @@ class ElasticsearchClientProvider
         return ClientBuilder::create()
             ->setHosts(["https://$esHost:9200"])
             ->setBasicAuthentication($esUser, $esPassword)
-            ->setCABundle("$certsDir/http_ca.crt")
+            ->setCABundle("$certsDir/ca/ca.crt")
             ->build();
     }
 }

@@ -6,5 +6,5 @@
 .env
 /var/
 /http/http-client.env.json
-/docker/elasticsearch/config/certs/*.p12
-/docker/elasticsearch/config/certs/*.crt
+/docker/elasticsearch/config/certs
+/docker/elasticsearch/config/keystore
