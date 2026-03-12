@@ -43,4 +43,17 @@ final readonly class PostgresRequestRepository implements RequestRepository
             'status' => $status,
         ]);
     }
+
+    public function getRequest(int $id): ?array
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT * FROM requests WHERE id = :id'
+        );
+
+        $statement->execute(['id' => $id]);
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $result ?: null;
+    }
 }
