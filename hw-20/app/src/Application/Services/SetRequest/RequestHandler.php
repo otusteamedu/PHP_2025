@@ -17,7 +17,6 @@ final class RequestHandler
     public function __construct(
         private RequestRepository $repository,
         private RequestProducer $producer,
-        private LoggerInterface $logger,
     ) {
     }
 
@@ -29,10 +28,7 @@ final class RequestHandler
             $this->producer->publish($requestId, $query->data);
         } catch (Throwable $exception) {
             $this->repository->updateStatus($requestId, self::STATUS_FAILED);
-            $this->logger->error('Failed to publish request to queue', [
-                'request_id' => $requestId,
-                'exception' => $exception,
-            ]);
+
             throw $exception;
         }
 
