@@ -1,0 +1,120 @@
+openapi: 3.0.0
+info:
+  title: API для работы с запросами
+  description: API для создания и получения информации о запросах
+  version: 1.0.0
+servers:
+  - url: 'http://localhost/api'
+    description: Локальный сервер для разработки
+paths:
+  /request:
+    post:
+      summary: Создание нового запроса
+      description: Принимает данные запроса и создает новый запрос в системе.
+      operationId: createRequest
+      requestBody:
+        description: Данные запроса, которые нужно создать
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - request_data
+              properties:
+                request_data:
+                  type: string
+                  description: Данные запроса
+                  example: "Данные запроса для создания"
+      responses:
+        '202':
+          description: Запрос успешно принят
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: integer
+                    example: 123
+                  status:
+                    type: string
+                    example: "queued"
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  error:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: "BAD_REQUEST"
+                      description:
+                        type: string
+                        example: "Данные запроса не указаны"
+  /information/{id}:
+    get:
+      summary: Получение информации о запросе
+      description: Получает информацию о запросе по его ID.
+      operationId: getRequestInformation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Идентификатор запроса
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: Информация о запросе успешно получена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: integer
+                    example: 123
+                  status:
+                    type: string
+                    example: "queued"
+        '400':
+          description: Запись с таким ID не найдена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  error:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: "BAD_REQUEST"
+                      description:
+                        type: string
+                        example: "Запись не найдена"
+components:
+  schemas:
+    Request:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+        status:
+          type: string
+          example: "pending"
+        request_data:
+          type: string
+          example: "Данные запроса для ID 123"
