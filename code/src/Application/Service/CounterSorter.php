@@ -17,13 +17,12 @@ class CounterSorter {
     
     public static function sort(array $counters): array {
         $sorted = [];
+        $priority_models = array_flip(self::PRIORITY_ORDER);
         
-        foreach (self::PRIORITY_ORDER as $model) {
-            foreach ($counters as $key => $counter) {
-                if ($counter['device_model_name'] === $model) {
-                    $sorted[] = $counter;
-                    unset($counters[$key]);
-                }
+        foreach ($counters as $key => $counter) {
+            if (isset($priority_models[$counter['device_model_name']])) {
+                $sorted[] = $counter;
+                unset($counters[$key]);
             }
         }
         
