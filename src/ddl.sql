@@ -42,10 +42,10 @@ create table cinema.movie
 create table cinema.hall
 (
     id smallserial primary key,
-    cinemaId smallint not null,
+    cinema_id smallint not null,
     number smallint not null,
 
-    foreign key (cinemaId) references cinema.cinema (id)
+    foreign key (cinema_id) references cinema.cinema (id)
 );
 
 
