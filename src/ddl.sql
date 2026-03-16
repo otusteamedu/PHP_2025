@@ -2,6 +2,22 @@
 drop schema if exists cinema cascade;
 create schema cinema;
 
+create type cinema.seat_category as enum
+    (
+    'в центре',
+    'с краю',
+    'в центре, далеко',
+    'с краю далеко'
+);
+
+create type cinema.part_of_day as enum
+    (
+    'утро',
+    'день',
+    'вечер',
+    'ночь'
+);
+
 create table cinema.customer
 (
     id bigserial primary key,
@@ -32,7 +48,6 @@ create table cinema.hall
     foreign key (cinemaId) references cinema.cinema (id)
 );
 
-CREATE TYPE placeCategory AS ENUM ('В центре', 'С краю', 'В центре, далеко', 'С краю далеко');
 
 create table cinema.place
 (
@@ -74,7 +89,6 @@ create table cinema.orders
     foreign key (sessionId) references cinema.session (id)
 );
 
-CREATE TYPE partOfDay AS ENUM ('Утро', 'День', 'Вечер', 'Ночь');
 
 create table cinema.price
 (
