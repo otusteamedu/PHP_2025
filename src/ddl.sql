@@ -97,21 +97,3 @@ create table cinema.price
     -- для каждой категории может быть только одна цена
     unique (session_id, seat_category)
 );
-
-CREATE TABLE cinema.customer_order (
-    orderId bigint references cinema.customer,
-    customerId bigint references cinema.order,
-    PRIMARY KEY (orderId, customerId)
-);
-
-create table cinema.orders_place (
-    placeId bigint references cinema.place,
-    orderId int references cinema.orders,
-    primary key (orderId, placeId)
-);
-
-CREATE TABLE cinema.place_price (
-    priceId bigint references cinema.place,
-    placeId int references cinema.price,
-    PRIMARY KEY (priceId, placeId)
-);
