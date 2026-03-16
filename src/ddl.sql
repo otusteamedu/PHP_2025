@@ -78,13 +78,10 @@ create table cinema.session
 create table cinema.orders
 (
     id bigserial primary key,
-    customerId bigint not null,
-    sessionId bigint not null,
-    ticketPrice money not null,
+    customer_id bigint not null,
     created_at  timestamp not null default now(),
 
-    foreign key (customerId) references cinema.customer (id),
-    foreign key (sessionId) references cinema.session (id)
+    foreign key (customer_id) references cinema.customer (id),
 );
 
 
