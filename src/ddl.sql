@@ -53,11 +53,11 @@ create table cinema.place
 (
     id serial primary key,
     row smallint not null,
-    place smallint not null,
+    seat smallint not null,
     hall_id smallint not null,
     seat_category cinema.seat_category not null,
 
-    foreign key (hallId) references cinema.hall (id),
+    foreign key (hall_id) references cinema.hall (id),
 
 -- В одном зале может быть одно место
     unique (hall_id, row, seat)
