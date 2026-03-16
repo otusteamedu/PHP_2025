@@ -112,3 +112,7 @@ create table cinema.ticket
     foreign key (order_id) references cinema.orders(id),
     foreign key (place_id) references cinema.place(id)
 );
+
+-- Не позволит покупать один и тот же билет в один сеанс
+create unique index unique_ticket
+on cinema.ticket(session_id, place_id);
