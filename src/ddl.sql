@@ -88,11 +88,14 @@ create table cinema.orders
 create table cinema.price
 (
     id bigserial primary key,
-    movieId bigint not null,
-    partOfDay partOfDay not null,
+    session_id bigint not null,
+    seat_category cinema.seat_category not null,
     price money not null,
 
-    foreign key (movieId) references cinema.movie (id)
+    foreign key (session_id) references cinema.session (id),
+
+    -- для каждой категории может быть только одна цена
+    unique (session_id, seat_category)
 );
 
 CREATE TABLE cinema.customer_order (
