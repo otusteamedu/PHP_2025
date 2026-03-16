@@ -66,14 +66,13 @@ create table cinema.place
 create table cinema.session
 (
     id bigserial primary key,
-    movieId bigint not null,
-    hallId smallint not null,
-    orderId bigint not null,
+    movie_id bigint not null,
+    hall_id smallint not null,
     startTime timestamp not null,
+    part_of_day cinema.part_of_day not null,
 
-    foreign key (hallId) references cinema.hall (id),
-    foreign key (orderId) references cinema.order (id),
-    foreign key (movieId) references cinema.movie (id)
+    foreign key (hall_id) references cinema.hall (id),
+    foreign key (movie_id) references cinema.movie (id)
 );
 
 create table cinema.orders
