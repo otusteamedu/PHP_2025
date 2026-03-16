@@ -81,7 +81,7 @@ create table cinema.orders
     customer_id bigint not null,
     created_at  timestamp not null default now(),
 
-    foreign key (customer_id) references cinema.customer (id),
+    foreign key (customer_id) references cinema.customer (id)
 );
 
 
