@@ -1,5 +1,5 @@
--- drop table cinema.customer, cinema.cinema, cinema.movie, cinema.place, cinema.hall, cinema.session, cinema.order, cinema.price;
--- drop table cinema.customer_order, cinema.order_place, cinema.place_price;
+
+drop schema if exists cinema cascade;
 create schema cinema;
 
 create table cinema.customer
