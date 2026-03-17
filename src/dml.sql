@@ -57,25 +57,7 @@ insert into cinema.hall(cinemaId, number)
              from cinema.cinema
          ) as c
              join lateral generate_series(1, c.hall_count) as h(num) on true
-    order by c.id, h.num
-
-
-set my.minimum_price_range = 200;
-set my.maximum_price_range = 600;
-set my.place_category_count = 4;
-
-set my.step_price = 50;
-set my.min_price = 200;
--- 600 - 3 * 5
-set my.max_price = 450;
-
-with settings as (
-    select
-        current_setting('my.minimum_price_range')::int as min_price,
-        current_setting('my.maximum_price_range')::int as max_price,
-        current_setting('my.place_category_count')::int as count_categories,
-        current_setting('my.step_price')::int as step_price
-),
+    order by c.id, h.num;
 
 insert into cinema.place (hall_id, row, seat, seat_category)
     select
@@ -98,6 +80,45 @@ insert into cinema.place (hall_id, row, seat, seat_category)
             else 'с краю'::cinema.seat_category
         end) as c(category);
 
+insert into cinema.session(movie_id, hall_id, start_time, part_of_day)
+select
+    m.id,
+    h.id,
+    ts,
+    case
+        when extract(hour from ts) >= 4  and extract(hour from ts) < 9  then 'утро'::cinema.part_of_day
+        when extract(hour from ts) >= 9  and extract(hour from ts) < 14 then 'день'::cinema.part_of_day
+        when extract(hour from ts) >= 14 and extract(hour from ts) < 20 then 'вечер'::cinema.part_of_day
+        else 'ночь'::cinema.part_of_day
+        end
+
+from cinema.movie m
+join cinema.hall h on true
+cross join lateral (
+    generate_series(
+        timestamp '2020-01-10 00:00:00',
+        timestamp '2026-07-20 23:00:00',
+        interval '1 hour'
+    ) as ts(ts)
+limit 10000;
+
+
+set my.minimum_price_range = 200;
+set my.maximum_price_range = 600;
+set my.place_category_count = 4;
+
+set my.step_price = 50;
+set my.min_price = 200;
+-- 600 - 3 * 5
+set my.max_price = 450;
+
+with settings as (
+    select
+        current_setting('my.minimum_price_range')::int as min_price,
+            current_setting('my.maximum_price_range')::int as max_price,
+            current_setting('my.place_category_count')::int as count_categories,
+            current_setting('my.step_price')::int as step_price
+),
 
 base_prices as (
     -- для каждой пары (movie, partOfDay) выбираем одну базовую цену
