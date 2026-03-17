@@ -132,3 +132,11 @@ insert into cinema.price(session_id, seat_category, price)
     cross join (
         select unnest(enum_range(null::cinema.seat_category)) as category
     ) c;
+
+insert into cinema.orders(customer_id, created_at)
+    select
+        c.id,
+        timestamp '2026-03-01'
+            + random() * (timestamp '2026-03-01' - timestamp '2026-01-01')
+    from cinema.customer c
+        limit 10000;
