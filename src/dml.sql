@@ -77,6 +77,28 @@ with settings as (
         current_setting('my.step_price')::int as step_price
 ),
 
+insert into cinema.place (hall_id, row, seat, seat_category)
+    select
+        h.id as hall_id,
+        r.row_number as row,
+        s.seat_number as seat,
+        c.category as category
+    from cinema.hall as h
+
+         cross join generate_series(1, 10) as r(row_number)
+         cross join generate_series(1, 30) as s(seat_number)
+         cross join lateral (
+    select
+        case
+            when s.seat_number between 3 and 5 then 'с краю далеко'::cinema.seat_category
+            when s.seat_number between 6 and 9 then 'в центре, далеко'::cinema.seat_category
+            when s.seat_number between 10 and 20 then 'в центре'::cinema.seat_category
+            when s.seat_number between 21 and 24 then 'в центре, далеко'::cinema.seat_category
+            when s.seat_number between 25 and 28 then 'с краю далеко'::cinema.seat_category
+            else 'с краю'::cinema.seat_category
+        end) as c(category);
+
+
 base_prices as (
     -- для каждой пары (movie, partOfDay) выбираем одну базовую цену
     select
