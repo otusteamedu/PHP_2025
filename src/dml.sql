@@ -102,6 +102,32 @@ cross join lateral (
     ) as ts(ts)
 limit 10000;
 
+insert into cinema.price(session_id, seat_category, price)
+    select
+        s.id,
+        c.category,
+        (
+            case s.part_of_day
+                when 'утро'  then 200
+                when 'день'  then 300
+                when 'вечер' then 400
+                when 'ночь'  then 250
+            end
+            +
+            case c.category
+                when 'с краю' then 0
+                when 'с краю далеко' then 50
+                when 'в центре, далеко' then 100
+                when 'в центре' then 150
+            end
+        )::money
+
+    from cinema.session s
+
+    cross join (
+        select unnest(enum_range(null::cinema.seat_category)) as category
+    ) c;
+
 
 set my.minimum_price_range = 200;
 set my.maximum_price_range = 600;
