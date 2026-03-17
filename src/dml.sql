@@ -35,7 +35,7 @@ insert into cinema.movie(name)
 insert into cinema.cinema(city, address)
     select
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_50')::int)::int),
-        random_string(1 + floor(random() * 200))
+        random_string(1 + floor(random() * 200)::int)
     from generate_series(1,current_setting('my.amount_data_to_generate_smallserial')::int) as gs(id);
 
 insert into cinema.customer(name, email, phone)
