@@ -25,25 +25,30 @@ set my.amount_data_to_generate_smallserial = 32; -- 32000
 set my.amount_data_to_generate_serial = 10000; -- 10000000
 set my.amount_data_to_generate_bigserial = 10000; -- 10000000
 
-set my.max_count_halls = 30;
+
+set my.movie_count = 10000; -- 10000000
+set my.cinema_count = 10000; -- 10000000
+set my.customer_count = 10000; -- 10000000
+set my.halls_count = 30;
+set my.session_count = 10000; -- 10000000
 
 insert into cinema.movie(name)
     select
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_100')::int)::int)
-    from generate_series(1,current_setting('my.amount_data_to_generate_bigserial')::int) as gs(id);
+    from generate_series(1,current_setting('my.movie_count')::int) as gs(id);
 
 insert into cinema.cinema(city, address)
     select
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_50')::int)::int),
         random_string(1 + floor(random() * 200)::int)
-    from generate_series(1,current_setting('my.amount_data_to_generate_smallserial')::int) as gs(id);
+    from generate_series(1,current_setting('my.cinema_count')::int) as gs(id);
 
 insert into cinema.customer(name, email, phone)
     select
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_50')::int)::int),
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_50')::int)::int),
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_20')::int)::int)
-    from generate_series(1, current_setting('my.amount_data_to_generate_bigserial')::int) as gs(id);
+    from generate_series(1, current_setting('my.customer_count')::int) as gs(id);
 
 insert into cinema.hall(cinema_id, number)
     select c.id, h.num
@@ -52,7 +57,7 @@ insert into cinema.hall(cinema_id, number)
                  id,
                  floor(
                      random()
-                         * current_setting('my.max_count_halls')::int
+                         * current_setting('my.halls_count')::int
                  )::int + 1 as hall_count
              from cinema.cinema
          ) as c
