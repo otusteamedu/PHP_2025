@@ -45,7 +45,7 @@ insert into cinema.customer(name, email, phone)
         random_string(1 + floor(random() * current_setting('my.max_chars_varying_20')::int)::int)
     from generate_series(1, current_setting('my.amount_data_to_generate_bigserial')::int) as gs(id);
 
-insert into cinema.hall(cinemaId, number)
+insert into cinema.hall(cinema_id, number)
     select c.id, h.num
     from (
              select
