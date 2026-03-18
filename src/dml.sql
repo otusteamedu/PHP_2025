@@ -82,27 +82,46 @@ insert into cinema.place (hall_id, row, seat, seat_category)
             else 'с краю'::cinema.seat_category
         end) as c(category);
 
+with time_slots as (
+    select ts
+    from generate_series(
+         timestamp '2026-06-10 00:00:00',
+         timestamp '2026-07-20 23:00:00',
+         interval '1 hour'
+     ) ts
+)
 insert into cinema.session(movie_id, hall_id, start_time, part_of_day)
 select
     m.id,
     h.id,
-    ts,
+    t.ts,
     case
-        when extract(hour from ts) >= 4  and extract(hour from ts) < 9  then 'утро'::cinema.part_of_day
-        when extract(hour from ts) >= 9  and extract(hour from ts) < 14 then 'день'::cinema.part_of_day
-        when extract(hour from ts) >= 14 and extract(hour from ts) < 20 then 'вечер'::cinema.part_of_day
+        when extract(hour from t.ts) >= 4  and extract(hour from t.ts) < 9  then 'утро'::cinema.part_of_day
+        when extract(hour from t.ts) >= 9  and extract(hour from t.ts) < 14 then 'день'::cinema.part_of_day
+        when extract(hour from t.ts) >= 14 and extract(hour from t.ts) < 20 then 'вечер'::cinema.part_of_day
         else 'ночь'::cinema.part_of_day
         end
+from generate_series(1, current_setting('my.session_count')::int) g(i)
+join lateral (
+    select id
+    from cinema.movie
+    order by random() + g.i * 0
+    limit 1
+) m on true
 
-from cinema.movie m
-join cinema.hall h on true
-cross join lateral (
-    generate_series(
-        timestamp '2020-01-10 00:00:00',
-        timestamp '2026-07-20 23:00:00',
-        interval '1 hour'
-    ) as ts(ts)
-limit 10000;
+join lateral (
+    select id
+    from cinema.hall
+    order by random() + g.i * 0
+    limit 1
+) h on true
+
+join lateral (
+    select ts
+    from time_slots
+    order by random() + g.i * 0
+    limit 1
+) t on true;
 
 insert into cinema.price(session_id, seat_category, price)
     select
