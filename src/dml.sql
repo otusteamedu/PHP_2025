@@ -29,7 +29,7 @@ set my.amount_data_to_generate_bigserial = 10000; -- 10000000
 set my.movie_count = 10000; -- 10000000
 set my.cinema_count = 10000; -- 10000000
 set my.customer_count = 10000; -- 10000000
-set my.halls_count = 30;
+set my.halls_count = 2;
 set my.session_count = 10000; -- 10000000
 
 insert into cinema.movie(name)
@@ -55,13 +55,10 @@ insert into cinema.hall(cinema_id, number)
     from (
              select
                  id,
-                 floor(
-                     random()
-                         * current_setting('my.halls_count')::int
-                 )::int + 1 as hall_count
+                 current_setting('my.halls_count')::int as hall_count
              from cinema.cinema
          ) as c
-             join lateral generate_series(1, c.hall_count) as h(num) on true
+             join lateral generate_series(1, current_setting('my.halls_count')::int) as h(num) on true
     order by c.id, h.num;
 
 insert into cinema.place (hall_id, row, seat, seat_category)
