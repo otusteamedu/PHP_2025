@@ -3,9 +3,15 @@
 declare(strict_types=1);
 
 namespace Ak\Hw\Services;
+use Ak\Hw\Domain\Messaging\QueueProducerInterface;
 
-final class UserReportService
+class UserReportService
 {
+    private QueueProducerInterface $queueProducer;
+
+    public function __construct(QueueProducerInterface $producer){
+        $this->queueProducer = $producer;
+    }
 
     /**
      * @param int $userId
@@ -24,13 +30,14 @@ final class UserReportService
 
 
         // 2. For now, just return the input data
-        return [
-            'user_id' => $userId,
-            'email' => $email,
-            'period' => [
-                'from' => $dateFrom,
-                'to' => $dateTo,
-            ]
-        ];
+        $this->queueProducer->publish(
+            'report generation',
+            array('user_id' => $userId,
+                'email' => $email,
+                'date_from' => $dateFrom,
+                'date_to' => $dateTo
+            )
+        );
+        return ['status' => 'Report generation has been queued.'];
     }
 }
