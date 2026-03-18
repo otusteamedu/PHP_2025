@@ -31,6 +31,7 @@ set my.cinema_count = 10000; -- 10000000
 set my.customer_count = 10000; -- 10000000
 set my.halls_count = 2;
 set my.session_count = 10000; -- 10000000
+set my.order_count = 10000; -- 10000000
 
 insert into cinema.movie(name)
     select
@@ -155,4 +156,4 @@ insert into cinema.orders(customer_id, created_at)
         timestamp '2026-03-01'
             + random() * (timestamp '2026-03-01' - timestamp '2026-01-01')
     from cinema.customer c
-        limit 10000;
+        limit current_setting('my.order_count')::int;
