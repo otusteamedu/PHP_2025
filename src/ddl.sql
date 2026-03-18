@@ -41,7 +41,7 @@ create table cinema.movie
 
 create table cinema.hall
 (
-    id smallserial primary key,
+    id serial primary key,
     cinema_id smallint not null,
     number smallint not null,
 
@@ -54,7 +54,7 @@ create table cinema.place
     id serial primary key,
     row smallint not null,
     seat smallint not null,
-    hall_id smallint not null,
+    hall_id int not null,
     seat_category cinema.seat_category not null,
 
     foreign key (hall_id) references cinema.hall (id),
@@ -67,7 +67,7 @@ create table cinema.session
 (
     id bigserial primary key,
     movie_id bigint not null,
-    hall_id smallint not null,
+    hall_id int not null,
     start_time timestamp not null,
     part_of_day cinema.part_of_day not null,
 
@@ -102,7 +102,7 @@ create table cinema.ticket
 (
     id bigserial primary key,
     session_id bigint not null,
-    hall_id smallint not null,
+    hall_id int not null,
     order_id bigint not null,
     place_id bigint not null,
     price money not null,
