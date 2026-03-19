@@ -6,7 +6,7 @@ config:
 erDiagram
 	direction TB
 	HALL {
-		smallserial id PK ""
+		serial id PK ""
 		smallint cinema-id FK ""
 		smallint number  ""
 	}
@@ -37,15 +37,15 @@ erDiagram
 
 	SESSION {
 		bigserial id PK ""
-		bigserial movie_id FK ""
-		smallserial hall_id FK ""
+		bigint movie_id FK ""
+		int hall_id FK ""
 		timestamp start_time  ""
 		enum part-of-day-id  "Утро, день, вечер, ночь"
 	}
 
 	PLACE {
 		serial id PK ""
-		smallint hall_id FK ""
+		int hall_id FK ""
 		smallint row  ""
 		smallint seat  ""
 		enum seat_category  "'в центре', 'с краю', 'в центре, далеко', 'с краю далеко'"
@@ -61,7 +61,7 @@ erDiagram
 	TICKET {
 		bigserial id PK ""
 		bigint session_id FK ""
-		smallint hall_id FK ""
+		int hall_id FK ""
 		bigint order_id FK ""
 		bigint place_id FK ""
 		money price  ""
