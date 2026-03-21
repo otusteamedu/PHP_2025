@@ -9,7 +9,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 class RabbitMqProducer implements QueueProducerInterface
 {
     private AMQPStreamConnection $connection;
-    private $channel;
+    private \PhpAmqpLib\Channel\AMQPChannel $channel;
 
     public function __construct(string $host, int $port, string $user, string $password)
     {
@@ -19,12 +19,15 @@ class RabbitMqProducer implements QueueProducerInterface
         $this->channel = $this->connection->channel();
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function publish(string $queueName, array $messageBody): void
     {
         $this->channel->queue_declare($queueName, false, true, false, false);
 
         $msg = new AMQPMessage(
-            json_encode($messageBody),
+            json_encode($messageBody, JSON_THROW_ON_ERROR),
             ['delivery_mode' => 2] // 2 = persistent
         );
         $this->channel->basic_publish($msg, '', $queueName);

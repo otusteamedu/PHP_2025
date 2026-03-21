@@ -23,27 +23,31 @@ class RabbitMqConsumer implements QueueConsumerInterface
     {
         $this->channel->queue_declare($queueName, false, true, false, false);
 
-        echo " [*] Checking for a message in queue '$queueName'...\n";
+        echo " [*] Проверяю наличие сообщений в очереди '$queueName'...\n";
 
         // Пытаемся получить сообщение очереди
         $msg = $this->channel->basic_get($queueName, false);
 
         if ($msg instanceof AMQPMessage) {
-            echo " [x] Received message.\n";
+            echo " [x] Получено сообщение.\n";
             try {
                 $messageBody = json_decode($msg->body, true, 512, JSON_THROW_ON_ERROR);
+
+                /* todo  Генерация отчета по заданным параметрам  */
+
+                $messageBody['content'] = 'content';
+
                 // Вызываем callback
                 $onMessage($messageBody);
                 // Подтверждаем успешную обработку
                 $this->channel->basic_ack($msg->delivery_info['delivery_tag']);
-                echo " [x] Message processed and acknowledged.\n";
+                echo " [x] Сообщение обработано и подтверждено.\n";
             } catch (\Throwable $e) {
-                echo " [!] Error processing message: " . $e->getMessage() . "\n";
-                // Отклоняем сообщение через канал, чтобы оно вернулось в очередь (requeue = true)
+                echo " [!] Ошибка при обработке сообщения: " . $e->getMessage() . "\n";
                 $this->channel->basic_reject($msg->delivery_info['delivery_tag'], true);
             }
         } else {
-            echo " [ ] No messages in the queue.\n";
+            echo " [ ] В очереди нет сообщений.\n";
         }
     }
 
