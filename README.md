@@ -1,3 +1,47 @@
-# PHP_2025
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+Этот проект — веб-приложение на PHP 8.2
+## Настройка окружения
+
+2.  **Настройте переменные окружения:**
+    Создайте файл `.env` в корне проекта, скопировав содержимое из `.env.example`, и заполните его необходимыми значениями.
+    ```
+
+3.  **Соберите и запустите Docker-контейнеры:**
+    ```bash
+    docker-compose up -d --build
+    ```
+
+4.  **Установите зависимости Composer:**
+    ```bash
+    docker-compose exec php-fpm composer install
+    ```
+
+5.  **Приложение будет доступно по адресу:** `http://localhost:8000`
+
+6. **Создание очереди RabbitMQ:**
+    Войти в интерфейс RabbitMQ через браузер (например, http://localhost:15672)
+    login:guest password:guest
+    создать очередь `report generation`
+
+
+## Обработка запросов
+
+Все HTTP-запросы обрабатываются через `code/index.php`, который выступает в роли единой точки входа (Front Controller). Маршрутизация основана на методе и URI запроса.
+
+-   **`POST /api/user-report`**
+    -   Этот запрос обрабатывается методом `handleReportRequest` класса `UserReportController`.
+    -   Предназначен для получения отчетов от пользователей.
+
+Опционально был добавлена обработка запроса
+-   **`POST /api/queue-handler`**
+    -   Этот запрос обрабатывается методом `queueHandler` класса `UserReportController`.
+    -   Предназначен для обработки сообщений из очереди.
+
+## Cron
+
+Чтобы запустить скрипт генерации отчетов с помощью консоли, выполните следующую команду:
+
+```bash
+php -f  /data/webserver/cron/reports.php
+```
+Вы можете добавить эту команду в crontab на хост-машине для автоматического выполнения.
