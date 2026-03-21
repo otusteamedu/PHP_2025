@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
         libzip-dev \
         libpq-dev \
     && docker-php-ext-install zip \
-    && docker-php-ext-install pdo pdo_pgsql
+    && docker-php-ext-install pdo pdo_pgsql bcmath
 
 # расширение Redis
 RUN pecl install redis && docker-php-ext-enable redis
