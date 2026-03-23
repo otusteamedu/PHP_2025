@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   php:
@@ -36,13 +34,9 @@ services:
 
   memcached:
     image: memcached:latest
-    ports:
-      - '${MEMCACHED_PUBLISHED_PORT}:11211'
 
   redis:
     image: redis:latest
-    ports:
-      - '${REDIS_PUBLISHED_PORT}:6379'
     volumes:
       - redis_data:/data
 

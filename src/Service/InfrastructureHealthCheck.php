@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Infrastructure\MemcachedDriver;
-use App\Infrastructure\PgSQLDriver;
-use App\Infrastructure\RedisDriver;
+use App\Infrastructure\Memcached\MemcachedDriver;
+use App\Infrastructure\Postgres\PgSQLDriver;
+use App\Infrastructure\Redis\RedisDriver;
 
 class InfrastructureHealthCheck
 {
