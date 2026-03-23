@@ -32,6 +32,7 @@ set my.customer_count = 10000; -- 10000000
 set my.halls_count = 2;
 set my.session_count = 10000; -- 10000000
 set my.order_count = 10000; -- 10000000
+set my.ticket_count = 10000; -- 10000000
 
 insert into cinema.movie(name)
     select
@@ -157,3 +158,40 @@ insert into cinema.orders(customer_id, created_at)
             + random() * (timestamp '2026-03-01' - timestamp '2026-01-01')
     from cinema.customer c
         limit current_setting('my.order_count')::int;
+
+with candidates as (select s.id  as session_id,
+                           s.hall_id,
+                           pl.id as place_id,
+                           pl.seat_category
+                    from cinema.session s
+                             join cinema.place pl on pl.hall_id = s.hall_id),
+     free_places as (select *
+                     from candidates c
+                     where not exists (select 1
+                                       from cinema.ticket ti
+                                       where ti.session_id = c.session_id
+                                         and ti.place_id = c.place_id)),
+     randomized as (select *
+                    from free_places
+                    order by random()
+    limit current_setting('my.ticket_count'):: int
+    )
+insert
+into cinema.ticket(session_id, hall_id, order_id, place_id, price)
+select r.session_id,
+       r.hall_id,
+       o.id,
+       r.place_id,
+       pr.price
+from randomized r
+
+         join lateral (
+    select id
+    from cinema.orders
+    order by random()
+        limit 1
+) o
+on true
+    join cinema.price pr
+    on pr.session_id = r.session_id
+    and pr.seat_category = r.seat_category;
