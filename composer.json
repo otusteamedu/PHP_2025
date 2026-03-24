@@ -2,7 +2,7 @@
     "name": "igor/test",
     "autoload": {
         "psr-4": {
-            "Igor\\Test\\": "src/"
+            "LeetCode\\": "src/LeetCode/"
         }
     },
     "authors": [
