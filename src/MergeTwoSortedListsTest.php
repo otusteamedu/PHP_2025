@@ -39,10 +39,10 @@ class MergeTwoSortedListsTest
         foreach ($tests as $testName => $testMethod) {
             try {
                 $testMethod();
-                echo "✓ {$testName}: PASSED\n";
+                echo "{$testName}: PASSED\n";
                 $passed++;
             } catch (\Exception $e) {
-                echo "✗ {$testName}: FAILED - {$e->getMessage()}\n";
+                echo "{$testName}: FAILED - {$e->getMessage()}\n";
                 $failed++;
             }
         }
