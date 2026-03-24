@@ -8,3 +8,4 @@
 /http/http-client.env.json
 /docker/elasticsearch/config/certs
 /docker/elasticsearch/config/keystore
+/docker/ssh/keys

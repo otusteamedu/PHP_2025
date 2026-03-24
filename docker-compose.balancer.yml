@@ -66,13 +66,9 @@ services:
 
   memcached:
     image: memcached:latest
-    ports:
-      - '${MEMCACHED_PUBLISHED_PORT}:11211'
 
   redis:
     image: redis:latest
-    ports:
-      - '${REDIS_PUBLISHED_PORT}:6379'
     volumes:
       - redis_data:/data
 
@@ -143,9 +139,29 @@ services:
       retries: 3
       start_period: 120s
 
+  ssh-gateway:
+    image: lscr.io/linuxserver/openssh-server
+    ports:
+      - '2222:2222'
+    environment:
+      - DOCKER_MODS=linuxserver/mods:openssh-server-ssh-tunnel
+      - SHELL_NOLOGIN=false
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Moscow
+      - USER_NAME=devuser
+      - PUBLIC_KEY=${SSH_PUBLIC_KEY}
+      - DISABLE_PASSWORD_AUTH=true
+    volumes:
+      - ssh_gateway:/config
+    depends_on:
+      - redis
+      - memcached
+
 volumes:
   php_1_socket:
   php_2_socket:
   pg_data:
   redis_data:
   es_data:
+  ssh_gateway:
