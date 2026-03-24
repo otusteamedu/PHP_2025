@@ -29,4 +29,14 @@ class GetEventModel
             'conditions' => $conditions,
         ];
     }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            id: (string) $data['id'],
+            name: $data['name'],
+            priority: (string) $data['priority'],
+            conditions: $data['conditions'],
+        );
+    }
 }

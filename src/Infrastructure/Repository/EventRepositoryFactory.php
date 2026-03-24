@@ -16,7 +16,9 @@ class EventRepositoryFactory
 
         switch ($eventStorage) {
             case EventStorage::Memcached:
-                // TODO
+                $memcachedHost = $dotEnvLoader->getEnv('MEMCACHED_HOST');
+                $memcachedPort = $dotEnvLoader->getEnv('MEMCACHED_PORT');
+                return new MemcachedEventRepository($memcachedHost, (int) $memcachedPort);
             default:
                 $redisHost = $dotEnvLoader->getEnv('REDIS_HOST');
                 return new RedisEventRepository($redisHost);

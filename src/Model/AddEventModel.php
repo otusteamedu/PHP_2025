@@ -54,4 +54,14 @@ class AddEventModel
 
         return implode('&', $conditions);
     }
+
+    public function serialize(): string
+    {
+        return json_encode([
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'priority' => $this->getPriority(),
+            'conditions' => $this->getPreparedConditions(),
+        ]);
+    }
 }
