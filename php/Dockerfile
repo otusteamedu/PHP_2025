@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. Установка встроенных расширений (не требуют компиляции)
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+RUN docker-php-ext-install mysqli pdo pdo_mysql sockets
 
 # 3. Установка PECL-расширений
 RUN pecl install redis \

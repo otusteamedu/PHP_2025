@@ -19,8 +19,11 @@ services:
     networks:
       - app-network
 
-  redis:
-    image: redis:latest
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - app-network
 networks:
