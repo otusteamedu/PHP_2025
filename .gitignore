@@ -1,6 +1,1 @@
-.idea/
-.DS_Store
-.AppleDouble
-.LSOverride
-/home_work1/db/*
-/home_work1/.env
+/vendor/

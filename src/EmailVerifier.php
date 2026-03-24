@@ -6,9 +6,9 @@ class EmailVerifier
 {
     private $checker;
     
-    public function __construct()
+    public function __construct(EmailChecker $checker = null)
     {
-        $this->checker = new EmailChecker();
+        $this->checker = $checker ?? new EmailChecker();
     }
     
     public function verify($email)
