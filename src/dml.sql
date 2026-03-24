@@ -87,8 +87,8 @@ insert into cinema.place (hall_id, row, seat, seat_category)
 with time_slots as (
     select ts
     from generate_series(
-         timestamp '2026-06-10 00:00:00',
-         timestamp '2026-07-20 23:00:00',
+         timestamp '2026-02-20 00:00:00',
+         timestamp '2027-07-20 23:00:00',
          interval '1 hour'
      ) ts
 )
