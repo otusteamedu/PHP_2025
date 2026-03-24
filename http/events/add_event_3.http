@@ -1,0 +1,16 @@
+POST http://localhost:{{nginxPublishedPort}}/add-event
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "event": {
+    "id": 3,
+    "name": "event_3",
+    "priority": 3000,
+    "conditions": {
+      "param1": 1,
+      "param2": 2
+    }
+  }
+}

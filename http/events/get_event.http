@@ -1,0 +1,11 @@
+GET http://localhost:{{nginxPublishedPort}}/get-event
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "params": {
+    "param1": 1,
+    "param2": 2
+  }
+}

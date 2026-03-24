@@ -6,4 +6,7 @@ return [
     ['POST', '/parenthesis-verifier', App\Controller\ParenthesisStringController::class, 'verifyParenthesisString'],
     ['GET', '/session-storage-checker', App\Controller\SessionController::class, 'checkSessionStorage'],
     ['POST', '/emails-verifier', App\Controller\EmailController::class, 'verifyEmails'],
+    ['POST', '/add-event', App\Controller\EventController::class, 'addEvent'],
+    ['GET', '/get-event', App\Controller\EventController::class, 'getEvent'],
+    ['DELETE', '/delete-events', App\Controller\EventController::class, 'deleteEvents'],
 ];
