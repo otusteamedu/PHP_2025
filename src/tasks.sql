@@ -17,6 +17,21 @@ from cinema.session as s
 where s.start_time >= current_date and  s.start_time < current_date + interval '1 day';
 
 --4. Поиск 3 самых прибыльных фильмов за неделю
+with sessions as (
+    select s.id as id, m.name as movie_name
+    from cinema.session as s
+             join cinema.movie as m on m.id = s.movie_id
+    where s.start_time >= date_trunc('week', now())
+      and  s.start_time < date_trunc('week', now()) + interval '1 week'
+)
+select
+    s.movie_name,
+    sum(t.price) as total_revenue
+from sessions as s
+join cinema.ticket as t on s.id = t.session_id
+group by s.movie_name
+order by total_revenue desc
+limit 3
 
 --5. Сформировать схему зала и показать на ней свободные и занятые места на конкретный сеанс
 
