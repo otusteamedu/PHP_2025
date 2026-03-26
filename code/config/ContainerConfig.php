@@ -2,27 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Queues\Config;
+namespace Api\Config;
 
+use Api\Domain\Interfaces\QueueInterface;
+use Api\Domain\Interfaces\RepositoryInterface;
+use Api\Infrastructure\Queue\RabbitMQ;
+use Api\Infrastructure\Repository\Postgres;
+use Api\Presentation\Api\Actions\Requests\CreateRequestAction;
+use Api\Presentation\Api\Actions\Requests\GetRequestAction;
+use Api\Presentation\Api\Middleware\ApiKeyAuthMiddleware;
+use Api\Presentation\Api\Middleware\ErrorMiddleware;
+use Api\Presentation\Api\Middleware\RequestLoggingMiddleware;
 use DI\Container;
 use DI\ContainerBuilder;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
-use Psr\Log\LoggerInterface;
-use Monolog\Handler\StreamHandler;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Slim\App;
+use Slim\Factory\AppFactory as SlimAppFactory;
+use Slim\Psr7\Factory\ResponseFactory;
 use Dotenv\Dotenv;
-use Queues\Application\Interfaces\{MailerInterface,
-    QueueInterface,
-    RequestInterface,
-    ResponseInterface,
-    StatementRequestValidatorInterface};
-use Queues\Application\Validators\StatementRequestValidator;
-use Queues\Infrastructure\Http\{Request, Response};
-use Queues\Infrastructure\Mailer\SmtpMailer;
-use Queues\Infrastructure\Queue\RabbitMQ;
-use Queues\Presentation\Controllers\StatementsController;
 
-class ContainerConfig
+final class ContainerConfig
 {
     public static function getContainer(): Container
     {
@@ -30,29 +33,78 @@ class ContainerConfig
 
         $builder = new ContainerBuilder();
         $builder->addDefinitions([
-            LoggerInterface::class => \DI\factory(fn() => new Logger('app', [
-                new StreamHandler($env['LOG_PATH'], Level::Info),
-            ])),
+            ResponseFactoryInterface::class => \DI\factory(
+                fn() => new ResponseFactory()
+            ),
 
-            RequestInterface::class => \DI\autowire(Request::class),
-            ResponseInterface::class => \DI\autowire(Response::class),
+            \PDO::class => \DI\factory(fn() => new \PDO(
+                sprintf(
+                    'pgsql:host=%s;port=%s;dbname=%s',
+                    $env['PG_HOST'],
+                    $env['PG_PORT'],
+                    $env['PG_DB']
+                ),
+                $env['PG_USER'],
+                $env['PG_PASSWORD'],
+                [
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                ]
+            )),
+
+            Logger::class => \DI\factory(function () use ($env) {
+                $logger = new Logger('api');
+                $handler = new StreamHandler($env['LOG_PATH'], Level::Debug);
+                $handler->setFormatter(
+                    new LineFormatter(
+                        "[%datetime%] %channel%.%level_name%: %message% %context%\n",
+                        'Y-m-d H:i:s'
+                    )
+                );
+                $logger->pushHandler($handler);
+                return $logger;
+            }),
+
+            RepositoryInterface::class => \DI\autowire(Postgres::class),
 
             QueueInterface::class => \DI\factory(fn() => new RabbitMQ(
-                $env['RABBITMQ_HOST'], (int)$env['RABBITMQ_PORT'],
-                $env['RABBITMQ_LOGIN'], $env['RABBITMQ_PASSWORD'],
-                $env['RABBITMQ_VHOST'], $env['RABBITMQ_QUEUE']
+                $env['RABBITMQ_HOST'],
+                (int)$env['RABBITMQ_PORT'],
+                $env['RABBITMQ_LOGIN'],
+                $env['RABBITMQ_PASSWORD'],
+                $env['RABBITMQ_VHOST'],
+                $env['RABBITMQ_QUEUE']
             )),
 
-            MailerInterface::class => \DI\factory(fn() => new SmtpMailer(
-                $env['MAILER_HOST'], (int)$env['MAILER_PORT'],
-                $env['MAILER_FROM'], $env['MAILER_FROM_NAME']
-            )),
-
-            StatementRequestValidatorInterface::class => \DI\autowire(
-                StatementRequestValidator::class
+            ApiKeyAuthMiddleware::class => \DI\factory(
+                function (ResponseFactoryInterface $responseFactory) use ($env): ApiKeyAuthMiddleware {
+                    $validKeys = array_filter(
+                        array_map('trim', explode(',', $env['API_KEYS'])),
+                        fn($key) => $key !== ''
+                    );
+                    if (empty($validKeys)) {
+                        throw new \RuntimeException('API_KEYS не может быть пустым');
+                    }
+                    return new ApiKeyAuthMiddleware($responseFactory, $validKeys);
+                }
             ),
-            StatementsController::class => \DI\autowire()
-                ->constructorParameter('templatePath', __DIR__ . '/../src/Presentation/View/Templates'),
+
+            App::class => \DI\factory(function (Container $c): App {
+                $app = SlimAppFactory::create();
+
+                $app->addBodyParsingMiddleware();
+                $app->addRoutingMiddleware();
+                $app->add($c->get(ErrorMiddleware::class));
+                $app->add($c->get(RequestLoggingMiddleware::class));
+                $app->add($c->get(ApiKeyAuthMiddleware::class));
+
+                $app->group('/api/v1', function ($group) use ($c) {
+                    $group->post('/requests', $c->get(CreateRequestAction::class));
+                    $group->get('/requests/{id:\d+}', $c->get(GetRequestAction::class));
+                });
+
+                return $app;
+            }),
         ]);
 
         return $builder->build();
@@ -62,18 +114,30 @@ class ContainerConfig
     {
         Dotenv::createImmutable(__DIR__ . '/..')->load();
 
-        return [
-            'LOG_PATH' => $_ENV['LOG_PATH'] ?? '/var/log/app/app.log',
-            'RABBITMQ_HOST' => $_ENV['RABBITMQ_HOST'] ?? 'localhost',
-            'RABBITMQ_PORT' => $_ENV['RABBITMQ_PORT'] ?? 5672,
-            'RABBITMQ_LOGIN' => $_ENV['RABBITMQ_LOGIN'] ?? 'guest',
-            'RABBITMQ_PASSWORD' => $_ENV['RABBITMQ_PASSWORD'] ?? 'guest',
-            'RABBITMQ_VHOST' => $_ENV['RABBITMQ_VHOST'] ?? '/',
-            'RABBITMQ_QUEUE' => $_ENV['RABBITMQ_QUEUE'] ?? 'statements',
-            'MAILER_HOST' => $_ENV['MAILER_HOST'] ?? 'localhost',
-            'MAILER_PORT' => $_ENV['MAILER_PORT'] ?? 1025,
-            'MAILER_FROM' => $_ENV['MAILER_FROM'] ?? 'noreply@mysite.local',
-            'MAILER_FROM_NAME' => $_ENV['MAILER_FROM_NAME'] ?? 'Bank Statement Service',
+        $required = [
+            'PG_HOST',
+            'PG_PORT',
+            'PG_DB',
+            'PG_USER',
+            'PG_PASSWORD',
+            'RABBITMQ_HOST',
+            'RABBITMQ_PORT',
+            'RABBITMQ_LOGIN',
+            'RABBITMQ_PASSWORD',
+            'RABBITMQ_VHOST',
+            'RABBITMQ_QUEUE',
+            'LOG_PATH',
+            'API_KEYS',
         ];
+
+        $result = [];
+        foreach ($required as $key) {
+            if (empty($_ENV[$key])) {
+                throw new \RuntimeException("Отсутствует обязательная переменная окружения: {$key}");
+            }
+            $result[$key] = $_ENV[$key];
+        }
+
+        return $result;
     }
 }

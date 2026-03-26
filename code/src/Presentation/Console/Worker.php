@@ -2,26 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Queues\Presentation\Console;
+namespace Api\Presentation\Console;
 
-use Queues\Domain\Entities\Statement;
-use Queues\Application\Interfaces\QueueInterface;
-use Queues\Application\UseCases\GenerateStatementUseCase;
-use Queues\Application\UseCases\SendStatementUseCase;
+use Api\Domain\Interfaces\QueueInterface;
+use Api\Application\UseCases\ProcessRequestUseCase;
+use Monolog\Logger;
 
-class Worker
+final class Worker
 {
     private const LOOP_U_SLEEP = 1000;
-    private const SIMULATION_SLEEP_MIN = 5;
-    private const SIMULATION_SLEEP_MAX = 15;
-    private const ERROR_PAUSE = 5;
 
     private bool $shouldStop = false;
 
     public function __construct(
-        private readonly QueueInterface $queue,
-        private readonly GenerateStatementUseCase $generator,
-        private readonly SendStatementUseCase $sendEmail,
+        private QueueInterface $queue,
+        private ProcessRequestUseCase $processUseCase,
+        private Logger $logger
     ) {
         if (function_exists('pcntl_signal')) {
             pcntl_async_signals(true);
@@ -32,55 +28,48 @@ class Worker
 
     public function run(): void
     {
-        echo "Worker запущен. Ожидание сообщений...\n";
+        $this->logger->info('Worker запущен. Ожидание запросов...');
+        echo "Worker запущен. Ожидание запросов...\n";
 
         while (!$this->shouldStop) {
-            $payload = $this->queue->dequeue();
+            try {
+                $message = $this->queue->dequeue();
 
-            if ($payload) {
-                $this->process($payload);
-            } elseif (!$this->shouldStop) {
+                if ($message === null) {
+                    usleep(self::LOOP_U_SLEEP);
+                    continue;
+                }
+
+                $id = $message['id'] ?? null;
+
+                if ($id === null) {
+                    $this->logger->warning('Получен запрос без ID', ['message' => $message]);
+                    continue;
+                }
+
+                $this->logger->info('Обработка запроса', ['id' => $id]);
+                echo "Обработка запроса #{$id}...\n";
+
+                $success = $this->processUseCase->execute((int)$id);
+
+                if ($success) {
+                    $this->logger->info('Запрос успешно обработан', ['id' => $id]);
+                    echo "Запрос #{$id} успешно обработан\n";
+                } else {
+                    $this->logger->error('Ошибка обработки запроса', ['id' => $id]);
+                    echo "Запрос #{$id} обработан с ошибкой\n";
+                }
+            } catch (\Throwable $e) {
+                $this->logger->error('Ошибка в Worker', [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]);
+                echo "Ошибка: {$e->getMessage()}\n";
                 usleep(self::LOOP_U_SLEEP);
             }
         }
 
         echo "\nWorker остановлен\n";
-    }
-
-    private function process(string $payload): void
-    {
-        try {
-            $statement = Statement::fromJson($payload);
-            echo sprintf("[%s] Обработка %s для %s\n", date('Y-m-d H:i:s'), $statement->id, $statement->email);
-
-            $this->waitLoop(random_int(self::SIMULATION_SLEEP_MIN, self::SIMULATION_SLEEP_MAX));
-
-            if (!$this->shouldStop) {
-                $statement = $this->generator->execute($statement);
-                $this->sendEmail->execute($statement);
-                echo sprintf("[%s] Успешно\n\n", date('Y-m-d H:i:s'));
-            } else {
-                echo "\nОбработка прервана: сообщение будет возвращено в очередь\n";
-                $this->queue->enqueue($payload); // Но теперь у него поменяется порядок: что делать - хз?!?
-            }
-        } catch (\Throwable $e) {
-            if (!$this->shouldStop) {
-                echo sprintf(
-                    "[%s] Ошибка: %s\nПауза %d сек\n\n",
-                    date('Y-m-d H:i:s'),
-                    $e->getMessage(),
-                    self::ERROR_PAUSE
-                );
-                $this->waitLoop(self::ERROR_PAUSE);
-            }
-        }
-    }
-
-    private function waitLoop(int $waitSeconds): void
-    {
-        $loopCnt = $waitSeconds * 1000000 / self::LOOP_U_SLEEP;
-        for ($i = 0; $i < $loopCnt && !$this->shouldStop; $i++) {
-            usleep(self::LOOP_U_SLEEP);
-        }
     }
 }

@@ -10,9 +10,10 @@ RUN apt-get update && apt-get install -y \
     libmemcached-dev \
     libmcrypt-dev \
     librabbitmq-dev \
+    libpq-dev \
     && pecl install mcrypt memcached redis amqp \
     && docker-php-ext-enable mcrypt memcached redis amqp \
-    && docker-php-ext-install -j$(nproc) iconv mbstring mysqli pdo_mysql zip \
+    && docker-php-ext-install -j$(nproc) iconv mbstring mysqli pdo pdo_pgsql zip pcntl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 

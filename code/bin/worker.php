@@ -5,8 +5,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Queues\Config\ContainerConfig;
-use Queues\Presentation\Console\Worker;
+use Api\Config\ContainerConfig;
+use Api\Presentation\Console\Worker;
 
 ContainerConfig::getContainer()
     ->get(Worker::class)

@@ -1,4 +1,22 @@
 services:
+  postgres:
+    image: postgres:17
+    ports:
+      - 5432:5432
+    container_name: 'postgres'
+    working_dir: /app
+    restart: always
+    environment:
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - pg_dump:/app/dump
+      - pg_data:/var/lib/postgresql/data
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+    networks:
+      - app-network
+
   rabbitmq:
     image: rabbitmq:4.1-management
     ports:
@@ -20,6 +38,7 @@ services:
       - php_socket:/var/run/php-fpm
       - ./logs:/var/log/app
     depends_on:
+      - postgres
       - rabbitmq
     networks:
       - app-network
@@ -40,18 +59,14 @@ services:
     networks:
       - app-network
 
-  mailhog:
-    image: mailhog/mailhog:latest
-    ports:
-      - "8025:8025"
-      - "1025:1025"
-    networks:
-      - app-network
-
 volumes:
   php_socket:
     driver: local
   rabbitmq_data:
+    driver: local
+  pg_dump:
+    driver: local
+  pg_data:
     driver: local
 
 networks:

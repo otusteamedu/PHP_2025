@@ -4,4 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-(new \Queues\Presentation\Web\Application())->run();
+use Api\Config\ContainerConfig;
+use Slim\App;
+
+ContainerConfig::getContainer()
+    ->get(App::class)
+    ->run();

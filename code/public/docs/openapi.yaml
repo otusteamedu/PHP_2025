@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  title: 'API с использованием очередей'
+  description: 'Rest API с очередями RabbitMQ для асинхронной обработки запросов'
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+    description: 'Локальный сервер'
+paths:
+  /api/v1/requests:
+    post:
+      tags:
+        - Requests
+      summary: 'Создать новый запрос'
+      operationId: ead95c1a0cd8585987e1cdf31318fa2e
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  example: 'Текст запроса'
+              type: object
+      responses:
+        '200':
+          description: 'Запрос создан'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id: { type: integer, example: 1 }
+                type: object
+        '401':
+          description: 'Неверный API ключ'
+        '400':
+          description: 'Ошибка валидации'
+      security:
+        -
+          ApiKeyAuth: []
+  '/api/v1/requests/{id}':
+    get:
+      tags:
+        - Requests
+      summary: 'Получить статус запроса'
+      operationId: bd73d9c7e59140fafba902cd10458e95
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID запроса'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Статус запроса'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id: { type: integer }
+                  status: { type: string }
+                  content: { type: string }
+                  created: { type: string, format: date-time }
+                  processed: { type: string, format: date-time, nullable: true }
+                  result: { type: string, nullable: true }
+                type: object
+        '401':
+          description: 'Неверный API ключ'
+        '400':
+          description: 'Ошибка валидации'
+        '404':
+          description: 'Запрос не найден'
+      security:
+        -
+          ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: 'API Key авторизация.'
+      name: X-API-Key
+      in: header
+tags:
+  -
+    name: Requests
+    description: 'Управление запросами'
