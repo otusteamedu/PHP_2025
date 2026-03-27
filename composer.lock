@@ -1,0 +1,59 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "3f1b43bbfaaf7492f1588fadfc6cf899",
+    "packages": [
+        {
+            "name": "konstantind/otus-flexible-float-parser",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/konstantind/otus-flexible-float-parser.git",
+                "reference": "80d9a14dcdb0af19e317d97da765d71c50bf7b40"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/konstantind/otus-flexible-float-parser/zipball/80d9a14dcdb0af19e317d97da765d71c50bf7b40",
+                "reference": "80d9a14dcdb0af19e317d97da765d71c50bf7b40",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Konstantind\\OtusFlexibleFloatParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Konstantin Dubelev",
+                    "email": "merty.doc@gmail.com"
+                }
+            ],
+            "description": "Flexible Float Parser is a lightweight PHP package that converts numeric strings with either a comma or a dot as a decimal separator into a float. It supports negative numbers and values without a leading zero (e.g., .5 → 0.5).",
+            "support": {
+                "issues": "https://github.com/konstantind/otus-flexible-float-parser/issues",
+                "source": "https://github.com/konstantind/otus-flexible-float-parser/tree/1.0.2"
+            },
+            "time": "2025-02-15T07:11:14+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}
