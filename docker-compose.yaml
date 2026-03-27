@@ -1,0 +1,49 @@
+services:
+  nginx:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    image: otus-test/nginx
+    container_name: otus-nginx
+    networks:
+      - test-network
+    ports:
+      - "82:82"
+    volumes:
+      - ./otus-app:/data/mysite.local/otus-app
+      - php_fpm_socket:/var/run/php
+
+  php:
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    image: otus-test/php
+    container_name: otus-php
+    environment:
+      - RABBIT_HOST=${RABBIT_HOST}
+      - RABBIT_PORT=${RABBIT_PORT}
+      - RABBIT_USER=${RABBIT_USER}
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
+    networks:
+      - test-network
+    volumes:
+      - ./PHP_2025/..:/data/mysite.local
+      - php_fpm_socket:/var/run/php
+    depends_on:
+      - nginx
+
+  rabbit:
+    container_name: otus-rabbit
+    image: rabbitmq:3-management
+    networks:
+      - test-network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+networks:
+  test-network:
+    driver: bridge
+
+volumes:
+  php_fpm_socket:

@@ -1,0 +1,47 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App;
+
+use App\Command\ConsumeReport;
+use App\Enum\QueueNameEnum;
+use App\Service\RabbitService;
+use App\Service\ReportService;
+use Exception;
+use Throwable;
+
+class Command
+{
+    public function run(array $argv): string
+    {
+        try {
+            $action = $argv[1] ?? null;
+            $subAction = $argv[2] ?? null;
+
+            switch ($action) {
+                case 'consumer:run':
+                    switch ($subAction) {
+                        case QueueNameEnum::REPORT_QUEUE->value:
+                            $queueService = new RabbitService();
+
+                            $queueService->consume(QueueNameEnum::REPORT_QUEUE, function ($data) {
+                                $reportService = new ReportService(new RabbitService());
+                                $reportConsumer = new ConsumeReport($reportService);
+
+                                $reportConsumer->process($data);
+                            });
+
+                            break;
+                        default:
+                            throw new Exception("Unknown subaction: $subAction");
+                    }
+
+                default:
+                    throw new Exception("Unknown action: $action");
+            }
+        } catch (Throwable $e) {
+            return 'Invalid request ' . $e->getMessage();
+        }
+    }
+}
