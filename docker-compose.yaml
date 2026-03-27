@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - php
+    networks:
+      - appnet
+
+  php:
+    build: ./php
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
