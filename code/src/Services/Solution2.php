@@ -10,6 +10,10 @@ class Solution2
      * @param int $numerator
      * @param int $denominator
      * @return string
+     *
+     * Сложность алгоритма в худшем случае будет O(n)
+     * где n максимальное количество итераций  в цикле while,
+     * которая зависит от дробной части.
      */
     public function fractionToDecimal(int $numerator, int $denominator): string
     {
@@ -31,7 +35,6 @@ class Solution2
 
         $result .= floor($num / $den);
         $remainder = $num % $den;
-
         if ($remainder === 0) {
             return $result;
         }
@@ -41,21 +44,26 @@ class Solution2
         $fractionalPart = "";
         $remaindersMap = [];
 
-        while ($remainder !== 0 && !isset($remaindersMap[$remainder])) {
-            $remaindersMap[$remainder] = strlen($fractionalPart);
+        // Цикл для вычисления дробной части.
+        // Он продолжается до тех пор, пока остаток не станет равен 0 (т.е. деление завершится)
+        // или пока не будет найден повторяющийся остаток (что указывает на бесконечную периодическую дробь).
 
+        while ($remainder !== 0) {
+            // ищем повторяющийся остаток
+            if ( isset($remaindersMap[$remainder]) ) {
+                $pos = $remaindersMap[$remainder];
+                $result .= substr($fractionalPart, 0, $pos) . "(" . substr($fractionalPart, $pos) . ")";
+
+                return $result;
+            }
+
+            $remaindersMap[$remainder] = strlen($fractionalPart);
             $remainder *= 10;
             $fractionalPart .= floor($remainder / $den);
             $remainder %= $den;
         }
 
-        if ($remainder === 0) {
-            $result .= $fractionalPart;
-        } else {
-            $pos = $remaindersMap[$remainder];
-            $result .= substr($fractionalPart, 0, $pos) . "(" . substr($fractionalPart, $pos) . ")";
-        }
-
+        $result .= $fractionalPart;
         return $result;
     }
 }

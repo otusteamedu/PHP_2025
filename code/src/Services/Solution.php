@@ -3,31 +3,31 @@ declare(strict_types=1);
 
 namespace Ak\Hw\Services;
 
-/**
- * Definition for a singly-linked list.
- */
-
 class Solution
 {
     /**
      * @param ?ListNode $headA
      * @param ?ListNode $headB
      * @return ?ListNode
+     *
+     *  Сложность алгоритма: O(m + n), где m и n - количество элементов в списках A и B.
+     *
      */
-    public function getIntersectionNode(?ListNode $headA, ?ListNode $headB): ?ListNode
+    function getIntersectionNode(?ListNode $headA, ?ListNode $headB): ?ListNode
     {
-        if ($headA === null) {
+        if ($headA === null || $headB === null) {
             return null;
         }
 
-        $intersect = $headB;
-        while ($intersect !== null) {
-            if ($headA === $intersect) {
-                return $headA;
-            }
-            $intersect = $intersect->next;
+        $listA = $headA;
+        $listB = $headB;
+
+        // Базовый случай совпадение $listA и $listB
+        while ($listA !== $listB) {
+            $listA = ($listA === null) ? $headB : $listA->next;
+            $listB = ($listB === null) ? $headA : $listB->next;
         }
 
-        return $this->getIntersectionNode($headA->next, $headB);
+        return $listA;
     }
 }

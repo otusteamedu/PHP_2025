@@ -5,6 +5,7 @@ declare(strict_types=1);
 require __DIR__ . '/vendor/autoload.php';
 
 use Ak\Hw\Services\Solution;
+use Ak\Hw\Services\Solution2;
 use Ak\Hw\Services\ListNode;
 
 $s1 = new Solution();
@@ -31,3 +32,9 @@ try {
 } catch (Exception $e) {
     pr($e->getMessage(), true, true);
 }
+
+
+$s2 = new Solution2();
+echo $s2->fractionToDecimal(1, 2) . PHP_EOL;
+echo $s2->fractionToDecimal(2, 1) . PHP_EOL;
+echo $s2->fractionToDecimal(4, 333) . PHP_EOL;
