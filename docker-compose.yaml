@@ -1,0 +1,97 @@
+
+services:
+  # Контейнер с Nginx
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: "${CONTAINER_NAME}"
+    ports:
+      - "80:80"
+    volumes:
+      - ./code:/data/mysite.local
+    depends_on:
+      - app
+
+  # Контейнер с PHP-FPM
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: app
+    volumes:
+      - ./code:/data/mysite.local
+    depends_on:
+      - redis
+      - memcached
+      - db
+  
+  # Контейнер с PHP-FPM (второй экземпляр)
+  app2:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: app2
+    volumes:
+      - ./code:/data/mysite.local
+    depends_on:
+      - redis
+      - memcached
+      - db
+
+
+  # Контейнер с Redis
+  redis:
+    image: redis:latest
+    container_name: redis
+
+  # Контейнер с Memcached
+  memcached:
+    image: memcached:latest
+    container_name: memcached
+
+  # Контейнер с базой данных PostgreSQL
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data_postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Контейнер с эластик
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+
+  # Контейнер с визуальным интерфейсом для работы с эластик
+  kibana:
+    image: kibana:8.11.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
+
+volumes:
+  db_data:
+  db_data_postgres:
+  elastic_data:
