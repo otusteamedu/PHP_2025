@@ -1,0 +1,484 @@
+openapi: 3.0.0
+
+info:
+  title: "Интернет-ресторан фаст-фуда с REST API"
+  version: "1.0.0"
+  description: "API для управления заказами фастфуда"
+
+servers:
+  - url: http://localhost:8080
+    description: Локальный сервер
+
+tags:
+  - name: General
+    description: Общие эндпоинты
+  - name: Menu
+    description: Операции с меню
+  - name: Orders
+    description: Операции с заказами
+
+paths:
+  /:
+    get:
+      tags:
+        - General
+      summary: "Метод для получения информации о данном API"
+      description: "С помощью данного метода можно получить информацию об имеющихся эндпоинтах"
+      responses:
+        "200":
+          description: "Информация об API"
+          content:
+            application/json:
+              example:
+                {
+                  "success": true,
+                  "data":
+                    {
+                      "name": "API интернет-ресторана фаст-фуда",
+                      "version": "1.0.0",
+                      "endpoints":
+                        {
+                          "GET /menu": "Получить меню ресторана",
+                          "POST /order": "Создать заказ",
+                          "GET /order/{id}": "Получить информацию о заказе",
+                          "GET /order/{id}/history": "Получить историю статусов заказа",
+                          "POST /order/{id}/cancel": "Отменить заказ",
+                        },
+                      "example_order":
+                        {
+                          "product_type": "burger",
+                          "additions": ["lettuce", "cheese", "tomato"],
+                        },
+                    },
+                }
+        "500":
+          description: "Запрос завершился с ошибкой"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /menu:
+    get:
+      tags:
+        - Menu
+      summary: "Метод для получения меню ресторана"
+      description: "С помощью данного метода можно получить меню ресторана с имеющимися продуктами и ценами"
+      responses:
+        "200":
+          description: "Меню ресторана"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuResponse"
+              example:
+                {
+                  "products":
+                    [
+                      {
+                        "type": "burger",
+                        "name": "Бургер",
+                        "description": "Классический бургер с котлетой из говядины",
+                        "base_price": 250,
+                        "base_ingredients":
+                          [
+                            "булочка",
+                            "котлета из говядины",
+                            "кетчуп",
+                            "горчица",
+                          ],
+                      },
+                      {
+                        "type": "sandwich",
+                        "name": "Сэндвич",
+                        "description": "Сэндвич с курицей и овощами",
+                        "base_price": 200,
+                        "base_ingredients": ["хлеб", "курица", "майонез"],
+                      },
+                      {
+                        "type": "hotdog",
+                        "name": "Хот-дог",
+                        "description": "Классический хот-дог с сосиской",
+                        "base_price": 150,
+                        "base_ingredients":
+                          [
+                            "булочка для хот-дога",
+                            "сосиска",
+                            "кетчуп",
+                            "горчица",
+                          ],
+                      },
+                    ],
+                  "additions":
+                    {
+                      "lettuce": { "name": "Салат", "price": 20 },
+                      "onion": { "name": "Лук", "price": 15 },
+                      "pepper": { "name": "Перец", "price": 15 },
+                      "cheese": { "name": "Сыр", "price": 30 },
+                      "tomato": { "name": "Помидор", "price": 25 },
+                    },
+                }
+        "500":
+          description: "Запрос завершился с ошибкой"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /order:
+    post:
+      tags:
+        - Orders
+      summary: "Метод для создания заказа"
+      description: "С помощью данного метода можно создать заказ, указав продукт из меню и дополнительные ингредиенты"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+            examples:
+              singleProduct:
+                summary: "Один продукт"
+                value:
+                  product_type: "burger"
+                  additions:
+                    - "cheese"
+                    - "tomato"
+              multipleProducts:
+                summary: "Несколько продуктов"
+                value:
+                  items:
+                    - product_type: "burger"
+                      additions:
+                        - "cheese"
+                    - product_type: "hotdog"
+                      additions:
+                        - "onion"
+      responses:
+        "200":
+          description: "Заказ успешно создан"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+        "400":
+          description: "Ошибка валидации"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Внутренняя ошибка сервера"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /order/{orderId}:
+    get:
+      tags:
+        - Orders
+      summary: "Получить информацию о заказе"
+      description: "Возвращает информацию о заказе по его ID"
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: "Уникальный идентификатор заказа"
+          schema:
+            type: string
+            example: "550e8400"
+      responses:
+        "200":
+          description: "Заказ найден"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+        "404":
+          description: "Заказ не найден"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /order/{orderId}/history:
+    get:
+      tags:
+        - Orders
+      summary: "История статусов заказа"
+      description: "Возвращает историю изменений статуса заказа"
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: "Уникальный идентификатор заказа"
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "История получена"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderHistoryResponse"
+              example:
+                {
+                  "success": true,
+                  "order_id": "550e8400",
+                  "history":
+                    [
+                      {
+                        "status": "created",
+                        "description": "Заказ создан",
+                        "timestamp": "2026-03-29T12:00:00+00:00",
+                      },
+                      {
+                        "status": "preparing",
+                        "description": "Подготовка ингредиентов",
+                        "timestamp": "2026-03-29T12:05:00+00:00",
+                      },
+                    ],
+                }
+        "404":
+          description: "Заказ не найден"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /order/{orderId}/cancel:
+    post:
+      tags:
+        - Orders
+      summary: "Отменить заказ"
+      description: "Отменяет заказ (доступно только для статусов: created, preparing, cooking)"
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: "Уникальный идентификатор заказа"
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Заказ отменён"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+        "400":
+          description: "Невозможно отменить заказ в текущем статусе"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: "Заказ не найден"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Заказ не найден"
+
+    CreateOrderRequest:
+      type: object
+      description: "Запрос на создание заказа"
+      properties:
+        product_type:
+          type: string
+          enum: [burger, sandwich, hotdog]
+          description: "Тип продукта (для одного продукта)"
+        additions:
+          type: array
+          items:
+            type: string
+            enum: [lettuce, onion, pepper, cheese, tomato]
+          description: "Список добавок"
+        items:
+          type: array
+          description: "Список продуктов (для нескольких)"
+          items:
+            $ref: "#/components/schemas/OrderItem"
+
+    OrderItem:
+      type: object
+      required:
+        - product_type
+      properties:
+        product_type:
+          type: string
+          enum: [burger, sandwich, hotdog]
+          description: "Тип продукта"
+        additions:
+          type: array
+          items:
+            type: string
+            enum: [lettuce, onion, pepper, cheese, tomato]
+          description: "Список добавок"
+
+    OrderResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Заказ успешно создан"
+        order:
+          $ref: "#/components/schemas/Order"
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "550e8400"
+        status:
+          type: string
+          enum:
+            [
+              created,
+              preparing,
+              cooking,
+              quality_check,
+              ready,
+              delivered,
+              cancelled,
+              disposed,
+            ]
+          example: "created"
+        status_description:
+          type: string
+          example: "Заказ создан"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        total_price:
+          type: number
+          format: float
+          example: 295.00
+        created_at:
+          type: string
+          format: date-time
+          example: "2026-03-29T12:00:00+00:00"
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Бургер с сыром и помидором"
+        description:
+          type: string
+          example: "Классический бургер с котлетой из говядины"
+        price:
+          type: number
+          format: float
+          example: 295.00
+        ingredients:
+          type: array
+          items:
+            type: string
+          example: ["булочка", "котлета", "сыр", "помидор"]
+
+    MenuResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
+        additions:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/Addition"
+
+    MenuItem:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [burger, sandwich, hotdog]
+          example: "burger"
+        name:
+          type: string
+          example: "Бургер"
+        description:
+          type: string
+          example: "Классический бургер с котлетой из говядины"
+        base_price:
+          type: number
+          format: float
+          example: 250.00
+        base_ingredients:
+          type: array
+          items:
+            type: string
+          example: ["булочка", "котлета", "соус"]
+
+    Addition:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Сыр"
+        price:
+          type: number
+          format: float
+          example: 30.00
+
+    OrderHistoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        order_id:
+          type: string
+          format: uuid
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusHistoryItem"
+
+    StatusHistoryItem:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            [
+              created,
+              preparing,
+              cooking,
+              quality_check,
+              ready,
+              delivered,
+              cancelled,
+              disposed,
+            ]
+        description:
+          type: string
+          example: "Заказ создан"
+        timestamp:
+          type: string
+          format: date-time

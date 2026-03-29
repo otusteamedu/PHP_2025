@@ -1,0 +1,100 @@
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+       - ./code:/data/mysite.local
+       - ./docker/nginx/logs:/var/log/nginx:delegated
+       - php-socket:/var/run
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: myapp/php 
+    container_name: app
+    volumes:
+       - ./code:/data/mysite.local
+       - php-socket:/var/run
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=fastfood
+      - DB_USER=app
+      - DB_PASSWORD=secret
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: fastfood
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  worker:
+    build:
+      context: ./docker/fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: worker
+    volumes:
+      - ./code:/data/mysite.local
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=fastfood
+      - DB_USER=app
+      - DB_PASSWORD=secret
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    entrypoint: ["sh", "-c", "cd /data/mysite.local && php bin/worker.php"]
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  php-socket:
+    driver: local
+  postgres-data:
+    driver: local
+  pgadmin-data:
+    driver: local
