@@ -1,0 +1,76 @@
+-- Таблица залов
+CREATE TABLE app.Cinema_halls (
+	hall_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+	hall_name varchar (100) NULL,
+	count_seats INT NULL,
+	CONSTRAINT Cinema_halls_PK PRIMARY KEY (hall_id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
+-- Таблица фильмов
+CREATE TABLE app.Movies (
+	movie_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+	movie_name varchar(100) NULL,
+	movie_duration varchar(100) NULL,
+	movie_price DECIMAL (10, 2) NULL,
+	CONSTRAINT Movies_PK PRIMARY KEY (movie_id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
+-- Таблица мест (каждое место в зале)
+CREATE TABLE app.Seats (
+	seat_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+	hall_id BIGINT UNSIGNED NULL,
+	`row_number` INT NULL,
+	seat_number INT NULL,
+	CONSTRAINT Seats_PK PRIMARY KEY (seat_id),
+	CONSTRAINT Seats_Cinema_halls_FK
+		FOREIGN KEY (hall_id)
+		REFERENCES app.Cinema_halls(hall_id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
+
+-- Таблица сеансов
+CREATE TABLE app.Sessions (
+    session_id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    hall_id BIGINT UNSIGNED NULL,
+    movie_id BIGINT UNSIGNED NULL,
+    tm_start DATETIME NULL,
+    price DECIMAL(10,2) NULL,
+    count_tikets INT NULL,
+    CONSTRAINT session_PK PRIMARY KEY (session_id),
+    CONSTRAINT Sessions_Cinema_halls_FK
+        FOREIGN KEY (hall_id) REFERENCES app.Cinema_halls(hall_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT Sessions_Movies_FK
+        FOREIGN KEY (movie_id) REFERENCES app.Movies(movie_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
+-- Таблица сеансов Билетов
+CREATE TABLE app.Tikets (
+	tiket_id BIGINT UNSIGNED auto_increment NOT NULL,
+	session_id BIGINT UNSIGNED NULL,
+	seat_number BIGINT UNSIGNED NULL,
+	dt_buy DATETIME NULL,
+	price DECIMAL (10, 2) NULL,
+	CONSTRAINT tikets_PK PRIMARY KEY (tiket_id),
+	CONSTRAINT Tikets_Sessions_FK FOREIGN KEY (session_id) REFERENCES app.Sessions(session_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT Tikets_Seats_FK FOREIGN KEY (seat_number) REFERENCES app.Seats(seat_id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
