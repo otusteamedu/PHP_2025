@@ -1,0 +1,14 @@
+CREATE VIEW marketing_data_view AS
+SELECT
+    m.id AS movie_id,
+    m.title AS movie_title,
+    atype.name AS attribute_type,
+    a.name AS attribute_name,
+    COALESCE(av.value_text,
+             TO_CHAR(av.value_date, 'DD.MM.YYYY'),
+             TO_CHAR(av.value_numeric, 'FM999999990.00'),
+             CASE WHEN av.value_boolean THEN 'Да' ELSE 'Нет' END) AS value_text
+FROM movies m
+         JOIN attribute_values av ON m.id = av.movie_id
+         JOIN attributes a ON av.attribute_id = a.id
+         JOIN attribute_types atype ON a.attribute_type_id = atype.id;
