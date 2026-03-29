@@ -1,0 +1,76 @@
+
+# в этом блоке мы описываем контейнеры, которые будут запускаться
+services:
+  #контейнер с Nginx
+  nginx:
+   # Если нет секции build, то система будет искать образ в репозиториях
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx # имя будущего образа
+    container_name: nginx # имя контейнера после запуска
+    ports:
+      - "80:80" 
+    volumes:
+       - ./code:/data/mysite.local
+    networks:
+      - app-network
+    depends_on:
+      - app
+      - redis
+      - memcached
+
+  #Контейнер с PHP-FPM
+  app:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php 
+    container_name: app 
+    volumes:
+       - ./code:/data/mysite.local
+    networks:
+      - app-network
+    depends_on:
+      - redis
+      - memcached
+    env_file:
+      - .env
+
+  #Контейнер с MySQL    
+  db:
+    image: mysql
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:3306"
+    networks:
+      - app-network
+    volumes:
+      - db_data:/var/lib/mysql
+
+  #Контейнер с Redis
+  redis:
+    image: redis
+    container_name: redis 
+    networks:
+      - app-network
+
+  #Контейнер с Memcached
+  memcached:
+    image: memcached
+    container_name: memcached 
+    networks:
+      - app-network
+
+volumes:
+  db_data:  
+
+#виртуальная сеть
+networks:
+  app-network:
+    driver: bridge
