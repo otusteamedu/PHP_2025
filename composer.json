@@ -1,0 +1,17 @@
+{
+    "name": "nikolay_vanzhin/php_2025",
+    "autoload": {
+        "psr-4": {
+            "NikolayVanzhin\\Php2025\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nikolay vanzhin",
+            "email": "nikolay.vanzhin@yandex.ru"
+        }
+    ],
+    "require": {
+        "nvanzhin/randomizer": "^1.0"
+    }
+}
