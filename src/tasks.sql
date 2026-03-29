@@ -75,3 +75,7 @@ group by row
 order by row;
 
 --6. Вывести диапазон миниальной и максимальной цены за билет на конкретный сеанс
+
+select max(t.price), min(t.price)
+from cinema.ticket as t
+where t.session_id = 3258
