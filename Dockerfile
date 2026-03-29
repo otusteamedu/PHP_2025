@@ -38,6 +38,9 @@ RUN apk add libmemcached-dev \
     && pecl install memcached \
     && docker-php-ext-enable memcached
 
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
 RUN apk del .build-deps
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -49,6 +52,7 @@ COPY composer.lock ./composer.lock
 
 COPY /docker/php/entrypoint.sh /usr/local/bin/
 COPY /docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
+COPY /docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
