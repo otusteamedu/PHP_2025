@@ -1,0 +1,53 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "59e9a491988aba51a43e1de03a2fcb3b",
+    "packages": [
+        {
+            "name": "dmitrijm/composer",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DmitrijM1983/Composer.git",
+                "reference": "7f5e6897c7cf65e5a6413355aec6a2a5387a9ac1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DmitrijM1983/Composer/zipball/7f5e6897c7cf65e5a6413355aec6a2a5387a9ac1",
+                "reference": "7f5e6897c7cf65e5a6413355aec6a2a5387a9ac1",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dmitrijm\\Composer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "dmitrijM",
+                    "email": "dmitrij.m.183@yandex.ru"
+                }
+            ],
+            "description": "Education project",
+            "support": {
+                "issues": "https://github.com/DmitrijM1983/Composer/issues",
+                "source": "https://github.com/DmitrijM1983/Composer/tree/v1.0.0"
+            },
+            "time": "2025-02-15T06:27:59+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}
