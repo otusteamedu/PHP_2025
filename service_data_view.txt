@@ -1,0 +1,11 @@
+CREATE VIEW service_data AS
+SELECT 
+    m.movie_id,
+    m.title AS movie_title,
+    av1.value_text AS tasks_today,
+    av2.value_text AS tasks_in_20_days
+FROM movies m
+LEFT JOIN attribute_values av1 ON m.movie_id = av1.movie_id 
+    AND av1.value_date = CURDATE()
+LEFT JOIN attribute_values av2 ON m.movie_id = av2.movie_id 
+    AND av2.value_date = CURDATE() + INTERVAL 20 DAY;
