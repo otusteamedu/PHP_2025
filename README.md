@@ -10,6 +10,10 @@
 - История изменения статусов заказа
 - Хранение данных в PostgreSQL
 
+## Swagger
+
+https://app.swaggerhub.com/apis-docs/individual-ca4/fast_food/1.0.0?view=uiDocs#/
+
 ## Запуск
 
 docker compose up -d
