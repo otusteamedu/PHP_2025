@@ -1,0 +1,12 @@
+{
+    "name": "napastyuk/code",
+    "authors": [
+        {
+            "name": "Ilya",
+            "email": "napastyuk@gmail.com"
+        }
+    ],
+    "require": {
+        "napastyuk/counter": "^1.0"
+    }
+}
