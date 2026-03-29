@@ -1,0 +1,8 @@
+SELECT m.id, m.title, SUM(t.price) AS total_revenue
+FROM sales s
+JOIN tickets t ON s.ticket_id = t.id
+JOIN sessions se ON t.session_id = se.id
+JOIN movies m ON se.movie_id = m.id
+GROUP BY m.id, m.title
+ORDER BY total_revenue DESC
+LIMIT 1;
