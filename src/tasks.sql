@@ -34,5 +34,44 @@ order by total_revenue desc
 limit 3
 
 --5. Сформировать схему зала и показать на ней свободные и занятые места на конкретный сеанс
+select t.session_id, count (t.session_id) as total
+from cinema.ticket as t
+         join cinema.session as s
+              on s.id = t.session_id
+
+group by t.session_id
+order by total desc
+
+
+    with hall as (
+	select hall_id as id from cinema.session as s where s.id = 3258
+),
+places as (
+	select row, seat, p.id
+	from cinema.place as p
+	join hall as h on p.hall_id = h.id
+),
+busy_places as (
+	select t.place_id
+	from cinema.ticket as t
+	where t.session_id = 3258
+),
+seats as (
+    select
+        p.row,
+        p.seat,
+        case
+            when b.place_id is null then 'o'
+            else 'x'
+        end as status
+    from places p
+    left join busy_places b on b.place_id = p.id
+)
+select
+    row,
+    array_agg(status order by seat) as seats
+from seats
+group by row
+order by row;
 
 --6. Вывести диапазон миниальной и максимальной цены за билет на конкретный сеанс
