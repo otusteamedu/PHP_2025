@@ -16,7 +16,7 @@ class FillListNode {
         $indicator = $newList;
         foreach ($nodes as $node) {
             $indicator->next = new ListNode($node);
-            $indicator = &$indicator->next;
+            $indicator = $indicator->next;
         }
         return $newList->next;
     }
@@ -28,20 +28,20 @@ function mergeTwoLists(ListNode $list1, ListNode $list2) {
     while ($list1 !== null || $list2 !== null) {
         if (empty($list1) && $list2) {
             $indicator->next = new ListNode($list2->val);
-            $indicator = &$indicator->next;
+            $indicator = $indicator->next;
             $list2 = $list2->next;
             continue;
         }
 
         if ($list1 && empty($list2)) {
             $indicator->next = new ListNode($list1->val);
-            $indicator = &$indicator->next;
+            $indicator = $indicator->next;
             $list1 = $list1->next;
             continue;
         }
         if ($list1->val === $list2->val) {
             $indicator->next = new ListNode($list1->val, new ListNode($list2->val));
-            $indicator = &$indicator->next->next;
+            $indicator = $indicator->next->next;
             $list1 = $list1->next;
             $list2 = $list2->next;
             continue;
@@ -49,14 +49,14 @@ function mergeTwoLists(ListNode $list1, ListNode $list2) {
 
         if ($list1->val < $list2->val) {
             $indicator->next = new ListNode($list1->val);
-            $indicator = &$indicator->next;
+            $indicator = $indicator->next;
             $list1 = $list1->next;
             continue;
         }
 
         if ($list1->val > $list2->val) {
             $indicator->next = new ListNode($list2->val);
-            $indicator = &$indicator->next;
+            $indicator = $indicator->next;
             $list2 = $list2->next;
         }
 
