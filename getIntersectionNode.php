@@ -33,6 +33,29 @@ class Solution {
 
         return null;
     }
+
+    /**
+     * O(n + m)
+     * 
+     * @param $headA
+     * @param $headB
+     * @return mixed|null
+     */
+    function getIntersectionNode2($headA, $headB) {
+        if ($headA == null || $headB == null) {
+            return null;
+        }
+
+        $indicator1 = $headA;
+        $indicator2 = $headB;
+
+        while ($indicator1 !== $indicator2) {
+            $indicator1 = $indicator1 !== null ? $indicator1->next : $headB;
+            $indicator2 = $indicator2 !== null ? $indicator2->next : $headA;
+        }
+
+        return $indicator1;
+    }
 }
 
 $a1 = new ListNode(2);
