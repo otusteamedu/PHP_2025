@@ -1,0 +1,17 @@
+{
+    "name": "maksim-skoropispcev/parenthesis-validator",
+    "description": "Checks the correctness of nested parenthesis",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Pryaniki\\App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Maksim Skoropiscev",
+            "email": "skoro11@bk.ru"
+        }
+    ],
+    "require": {}
+}
