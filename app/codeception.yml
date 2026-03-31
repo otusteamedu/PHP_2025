@@ -1,0 +1,15 @@
+namespace: App\Tests
+paths:
+  tests: tests
+  output: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
+suites:
+  unit:
+    path: unit
+    actor: UnitTester
+    modules:
+      enabled:
+        - Asserts
+
