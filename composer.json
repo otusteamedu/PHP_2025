@@ -1,0 +1,17 @@
+{
+    "name": "app/project",
+    "autoload": {
+        "psr-4": {
+            "App\\Project\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Марина Лубник",
+            "email": "m.kalinina@21vek.by"
+        }
+    ],
+    "require": {
+        "marina-lubnik/package-uppercase": "^1.0"
+    }
+}
