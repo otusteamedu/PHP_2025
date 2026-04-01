@@ -85,43 +85,36 @@ insert into cinema.place (hall_id, row, seat, seat_category)
         end) as c(category);
 
 with
-    movie_max as (select max(id) as m from cinema.movie),
-    hall_max as (select max(id) as h from cinema.hall),
-
-    time_slots as (
-        select
-            ts,
-            row_number() over () as rn
-        from generate_series(
-                timestamp '2026-02-20 00:00:00',
-                timestamp '2027-07-20 23:00:00',
-                interval '1 hour'
-            ) as ts
+    movie_max as (
+        select max(id) as m from cinema.movie
     ),
-
-    time_cnt as (
-        select count(*) as c from time_slots
+    hall_max as (
+        select max(id) as h from cinema.hall
     )
 
-insert into cinema.session(movie_id, hall_id, start_time, part_of_day)
+insert into cinema.session (movie_id, hall_id, start_time, part_of_day)
 select
-    (1 + floor(random() * movie_max.m))::bigint,
-        (1 + floor(random() * hall_max.h))::int,
-        ts.ts,
+    (1 + floor(random() * m.m))::bigint,
+    (1 + floor(random() * h.h))::int,
+    ts,
+    
     case
-        when extract(hour from ts.ts) >= 4  and extract(hour from ts.ts) < 9  then 'утро'::cinema.part_of_day
-        when extract(hour from ts.ts) >= 9  and extract(hour from ts.ts) < 14 then 'день'::cinema.part_of_day
-        when extract(hour from ts.ts) >= 14 and extract(hour from ts.ts) < 20 then 'вечер'::cinema.part_of_day
+        when extract(hour from ts) >= 4  and extract(hour from ts) < 9  then 'утро'::cinema.part_of_day
+        when extract(hour from ts) >= 9  and extract(hour from ts) < 14 then 'день'::cinema.part_of_day
+        when extract(hour from ts) >= 14 and extract(hour from ts) < 20 then 'вечер'::cinema.part_of_day
         else 'ночь'::cinema.part_of_day
         end
+
 from generate_series(1, current_setting('my.session_count')::int) g(i)
-     join movie_max on true
-     join hall_max on true
-     join time_cnt on true
 
+         cross join movie_max m
+         cross join hall_max h
 
-     join time_slots ts
-          on ts.rn = (1 + floor(random() * time_cnt.c))::int;
+         cross join lateral (
+    select timestamp '2020-03-29'
+               + (random() * interval '20 years')
+               + (g.i * interval '0 second') as ts
+        ) t
 
 
 insert into cinema.price(session_id, seat_category, price)
