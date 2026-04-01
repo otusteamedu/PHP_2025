@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  title: 'Get event'
+  version: '1.0'
+paths:
+  /event:
+    description: 'Create event'
+    post:
+      operationId: 819d7f0c314485d9c2f2ee82c98bbd9d
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                message:
+                  type: string
+              type: object
+      responses:
+        '200':
+          description: 'Success response'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string }
+                  data: { type: array, items: { type: string } }
+                type: object
+  '/event/{id}':
+    description: 'Get event'
+    get:
+      operationId: 7f56e6372772220b674eb8d0285d9a43
+      parameters:
+        -
+          name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Success response'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: { type: string }
+                  data: { type: array, items: { type: string } }
+                type: object
