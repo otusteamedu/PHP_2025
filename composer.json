@@ -1,0 +1,25 @@
+{
+    "name": "atelepchenkov/hw3",
+    "description": "use composer lib",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Atelepchenkov\\Hw3\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/trijin/otus-email-validator.git"
+        }
+    ],
+    "authors": [
+        {
+            "name": "trijin",
+            "email": "trijin@gmail.com"
+        }
+    ],
+    "require": {
+        "trijin/otus-email-validator": "^1.0"
+    }
+}
