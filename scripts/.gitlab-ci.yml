@@ -1,0 +1,18 @@
+stages:
+  - deploy
+  - rollback
+
+deploy:
+  stage: deploy
+  script:
+    - cd $DEPLOY_DIR
+    - bash ./scripts/deploy.sh
+  only:
+    - main
+
+rollback:
+  stage: rollback
+  script:
+    - cd $DEPLOY_DIR
+    - bash ./scripts/rollback.sh
+  when: manual
