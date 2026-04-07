@@ -1,3 +1,61 @@
-# PHP_2025
+### HW21
 
-https://otus.ru/lessons/razrabotchik-php/?utm_source=github&utm_medium=free&utm_campaign=otus
+**Задание:**
+Используя выбранный инструмент автоматического деплоя, необходимо реализовать автоматическую выкатку написанного ранее мини-приложения на собственный виртуальный сервер.
+
+---
+
+**Краткая демонстрация настройки blue/green деплоя (триггер - push в ветку main)**
+
+
+1. Развернул виртуальную машину Ubuntu 24 LTS (VMware Workstation PRO), обновил и установил необходимые зависимости
+![screenshot](img/2026-04-07_135425.png)
+
+2. Установил и настроил Gitlab и Gitlab runner
+
+**Gitlab docker-compose.yml файл**
+![screenshot](img/2026-04-07_135901.png)
+
+**Gitlab runner**
+![screenshot](img/2026-04-07_140046.png)
+
+3. Создал необходимые директории и файлы
+
+**Структура папок по пути /app/deploy**
+![screenshot](img/2026-04-07_140305.png)
+
+4. В Gitlab создал два репозитория, с конфигами и приложением
+![screenshot](img/2026-04-07_140542.png)
+
+
+**Репозиторий config**
+![screenshot](img/2026-04-07_140843.png)
+![screenshot](img/2026-04-07_140902.png)
+
+**Репозиторий hw21 (приложение)**
+![screenshot](img/2026-04-07_141008.png)
+![screenshot](img/2026-04-07_141033.png)
+5. Настройки CI/CD
+
+![screenshot](img/2026-04-07_141436.png)
+
+
+**Необходимые переменные для работы скриптов**
+![screenshot](img/2026-04-07_141606.png)
+
+> В зависимости от переменной **APP_ENV** (dev/prod/stage) применятся разные конфиги из репозитория **config**
+
+
+6. Pipelines
+
+![screenshot](img/2026-04-07_141914.png)
+
+![screenshot](img/2026-04-07_142131.png)
+
+**Приложение успешно проходит deploy и rollback**
+
+![screenshot](img/2026-04-07_142422.png)
+
+![screenshot](img/2026-04-07_142527.png)
+
+![screenshot](img/2026-04-07_142646.png)
