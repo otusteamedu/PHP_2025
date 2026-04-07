@@ -11,6 +11,7 @@
 1. Развернул виртуальную машину Ubuntu 24 LTS (VMware Workstation PRO), обновил и установил необходимые зависимости  
 ![screenshot](img/2026-04-07_135425.png)
 
+
 2. Установил и настроил Gitlab и Gitlab runner
 
 **Gitlab docker-compose.yml файл**  
@@ -19,26 +20,32 @@
 **Gitlab runner**  
 ![screenshot](img/2026-04-07_140046.png)
 
+
 3. Создал необходимые директории и файлы
 
 **Структура папок по пути /app/deploy**  
 ![screenshot](img/2026-04-07_140305.png)
 
+
 4. В Gitlab создал два репозитория, с конфигами и приложением  
+
 ![screenshot](img/2026-04-07_140542.png)
 
 
 **Репозиторий config**  
 ![screenshot](img/2026-04-07_140843.png)  
+
 ![screenshot](img/2026-04-07_140902.png)
 
-**Репозиторий hw21 (приложение)**  
+**Репозиторий hw21 (приложение)**
 ![screenshot](img/2026-04-07_141008.png)  
+
 ![screenshot](img/2026-04-07_141033.png)
+
+
 5. Настройки CI/CD
 
-![screenshot](img/2026-04-07_141436.png)
-
+![screenshot](img/2026-04-07_141436.png)  
 
 **Необходимые переменные для работы скриптов**  
 ![screenshot](img/2026-04-07_141606.png)
