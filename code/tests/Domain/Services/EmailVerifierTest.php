@@ -4,124 +4,48 @@ declare(strict_types=1);
 
 namespace Alisaselezneva\Code\Tests\Domain\Services;
 
+use Alisaselezneva\Code\Domain\Services\Checkers\EmailFormatCheckerInterface;
+use Alisaselezneva\Code\Domain\Services\Checkers\MxRecordCheckerInterface;
 use Alisaselezneva\Code\Domain\Services\EmailVerifier;
 use Alisaselezneva\Code\Domain\Services\VerificationResult;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 
 class EmailVerifierTest extends TestCase
 {
-    public function testCheckFormatValid(): void
+    use MockeryPHPUnitIntegration;
+
+    /** @var EmailFormatCheckerInterface&MockInterface */
+    private $formatChecker;
+
+    /** @var MxRecordCheckerInterface&MockInterface */
+    private $mxRecordChecker;
+
+    /** @var EmailVerifier&MockInterface */
+    private $verifier;
+
+    protected function setUp(): void
     {
-        $validEmails = [
-            'user@example.com',
-            'john.doe@example.org',
-            'user+tag@example.co.uk',
-            'name_surname@sub.domain.net',
-            'test123@my-domain.io',
-        ];
+        parent::setUp();
 
-        $verifier = new EmailVerifier();
-        $method = new ReflectionMethod(EmailVerifier::class, 'checkFormat');
+        $this->formatChecker = Mockery::mock(EmailFormatCheckerInterface::class);
+        $this->mxRecordChecker = Mockery::mock(MxRecordCheckerInterface::class);
 
-        foreach ($validEmails as $email) {
-            $this->assertTrue($method->invoke($verifier, $email), "Expected valid email: {$email}");
-        }
-    }
-
-    public function testCheckFormatInvalid(): void
-    {
-        $invalidEmails = [
-            'wrong-email',
-            'user..name@example.com',
-            '.user@example.com',
-            'user.@example.com',
-            'user@example',
-            'user@.example.com',
-            'user@example.com.',
-            'user@example..com',
-            'user@-example.com',
-            'user@exa_mple.com',
-            'user@example.123',
-            'user name@example.com',
-            str_repeat('a', 64) . '@' . str_repeat('b', 186) . '.com',
-        ];
-
-        $verifier = new EmailVerifier();
-        $method = new ReflectionMethod(EmailVerifier::class, 'checkFormat');
-
-        foreach ($invalidEmails as $email) {
-            $this->assertFalse($method->invoke($verifier, $email), "Expected invalid email: {$email}");
-        }
-    }
-
-    public function testIsValidTldValid(): void
-    {
-        $validDomains = [
-            'example.com',
-            'mail.example.123org',
-            'service.example.co.uk',
-        ];
-
-        $verifier = new EmailVerifier();
-        $method = new ReflectionMethod(EmailVerifier::class, 'isValidTld');
-
-        foreach ($validDomains as $domain) {
-            $this->assertTrue($method->invoke($verifier, $domain), "Expected valid TLD in domain: {$domain}");
-        }
-    }
-
-    public function testIsValidTldInvalid(): void
-    {
-        $invalidDomains = [
-            'example.123',
-            'example.---',
-        ];
-
-        $verifier = new EmailVerifier();
-        $method = new ReflectionMethod(EmailVerifier::class, 'isValidTld');
-
-        foreach ($invalidDomains as $domain) {
-            $this->assertFalse($method->invoke($verifier, $domain), "Expected invalid TLD in domain: {$domain}");
-        }
-    }
-
-    public function testCheckMxRecordsValid(): void
-    {
-        $validEmails = [
-            'user@gmail.com',
-        ];
-
-        $verifier = new EmailVerifier();
-        $method = new ReflectionMethod(EmailVerifier::class, 'checkMxRecords');
-
-        foreach ($validEmails as $email) {
-            $this->assertTrue($method->invoke($verifier, $email), "Expected MX records for email: {$email}");
-        }
-    }
-
-    public function testCheckMxRecordsInvalid(): void
-    {
-        $invalidEmails = [
-            'user@invalid-domain-for-tests.local',
-            'user@',
-        ];
-
-        $verifier = new EmailVerifier();
-        $method = new ReflectionMethod(EmailVerifier::class, 'checkMxRecords');
-
-        foreach ($invalidEmails as $email) {
-            $this->assertFalse($method->invoke($verifier, $email), "Expected no MX records for email: {$email}");
-        }
+        $this->verifier = Mockery::mock(EmailVerifier::class)->makePartial()->shouldAllowMockingProtectedMethods();
+        $this->verifier->shouldReceive('getFormatChecker')->andReturn($this->formatChecker);
+        $this->verifier->shouldReceive('getMxRecordChecker')->andReturn($this->mxRecordChecker);
     }
 
     public function testVerifyValid(): void
     {
-        $validEmail = 'user@gmail.com';
+        $validEmail = 'user@example.com';
 
-        $verifier = new EmailVerifier();
+        $this->prepareFormatChecker($validEmail, true);
+        $this->prepareMxRecordChecker($validEmail, true);
 
-        $result = $verifier->verify($validEmail);
+        $result = $this->verifier->verify($validEmail);
 
         $this->assertInstanceOf(VerificationResult::class, $result);
         $this->assertTrue($result->isValid());
@@ -136,25 +60,59 @@ class EmailVerifierTest extends TestCase
 
     public function testVerifyInvalid(): void
     {
-        $verifier = new EmailVerifier();
+        $invalidFormatEmail = 'user@example';
 
-        $invalidCases = [
-            'user@example' => [
+        $this->prepareFormatChecker($invalidFormatEmail, false);
+        $this->mxRecordChecker
+            ->shouldNotReceive('hasMxRecords');
+
+        $result = $this->verifier->verify($invalidFormatEmail);
+
+        $this->assertInstanceOf(VerificationResult::class, $result);
+        $this->assertFalse($result->isValid());
+        $this->assertSame(
+            [
                 'format' => false,
-                'mx_records' => false,
             ],
-            'user@invalid-domain-for-tests.local' => [
+            $result->getChecks()
+        );
+    }
+
+    public function testVerifyInvalidMx(): void
+    {
+        $emailWithoutMx = 'user@no-mx.example';
+
+        $this->prepareFormatChecker($emailWithoutMx, true);
+        $this->prepareMxRecordChecker($emailWithoutMx, false);
+
+        $result = $this->verifier->verify($emailWithoutMx);
+
+        $this->assertInstanceOf(VerificationResult::class, $result);
+        $this->assertFalse($result->isValid());
+        $this->assertSame(
+            [
                 'format' => true,
                 'mx_records' => false,
             ],
-        ];
+            $result->getChecks()
+        );
+    }
 
-        foreach ($invalidCases as $email => $expectedChecks) {
-            $result = $verifier->verify($email);
+    private function prepareFormatChecker(string $email, bool $result): void
+    {
+        $this->formatChecker
+            ->shouldReceive('isValid')
+            ->once()
+            ->with($email)
+            ->andReturn($result);
+    }
 
-            $this->assertInstanceOf(VerificationResult::class, $result);
-            $this->assertFalse($result->isValid());
-            $this->assertSame($expectedChecks, $result->getChecks());
-        }
+    private function prepareMxRecordChecker(string $email, bool $result): void
+    {
+        $this->mxRecordChecker
+            ->shouldReceive('hasMxRecords')
+            ->once()
+            ->with($email)
+            ->andReturn($result);
     }
 }

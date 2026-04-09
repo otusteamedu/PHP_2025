@@ -16,6 +16,7 @@
         <exclude>
             <file>src/index.php</file>
             <file>src/Domain/Services/VerificationResult.php</file>
+            <file>src/Domain/Services/Checkers/DnsMxRecordChecker.php</file>
         </exclude>
     </source>
     <coverage>
