@@ -1,0 +1,39 @@
+{
+  "onion": {
+    "count": 5
+  },
+  "cheese": {
+    "count": 5
+  },
+  "pizza-crust": {
+    "count": 5
+  },
+  "ketchup": {
+    "count": 50
+  },
+  "cutlet": {
+    "count": 10
+  },
+  "salad": {
+    "count": 10
+  },
+  "mayonnaise": {
+    "count": 5
+  },
+  "tomato": {
+    "count": 5
+  },
+  "mustard": {
+    "count": 5
+  },
+  "sausage": {
+    "count": 5
+  },
+  "hot-dog-bun": {
+    "count": 5
+  },
+  "fried-onions": {
+    "count": 10
+  }
+}
+
