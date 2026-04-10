@@ -13,3 +13,6 @@ memcached/
 /nginx/logs/*
 /nginx/logs/error.log
 /code/vendor/
+/rabbitmq/*
+/pgdata/*
+/esdata/*

@@ -20,6 +20,7 @@ services:
       - php-fpm
 
   php-fpm:
+    image: php-2025-fpm
     container_name: php-fpm
     build:
       context: ./fpm

@@ -1,18 +1,45 @@
-FROM php:8.4-fpm
+# Используем конкретную, стабильную версию Debian (Bullseye)
+FROM php:8.2-fpm-bullseye
 
-RUN apt-get update && apt-get install nano -y
+# Устанавливаем рабочую директорию
+WORKDIR /data/webserver
 
-# расширение Redis
-RUN pecl install redis && docker-php-ext-enable redis
+# Устанавливаем системные зависимости, включая libcurl4-openssl-dev для ext-curl
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    nano \
+    curl \
+    libcurl4-openssl-dev \
+    zlib1g-dev \
+    libzip-dev \
+    libicu-dev \
+    libmemcached-dev \
+    libpq-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# конфигурации - хранения сессий в Redis
-COPY redis-session.ini /usr/local/etc/php/conf.d/redis-session.ini
+# Устанавливаем расширения PHP
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        gd \
+        pdo_pgsql \
+        intl \
+        zip \
+        sockets \
+        bcmath \
+        curl \
+    && pecl install redis memcached \
+    && docker-php-ext-enable redis memcached
 
-# Install Composer
+# Устанавливаем Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Xdebug
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+# Копируем кастомные конфигурации PHP
+COPY redis-session.ini /usr/local/etc/php/conf.d/redis-session.ini
 
-# Configure Xdebug
+# Установка и настройка Xdebug
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
