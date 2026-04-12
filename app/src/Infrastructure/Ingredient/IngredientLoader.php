@@ -36,4 +36,16 @@ readonly class IngredientLoader
 
         return $result;
     }
+
+    /** @return IngredientInterface[] */
+    public function loadFromArray(array $arIngredients): array
+    {
+        $result = [];
+
+        foreach ($arIngredients as $ingredientName => $ingredientCount) {
+            $result[] = $this->factory->create($ingredientName, $ingredientCount);
+        }
+
+        return $result;
+    }
 }
