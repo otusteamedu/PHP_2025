@@ -2,6 +2,8 @@
 
 use App\Presentation\AppRunner;
 
+require_once __DIR__  . '/../vendor/autoload.php';
+
 $order = [
     'burger' =>  [
         [
