@@ -17,9 +17,7 @@ class CreatorOrderUseCase
 
         foreach ($arOrderConfig as $productName => $arSettings) {
             foreach ($arSettings as $arProductSetting) {
-                $additionalIngredients = $arProductSetting['additional_ingredients']
-                    ? $this->getAdditionalIngredients($arProductSetting['additional_ingredients'])
-                    : [];
+                $additionalIngredients = $arProductSetting['additional_ingredients'] ?: [];
                 $orderItemModel = new OrderItemModel(
                     productName: $productName,
                     recipeType: $arProductSetting['type'],
@@ -31,14 +29,5 @@ class CreatorOrderUseCase
         }
 
         return $order;
-    }
-
-    /** @return IngredientInterface[] */
-    private function getAdditionalIngredients(array $arIngredients): array
-    {
-        $ingredientsFactory = new IngredientFactory();
-        $ingredientLoader = new IngredientLoader($ingredientsFactory);
-
-        return $ingredientLoader->loadFromArray($arIngredients);
     }
 }
