@@ -7,10 +7,19 @@ require_once __DIR__ . '/vendor/autoload.php';
 use App\FactoryMethod\{
     WordDocumentCreator,
     ExcelDocumentCreator,
-    PDFDocumentCreator,
-    IDocument
+    PDFDocumentCreator
 };
 use App\Adapter\{DocumentFormatAdapter, LegacyDocumentAPI};
+use App\Strategy\{
+    EmailValidator,
+    StrictEmailValidationStrategy,
+    BusinessDomainValidationStrategy
+};
+use App\Decorator\{
+    BasicEmailNotifier,
+    SignatureNotifierDecorator,
+    LoggingNotifierDecorator
+};
 
 // ============================================================
 // Демонстрация паттернов проектирования
@@ -82,11 +91,69 @@ echo "\nАдаптер позволяет работать со старым API
 echo "как с новым интерфейсом (IDocument).\n\n";
 
 // ============================================================
-// 3. Практическое применение
+// 3. STRATEGY - выбор алгоритма во время выполнения
 // ============================================================
 
 echo str_repeat("-", 60) . "\n\n";
-echo "3. КАК ЭТО РАБОТАЕТ ВМЕСТЕ\n\n";
+echo "3. STRATEGY\n\n";
+echo "Задача: менять правила проверки email без переписывания клиента\n";
+echo "Решение: EmailValidator работает через интерфейс стратегии\n\n";
+
+$emails = [
+    'admin@gmail.com',
+    'manager@company.org',
+    'invalid-email',
+    'user@yahoo.com',
+];
+
+$validator = new EmailValidator(new StrictEmailValidationStrategy());
+echo "Проверка с StrictEmailValidationStrategy:\n";
+foreach ($emails as $email) {
+    $isValid = $validator->validate($email);
+    echo "  - {$email}: " . ($isValid ? 'валидный' : 'невалидный') . "\n";
+}
+
+$validator->setStrategy(new BusinessDomainValidationStrategy(['gmail.com', 'company.org']));
+echo "\nПроверка с BusinessDomainValidationStrategy (только whitelist доменов):\n";
+foreach ($emails as $email) {
+    $isValid = $validator->validate($email);
+    echo "  - {$email}: " . ($isValid ? 'допущен' : 'отклонен') . "\n";
+}
+
+// ============================================================
+// 4. DECORATOR - добавление поведения без изменения класса
+// ============================================================
+
+echo str_repeat("-", 60) . "\n\n";
+echo "4. DECORATOR\n\n";
+echo "Задача: расширить отправку email (подпись, логирование)\n";
+echo "Решение: оборачиваем базовый EmailNotifier декораторами\n\n";
+
+$logFile = sys_get_temp_dir() . '/email_notifier.log';
+
+$notifier = new LoggingNotifierDecorator(
+    new SignatureNotifierDecorator(
+        new BasicEmailNotifier(),
+        "С уважением,\nКоманда поддержки"
+    ),
+    $logFile
+);
+
+$sent = $notifier->send(
+    'client@example.com',
+    'Статус заказа',
+    'Ваш заказ #245 уже передан в доставку.'
+);
+
+echo "\n" . ($sent ? "  ✓ Email успешно отправлен\n" : "  ✗ Ошибка отправки email\n");
+echo "Лог записан в: {$logFile}\n\n";
+
+// ============================================================
+// 5. Практическое применение
+// ============================================================
+
+echo str_repeat("-", 60) . "\n\n";
+echo "5. КАК ЭТО РАБОТАЕТ ВМЕСТЕ\n\n";
 
 $info = [
     'Factory Method' => [
@@ -96,6 +163,14 @@ $info = [
     'Adapter' => [
         'применение' => 'интеграция несовместимого кода',
         'выигрыш' => 'переиспользуем старый код без изменений',
+    ],
+    'Strategy' => [
+        'применение' => 'динамическая смена алгоритма проверки',
+        'выигрыш' => 'новые правила добавляются без изменения клиента',
+    ],
+    'Decorator' => [
+        'применение' => 'расширение поведения объекта без наследования',
+        'выигрыш' => 'гибкая композиция дополнительных возможностей',
     ],
 ];
 
@@ -108,7 +183,7 @@ foreach ($info as $pattern => $details) {
 }
 
 // ============================================================
-// 4. Результаты
+// 6. Результаты
 // ============================================================
 
 echo str_repeat("-", 60) . "\n\n";
@@ -131,6 +206,12 @@ if ($adaptedFiles) {
     foreach ($adaptedFiles as $file) {
         echo "  - " . basename($file) . "\n";
     }
+    echo "\n";
+}
+
+if (file_exists($logFile)) {
+    echo "Лог, созданный Decorator:\n";
+    echo "  - " . basename($logFile) . "\n";
 }
 
 echo "\n" . str_repeat("-", 60) . "\n";
