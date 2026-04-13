@@ -1,0 +1,83 @@
+<?php
+declare(strict_types=1);
+
+//pr([file_exists($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php'), ], true, true);
+
+require $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+
+use App\Presentation\Controller\User\UserController;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\App;
+use Slim\Interfaces\RouteCollectorProxyInterface as Group;
+
+return function (App $app) {
+    // Add trailing slash middleware
+    $app->add(function ($request, $handler) {
+        $uri = $request->getUri();
+        $path = $uri->getPath();
+
+        if ($path != '/' && substr($path, -1) == '/') {
+            // permanently redirect paths with a trailing slash
+            // to their non-trailing counterpart
+            $uri = $uri->withPath(substr($path, 0, -1));
+            
+            if($request->getMethod() == 'GET') {
+                return (new \Slim\Psr7\Response())
+                    ->withHeader('Location', (string)$uri)
+                    ->withStatus(301);
+            }
+            else {
+                $request = $request->withUri($uri);
+            }
+        }
+
+        return $handler->handle($request);
+    });
+
+    $app->options('/{routes:.*}', function (Request $request, Response $response) {
+        // CORS Pre-Flight OPTIONS Request Handler
+        return $response;
+    });
+
+    $app->get('/', function (Request $request, Response $response) {
+        $response->getBody()->write('Hello world!');
+        return $response;
+    });
+
+    // User registration and profile
+    $app->group('/users', function (Group $group) {
+        $group->post('', [UserController::class, 'createUser']);
+        $group->get('/{id}', function (Request $request, Response $response, array $args) {
+            // TODO: Implement get user profile
+            $response->getBody()->write("Get user profile placeholder for id: " . $args['id']);
+            return $response;
+        });
+        $group->put('/{id}', function (Request $request, Response $response, array $args) {
+            // TODO: Implement update user profile
+            $response->getBody()->write("Update user profile placeholder for id: " . $args['id']);
+            return $response;
+        });
+        $group->delete('/{id}', function (Request $request, Response $response, array $args) {
+            // TODO: Implement delete user profile
+            $response->getBody()->write("Delete user profile placeholder for id: " . $args['id']);
+            return $response;
+        });
+    });
+
+    // Exercises
+    $app->get('/exercises', function (Request $request, Response $response) {
+        // TODO: Implement exercise list with filtering
+        $response->getBody()->write('Exercise list placeholder');
+        return $response;
+    });
+
+    // RabbitMQ routes
+    $app->group('/rabbitmq', function (Group $group) {
+        $group->post('/send', function (Request $request, Response $response) {
+            // TODO: Implement RabbitMQ message sending
+            $response->getBody()->write('RabbitMQ send message placeholder');
+            return $response;
+        });
+    });
+};
