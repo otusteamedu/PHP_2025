@@ -7,6 +7,35 @@ use App\EmailChecker;
 
 class EmailVerifierTest extends TestCase
 {
+    /**
+     * @dataProvider successfulVerificationProvider
+     */
+    public function testVerifyReturnsTrueForDifferentValidEmails(string $email, string $domain): void
+    {
+        $checker = $this->createMock(EmailChecker::class);
+        $checker->expects($this->once())
+            ->method('checkSyntax')
+            ->with($email)
+            ->willReturn($domain);
+
+        $checker->expects($this->once())
+            ->method('checkDns')
+            ->with($domain)
+            ->willReturn(true);
+
+        $verifier = new EmailVerifier($checker);
+        $this->assertTrue($verifier->verify($email));
+    }
+
+    public static function successfulVerificationProvider(): array
+    {
+        return [
+            ['first.last+shop@gmail.com', 'gmail.com'],
+            ['team@subdomain.company.org', 'subdomain.company.org'],
+            ['user_42@example-mail.net', 'example-mail.net'],
+        ];
+    }
+
     public function testVerifyReturnsFalseIfSyntaxIsInvalid(): void
     {
         $checker = $this->createMock(EmailChecker::class);
