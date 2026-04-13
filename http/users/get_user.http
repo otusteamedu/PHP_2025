@@ -1,0 +1,4 @@
+GET http://localhost:{{nginxPublishedPort}}/get-user?id=1
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
