@@ -2,7 +2,7 @@
 
 namespace App\Presentation;
 
-use App\Application\UseCases\CreatorOrderUseCases;
+use App\Application\UseCases\CreatorOrderUseCase;
 use App\Application\UseCases\InitializeStorageUseCase;
 use App\Domain\Ingredient\Storage\IngredientStorageInterface;
 use App\Infrastructure\Ingredient\IngredientFactory;
@@ -22,7 +22,7 @@ class AppRunner
 
     public function prepareOrder(array $arOrder): void
     {
-        $creatorOrderUseCases = new CreatorOrderUseCases();
+        $creatorOrderUseCases = new CreatorOrderUseCase();
         $order = $creatorOrderUseCases->execute($arOrder);
 
         // todo заказ передается на кухню и возвращается блюда + сообщения об ошибках (нехватка ингредиентов)

@@ -9,7 +9,7 @@ use App\Domain\Order\OrderItemModel;
 use App\Infrastructure\Ingredient\IngredientFactory;
 use App\Infrastructure\Ingredient\IngredientLoader;
 
-class CreatorOrderUseCases
+class CreatorOrderUseCase
 {
     public function execute(array $arOrderConfig): OrderInterface
     {
