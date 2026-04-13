@@ -11,8 +11,6 @@
 
 1. **Сборка и запуск контейнеров**
 
-   Так как конфигурация Docker изменилась (добавлен RabbitMQ и расширение sockets), необходимо пересобрать контейнеры:
-
    ```bash
    docker-compose down
    docker-compose up -d --build
