@@ -157,15 +157,47 @@ class OrderGateway
             return true; // Нет изменений для сохранения
         }
 
-        $sql = "UPDATE {$this->tableName} SET user_id = :user_id, total = :total, status = :status WHERE id = :id";
+        $id = $order->getId();
+
+        $selectStmt = $this->db->prepare("SELECT user_id, total, status FROM {$this->tableName} WHERE id = :id");
+        $selectStmt->execute(['id' => $id]);
+        $currentData = $selectStmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($currentData === false) {
+            throw new \RuntimeException("Cannot update order: order not found.");
+        }
+
+        $changedFields = [];
+
+        if ((int)$currentData['user_id'] !== $order->getUserId()) {
+            $changedFields['user_id'] = $order->getUserId();
+        }
+
+        if ((float)$currentData['total'] !== $order->getTotal()) {
+            $changedFields['total'] = $order->getTotal();
+        }
+
+        if ((string)$currentData['status'] !== $order->getStatus()) {
+            $changedFields['status'] = $order->getStatus();
+        }
+
+        if (empty($changedFields)) {
+            $order->markAsSaved();
+            return true;
+        }
+
+        $setParts = [];
+        foreach (array_keys($changedFields) as $field) {
+            $setParts[] = "{$field} = :{$field}";
+        }
+
+        $sql = "UPDATE {$this->tableName} SET " . implode(', ', $setParts) . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
-        $result = $stmt->execute([
-            'id' => $order->getId(),
-            'user_id' => $order->getUserId(),
-            'total' => $order->getTotal(),
-            'status' => $order->getStatus(),
-        ]);
+        $params = $changedFields;
+        $params['id'] = $id;
+
+        $result = $stmt->execute($params);
 
         if ($result) {
             $order->markAsSaved();
