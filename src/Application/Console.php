@@ -31,12 +31,12 @@ class Console
      */
     private function getCommandsMapping(): array
     {
-        $commandDir = realpath(__DIR__ . '/../Command');
+        $commandDir = realpath(__DIR__ . '/../Controller/Command');
         $files = glob($commandDir . '/*.php');
 
         $commands = [];
         foreach ($files as $file) {
-            $commandClassName = 'App\\Command\\' . basename($file, '.php');
+            $commandClassName = 'App\\Controller\\Command\\' . basename($file, '.php');
             if (class_exists($commandClassName)) {
                 $reflection = new \ReflectionClass($commandClassName);
                 if ($reflection->isSubclassOf(Command::class)) {

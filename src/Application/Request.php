@@ -23,7 +23,7 @@ class Request
     {
         $content = file_get_contents('php://input');
         if ($content === false) {
-            throw new \Exception('Couldn\'t get data from request body', 400);
+            throw new \Exception('Couldn\'t get data from request body.', 400);
         }
 
         try {
@@ -31,5 +31,13 @@ class Request
         } catch (\JsonException $e) {
             throw new \Exception($e->getMessage(), 400);
         }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getQueryParam(string $param): mixed
+    {
+        return $_GET[$param] ?? throw new \Exception("Param '$param' does not exists.", 400);
     }
 }
