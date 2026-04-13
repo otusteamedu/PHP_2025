@@ -16,7 +16,7 @@ class BurgerStrategy implements ProductStrategyInterface
     {
         return match ($type) {
            'classic' => [
-               'bun' => 2,
+               'bun' => 1,
                'cutlet' => 1,
                'ketchup' => 1,
             ],
