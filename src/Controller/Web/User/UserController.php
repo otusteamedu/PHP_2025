@@ -6,6 +6,7 @@ use App\Application\Response;
 use App\Controller\Web\AbstractController;
 use App\Domain\Entity\User;
 use App\Domain\Model\CreateUserModel;
+use App\Domain\Model\GetUsersModel;
 use App\Domain\Model\UpdateUserEmailModel;
 use App\Domain\Service\UserService;
 use Customer41\MultiException\MultiException;
@@ -74,18 +75,27 @@ class UserController extends AbstractController
 
     public function getUsers(): Response
     {
-        $users = array_map(
-            static fn(User $user) => $user->toArray(),
-            $this->userService->findUsers(),
-        );
+        try {
+            $payload = $this->request->getPayload();
+            $getUsers = GetUsersDTO::fromArray($payload);
+            $users = $this->userService->findUsers(
+                new GetUsersModel(
+                    lastId: $getUsers->lastId,
+                    limit: $getUsers->limit,
+                ),
+            );
 
-        return new Response(
-            json_encode([
-                'success' => true,
-                'users' => $users,
-            ]),
-            headers: ['Content-Type: application/json; charset=utf-8'],
-        );
+            $data['success'] = true;
+            $data['users'] = array_map(static fn(User $user) => $user->toArray(), $users->toArray());
+            $data['pager'] = ['lastId' => $users->max('id'), 'totalItems' => $users->count()];
+            $httpCode = 200;
+        } catch (\Throwable $e) {
+            $data['success'] = false;
+            $data['message'] = $e->getMessage();
+            $httpCode = $e->getCode();
+        }
+
+        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
     }
 
     public function updateUserEmail(): Response

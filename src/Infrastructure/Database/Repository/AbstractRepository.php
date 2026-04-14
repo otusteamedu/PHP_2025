@@ -45,6 +45,20 @@ abstract class AbstractRepository
         return $collection;
     }
 
+    public function findAllPaginatedById(int $lastId, int $limit): AbstractCollection
+    {
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id > :last_id ORDER BY id ASC LIMIT :limit';
+        $rows = $this->dbQueryExecutor->queryRows($sql, [':last_id' => $lastId, ':limit' => $limit]);
+
+        /** @var AbstractCollection $collection */
+        $collection = new ($this->getCollectionClassName());
+        foreach ($rows as $row) {
+            $collection->add($this->createEntityFromRow($row));
+        }
+
+        return $collection;
+    }
+
     public function save(EntityInterface $entity): EntityInterface
     {
         return $entity->getId() === null ? $this->insert($entity) : $this->update($entity);

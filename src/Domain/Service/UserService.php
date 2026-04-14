@@ -2,8 +2,10 @@
 
 namespace App\Domain\Service;
 
+use App\Domain\Collection\UserCollection;
 use App\Domain\Entity\User;
 use App\Domain\Model\CreateUserModel;
+use App\Domain\Model\GetUsersModel;
 use App\Domain\Model\UpdateUserEmailModel;
 use App\Infrastructure\Database\Repository\UserRepository;
 
@@ -38,9 +40,12 @@ class UserService
         return $user;
     }
 
-    public function findUsers(): array
+    public function findUsers(GetUsersModel $getUsersModel): UserCollection
     {
-        return $this->userRepository->findAll()->toArray();
+        return $this->userRepository->findAllPaginatedById(
+            $getUsersModel->getLastId(),
+            $getUsersModel->getLimit(),
+        );
     }
 
     public function updateUserEmail(UpdateUserEmailModel $updateUserModel): User

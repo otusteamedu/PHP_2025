@@ -30,6 +30,30 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable
         return $this->items;
     }
 
+    public function max(string $field): mixed
+    {
+        if ($this->isEmpty()) {
+            return null;
+        }
+
+        $getter = 'get' . ucfirst($field);
+        $hasGetter = array_all($this->items, static fn(EntityInterface $entity, $k) => method_exists($entity, $getter));
+        if (!$hasGetter) {
+            return null;
+        }
+
+        $max = null;
+        foreach ($this->items as $entity) {
+            if ($max === null) {
+                $max = $entity->$getter();
+                continue;
+            }
+            $max = max($entity->$getter(), $max);
+        }
+
+        return $max;
+    }
+
     protected function addEntity(EntityInterface $entity): void
     {
         $this->items[] = $entity;
