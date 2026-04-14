@@ -1,0 +1,9 @@
+GET http://localhost:{{nginxPublishedPort}}/get-users
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "lastId": 0,
+  "limit": 10
+}

@@ -9,4 +9,9 @@ return [
     ['POST', '/add-event', \App\Controller\Web\EventController::class, 'addEvent'],
     ['GET', '/get-event', \App\Controller\Web\EventController::class, 'getEvent'],
     ['DELETE', '/delete-events', \App\Controller\Web\EventController::class, 'deleteEvents'],
+    ['GET', '/get-user', \App\Controller\Web\User\UserController::class, 'getUser'],
+    ['GET', '/get-users', \App\Controller\Web\User\UserController::class, 'getUsers'],
+    ['POST', '/create-user', \App\Controller\Web\User\UserController::class, 'createUser'],
+    ['PATCH', '/update-user-email', \App\Controller\Web\User\UserController::class, 'updateUserEmail'],
+    ['DELETE', '/delete-user', \App\Controller\Web\User\UserController::class, 'deleteUser'],
 ];

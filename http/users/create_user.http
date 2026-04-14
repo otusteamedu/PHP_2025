@@ -1,0 +1,13 @@
+POST http://localhost:{{nginxPublishedPort}}/create-user
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "createUser": {
+    "firstName": "Иван",
+    "lastName": "Иванов",
+    "email": "i.ivanov@gmail.com",
+    "birthDate": "2005-03-05"
+  }
+}
