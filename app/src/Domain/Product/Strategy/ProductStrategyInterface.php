@@ -2,11 +2,11 @@
 
 namespace App\Domain\Product\Strategy;
 
-use App\Domain\Product\Product;
+use App\Domain\Product\ProductInterface;
 
 interface ProductStrategyInterface
 {
-    public function create(): Product;
+    public function create(): ProductInterface;
 
     public function getBaseIngredients(string $type): array;
 }
