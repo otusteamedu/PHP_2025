@@ -9,6 +9,9 @@ class ProductStrategyFactory implements ProductStrategyFactoryInterface
     {
        return match ($productType) {
            'burger' => new BurgerStrategy(),
+           'HotDogStrategy' => new HotDogStrategy(),
+           'PizzaStrategy' => new PizzaStrategy(),
+           'sandwich' => new SandwichStrategy(),
        };
     }
 }
