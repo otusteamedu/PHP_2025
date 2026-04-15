@@ -82,4 +82,12 @@ final readonly class AmqpAdapter implements AdapterInterface
 
         $this->channel->consume();
     }
+
+    /**
+     * @return bool
+     */
+    public function ping(): bool
+    {
+        return $this->connection->isConnected();
+    }
 }

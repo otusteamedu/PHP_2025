@@ -81,3 +81,59 @@ docker compose exec php php bin/console.php queue:publisher Example
 ```shell
 docker compose run --rm php composer phpunit
 ```
+
+# Build
+
+## PHP
+
+```shell
+docker build . --file docker/build/php/Dockerfile --platform=linux/amd64 --target production --tag phexel/php-2025-10-php:latest
+```
+
+## NGINX
+
+```shell
+docker build . --file docker/build/nginx/Dockerfile --platform=linux/amd64 --target production --tag phexel/php-2025-10-nginx:latest
+```
+
+# Push
+
+## PHP
+
+```shell
+docker push phexel/php-2025-10-php:latest
+```
+
+## NGINX
+
+```shell
+docker push phexel/php-2025-10-nginx:latest
+```
+
+# Kubernetes
+
+## Deploy
+
+### Secret & Infrastructure
+
+```shell
+kubectl apply -f k8s/secret.yaml
+kubectl apply -f k8s/postgres.yaml
+kubectl apply -f k8s/rabbitmq.yaml
+```
+
+### Migrations
+
+```shell
+kubectl delete job application-migrate
+```
+
+```shell
+kubectl apply -f k8s/migration-job.yaml
+```
+
+### Application
+
+```shell
+kubectl apply -f k8s/application.yaml
+```

@@ -8,6 +8,14 @@ ARG GID=33
 
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends nano unzip p7zip-full procps \
+    && apt-get install --yes --no-install-recommends lsb-release ca-certificates \
+    && install --directory /usr/share/postgresql-common/pgdg \
+    && curl --output /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+    && echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release --codename --short)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && apt-get install --yes --no-install-recommends libpq-dev postgresql-client-17 \
+    && docker-php-ext-install pdo_pgsql \
+    && docker-php-ext-enable pdo_pgsql \
     && apt-get clean && apt-get autoclean && apt-get autoremove --purge --yes
 
 RUN set -e \

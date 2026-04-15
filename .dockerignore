@@ -1,1 +1,5 @@
 .git
+html/vendor
+html/.env.php
+html/.php-cs-fixer.cache
+html/.phpunit.result.cache
