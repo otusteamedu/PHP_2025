@@ -50,6 +50,12 @@ docker compose up -d
 http://localhost:8000/
 ```
 
+## Swagger
+
+```shell
+http://localhost:8080/swagger/ui
+```
+
 ## RabbitMQ
 
 ```
@@ -68,4 +74,10 @@ docker compose exec php php bin/console.php queue:consumer
 
 ```shell
 docker compose exec php php bin/console.php queue:publisher Example
+```
+
+# PHPUnit
+
+```shell
+docker compose run --rm php composer phpunit
 ```

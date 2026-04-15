@@ -55,6 +55,6 @@ final class FallbackController
      */
     private function getAccept(Request $request): ?string
     {
-        return $request->headers['Accept'] ?? null;
+        return $request->headers->get('Accept');
     }
 }

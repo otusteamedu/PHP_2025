@@ -2,18 +2,27 @@
     "name": "otus/queue",
     "type": "project",
     "require": {
+        "php": "^8.4.0",
         "ext-pdo": "*",
         "ext-pdo_sqlite": "*",
         "php-amqplib/php-amqplib": "^3.7"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.94",
-        "rector/rector": "^2.3"
+        "phpunit/phpunit": "^11.5",
+        "rector/rector": "^2.3",
+        "swagger-api/swagger-ui": "^5.32",
+        "zircote/swagger-php": "^6.0"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "Otus\\Queue\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Otus\\Queue\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -26,9 +35,15 @@
     "scripts": {
         "rector": "vendor/bin/rector",
         "php-cs-fixer": "vendor/bin/php-cs-fixer fix",
+        "test": "vendor/bin/phpunit",
+        "coverage": "vendor/bin/phpunit --coverage-text",
         "fix": [
             "@rector",
             "@php-cs-fixer"
+        ],
+        "phpunit": [
+            "@test",
+            "@coverage"
         ]
     },
     "config": {
