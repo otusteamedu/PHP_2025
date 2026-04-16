@@ -2,12 +2,9 @@
 
 namespace App\Application\UseCases;
 
-use App\Domain\Ingredient\IngredientInterface;
 use App\Domain\Order\Order;
 use App\Domain\Order\OrderInterface;
 use App\Domain\Order\OrderItemModel;
-use App\Infrastructure\Ingredient\IngredientFactory;
-use App\Infrastructure\Ingredient\IngredientLoader;
 
 class CreatorOrderUseCase
 {
