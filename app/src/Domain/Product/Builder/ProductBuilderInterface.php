@@ -2,7 +2,6 @@
 
 namespace App\Domain\Product\Builder;
 
-use App\Domain\Ingredient\IngredientInterface;
 use App\Domain\Product\ProductInterface;
 
 interface ProductBuilderInterface
