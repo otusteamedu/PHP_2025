@@ -23,7 +23,7 @@ final readonly class Migrate
     {
         $this
             ->database
-            ->command('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, author VARCHAR(255), text TEXT, created_at BIGINT);');
+            ->command('CREATE TABLE IF NOT EXISTS messages (id SERIAL PRIMARY KEY, author VARCHAR(255), text TEXT, created_at BIGINT);');
 
         return 0;
     }

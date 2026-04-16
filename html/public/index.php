@@ -6,7 +6,10 @@ use Otus\Queue\Infrastructure\Http\Request;
 use Otus\Queue\Infrastructure\Kernel\Http\Kernel;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../.env.php';
+
+if (file_exists(__DIR__ . '/../.env.php')) {
+    require_once __DIR__ . '/../.env.php';
+}
 
 $config = require_once __DIR__ . '/../config/http.php';
 

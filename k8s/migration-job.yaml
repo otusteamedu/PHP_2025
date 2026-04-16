@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: application-migrate
+spec:
+    template:
+        metadata:
+            labels:
+                app: application-migrate
+        spec:
+            containers:
+                -   name: php
+                    image: phexel/php-2025-10-php:latest
+                    command: [ "php", "bin/console.php", "database:migrate" ]
+                    envFrom:
+                        -   secretRef:
+                                name: application
+            restartPolicy: OnFailure
+    backoffLimit: 4

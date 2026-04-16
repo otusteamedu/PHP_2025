@@ -40,6 +40,14 @@ final class Queue implements QueueInterface
     }
 
     /**
+     * @return bool
+     */
+    public function ping(): bool
+    {
+        return array_all(array_keys($this->config), fn (string $connection): bool => $this->getConnection($connection)->ping());
+    }
+
+    /**
      * @param string $connection
      *
      * @return AdapterInterface

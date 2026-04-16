@@ -6,6 +6,7 @@ namespace Otus\Queue\Infrastructure\Database;
 
 use Iterator;
 use PDO;
+use PDOException;
 
 final readonly class Database implements DatabaseInterface
 {
@@ -54,5 +55,17 @@ final readonly class Database implements DatabaseInterface
             ->pdo
             ->query($sql)
             ->getIterator();
+    }
+
+    /**
+     * @return bool
+     */
+    public function ping(): bool
+    {
+        try {
+            return (bool) $this->pdo->query('SELECT 1');
+        } catch (PDOException) {
+            return false;
+        }
     }
 }

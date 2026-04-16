@@ -22,4 +22,9 @@ interface DatabaseInterface
      * @return Iterator
      */
     public function query(string $sql): Iterator;
+
+    /**
+     * @return bool
+     */
+    public function ping(): bool;
 }

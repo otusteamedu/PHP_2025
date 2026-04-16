@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: application
+    labels:
+        app: application
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: application
+    template:
+        metadata:
+            labels:
+                app: application
+        spec:
+            containers:
+                -   name: php
+                    image: phexel/php-2025-10-php:latest
+                    resources:
+                        requests:
+                            memory: "128Mi"
+                            cpu: "100m"
+                        limits:
+                            memory: "256Mi"
+                            cpu: "500m"
+                    envFrom:
+                        -   secretRef:
+                                name: application
+                    volumeMounts:
+                        -   name: shared-socket
+                            mountPath: /var/www/run
+                -   name: nginx
+                    image: phexel/php-2025-10-nginx:latest
+                    resources:
+                        requests:
+                            memory: "64Mi"
+                            cpu: "50m"
+                        limits:
+                            memory: "128Mi"
+                            cpu: "200m"
+                    ports:
+                        -   containerPort: 80
+                            name: http
+                    volumeMounts:
+                        -   name: shared-socket
+                            mountPath: /var/www/run
+                    livenessProbe:
+                        httpGet:
+                            path: /health
+                            port: 80
+                        initialDelaySeconds: 10
+                        periodSeconds: 5
+                        timeoutSeconds: 3
+                    readinessProbe:
+                        httpGet:
+                            path: /health
+                            port: 80
+                        initialDelaySeconds: 10
+                        periodSeconds: 5
+                        timeoutSeconds: 3
+            volumes:
+                -   name: shared-socket
+                    emptyDir: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: application
+spec:
+    selector:
+        app: application
+    ports:
+        -   port: 80
+            targetPort: 80
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+    name: php.k8s.swado.ru
+spec:
+    secretName: php.k8s.swado.ru
+    dnsNames:
+        - php.k8s.swado.ru
+        - www.php.k8s.swado.ru
+    privateKey:
+        rotationPolicy: Always
+    issuerRef:
+        name: letsencrypt
+        kind: ClusterIssuer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: application
+    annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+        cert-manager.io/cluster-issuer: letsencrypt
+spec:
+    ingressClassName: nginx
+    tls:
+        -   hosts:
+                - php.k8s.swado.ru
+                - www.php.k8s.swado.ru
+            secretName: php.k8s.swado.ru
+    rules:
+        -   host: php.k8s.swado.ru
+            http:
+                paths:
+                    -   path: /
+                        pathType: Prefix
+                        backend:
+                            service:
+                                name: application
+                                port:
+                                    number: 80
+        -   host: www.php.k8s.swado.ru
+            http:
+                paths:
+                    -   path: /
+                        pathType: Prefix
+                        backend:
+                            service:
+                                name: application
+                                port:
+                                    number: 80

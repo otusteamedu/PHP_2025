@@ -17,4 +17,9 @@ interface AdapterInterface
      * @param Payload $payload
      */
     public function pull(Payload $payload): void;
+
+    /**
+     * @return bool
+     */
+    public function ping(): bool;
 }

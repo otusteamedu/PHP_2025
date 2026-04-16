@@ -17,4 +17,9 @@ interface QueueInterface
      * @param Payload $payload
      */
     public function pull(string $connection, Payload $payload): void;
+
+    /**
+     * @return bool
+     */
+    public function ping(): bool;
 }
