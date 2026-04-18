@@ -30,7 +30,7 @@ SELECT
     CASE a.data_type
         WHEN 'text' THEN av.value_text
         WHEN 'boolean' THEN CASE WHEN av.value_boolean THEN 'Да' ELSE 'Нет' END
-        WHEN 'date' THEN TO_CHAR(av.value_date, 'YYYY-MM-DD')
+        WHEN 'date' THEN TO_CHAR(av.value_date, 'DD.MM.YYYY')
         WHEN 'numeric' THEN TRIM(TO_CHAR(av.value_numeric, 'FM999999990.9999'))
         END AS value
 FROM attribute_values av
