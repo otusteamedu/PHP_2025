@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use App\Application\UseCase\CreateUserUseCase;
+use App\Application\UseCase;
 use App\Infrastructure\Repository\PostgresUserRepository;
 use App\Presentation\Controller\User\UserController;
 use App\Presentation\Validation\UserValidator;
@@ -74,7 +74,10 @@ return function (Container $container) {
     $container->set(UserController::class, function (ContainerInterface $c) {
         return new UserController(
             $c->get(UserValidator::class),
-            $c->get(CreateUserUseCase::class)
+            $c->get(UseCase\CreateUserUseCase::class),
+            $c->get(UseCase\GetUserByIdUseCase::class),
+            $c->get(UseCase\UpdateUserUseCase::class),
+            $c->get(UseCase\DeleteUserUseCase::class),
         );
     });
 };
