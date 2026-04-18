@@ -17,19 +17,18 @@ return function (App $app) {
         $uri = $request->getUri();
         $path = $uri->getPath();
 
-        if ($path != '/' && substr($path, -1) == '/') {
+        if ($path !== '/' && substr($path, -1) === '/') {
             // permanently redirect paths with a trailing slash
             // to their non-trailing counterpart
             $uri = $uri->withPath(substr($path, 0, -1));
             
-            if($request->getMethod() == 'GET') {
+            if($request->getMethod() === 'GET') {
                 return (new \Slim\Psr7\Response())
                     ->withHeader('Location', (string)$uri)
                     ->withStatus(301);
             }
-            else {
-                $request = $request->withUri($uri);
-            }
+
+            $request = $request->withUri($uri);
         }
 
         return $handler->handle($request);
@@ -48,21 +47,9 @@ return function (App $app) {
     // User registration and profile
     $app->group('/users', function (Group $group) {
         $group->post('', [UserController::class, 'createUser']);
-        $group->get('/{id}', function (Request $request, Response $response, array $args) {
-            // TODO: Implement get user profile
-            $response->getBody()->write("Get user profile placeholder for id: " . $args['id']);
-            return $response;
-        });
-        $group->put('/{id}', function (Request $request, Response $response, array $args) {
-            // TODO: Implement update user profile
-            $response->getBody()->write("Update user profile placeholder for id: " . $args['id']);
-            return $response;
-        });
-        $group->delete('/{id}', function (Request $request, Response $response, array $args) {
-            // TODO: Implement delete user profile
-            $response->getBody()->write("Delete user profile placeholder for id: " . $args['id']);
-            return $response;
-        });
+        $group->get('/{id}', [UserController::class, 'getUser']);
+        $group->put('/{id}', [UserController::class, 'updateUser']);
+        $group->delete('/{id}', [UserController::class, 'deleteUser']);
     });
 
     // Exercises

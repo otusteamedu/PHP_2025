@@ -1,8 +1,11 @@
 <?php
 declare(strict_types=1);
 
+use App\Application\UseCase\CreateUserUseCase;
+use App\Infrastructure\Repository\PostgresUserRepository;
 use App\Presentation\Controller\User\UserController;
 use App\Presentation\Validation\UserValidator;
+use App\Repository\UserRepositoryInterface;
 use DI\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -13,37 +16,65 @@ use Slim\App;
 use Slim\Factory\AppFactory;
 
 return function (Container $container) {
-    $container->set(LoggerInterface::class, function (ContainerInterface $container) {
-        $loggerSettings = [
+    // Logger
+    $container->set(LoggerInterface::class, function (ContainerInterface $c) {
+        $settings = [
             'name' => 'app',
             'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
             'level' => Logger::DEBUG,
         ];
-
-        $logger = new Logger($loggerSettings['name']);
-
-        $processor = new UidProcessor();
-        $logger->pushProcessor($processor);
-
-        $handler = new StreamHandler($loggerSettings['path'], $loggerSettings['level']);
-        $logger->pushHandler($handler);
-
+        $logger = new Logger($settings['name']);
+        $logger->pushProcessor(new UidProcessor());
+        $logger->pushHandler(new StreamHandler($settings['path'], $settings['level']));
         return $logger;
     });
 
-    $container->set(App::class, function (ContainerInterface $container) {
-        AppFactory::setContainer($container);
+    // Slim App
+    $container->set(App::class, function (ContainerInterface $c) {
+        AppFactory::setContainer($c);
         return AppFactory::create();
     });
 
-    // User-related dependencies
+    // Database Connection (PDO)
+    $container->set(PDO::class, function (ContainerInterface $c) {
+        $host = getenv('POSTGRES_HOST');
+        $port = getenv('POSTGRES_PORT');
+        $db = getenv('POSTGRES_DB');
+        $user = getenv('POSTGRES_USER');
+        $pass = getenv('POSTGRES_PASSWORD');
+        $dsn = "pgsql:host={$host};port={$port};dbname={$db}";
+
+        try {
+            return new PDO($dsn, $user, $pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+        } catch (PDOException $e) {
+            throw new \RuntimeException("Database connection failed: " . $e->getMessage(), (int)$e->getCode(), $e);
+        }
+    });
+
+    // Repositories
+    $container->set(UserRepositoryInterface::class, function (ContainerInterface $c) {
+        return new PostgresUserRepository($c->get(PDO::class));
+    });
+
+    // Use Cases
+    $container->set(CreateUserUseCase::class, function (ContainerInterface $c) {
+        return new CreateUserUseCase($c->get(UserRepositoryInterface::class));
+    });
+
+    // Validators
     $container->set(UserValidator::class, function () {
         return new UserValidator();
     });
 
-    $container->set(UserController::class, function (ContainerInterface $container) {
-        return new UserController($container->get(UserValidator::class));
+    // Controllers
+    $container->set(UserController::class, function (ContainerInterface $c) {
+        return new UserController(
+            $c->get(UserValidator::class),
+            $c->get(CreateUserUseCase::class)
+        );
     });
-
-    // TODO: Add database connection, repositories, services here
 };
