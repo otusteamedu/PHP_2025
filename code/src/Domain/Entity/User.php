@@ -10,7 +10,7 @@ class User
         private ?int $id,
         private string $name,
         private string $email,
-        private ?string $telegram_id,
+        private ?int $telegram_id,
         private string $gender,
         private int $weight,
         private int $height,
@@ -33,14 +33,29 @@ class User
         return $this->name;
     }
 
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
     public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getTelegramId(): ?string
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function getTelegramId(): ?int
     {
         return $this->telegram_id;
+    }
+
+    public function setTelegramId( $telegram_id): void
+    {
+        $this->telegram_id = (int)$telegram_id;
     }
 
     public function getGender(): string
@@ -48,9 +63,19 @@ class User
         return $this->gender;
     }
 
+    public function setGender(string $gender): void
+    {
+        $this->gender = $gender;
+    }
+
     public function getWeight(): int
     {
         return $this->weight;
+    }
+
+    public function setWeight(int $weight): void
+    {
+        $this->weight = $weight;
     }
 
     public function getHeight(): int
@@ -58,8 +83,18 @@ class User
         return $this->height;
     }
 
+    public function setHeight(int $height): void
+    {
+        $this->height = $height;
+    }
+
     public function getBorn(): \DateTimeImmutable
     {
         return $this->born;
+    }
+
+    public function setBorn(\DateTimeImmutable $born): void
+    {
+        $this->born = $born;
     }
 }
