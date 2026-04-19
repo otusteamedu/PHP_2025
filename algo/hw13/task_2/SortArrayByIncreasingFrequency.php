@@ -3,6 +3,9 @@
 /**
  * @see: https://leetcode.com/problems/sort-array-by-increasing-frequency/description/
  *
+ * @note: Для PHP >= 8.0, где гарантируется стабильность сортировки
+ * @see: https://wiki.php.net/rfc/stable_sorting
+ *
  * @note:
  * Временная сложность:
  * array_count_values - полный проход по массиву $nums - O(n).
