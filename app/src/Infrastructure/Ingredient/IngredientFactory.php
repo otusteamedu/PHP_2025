@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Ingredient;
 
+use App\Domain\Ingredient\Bun;
 use App\Domain\Ingredient\IngredientInterface;
 use App\Domain\Ingredient\Onion;
 use App\Domain\Ingredient\Cheese;
@@ -46,6 +47,7 @@ class IngredientFactory
             'mustard' => Mustard::class,
             'sausage' => Sausage::class,
             'hot-dog-bun' => HotDogBun::class,
+            'bun' => Bun::class,
             'fried-onions' => FriedOnions::class,
         ];
     }
