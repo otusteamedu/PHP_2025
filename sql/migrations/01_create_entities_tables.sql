@@ -39,7 +39,7 @@ CREATE TABLE attribute_values
     value_text    TEXT,
     value_boolean BOOLEAN,
     value_date    DATE,
-    value_numeric NUMERIC(10, 4),
+    value_numeric NUMERIC,
 
     created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
 
