@@ -1,0 +1,233 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Консольное приложение для поиска по книжному магазину.
+ * Использование: php bin/console [опции]
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use App\Model\Book;
+use App\Storage\ElasticsearchStorage;
+
+/**
+ * Вывести справку по использованию.
+ */
+function printHelp(): void
+{
+    echo <<<TXT
+Поиск книг в интернет-магазине
+
+Использование:
+  php bin/console [опции]
+
+Опции:
+  --host URL         Адрес Elasticsearch (по умолчанию: http://localhost:9200)
+  --init             Пересоздать индекс и загрузить книги из books.json
+  --query ТЕКСТ      Поисковый запрос (название книги)
+  --category КАТ     Фильтр по категории (жанр)
+  --max-price ЦЕНА   Фильтр по максимальной цене
+  --in-stock         Показать только книги в наличии
+  --help             Показать справку
+
+Примеры:
+  php bin/console --init                              # Создать индекс и загрузить данные
+  php bin/console --query ржевский
+  php bin/console --query ржевский --category "Исторический роман" --max-price 2000 --in-stock
+
+TXT;
+}
+
+/**
+ * Загрузить книги из JSONL-файла (JSON Lines - по одной книге на строку).
+ *
+ * @param string $filePath Путь к файлу
+ * @return Book[]
+ */
+function loadBooks(string $filePath): array
+{
+    if (!is_file($filePath)) {
+        throw new RuntimeException('Файл не найден: ' . $filePath);
+    }
+
+    $handle = fopen($filePath, 'r');
+    if ($handle === false) {
+        throw new RuntimeException('Не удалось открыть файл: ' . $filePath);
+    }
+
+    $books = [];
+
+    // Читаем файл построчно (формат JSONL)
+    while (($line = fgets($handle)) !== false) {
+        $data = json_decode($line, true);
+
+        if (!is_array($data) || !isset($data['title'])) {
+            continue;
+        }
+
+        $book = Book::fromArray($data);
+
+        if ($book->sku === '' || $book->title === '') {
+            continue;
+        }
+
+        $books[] = $book;
+    }
+
+    fclose($handle);
+
+    return $books;
+}
+
+/**
+ * Дополнить строку пробелами до нужной ширины (multibyte-версия).
+ *
+ * @param string $value Значение
+ * @param int $width Требуемая ширина
+ * @return string
+ */
+function mb_pad(string $value, int $width): string
+{
+    $length = mb_strlen($value);
+    if ($length >= $width) {
+        return $value;
+    }
+
+    return $value . str_repeat(' ', $width - $length);
+}
+
+/**
+ * Вывести результаты поиска в виде таблицы.
+ *
+ * @param Book[] $books Найденные книги
+ */
+function printTable(array $books): void
+{
+    if ($books === []) {
+        echo "Ничего не найдено.\n";
+        return;
+    }
+
+    $headers = [
+        (string) 'Артикул',
+        (string) 'Название',
+        (string) 'Категория',
+        (string) 'Цена',
+        (string) 'Остаток',
+    ];
+    $rows = [];
+
+    foreach ($books as $book) {
+        $rows[] = [
+            $book->sku,
+            mb_strimwidth($book->title, 0, 50, '...'),
+            $book->category,
+            (string) $book->price . ' ₽',
+            $book->stock > 0 ? (string) $book->stock : 'Нет',
+        ];
+    }
+
+    // Вычисляем ширину колонок
+    $widths = array_map(static fn (string $header): int => mb_strlen($header), $headers);
+    foreach ($rows as $row) {
+        foreach ($row as $i => $cell) {
+            $widths[$i] = max($widths[$i], mb_strlen($cell));
+        }
+    }
+
+    // Рисуем таблицу
+    $line = '+';
+    foreach ($widths as $width) {
+        $line .= str_repeat('-', $width + 2) . '+';
+    }
+
+    echo $line . PHP_EOL;
+    echo '|';
+    foreach ($headers as $i => $header) {
+        echo ' ' . mb_pad($header, $widths[$i]) . ' |';
+    }
+    echo PHP_EOL;
+    echo $line . PHP_EOL;
+
+    foreach ($rows as $row) {
+        echo '|';
+        foreach ($row as $i => $cell) {
+            echo ' ' . mb_pad($cell, $widths[$i]) . ' |';
+        }
+        echo PHP_EOL;
+    }
+
+    echo $line . PHP_EOL;
+    echo 'Всего найдено: ' . count($books) . ' книг' . PHP_EOL;
+}
+
+// Проверяем, что запущено из CLI
+if (PHP_SAPI !== 'cli') {
+    fwrite(STDERR, "Этот скрипт нужно запускать из командной строки.\n");
+    exit(1);
+}
+
+// Разбираем аргументы командной строки
+$options = getopt('', [
+    'host:',
+    'init',
+    'query:',
+    'category:',
+    'max-price:',
+    'in-stock',
+    'help',
+]);
+
+// Показываем справку
+if (isset($options['help'])) {
+    printHelp();
+    exit(0);
+}
+
+// Подключаемся к Elasticsearch
+$host = $options['host'] ?? 'http://localhost:9200';
+$storage = new ElasticsearchStorage($host);
+
+try {
+    // Инициализация индекса (создаём заново и загружаем книги)
+    if (isset($options['init'])) {
+        $booksFile = dirname(__DIR__) . '/books.json';
+        $books = loadBooks($booksFile);
+
+        $storage->recreateIndex();
+        $count = $storage->bulkIndex($books);
+
+        echo "✅ Индекс пересоздан.\n";
+        echo "📚 Загружено книг: {$count}\n";
+        exit(0);
+    }
+
+    // Разбираем фильтры
+    $query = $options['query'] ?? null;
+    if ($query !== null && $query === '') {
+        $query = null;
+    }
+
+    $category = $options['category'] ?? null;
+    if ($category !== null && $category === '') {
+        $category = null;
+    }
+
+    $maxPrice = isset($options['max-price']) && $options['max-price'] !== ''
+        ? (int) $options['max-price']
+        : null;
+    $inStockOnly = isset($options['in-stock']);
+
+    // Выполняем поиск
+    $books = $storage->search($query, $category, $maxPrice, $inStockOnly);
+
+    // Выводим результат
+    printTable($books);
+    exit(0);
+} catch (Throwable $e) {
+    fwrite(STDERR, '❌ Ошибка: ' . $e->getMessage() . PHP_EOL);
+    exit(1);
+}
