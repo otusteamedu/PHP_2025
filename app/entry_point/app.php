@@ -45,4 +45,8 @@ $order = [
 
 $app = new AppRunner( '../storage/ingredients.json');
 
-$app->prepareOrder($order);
+$order = $app->prepareOrder($order);
+
+if ($order->getErrors()) {
+    echo implode(';' . PHP_EOL, $order->getErrors());
+}

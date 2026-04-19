@@ -2,9 +2,16 @@
 
 namespace App\Presentation;
 
+use App\Application\DTO\PrepareOrderResultDto;
 use App\Application\UseCases\CreatorOrderUseCase;
 use App\Application\UseCases\InitializeStorageUseCase;
+use App\Application\UseCases\PrepareOrderUseCase;
 use App\Domain\Ingredient\Storage\IngredientStorageInterface;
+use App\Domain\Product\Builder\ProductBuilder;
+use App\Domain\Product\Chain\AddIngredientsHandler;
+use App\Domain\Product\Chain\CheckIngredientsHandler;
+use App\Domain\Product\Chain\CookingHandler;
+use App\Domain\Product\Strategy\ProductStrategyFactory;
 use App\Infrastructure\Ingredient\IngredientFactory;
 use App\Infrastructure\Ingredient\IngredientLoader;
 
@@ -20,11 +27,22 @@ class AppRunner
         $this->storage = $useCase->execute($storageConfigPath);
     }
 
-    public function prepareOrder(array $arOrder): void
+    public function prepareOrder(array $arOrder): PrepareOrderResultDto
     {
         $creatorOrderUseCases = new CreatorOrderUseCase();
         $order = $creatorOrderUseCases->execute($arOrder);
 
-        // todo заказ передается на кухню и возвращается блюда + сообщения об ошибках (нехватка ингредиентов)
+        $productStrategyFactory = new ProductStrategyFactory();
+
+        $chain = new CookingHandler();
+
+        $chain->setNext(new CheckIngredientsHandler())
+            ->setNext(new AddIngredientsHandler());
+
+        $productBuilder = new ProductBuilder($chain, $this->storage);
+
+        $prepareOrderUseCase = new PrepareOrderUseCase($productStrategyFactory, $productBuilder);
+
+        return $prepareOrderUseCase->execute($order);
     }
 }
