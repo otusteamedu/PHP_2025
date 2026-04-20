@@ -43,7 +43,7 @@ $order = [
     ],
 ];
 
-$app = new AppRunner( '../storage/ingredients.json');
+$app = new AppRunner( __DIR__ .'/../storage/ingredients.json');
 
 $order = $app->prepareOrder($order);
 
