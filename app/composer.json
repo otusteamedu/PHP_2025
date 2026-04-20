@@ -12,5 +12,8 @@
       "name": "Maksim Skoropiscev",
       "email": "maksim.sckoropistsev@ya.ru"
     }
-  ]
+  ],
+  "require": {
+    "php": ">=8.4"
+  }
 }
