@@ -1,0 +1,20 @@
+name: Rollback to BLUE
+
+on:
+  workflow_dispatch:
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Switch traffic back to BLUE
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            bash /var/www/router_nginx/switch_to_blue.sh
+            docker compose -f /var/www/app_green/docker-compose.yml down
