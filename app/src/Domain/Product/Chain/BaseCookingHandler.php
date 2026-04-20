@@ -16,6 +16,11 @@ abstract class BaseCookingHandler implements CookingHandlerInterface
     {
         $this->process($context);
 
+        $this->goToNextHandle($context);
+    }
+
+    protected function goToNextHandle(CookingContext $context): void
+    {
         if (!is_null($this->next)) {
             $this->next->handle($context);
         }
