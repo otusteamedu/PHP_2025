@@ -8,9 +8,9 @@ use App\Application\UseCases\InitializeStorageUseCase;
 use App\Application\UseCases\PrepareOrderUseCase;
 use App\Domain\Ingredient\Storage\IngredientStorageInterface;
 use App\Domain\Product\Builder\ProductBuilder;
-use App\Domain\Product\Chain\AddIngredientsHandler;
-use App\Domain\Product\Chain\CheckIngredientsHandler;
 use App\Domain\Product\Chain\CookingHandler;
+use App\Domain\Product\Proxy\AddIngredientsHandlerProxy;
+use App\Domain\Product\Proxy\CheckIngredientsHandlerProxy;
 use App\Domain\Product\Strategy\ProductStrategyFactory;
 use App\Infrastructure\Ingredient\IngredientFactory;
 use App\Infrastructure\Ingredient\IngredientLoader;
@@ -36,8 +36,8 @@ class AppRunner
 
         $chain = new CookingHandler();
 
-        $chain->setNext(new CheckIngredientsHandler())
-            ->setNext(new AddIngredientsHandler());
+        $chain->setNext(new CheckIngredientsHandlerProxy())
+            ->setNext(new AddIngredientsHandlerProxy());
 
         $productBuilder = new ProductBuilder($chain, $this->storage);
 
