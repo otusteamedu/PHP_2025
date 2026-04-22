@@ -8,6 +8,7 @@ class TrainingPlan
 {
     /**
      * @param TrainingPlanExercise[] $exercises
+     * @param TrainingSchedule[] $schedules
      */
     public function __construct(
         private ?int $id,
@@ -15,7 +16,8 @@ class TrainingPlan
         private string $status,
         private ?string $description,
         private \DateTimeImmutable $created_at,
-        private array $exercises = []
+        private array $exercises = [],
+        private array $schedules = []
     ) {
     }
 
@@ -83,5 +85,21 @@ class TrainingPlan
     public function setExercises(array $exercises): void
     {
         $this->exercises = $exercises;
+    }
+
+    /**
+     * @return TrainingSchedule[]
+     */
+    public function getSchedules(): array
+    {
+        return $this->schedules;
+    }
+
+    /**
+     * @param TrainingSchedule[] $schedules
+     */
+    public function setSchedules(array $schedules): void
+    {
+        $this->schedules = $schedules;
     }
 }

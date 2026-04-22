@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Entity\TrainingPlan;
-use App\Repository\TrainingPlanRepositoryInterface;
+use App\Domain\Repository\TrainingPlanRepositoryInterface;
+use App\Domain\Repository\TrainingScheduleRepositoryInterface;
 use PDO;
 
 class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
 {
-    public function __construct(private readonly PDO $pdo)
-    {
+    public function __construct(
+        private readonly PDO $pdo,
+        private readonly TrainingScheduleRepositoryInterface $trainingScheduleRepository
+    ) {
     }
 
     /**
@@ -97,13 +100,13 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
         if ($entity->getId() !== null) {
             // Update existing plan
             $stmt = $this->pdo->prepare(
-                'UPDATE training_plans SET name = :name, description = :description, created_at = :created_at WHERE id = :id'
+                'UPDATE training_plans SET name = :name, status = :status, description = :description, created_at = :created_at WHERE id = :id'
             );
             $stmt->execute($this->dehydrateTrainingPlan($entity));
         } else {
             // Insert new plan
             $stmt = $this->pdo->prepare(
-                'INSERT INTO training_plans (name, description, created_at) VALUES (:name, :description, :created_at) RETURNING id'
+                'INSERT INTO training_plans (name, status, description, created_at) VALUES (:name, :status, :description, :created_at) RETURNING id'
             );
             $stmt->execute($this->dehydrateTrainingPlan($entity, false));
             $id = $stmt->fetchColumn();
@@ -131,11 +134,16 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
      */
     private function hydrateTrainingPlan(array $data): TrainingPlan
     {
+        $schedules = $this->trainingScheduleRepository->findByTrainingPlanId((int)$data['id']);
+
         return new TrainingPlan(
             (int)$data['id'],
             $data['name'],
+            $data['status'],
             $data['description'],
-            new \DateTimeImmutable($data['created_at'])
+            new \DateTimeImmutable($data['created_at']),
+            [],
+            $schedules
         );
     }
 
@@ -143,6 +151,7 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
     {
         $data = [
             'name' => $plan->getName(),
+            'status' => $plan->getStatus(),
             'description' => $plan->getDescription(),
             'created_at' => $plan->getCreatedAt()->format('Y-m-d H:i:s'),
         ];
