@@ -6,6 +6,7 @@ declare(strict_types=1);
 require $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 
 use App\Presentation\Controller\User\UserController;
+use App\Presentation\Controller\TrainingPlan\TrainingPlanController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -50,6 +51,11 @@ return function (App $app) {
         $group->get('/{id}', [UserController::class, 'getUser']);
         $group->put('/{id}', [UserController::class, 'updateUser']);
         $group->delete('/{id}', [UserController::class, 'deleteUser']);
+    });
+
+    // Training Plans
+    $app->group('/training-plans', function (Group $group) {
+        $group->post('', [TrainingPlanController::class, 'createTrainingPlan']);
     });
 
     // Exercises
