@@ -3,9 +3,15 @@ declare(strict_types=1);
 
 use App\Application\UseCase;
 use App\Infrastructure\Repository\PostgresUserRepository;
+use App\Infrastructure\Repository\PostgresTrainingPlanRepository;
+use App\Infrastructure\Repository\PostgresUserTrainingPlanRepository;
 use App\Presentation\Controller\User\UserController;
+use App\Presentation\Controller\TrainingPlan\TrainingPlanController;
 use App\Presentation\Validation\UserValidator;
+use App\Presentation\Validation\TrainingPlanValidator;
 use App\Repository\UserRepositoryInterface;
+use App\Repository\TrainingPlanRepositoryInterface;
+use App\Repository\UserTrainingPlanRepositoryInterface;
 use DI\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -59,15 +65,34 @@ return function (Container $container) {
     $container->set(UserRepositoryInterface::class, function (ContainerInterface $c) {
         return new PostgresUserRepository($c->get(PDO::class));
     });
+    $container->set(TrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
+        return new PostgresTrainingPlanRepository($c->get(PDO::class));
+    });
+    $container->set(UserTrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
+        return new PostgresUserTrainingPlanRepository($c->get(PDO::class));
+    });
 
     // Use Cases
-    $container->set(CreateUserUseCase::class, function (ContainerInterface $c) {
-        return new CreateUserUseCase($c->get(UserRepositoryInterface::class));
+    $container->set(UseCase\CreateUserUseCase::class, function (ContainerInterface $c) {
+        return new UseCase\CreateUserUseCase($c->get(UserRepositoryInterface::class));
+    });
+    $container->set(UseCase\CreateTrainingPlanUseCase::class, function (ContainerInterface $c) {
+        return new UseCase\CreateTrainingPlanUseCase($c->get(TrainingPlanRepositoryInterface::class));
+    });
+    $container->set(UseCase\AssignTrainingPlanToUserUseCase::class, function (ContainerInterface $c) {
+        return new UseCase\AssignTrainingPlanToUserUseCase(
+            $c->get(UserTrainingPlanRepositoryInterface::class),
+            $c->get(UserRepositoryInterface::class),
+            $c->get(TrainingPlanRepositoryInterface::class)
+        );
     });
 
     // Validators
     $container->set(UserValidator::class, function () {
         return new UserValidator();
+    });
+    $container->set(TrainingPlanValidator::class, function () {
+        return new TrainingPlanValidator();
     });
 
     // Controllers
@@ -78,6 +103,13 @@ return function (Container $container) {
             $c->get(UseCase\GetUserByIdUseCase::class),
             $c->get(UseCase\UpdateUserUseCase::class),
             $c->get(UseCase\DeleteUserUseCase::class),
+        );
+    });
+    $container->set(TrainingPlanController::class, function (ContainerInterface $c) {
+        return new TrainingPlanController(
+            $c->get(TrainingPlanValidator::class),
+            $c->get(UseCase\CreateTrainingPlanUseCase::class),
+            $c->get(UseCase\AssignTrainingPlanToUserUseCase::class)
         );
     });
 };
