@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 use App\Application\UseCase;
+use App\Domain\Repository\TrainingScheduleRepositoryInterface;
+use App\Infrastructure\Repository\PostgresTrainingScheduleRepository;
 use App\Infrastructure\Repository\PostgresUserRepository;
 use App\Infrastructure\Repository\PostgresTrainingPlanRepository;
 use App\Infrastructure\Repository\PostgresUserTrainingPlanRepository;
@@ -9,9 +11,9 @@ use App\Presentation\Controller\User\UserController;
 use App\Presentation\Controller\TrainingPlan\TrainingPlanController;
 use App\Presentation\Validation\UserValidator;
 use App\Presentation\Validation\TrainingPlanValidator;
-use App\Repository\UserRepositoryInterface;
-use App\Repository\TrainingPlanRepositoryInterface;
-use App\Repository\UserTrainingPlanRepositoryInterface;
+use App\Domain\Repository\UserRepositoryInterface;
+use App\Domain\Repository\TrainingPlanRepositoryInterface;
+use App\Domain\Repository\UserTrainingPlanRepositoryInterface;
 use DI\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -65,8 +67,14 @@ return function (Container $container) {
     $container->set(UserRepositoryInterface::class, function (ContainerInterface $c) {
         return new PostgresUserRepository($c->get(PDO::class));
     });
+    $container->set(TrainingScheduleRepositoryInterface::class, function (ContainerInterface $c) {
+        return new PostgresTrainingScheduleRepository($c->get(PDO::class));
+    });
     $container->set(TrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
-        return new PostgresTrainingPlanRepository($c->get(PDO::class));
+        return new PostgresTrainingPlanRepository(
+            $c->get(PDO::class),
+            $c->get(TrainingScheduleRepositoryInterface::class)
+        );
     });
     $container->set(UserTrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
         return new PostgresUserTrainingPlanRepository($c->get(PDO::class));
