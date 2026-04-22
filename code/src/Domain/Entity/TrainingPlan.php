@@ -6,12 +6,16 @@ namespace App\Domain\Entity;
 
 class TrainingPlan
 {
+    /**
+     * @param TrainingPlanExercise[] $exercises
+     */
     public function __construct(
         private ?int $id,
         private string $name,
         private string $status,
         private ?string $description,
-        private \DateTimeImmutable $created_at
+        private \DateTimeImmutable $created_at,
+        private array $exercises = []
     ) {
     }
 
@@ -63,5 +67,21 @@ class TrainingPlan
     public function setCreatedAt(\DateTimeImmutable $created_at): void
     {
         $this->created_at = $created_at;
+    }
+
+    /**
+     * @return TrainingPlanExercise[]
+     */
+    public function getExercises(): array
+    {
+        return $this->exercises;
+    }
+
+    /**
+     * @param TrainingPlanExercise[] $exercises
+     */
+    public function setExercises(array $exercises): void
+    {
+        $this->exercises = $exercises;
     }
 }
