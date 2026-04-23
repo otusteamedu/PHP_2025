@@ -2,8 +2,6 @@
 
 namespace Alisaselezneva\Code\Domain\Services;
 
-use SplObjectStorage;
-
 class Solution {
     
     /**
@@ -12,20 +10,23 @@ class Solution {
      * @return ?ListNode
      */
     function getIntersectionNode($headA, $headB) {
-        $hashA = new SplObjectStorage();
-        while($headA != null) {
-            $hashA[$headA] = true;
-            $headA = $headA->next;
-        }
+        $node1 = $headA;
+        $node2 = $headB;
 
-        while($headB != null) {
-            if (isset($hashA[$headB])) {
-                
-                return $headB;
+        while ($node1 !== $node2) {
+            if ($node1 == null) {
+                $node1 = $headB;
+            } else {
+                $node1 = $node1->next;
             }
-            $headB = $headB->next;
+
+            if ($node2 == null) {
+                $node2 = $headA;
+            } else {
+                $node2 = $node2->next;
+            }
         }
 
-        return null;
+        return $node1;
     }
 }
