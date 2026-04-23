@@ -2,20 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase;
+namespace App\Application\UseCase\User;
 
-use App\Domain\Entity\User;
 use App\Domain\Exception\UserAlreadyExistsException;
-use App\Repository\UserRepositoryInterface;
+use App\Domain\Repository\UserRepositoryInterface;
+use App\Domain\Entity\User;
 
-class CreateUserUseCase
+readonly class CreateUserUseCase
 {
-    public function __construct(private readonly UserRepositoryInterface $userRepository)
+    public function __construct(private UserRepositoryInterface $userRepository)
     {
     }
 
     /**
-     * @throws UserAlreadyExistsException
      * @throws \Exception
      */
     public function execute(array $data): User

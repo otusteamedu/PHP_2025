@@ -19,17 +19,17 @@ readonly class UserController
 {
     /**
      * @param UserValidator $validator Валидатор данных пользователя.
-     * @param UseCase\CreateUserUseCase $createUserUseCase Use case для создания пользователя.
-     * @param UseCase\GetUserByIdUseCase $getUserByIdUseCase Use case для получения пользователя по ID.
-     * @param UseCase\UpdateUserUseCase $updateUserUseCase Use case для обновления пользователя.
-     * @param UseCase\DeleteUserUseCase $deleteUserUseCase Use case для удаления пользователя.
+     * @param UseCase\User\CreateUserUseCase $createUserUseCase Use case для создания пользователя.
+     * @param UseCase\User\GetUserByIdUseCase $getUserByIdUseCase Use case для получения пользователя по ID.
+     * @param UseCase\User\UpdateUserUseCase $updateUserUseCase Use case для обновления пользователя.
+     * @param UseCase\User\DeleteUserUseCase $deleteUserUseCase Use case для удаления пользователя.
      */
     public function __construct(
         private UserValidator              $validator,
-        private UseCase\CreateUserUseCase  $createUserUseCase,
-        private UseCase\GetUserByIdUseCase $getUserByIdUseCase,
-        private UseCase\UpdateUserUseCase  $updateUserUseCase,
-        private UseCase\DeleteUserUseCase  $deleteUserUseCase
+        private UseCase\User\CreateUserUseCase  $createUserUseCase,
+        private UseCase\User\GetUserByIdUseCase $getUserByIdUseCase,
+        private UseCase\User\UpdateUserUseCase  $updateUserUseCase,
+        private UseCase\User\DeleteUserUseCase  $deleteUserUseCase
     ) {
     }
 

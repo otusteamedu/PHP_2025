@@ -2,18 +2,19 @@
 declare(strict_types=1);
 
 use App\Application\UseCase;
-use App\Domain\Repository\TrainingScheduleRepositoryInterface;
+//use App\Domain\Repository\TrainingPlanRepositoryInterface;
+//use App\Domain\Repository\TrainingScheduleRepositoryInterface;
+use App\Domain\Repository;
+
+
+/*use App\Infrastructure\Repository\PostgresTrainingPlanRepository;
 use App\Infrastructure\Repository\PostgresTrainingScheduleRepository;
 use App\Infrastructure\Repository\PostgresUserRepository;
-use App\Infrastructure\Repository\PostgresTrainingPlanRepository;
-use App\Infrastructure\Repository\PostgresUserTrainingPlanRepository;
-use App\Presentation\Controller\User\UserController;
+use App\Infrastructure\Repository\PostgresUserTrainingPlanRepository;*/
 use App\Presentation\Controller\TrainingPlan\TrainingPlanController;
-use App\Presentation\Validation\UserValidator;
+use App\Presentation\Controller\User\UserController;
 use App\Presentation\Validation\TrainingPlanValidator;
-use App\Domain\Repository\UserRepositoryInterface;
-use App\Domain\Repository\TrainingPlanRepositoryInterface;
-use App\Domain\Repository\UserTrainingPlanRepositoryInterface;
+use App\Presentation\Validation\UserValidator;
 use DI\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -64,8 +65,8 @@ return function (Container $container) {
     });
 
     // Repositories
-    $container->set(UserRepositoryInterface::class, function (ContainerInterface $c) {
-        return new PostgresUserRepository($c->get(PDO::class));
+    $container->set(Repository\UserRepositoryInterface::class, function (ContainerInterface $c) {
+        return new Repository\PostgresUserRepository($c->get(PDO::class));
     });
     $container->set(TrainingScheduleRepositoryInterface::class, function (ContainerInterface $c) {
         return new PostgresTrainingScheduleRepository($c->get(PDO::class));
@@ -76,21 +77,21 @@ return function (Container $container) {
             $c->get(TrainingScheduleRepositoryInterface::class)
         );
     });
-    $container->set(UserTrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
+    $container->set(Repository\UserTrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
         return new PostgresUserTrainingPlanRepository($c->get(PDO::class));
     });
 
     // Use Cases
-    $container->set(UseCase\CreateUserUseCase::class, function (ContainerInterface $c) {
-        return new UseCase\CreateUserUseCase($c->get(UserRepositoryInterface::class));
+    $container->set(UseCase\User\CreateUserUseCase::class, function (ContainerInterface $c) {
+        return new UseCase\User\CreateUserUseCase($c->get(Repository\UserRepositoryInterface::class));
     });
-    $container->set(UseCase\CreateTrainingPlanUseCase::class, function (ContainerInterface $c) {
-        return new UseCase\CreateTrainingPlanUseCase($c->get(TrainingPlanRepositoryInterface::class));
+    $container->set(UseCase\TrainingPlan\CreateTrainingPlanUseCase::class, function (ContainerInterface $c) {
+        return new UseCase\TrainingPlan\CreateTrainingPlanUseCase($c->get(TrainingPlanRepositoryInterface::class));
     });
-    $container->set(UseCase\AssignTrainingPlanToUserUseCase::class, function (ContainerInterface $c) {
-        return new UseCase\AssignTrainingPlanToUserUseCase(
-            $c->get(UserTrainingPlanRepositoryInterface::class),
-            $c->get(UserRepositoryInterface::class),
+    $container->set(UseCase\TrainingPlan\AssignTrainingPlanToUserUseCase::class, function (ContainerInterface $c) {
+        return new UseCase\TrainingPlan\AssignTrainingPlanToUserUseCase(
+            $c->get(Repository\UserTrainingPlanRepositoryInterface::class),
+            $c->get(Repository\UserRepositoryInterface::class),
             $c->get(TrainingPlanRepositoryInterface::class)
         );
     });
@@ -107,17 +108,17 @@ return function (Container $container) {
     $container->set(UserController::class, function (ContainerInterface $c) {
         return new UserController(
             $c->get(UserValidator::class),
-            $c->get(UseCase\CreateUserUseCase::class),
-            $c->get(UseCase\GetUserByIdUseCase::class),
-            $c->get(UseCase\UpdateUserUseCase::class),
-            $c->get(UseCase\DeleteUserUseCase::class),
+            $c->get(UseCase\User\CreateUserUseCase::class),
+            $c->get(UseCase\User\GetUserByIdUseCase::class),
+            $c->get(UseCase\User\UpdateUserUseCase::class),
+            $c->get(UseCase\User\DeleteUserUseCase::class),
         );
     });
     $container->set(TrainingPlanController::class, function (ContainerInterface $c) {
         return new TrainingPlanController(
             $c->get(TrainingPlanValidator::class),
-            $c->get(UseCase\CreateTrainingPlanUseCase::class),
-            $c->get(UseCase\AssignTrainingPlanToUserUseCase::class)
+            $c->get(UseCase\TrainingPlan\CreateTrainingPlanUseCase::class),
+            $c->get(UseCase\TrainingPlan\AssignTrainingPlanToUserUseCase::class)
         );
     });
 };
