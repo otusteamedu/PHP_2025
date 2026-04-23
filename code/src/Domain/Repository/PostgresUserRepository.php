@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Repository;
+namespace App\Domain\Repository;
 
 use App\Domain\Entity\User;
-use App\Repository\UserRepositoryInterface;
 use PDO;
 
 class PostgresUserRepository implements UserRepositoryInterface

@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Repository;
+namespace App\Domain\Repository;
 
-use App\Repository\UserTrainingPlanRepositoryInterface;
 use PDO;
 
 class PostgresUserTrainingPlanRepository implements UserTrainingPlanRepositoryInterface

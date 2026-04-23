@@ -2,39 +2,39 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Domain\Repository;
 
-use App\Domain\Entity\User;
+use App\Domain\Entity\TrainingPlan;
 
-interface UserRepositoryInterface extends RepositoryInterface
+interface TrainingPlanRepositoryInterface extends RepositoryInterface
 {
     /**
      * @param int $id
-     * @return User|null
+     * @return TrainingPlan|null
      */
     public function findById(int $id): ?object;
 
     /**
-     * @param string $email
-     * @return User|null
+     * @param int $userId
+     * @return TrainingPlan[]
      */
-    public function findByEmail(string $email): ?User;
+    public function findByUserId(int $userId): array;
 
     /**
      * @param int $page
      * @param int $limit
-     * @return User[]
+     * @return TrainingPlan[]
      */
     public function findAll(int $page = 1, int $limit = 10): array;
 
     /**
-     * @param User $entity
-     * @return User
+     * @param TrainingPlan $entity
+     * @return TrainingPlan
      */
     public function save(object $entity): object;
 
     /**
-     * @param User $entity
+     * @param TrainingPlan $entity
      */
     public function remove(object $entity): void;
 }

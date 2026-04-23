@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Repository;
+namespace App\Domain\Repository;
 
 use App\Domain\Entity\TrainingPlan;
-use App\Domain\Repository\TrainingPlanRepositoryInterface;
-use App\Domain\Repository\TrainingScheduleRepositoryInterface;
 use PDO;
 
 class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
