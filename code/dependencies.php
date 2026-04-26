@@ -2,15 +2,7 @@
 declare(strict_types=1);
 
 use App\Application\UseCase;
-//use App\Domain\Repository\TrainingPlanRepositoryInterface;
-//use App\Domain\Repository\TrainingScheduleRepositoryInterface;
 use App\Domain\Repository;
-
-
-/*use App\Infrastructure\Repository\PostgresTrainingPlanRepository;
-use App\Infrastructure\Repository\PostgresTrainingScheduleRepository;
-use App\Infrastructure\Repository\PostgresUserRepository;
-use App\Infrastructure\Repository\PostgresUserTrainingPlanRepository;*/
 use App\Presentation\Controller\TrainingPlan\TrainingPlanController;
 use App\Presentation\Controller\User\UserController;
 use App\Presentation\Validation\TrainingPlanValidator;
@@ -68,17 +60,21 @@ return function (Container $container) {
     $container->set(Repository\UserRepositoryInterface::class, function (ContainerInterface $c) {
         return new Repository\PostgresUserRepository($c->get(PDO::class));
     });
-    $container->set(TrainingScheduleRepositoryInterface::class, function (ContainerInterface $c) {
-        return new PostgresTrainingScheduleRepository($c->get(PDO::class));
+    $container->set(Repository\TrainingScheduleRepositoryInterface::class, function (ContainerInterface $c) {
+        return new Repository\PostgresTrainingScheduleRepository($c->get(PDO::class));
     });
-    $container->set(TrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
-        return new PostgresTrainingPlanRepository(
+    $container->set(Repository\TrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
+        return new Repository\PostgresTrainingPlanRepository(
             $c->get(PDO::class),
-            $c->get(TrainingScheduleRepositoryInterface::class)
+            $c->get(Repository\TrainingScheduleRepositoryInterface::class),
+            $c->get(Repository\ExerciseRepositoryInterface::class)
         );
     });
     $container->set(Repository\UserTrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
-        return new PostgresUserTrainingPlanRepository($c->get(PDO::class));
+        return new Repository\PostgresUserTrainingPlanRepository($c->get(PDO::class));
+    });
+    $container->set(Repository\ExerciseRepositoryInterface::class, function (ContainerInterface $c) {
+        return new Repository\PostgresExerciseRepository($c->get(PDO::class));
     });
 
     // Use Cases
@@ -86,14 +82,17 @@ return function (Container $container) {
         return new UseCase\User\CreateUserUseCase($c->get(Repository\UserRepositoryInterface::class));
     });
     $container->set(UseCase\TrainingPlan\CreateTrainingPlanUseCase::class, function (ContainerInterface $c) {
-        return new UseCase\TrainingPlan\CreateTrainingPlanUseCase($c->get(TrainingPlanRepositoryInterface::class));
+        return new UseCase\TrainingPlan\CreateTrainingPlanUseCase($c->get(Repository\TrainingPlanRepositoryInterface::class));
     });
     $container->set(UseCase\TrainingPlan\AssignTrainingPlanToUserUseCase::class, function (ContainerInterface $c) {
         return new UseCase\TrainingPlan\AssignTrainingPlanToUserUseCase(
             $c->get(Repository\UserTrainingPlanRepositoryInterface::class),
             $c->get(Repository\UserRepositoryInterface::class),
-            $c->get(TrainingPlanRepositoryInterface::class)
+            $c->get(Repository\TrainingPlanRepositoryInterface::class)
         );
+    });
+    $container->set(UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay::class, function (ContainerInterface $c) {
+        return new UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay($c->get(Repository\TrainingPlanRepositoryInterface::class));
     });
 
     // Validators
@@ -118,7 +117,7 @@ return function (Container $container) {
         return new TrainingPlanController(
             $c->get(TrainingPlanValidator::class),
             $c->get(UseCase\TrainingPlan\CreateTrainingPlanUseCase::class),
-            $c->get(UseCase\TrainingPlan\AssignTrainingPlanToUserUseCase::class)
+            $c->get(UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay::class)
         );
     });
 };

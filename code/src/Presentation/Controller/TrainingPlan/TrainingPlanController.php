@@ -17,11 +17,13 @@ readonly class TrainingPlanController
 {
     /**
      * @param TrainingPlanValidator $validator Валидатор данных плана тренировок.
-     * @param UseCase\CreateTrainingPlanUseCase $createTrainingPlanUseCase Use case для создания плана тренировок.
+     * @param UseCase\TrainingPlan\CreateTrainingPlanUseCase $createTrainingPlanUseCase Use case для создания плана тренировок.
+     * @param UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay $getTrainingPlanWithExercisesByDay
      */
     public function __construct(
         private TrainingPlanValidator $validator,
-        private UseCase\CreateTrainingPlanUseCase $createTrainingPlanUseCase,
+        private UseCase\TrainingPlan\CreateTrainingPlanUseCase $createTrainingPlanUseCase,
+        private UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay $getTrainingPlanWithExercisesByDay
     ) {
     }
 
@@ -65,5 +67,21 @@ readonly class TrainingPlanController
         $response->getBody()->write(json_encode($responseData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
+    }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     * @return Response
+     * @throws \JsonException
+     */
+    public function getTrainingPlan(Request $request, Response $response, array $args): Response
+    {
+        $trainingPlanId = (int)$args['id'];
+        $dto = ($this->getTrainingPlanWithExercisesByDay)($trainingPlanId);
+
+        $response->getBody()->write(json_encode($dto, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }

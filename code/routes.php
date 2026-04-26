@@ -12,13 +12,13 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
-return function (App $app) {
+return static function (App $app) {
     // Add trailing slash middleware
     $app->add(function ($request, $handler) {
         $uri = $request->getUri();
         $path = $uri->getPath();
 
-        if ($path !== '/' && substr($path, -1) === '/') {
+        if ($path !== '/' && str_ends_with($path, '/')) {
             // permanently redirect paths with a trailing slash
             // to their non-trailing counterpart
             $uri = $uri->withPath(substr($path, 0, -1));
@@ -54,8 +54,9 @@ return function (App $app) {
     });
 
     // Training Plans
-    $app->group('/training-plans', function (Group $group) {
+    $app->group('/training-plan', function (Group $group) {
         $group->post('', [TrainingPlanController::class, 'createTrainingPlan']);
+        $group->get('/{id}', [TrainingPlanController::class, 'getTrainingPlan']);
     });
 
     // Exercises
