@@ -6,9 +6,9 @@ namespace App\Domain\Repository;
 
 use PDO;
 
-class PostgresUserTrainingPlanRepository implements UserTrainingPlanRepositoryInterface
+readonly class PostgresUserTrainingPlanRepository implements UserTrainingPlanRepositoryInterface
 {
-    public function __construct(private readonly PDO $pdo)
+    public function __construct(private PDO $pdo)
     {
     }
 

@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace App\Domain\Repository;
 
+use App\Domain\Entity\Exercise;
 use App\Domain\Entity\TrainingPlan;
+use App\Domain\Entity\TrainingPlanExercise;
+use App\Domain\Entity\TrainingSchedule;
+use Exception;
 use PDO;
 
-class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
+readonly class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
 {
     public function __construct(
-        private readonly PDO $pdo,
-        private readonly TrainingScheduleRepositoryInterface $trainingScheduleRepository
+        private PDO                                 $pdo,
+        private TrainingScheduleRepositoryInterface $trainingScheduleRepository,
+        private ExerciseRepositoryInterface         $exerciseRepository,
     ) {
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function findById(int $id): ?TrainingPlan
     {
@@ -34,7 +39,7 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
     /**
      * @param int $userId
      * @return TrainingPlan[]
-     * @throws \Exception
+     * @throws Exception
      */
     public function findByUserId(int $userId): array
     {
@@ -60,7 +65,7 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
      * @param int $page
      * @param int $limit
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function findAll(int $page = 1, int $limit = 10): array
     {
@@ -87,7 +92,8 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
     }
 
     /**
-     * @param TrainingPlan $entity
+     * @param object $entity
+     * @return TrainingPlan
      */
     public function save(object $entity): TrainingPlan
     {
@@ -96,15 +102,13 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
         }
 
         if ($entity->getId() !== null) {
-            // Update existing plan
             $stmt = $this->pdo->prepare(
-                'UPDATE training_plans SET name = :name, status = :status, description = :description, created_at = :created_at WHERE id = :id'
+                'UPDATE training_plans SET name = :name, description = :description, created_at = :created_at WHERE id = :id'
             );
             $stmt->execute($this->dehydrateTrainingPlan($entity));
         } else {
-            // Insert new plan
             $stmt = $this->pdo->prepare(
-                'INSERT INTO training_plans (name, status, description, created_at) VALUES (:name, :status, :description, :created_at) RETURNING id'
+                'INSERT INTO training_plans (name, description, created_at) VALUES (:name, :description, :created_at) RETURNING id'
             );
             $stmt->execute($this->dehydrateTrainingPlan($entity, false));
             $id = $stmt->fetchColumn();
@@ -115,7 +119,7 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
     }
 
     /**
-     * @param TrainingPlan $entity
+     * @param object $entity
      */
     public function remove(object $entity): void
     {
@@ -128,7 +132,7 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function hydrateTrainingPlan(array $data): TrainingPlan
     {
@@ -137,7 +141,6 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
         return new TrainingPlan(
             (int)$data['id'],
             $data['name'],
-            $data['status'],
             $data['description'],
             new \DateTimeImmutable($data['created_at']),
             [],
@@ -149,7 +152,6 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
     {
         $data = [
             'name' => $plan->getName(),
-            'status' => $plan->getStatus(),
             'description' => $plan->getDescription(),
             'created_at' => $plan->getCreatedAt()->format('Y-m-d H:i:s'),
         ];
@@ -159,5 +161,76 @@ class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
         }
 
         return $data;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function findWithExercisesByDay(int $trainingPlanId): ?TrainingPlan
+    {
+        $planStmt = $this->pdo->prepare('SELECT * FROM training_plans WHERE id = :id');
+        $planStmt->execute(['id' => $trainingPlanId]);
+        $planData = $planStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$planData) {
+            return null;
+        }
+
+        $schedulesStmt = $this->pdo->prepare('SELECT * FROM training_schedules WHERE training_plan_id = :plan_id');
+        $schedulesStmt->execute(['plan_id' => $trainingPlanId]);
+        $schedulesData = $schedulesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $exercisesStmt = $this->pdo->prepare('
+            SELECT
+                tpe.id as tpe_id,
+                tpe.sequence,
+                tpe.repetitions,
+                tpe.duration,
+                tpe.cycle,
+                e.id as exercise_id,
+                e.title as exercise_name,
+                e.description as exercise_description
+            FROM training_plan_exercises tpe
+            JOIN exercises e ON tpe.exercise_id = e.id
+            WHERE tpe.training_plan_id = :plan_id
+            ORDER BY tpe.sequence
+        ');
+        $exercisesStmt->execute(['plan_id' => $trainingPlanId]);
+        $exercisesData = $exercisesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $schedules = [];
+        foreach ($schedulesData as $data) {
+            $schedules[] = new TrainingSchedule(
+                (int)$data['id'],
+                (int)$data['day_of_week'],
+                (string)$data['time']
+            );
+        }
+
+        $exercises = [];
+        foreach ($exercisesData as $data) {
+            $exercise = new Exercise(
+                (int)$data['exercise_id'],
+                $data['exercise_name'],
+                $data['exercise_description']
+            );
+            $exercises[] = new TrainingPlanExercise(
+                (int)$data['tpe_id'],
+                $exercise,
+                $data['sequence'],
+                (int)$data['repetitions'],
+                (int)$data['duration'],
+                (int)$data['cycle']
+            );
+        }
+
+        return new TrainingPlan(
+            (int)$planData['id'],
+            $planData['name'],
+            $planData['description'],
+            new \DateTimeImmutable($planData['created_at']),
+            $exercises,
+            $schedules
+        );
     }
 }

@@ -37,4 +37,10 @@ interface TrainingPlanRepositoryInterface extends RepositoryInterface
      * @param TrainingPlan $entity
      */
     public function remove(object $entity): void;
+
+    /**
+     * @param int $trainingPlanId
+     * @return TrainingPlan|null
+     */
+    public function findWithExercisesByDay(int $trainingPlanId): ?TrainingPlan;
 }
