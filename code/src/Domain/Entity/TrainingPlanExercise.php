@@ -4,27 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity;
 
-class TrainingPlanExercise
+readonly class TrainingPlanExercise
 {
     public function __construct(
-        private readonly ?int $id,
-        private readonly TrainingPlan $trainingPlan,
-        private readonly Exercise $exercise,
-        private readonly int $sequence,
-        private readonly ?int $repetitions,
-        private readonly ?int $duration,
-        private readonly ?int $cycle
+        private ?int     $id,
+        private Exercise $exercise,
+        private int      $sequence,
+        private ?int     $repetitions,
+        private ?int     $duration,
+        private ?int     $cycle
     ) {
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getTrainingPlan(): TrainingPlan
-    {
-        return $this->trainingPlan;
     }
 
     public function getExercise(): Exercise

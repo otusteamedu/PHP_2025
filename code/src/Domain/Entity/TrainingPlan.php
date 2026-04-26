@@ -13,7 +13,6 @@ class TrainingPlan
     public function __construct(
         private ?int $id,
         private string $name,
-        private string $status,
         private ?string $description,
         private \DateTimeImmutable $created_at,
         private array $exercises = [],
@@ -49,16 +48,6 @@ class TrainingPlan
     public function setDescription(?string $description): void
     {
         $this->description = $description;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(?string $status): void
-    {
-        $this->status = $status;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

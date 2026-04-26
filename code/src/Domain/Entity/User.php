@@ -7,13 +7,13 @@ namespace App\Domain\Entity;
 class User
 {
     public function __construct(
-        private ?int $id,
-        private string $name,
-        private string $email,
-        private ?int $telegram_id,
-        private string $gender,
-        private int $weight,
-        private int $height,
+        private ?int               $id,
+        private string             $name,
+        private string             $email,
+        private ?int               $telegram_id,
+        private string             $gender,
+        private int                $weight,
+        private int                $height,
         private \DateTimeImmutable $born
     ) {
     }

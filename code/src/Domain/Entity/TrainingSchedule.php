@@ -7,7 +7,7 @@ namespace App\Domain\Entity;
 /**
  * Расписание тренировок.
  */
-class TrainingSchedule
+readonly class TrainingSchedule
 {
     /**
      * @param int|null $id
@@ -15,9 +15,9 @@ class TrainingSchedule
      * @param string $time Время тренировки в формате HH:MM.
      */
     public function __construct(
-        private readonly ?int $id,
-        private readonly int $dayOfWeek,
-        private readonly string $time
+        private ?int   $id,
+        private int    $dayOfWeek,
+        private string $time
     ) {
     }
 
