@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase;
+namespace App\Application\UseCase\TrainingPlan;
 
+use App\Domain\Exception\TrainingPlanNotFoundException;
+use App\Domain\Exception\UserNotFoundException;
 use App\Repository\TrainingPlanRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Repository\UserTrainingPlanRepositoryInterface;
-use App\Domain\Exception\TrainingPlanNotFoundException;
-use App\Domain\Exception\UserNotFoundException;
 
 class AssignTrainingPlanToUserUseCase
 {
