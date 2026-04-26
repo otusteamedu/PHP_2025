@@ -151,39 +151,39 @@ insert into cinema.orders(customer_id, created_at)
     from cinema.customer c
         limit current_setting('my.order_count')::int;
 
-with candidates as (select s.id  as session_id,
-                           s.hall_id,
-                           pl.id as place_id,
-                           pl.seat_category
-                    from cinema.session s
-                             join cinema.place pl on pl.hall_id = s.hall_id),
-     free_places as (select *
-                     from candidates c
-                     where not exists (select 1
-                                       from cinema.ticket ti
-                                       where ti.session_id = c.session_id
-                                         and ti.place_id = c.place_id)),
-     randomized as (select *
-                    from free_places
-                    order by random()
-    limit current_setting('my.ticket_count'):: int
+with
+    sessions_sample as (
+        select id, hall_id
+        from cinema.session
+        order by random()
+    limit current_setting('my.ticket_count')::int
     )
-insert
-into cinema.ticket(session_id, hall_id, order_id, place_id, price)
-select r.session_id,
-       r.hall_id,
-       o.id,
-       r.place_id,
-       pr.price
-from randomized r
 
-         join lateral (
-    select id
-    from cinema.orders
-    order by random()
+insert into cinema.ticket(session_id, hall_id, order_id, place_id, price)
+select
+    s.id,
+    s.hall_id,
+    (
+        select o.id
+        from cinema.orders o
+        order by random()
         limit 1
-) o
-on true
+    ),
+    pl.id,
+    pr.price
+
+from sessions_sample s
+
+    join lateral (
+    select p.id, p.seat_category
+    from cinema.place p
+    where p.hall_id = s.hall_id
+    order by random()
+    limit 1
+    ) pl on true
+
     join cinema.price pr
-    on pr.session_id = r.session_id
-    and pr.seat_category = r.seat_category;
+    on pr.session_id = s.id
+    and pr.seat_category = pl.seat_category
+
+    on conflict (session_id, place_id) do nothing;
