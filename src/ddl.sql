@@ -63,6 +63,8 @@ create table cinema.place
     unique (hall_id, row, seat)
 );
 
+create index idx_place_hall_id on cinema.place(hall_id);
+
 create table cinema.session
 (
     id bigserial primary key,
@@ -75,6 +77,11 @@ create table cinema.session
     foreign key (movie_id) references cinema.movie (id)
 );
 
+create index idx_session_start_time
+    on cinema.session(start_time)
+    include (id, movie_id);
+
+
 create table cinema.orders
 (
     id bigserial primary key,
@@ -84,6 +91,7 @@ create table cinema.orders
     foreign key (customer_id) references cinema.customer (id)
 );
 
+create index idx_orders_created_at_id on cinema.orders(created_at, id);
 
 create table cinema.price
 (
@@ -112,6 +120,10 @@ create table cinema.ticket
     foreign key (order_id) references cinema.orders(id),
     foreign key (place_id) references cinema.place(id)
 );
+
+create index idx_ticket_session_id
+on cinema.ticket(session_id)
+include (price);
 
 -- Не позволит покупать один и тот же билет в один сеанс
 create unique index unique_ticket
