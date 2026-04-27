@@ -13,18 +13,16 @@ class QueueService
 
     public function __construct()
     {
-        // Default RabbitMQ credentials are guest/guest
+
         try {
             $this->connection = new AMQPStreamConnection('rabbitmq', 5672, 'guest', 'guest');
             $this->channel = $this->connection->channel();
             
-            // Declare the queue to ensure it exists
-            // queue_declare(queue, passive, durable, exclusive, auto_delete)
+
             $this->channel->queue_declare($this->queueName, false, true, false, false);
         } catch (\Exception $e) {
-            // In a real app, we should probably log this or handle retry logic
-            // For now, we'll let it bubble up so the worker/producer fails fast if RMQ is down
-            throw new \Exception("Could not connect to RabbitMQ: " . $e->getMessage());
+   
+        throw new \Exception("Could not connect to RabbitMQ: " . $e->getMessage());
         }
     }
 
@@ -40,16 +38,16 @@ class QueueService
     }
 
     /**
-     * Start consuming messages from the queue.
-     * This method blocks indefinitely.
-     * 
-     * @param callable $callback Function to process the message data (array)
+     * Запускает чтение сообщений из очереди.
+     * Метод блокирует выполнение на неопределенное время.
+     *
+     * @param callable $callback Функция обработки данных сообщения (array)
      */
     public function consume(callable $callback): void
     {
         echo "Waiting for messages. To exit press CTRL+C\n";
 
-        // $callbackWrapper handles the AMQP message object, decodes body, calls user callback, and acks
+        // $callbackWrapper принимает AMQP-сообщение, декодирует тело, вызывает пользовательский callback и подтверждает обработку
         $callbackWrapper = function ($msg) use ($callback) {
             $body = $msg->body;
             $data = json_decode($body, true);
@@ -57,25 +55,25 @@ class QueueService
             echo " [x] Received task\n";
 
             try {
-                // Execute the worker logic
+                // Выполняем логику обработчика
                 call_user_func($callback, $data);
                 
-                // Acknowledge the message only if processing succeeded
+                // Подтверждаем сообщение только после успешной обработки
                 $msg->ack();
                 echo " [x] Done\n";
             } catch (\Exception $e) {
                 echo " [!] Error processing message: " . $e->getMessage() . "\n";
-                // In a real app, handle retry logic or dead letter queues.
-                // We acknowledge here to prevent infinite delivery loops in this demo.
+                // В реальном приложении здесь обычно делают ретраи или отправку в dead letter queue.
+                // В этом демо подтверждаем сообщение, чтобы избежать бесконечных повторных доставок.
                 $msg->ack(); 
             }
         };
 
-        // Fair dispatch: don't give more than 1 message to a worker at a time
+        // Равномерная выдача: не отдавать одному воркеру больше одного сообщения за раз
         $this->channel->basic_qos(null, 1, null);
         
         // basic_consume(queue, consumer_tag, no_local, no_ack, exclusive, nowait, callback)
-        // no_ack = false means we must manually ack (which we do in callbackWrapper)
+        // no_ack = false означает, что подтверждение нужно отправлять вручную (это делается в callbackWrapper)
         $this->channel->basic_consume($this->queueName, '', false, false, false, false, $callbackWrapper);
 
         while ($this->channel->is_consuming()) {
@@ -93,7 +91,7 @@ class QueueService
                 $this->connection->close();
             }
         } catch (\Exception $e) {
-            // Ignore closure errors
+            // Игнорируем ошибки при закрытии соединения
         }
     }
     

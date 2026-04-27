@@ -1,0 +1,142 @@
+openapi: 3.0.3
+info:
+  title: Async Request Processing API
+  version: 1.0.0
+  description: |
+    REST API для асинхронной обработки задач через RabbitMQ.
+    Клиент создает задачу, получает request_id и затем опрашивает статус обработки.
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/requests:
+    post:
+      summary: Создать запрос на обработку
+      description: Ставит задачу в очередь и возвращает request_id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequestBody'
+            example:
+              date_from: 2026-01-01
+              date_to: 2026-01-31
+              email: client@example.com
+      responses:
+        '202':
+          description: Запрос принят в очередь
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRequestAccepted'
+        '422':
+          description: Ошибка валидации входных данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '503':
+          description: Очередь недоступна
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+  /api/requests/{request_id}:
+    get:
+      summary: Получить статус запроса
+      description: Возвращает текущее состояние запроса по request_id
+      parameters:
+        - in: path
+          name: request_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Статус найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestStatus'
+        '404':
+          description: Запрос с таким request_id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+components:
+  schemas:
+    CreateRequestBody:
+      type: object
+      required:
+        - date_from
+        - date_to
+        - email
+      properties:
+        date_from:
+          type: string
+          format: date
+        date_to:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+    CreateRequestAccepted:
+      type: object
+      properties:
+        request_id:
+          type: string
+        status:
+          type: string
+          example: queued
+        status_url:
+          type: string
+          example: /api/requests/4b68a83f3f384fb8a1794c0f89a94468
+        created_at:
+          type: string
+          format: date-time
+    RequestStatus:
+      type: object
+      properties:
+        request_id:
+          type: string
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        result:
+          type: object
+          nullable: true
+        error:
+          type: string
+          nullable: true
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: object
+          additionalProperties:
+            type: string
+    GenericError:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string

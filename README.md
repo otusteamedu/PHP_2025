@@ -1,60 +1,139 @@
-# Асинхронная обработка запросов (Queue System)
+# Асинхронный REST API с очередью
 
-Пример реализации асинхронной обработки тяжелых задач (генерация банковской выписки) с использованием очередей (**RabbitMQ**) на PHP.
+Проект реализует REST API, где клиент:
+
+1. Отправляет запрос на обработку.
+2. Получает номер запроса (request_id).
+3. Проверяет статус обработки по request_id.
+
+Внутри используется RabbitMQ для очереди и фоновый worker для обработки задач.
 
 ## Требования
 
 - Docker
 - Docker Compose
 
-## Установка и запуск
+## Запуск
 
-1. **Сборка и запуск контейнеров**
+1. Поднять контейнеры:
 
-   ```bash
-   docker-compose down
-   docker-compose up -d --build
-   ```
+```bash
+docker-compose down
+docker-compose up -d --build
+```
 
-2. **Установка зависимостей**
+2. Установить зависимости в PHP-контейнере:
 
-   Установите PHP пакеты через Composer внутри контейнера (это установит `php-amqplib`):
+```bash
+docker-compose exec php-fpm composer install
+```
 
-   ```bash
-   docker-compose exec php-fpm composer install
-   ```
-
-## Использование
-
-### 1. Веб-интерфейс (Producer)
-
-Откройте в браузере: http://localhost:8080
-
-Здесь вы можете заполнить форму заказа выписки. После отправки формы, задача будет добавлена в очередь **RabbitMQ**.
-
-Вы можете проверить состояние очередей в интерфейсе управления RabbitMQ:
-- URL: http://localhost:15672
-- Логин: `guest`
-- Пароль: `guest`
-
-### 2. Запуск обработчика (Consumer)
-
-Для обработки задач из очереди необходимо запустить скрипт-воркер. Откройте новый терминал и выполните:
+3. Запустить worker в отдельном терминале:
 
 ```bash
 docker-compose exec php-fpm php worker.php
 ```
 
-Вы увидите сообщение `Worker started. Waiting for tasks...`.
+## REST API
 
-Теперь, при отправке формы на сайте, в консоли воркера вы увидите процесс обработки задачи:
-- Получение задачи из очереди RabbitMQ
-- Имитация длительной обработки (пауза 3-10 секунд)
-- Имитация отправки уведомления на email
+Базовый URL:
 
-## Структура проекта
+http://localhost:8080
 
-- `src/index.php` - Веб-страница с формой (Producer). Отправляет задачи в очередь.
-- `src/worker.php` - Скрипт-обработчик (Consumer). Читает задачи из очереди и выполняет их.
-- `src/Services/QueueService.php` - Сервис для работы с RabbitMQ (использует `php-amqplib`).
-- `docker-compose.yml` - Конфигурация окружения (Nginx, PHP-FPM, RabbitMQ).
+### 1. Создать запрос
+
+Метод: POST
+
+Путь: /api/requests
+
+Пример:
+
+```bash
+curl -X POST http://localhost:8080/api/requests \
+   -H "Content-Type: application/json" \
+   -d '{
+      "date_from": "2026-01-01",
+      "date_to": "2026-01-31",
+      "email": "client@example.com"
+   }'
+```
+
+Успешный ответ (202):
+
+```json
+{
+   "request_id": "4b68a83f3f384fb8a1794c0f89a94468",
+   "status": "queued",
+   "status_url": "/api/requests/4b68a83f3f384fb8a1794c0f89a94468",
+   "created_at": "2026-04-27T18:23:21+00:00"
+}
+```
+
+### 2. Проверить статус запроса
+
+Метод: GET
+
+Путь: /api/requests/{request_id}
+
+Пример:
+
+```bash
+curl http://localhost:8080/api/requests/4b68a83f3f384fb8a1794c0f89a94468
+```
+
+Возможные статусы:
+
+- queued
+- processing
+- completed
+- failed
+
+Пример ответа completed:
+
+```json
+{
+   "request_id": "4b68a83f3f384fb8a1794c0f89a94468",
+   "status": "completed",
+   "created_at": "2026-04-27T18:23:21+00:00",
+   "updated_at": "2026-04-27T18:23:27+00:00",
+   "started_at": "2026-04-27T18:23:22+00:00",
+   "completed_at": "2026-04-27T18:23:27+00:00",
+   "result": {
+      "message": "Statement generated successfully.",
+      "processing_time_seconds": 5,
+      "notified_email": "client@example.com",
+      "finished_at": "2026-04-27T18:23:27+00:00"
+   }
+}
+```
+
+## Очереди
+
+- Producer: API в src/index.php публикует задачи в RabbitMQ.
+- Consumer: src/worker.php читает сообщения из очереди и обрабатывает их в фоне.
+- Статусы запроса хранятся в файлах в src/storage/requests.
+
+RabbitMQ management UI:
+
+- URL: http://localhost:15672
+- Login: guest
+- Password: guest
+
+## Swagger / OpenAPI
+
+Файл спецификации:
+
+- src/openapi.yaml
+
+Его можно:
+
+1. Открыть напрямую: http://localhost:8080/openapi.yaml
+2. Импортировать в Swagger Editor: https://editor.swagger.io
+
+## Структура
+
+- src/index.php - REST API (create request, get status)
+- src/worker.php - фоновый обработчик очереди
+- src/Services/QueueService.php - работа с RabbitMQ
+- src/Services/RequestStatusService.php - хранение и обновление статусов
+- src/openapi.yaml - Swagger/OpenAPI документация

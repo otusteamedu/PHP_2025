@@ -1,79 +1,199 @@
 <?php
 
-require 'vendor/autoload.php';
+declare(strict_types=1);
+
+require __DIR__ . '/vendor/autoload.php';
 
 use App\Services\QueueService;
+use App\Services\RequestStatusService;
 
-$message = '';
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+$path = rtrim($path, '/');
+$path = $path === '' ? '/' : $path;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $dateFrom = $_POST['date_from'] ?? '';
-    $dateTo = $_POST['date_to'] ?? '';
-    $email = $_POST['email'] ?? '';
-
-    if ($dateFrom && $dateTo && $email) {
-        try {
-            $queueService = new QueueService();
-            $task = [
-                'type' => 'statement_generation',
-                'date_from' => $dateFrom,
-                'date_to' => $dateTo,
-                'email' => $email,
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-            
-            $queueService->push($task);
-            $message = "Запрос принят в обработку. Вы получите уведомление на $email после завершения.";
-        } catch (Exception $e) {
-            $message = "Ошибка при отправке запроса: " . $e->getMessage();
-        }
-    } else {
-        $message = "Пожалуйста, заполните все поля.";
-    }
+if ($method === 'GET' && $path === '/') {
+    sendJson(200, [
+        'service' => 'async-request-api',
+        'version' => '1.0.0',
+        'documentation' => '/openapi.yaml',
+        'endpoints' => [
+            'POST /api/requests',
+            'GET /api/requests/{request_id}',
+        ],
+    ]);
 }
 
-?>
+if ($method === 'POST' && $path === '/api/requests') {
+    createRequest();
+}
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генерация выписки</title>
-    <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.5rem; }
-        input { width: 100%; padding: 0.5rem; box-sizing: border-box; }
-        button { padding: 0.5rem 1rem; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; }
-        button:hover { background-color: #0056b3; }
-        .message { padding: 1rem; background: #e0f7fa; border-left: 5px solid #006064; margin-bottom: 1rem; }
-    </style>
-</head>
-<body>
-    <h1>Заказ банковской выписки</h1>
-    
-    <?php if ($message): ?>
-        <div class="message"><?= htmlspecialchars($message) ?></div>
-    <?php endif; ?>
+if ($method === 'GET' && preg_match('#^/api/requests/([A-Za-z0-9_-]+)$#', $path, $matches)) {
+    getRequestStatus($matches[1]);
+}
 
-    <form method="POST">
-        <div class="form-group">
-            <label for="date_from">Дата начала периода:</label>
-            <input type="date" id="date_from" name="date_from" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="date_to">Дата окончания периода:</label>
-            <input type="date" id="date_to" name="date_to" required>
-        </div>
+sendJson(404, [
+    'error' => 'Route not found.',
+]);
 
-        <div class="form-group">
-            <label for="email">Email для оповещения:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
+function createRequest(): void
+{
+    $payload = readJsonBody();
+    $errors = validatePayload($payload);
 
-        <button type="submit">Заказать выписку</button>
-    </form>
-</body>
-</html>
+    if (!empty($errors)) {
+        sendJson(422, [
+            'error' => 'Validation failed.',
+            'details' => $errors,
+        ]);
+    }
+
+    $requestId = bin2hex(random_bytes(16));
+
+    $requestPayload = [
+        'type' => 'statement_generation',
+        'date_from' => $payload['date_from'],
+        'date_to' => $payload['date_to'],
+        'email' => $payload['email'],
+    ];
+
+    try {
+        $statusService = new RequestStatusService();
+        $record = $statusService->create($requestId, $requestPayload);
+
+        $task = $requestPayload;
+        $task['request_id'] = $requestId;
+        $task['created_at'] = $record['created_at'];
+
+        $queueService = new QueueService();
+        $queueService->push($task);
+    } catch (Throwable $e) {
+        if (isset($statusService)) {
+            try {
+                $statusService->markFailed($requestId, 'Failed to enqueue request: ' . $e->getMessage());
+            } catch (Throwable $inner) {
+                // Игнорируем вторичные ошибки во время обработки сбоя постановки в очередь.
+            }
+        }
+
+        sendJson(503, [
+            'error' => 'Unable to enqueue request at the moment.',
+            'details' => $e->getMessage(),
+        ]);
+    }
+
+    sendJson(202, [
+        'request_id' => $requestId,
+        'status' => 'queued',
+        'status_url' => '/api/requests/' . $requestId,
+        'created_at' => $record['created_at'],
+    ]);
+}
+
+function getRequestStatus(string $requestId): void
+{
+    try {
+        $statusService = new RequestStatusService();
+        $record = $statusService->get($requestId);
+    } catch (InvalidArgumentException $e) {
+        sendJson(400, [
+            'error' => $e->getMessage(),
+        ]);
+    } catch (Throwable $e) {
+        sendJson(500, [
+            'error' => 'Failed to read request status.',
+            'details' => $e->getMessage(),
+        ]);
+    }
+
+    if ($record === null) {
+        sendJson(404, [
+            'error' => 'Request not found.',
+        ]);
+    }
+
+    $response = [
+        'request_id' => $record['request_id'],
+        'status' => $record['status'],
+        'created_at' => $record['created_at'],
+        'updated_at' => $record['updated_at'],
+    ];
+
+    if (isset($record['started_at'])) {
+        $response['started_at'] = $record['started_at'];
+    }
+
+    if (isset($record['completed_at'])) {
+        $response['completed_at'] = $record['completed_at'];
+    }
+
+    if (!empty($record['result'])) {
+        $response['result'] = $record['result'];
+    }
+
+    if (!empty($record['error'])) {
+        $response['error'] = $record['error'];
+    }
+
+    sendJson(200, $response);
+}
+
+function readJsonBody(): array
+{
+    $rawBody = file_get_contents('php://input');
+
+    if ($rawBody === false || trim($rawBody) === '') {
+        return [];
+    }
+
+    $decoded = json_decode($rawBody, true);
+
+    if (!is_array($decoded)) {
+        sendJson(400, [
+            'error' => 'Invalid JSON body.',
+        ]);
+    }
+
+    return $decoded;
+}
+
+function validatePayload(array $payload): array
+{
+    $errors = [];
+
+    if (empty($payload['date_from']) || !isValidDate((string) $payload['date_from'])) {
+        $errors['date_from'] = 'date_from is required in Y-m-d format.';
+    }
+
+    if (empty($payload['date_to']) || !isValidDate((string) $payload['date_to'])) {
+        $errors['date_to'] = 'date_to is required in Y-m-d format.';
+    }
+
+    if (!empty($payload['date_from']) && !empty($payload['date_to']) && isValidDate((string) $payload['date_from']) && isValidDate((string) $payload['date_to'])) {
+        if ($payload['date_from'] > $payload['date_to']) {
+            $errors['date_range'] = 'date_from must be less than or equal to date_to.';
+        }
+    }
+
+    if (empty($payload['email']) || !filter_var((string) $payload['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'email is required and must be valid.';
+    }
+
+    return $errors;
+}
+
+function isValidDate(string $value): bool
+{
+    $date = DateTimeImmutable::createFromFormat('Y-m-d', $value);
+
+    return $date !== false && $date->format('Y-m-d') === $value;
+}
+
+function sendJson(int $statusCode, array $payload): void
+{
+    http_response_code($statusCode);
+    header('Content-Type: application/json; charset=utf-8');
+
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    exit;
+}
