@@ -21,18 +21,13 @@ set my.max_chars_varying_20 = 20;
 set my.max_chars_varying_50 = 50;
 set my.max_chars_varying_100 = 100;
 
-set my.amount_data_to_generate_smallserial = 32; -- 32000
-set my.amount_data_to_generate_serial = 10000; -- 10000000
-set my.amount_data_to_generate_bigserial = 10000; -- 10000000
-
-
-set my.movie_count = 10000; -- 10000000
-set my.cinema_count = 10000; -- 10000000
-set my.customer_count = 10000; -- 10000000
+set my.movie_count = 10000000; -- 10000000
+set my.cinema_count = 32000; -- 10000000
+set my.customer_count = 10000000; -- 10000000
 set my.halls_count = 2;
-set my.session_count = 10000; -- 10000000
-set my.order_count = 10000; -- 10000000
-set my.ticket_count = 10000; -- 10000000
+set my.session_count = 10000000; -- 10000000
+set my.order_count = 10000000; -- 10000000
+set my.ticket_count = 10000000; -- 10000000
 
 insert into cinema.movie(name)
     select
