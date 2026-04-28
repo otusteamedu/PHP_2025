@@ -10,7 +10,10 @@ from cinema.ticket as t
 join cinema.orders as o on o.id = t.order_id
 where o.created_at >= date_trunc('week', now()) and  o.created_at < date_trunc('week', now()) + interval '1 week'
 
---3. Формирование афиши (фильмы, которые показывают сегодня)
+--3. Формирование афиши (фильмы, которые показывают в течении месяца.)
+-- Необходимо вывести: название фильма, время сеанса, зал.
+-- Нужно добавить фильтрацию по части дня
+
 select m.name
 from cinema.session as s
          join cinema.movie as m on m.id = s.movie_id
