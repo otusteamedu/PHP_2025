@@ -20,20 +20,10 @@ class GetTrainingPlanWithExercisesByDay
 
         $days = [];
         foreach ($trainingPlan->getSchedules() as $schedule) {
-            $dayOfWeek = $schedule->getDayOfWeek();
-            if (!isset($days[$dayOfWeek])) {
-                $days[$dayOfWeek] = [
-                    'day' => $dayOfWeek,
-                    'time' => $schedule->getTime(),
-                    'exercises' => [],
-                ];
-            }
-        }
-
-        foreach ($trainingPlan->getExercises() as $exercise) {
-            foreach ($trainingPlan->getSchedules() as $schedule) {
-                $dayOfWeek = $schedule->getDayOfWeek();
-                $days[$dayOfWeek]['exercises'][] = [
+            $dateKey = $schedule->getDate()->format('Y-m-d');
+            $exercises = [];
+            foreach ($schedule->getExercises() as $exercise) {
+                $exercises[] = [
                     'id' => $exercise->getExercise()->getId(),
                     'name' => $exercise->getExercise()->getTitle(),
                     'sequence' => $exercise->getSequence(),
@@ -42,6 +32,13 @@ class GetTrainingPlanWithExercisesByDay
                     'cycle' => $exercise->getCycle(),
                 ];
             }
+
+            $days[$dateKey] = [
+                'date' => $dateKey,
+                'time' => $schedule->getTime(),
+                'day' => $schedule->getDayOfWeek(),
+                'exercises' => $exercises,
+            ];
         }
 
         return new TrainingPlanWithExercisesByDayDto(

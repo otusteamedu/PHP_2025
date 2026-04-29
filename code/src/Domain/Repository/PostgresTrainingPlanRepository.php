@@ -143,7 +143,6 @@ readonly class PostgresTrainingPlanRepository implements TrainingPlanRepositoryI
             $data['name'],
             $data['description'],
             new \DateTimeImmutable($data['created_at']),
-            [],
             $schedules
         );
     }
@@ -176,51 +175,54 @@ readonly class PostgresTrainingPlanRepository implements TrainingPlanRepositoryI
             return null;
         }
 
-        $schedulesStmt = $this->pdo->prepare('SELECT * FROM training_schedules WHERE training_plan_id = :plan_id');
+        $schedulesStmt = $this->pdo->prepare('SELECT id, day_of_week, time, date FROM training_schedules WHERE training_plan_id = :plan_id ORDER BY date ASC');
         $schedulesStmt->execute(['plan_id' => $trainingPlanId]);
         $schedulesData = $schedulesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $exercisesStmt = $this->pdo->prepare('
-            SELECT
-                tpe.id as tpe_id,
-                tpe.sequence,
-                tpe.repetitions,
-                tpe.duration,
-                tpe.cycle,
-                e.id as exercise_id,
-                e.title as exercise_name,
-                e.description as exercise_description
-            FROM training_plan_exercises tpe
-            JOIN exercises e ON tpe.exercise_id = e.id
-            WHERE tpe.training_plan_id = :plan_id
-            ORDER BY tpe.sequence
-        ');
-        $exercisesStmt->execute(['plan_id' => $trainingPlanId]);
-        $exercisesData = $exercisesStmt->fetchAll(PDO::FETCH_ASSOC);
-
         $schedules = [];
-        foreach ($schedulesData as $data) {
-            $schedules[] = new TrainingSchedule(
-                (int)$data['id'],
-                (int)$data['day_of_week'],
-                (string)$data['time']
-            );
-        }
+        foreach ($schedulesData as $scheduleData) {
+            $scheduleId = (int)$scheduleData['id'];
+            $exercisesStmt = $this->pdo->prepare('
+                SELECT
+                    tpe.id as tpe_id,
+                    tpe.sequence,
+                    tpe.repetitions,
+                    tpe.duration,
+                    tpe.cycle,
+                    e.id as exercise_id,
+                    e.title as exercise_name,
+                    e.description as exercise_description
+                FROM training_plan_exercises tpe
+                JOIN exercises e ON tpe.exercise_id = e.id
+                WHERE tpe.schedule_id = :schedule_id
+                ORDER BY tpe.sequence
+            ');
+            $exercisesStmt->execute(['schedule_id' => $scheduleId]);
+            $exercisesData = $exercisesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $exercises = [];
-        foreach ($exercisesData as $data) {
-            $exercise = new Exercise(
-                (int)$data['exercise_id'],
-                $data['exercise_name'],
-                $data['exercise_description']
-            );
-            $exercises[] = new TrainingPlanExercise(
-                (int)$data['tpe_id'],
-                $exercise,
-                $data['sequence'],
-                (int)$data['repetitions'],
-                (int)$data['duration'],
-                (int)$data['cycle']
+            $exercises = [];
+            foreach ($exercisesData as $exerciseData) {
+                $exercise = new Exercise(
+                    (int)$exerciseData['exercise_id'],
+                    $exerciseData['exercise_name'],
+                    $exerciseData['exercise_description']
+                );
+                $exercises[] = new TrainingPlanExercise(
+                    (int)$exerciseData['tpe_id'],
+                    $exercise,
+                    $exerciseData['sequence'],
+                    (int)$exerciseData['repetitions'],
+                    (int)$exerciseData['duration'],
+                    (int)$exerciseData['cycle']
+                );
+            }
+
+            $schedules[] = new TrainingSchedule(
+                $scheduleId,
+                (int)$scheduleData['day_of_week'],
+                (string)$scheduleData['time'],
+                new \DateTimeImmutable($scheduleData['date']),
+                $exercises
             );
         }
 
@@ -229,7 +231,6 @@ readonly class PostgresTrainingPlanRepository implements TrainingPlanRepositoryI
             $planData['name'],
             $planData['description'],
             new \DateTimeImmutable($planData['created_at']),
-            $exercises,
             $schedules
         );
     }
