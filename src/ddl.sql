@@ -120,6 +120,8 @@ create table cinema.ticket
     foreign key (order_id) references cinema.orders(id),
     foreign key (place_id) references cinema.place(id)
 );
+create index idx_ticket_order_id
+on cinema.ticket(order_id);
 
 create index idx_ticket_session_id
 on cinema.ticket(session_id)
