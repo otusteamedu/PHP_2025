@@ -1,0 +1,3 @@
+"QUERY PLAN"
+"Index Only Scan using unique_ticket on ticket t  (cost=0.29..4.30 rows=1 width=8)"
+"  Index Cond: (session_id = 3258)"

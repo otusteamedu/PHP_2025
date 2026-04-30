@@ -1,0 +1,3 @@
+"QUERY PLAN"
+"Index Scan using session_pkey on session s  (cost=0.43..8.45 rows=1 width=4)"
+"  Index Cond: (id = 3258)"

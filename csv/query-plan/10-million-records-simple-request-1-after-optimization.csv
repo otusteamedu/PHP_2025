@@ -1,0 +1,4 @@
+"QUERY PLAN"
+"Aggregate  (cost=4.46..4.47 rows=1 width=16)"
+"  ->  Index Only Scan using idx_ticket_session_id on ticket t  (cost=0.43..4.45 rows=1 width=8)"
+"        Index Cond: (session_id = 3258)"
