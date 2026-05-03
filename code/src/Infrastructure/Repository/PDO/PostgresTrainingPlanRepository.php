@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Repository;
+namespace App\Infrastructure\Repository\PDO;
 
 use App\Domain\Entity\Exercise;
 use App\Domain\Entity\TrainingPlan;
 use App\Domain\Entity\TrainingPlanExercise;
 use App\Domain\Entity\TrainingSchedule;
+use App\Domain\Repository;
+
 use Exception;
 use PDO;
 
-readonly class PostgresTrainingPlanRepository implements TrainingPlanRepositoryInterface
+readonly class PostgresTrainingPlanRepository implements Repository\TrainingPlanRepositoryInterface
 {
     public function __construct(
         private PDO                                 $pdo,
-        private TrainingScheduleRepositoryInterface $trainingScheduleRepository,
-        private ExerciseRepositoryInterface         $exerciseRepository,
+        private Repository\TrainingScheduleRepositoryInterface $trainingScheduleRepository,
+        private Repository\ExerciseRepositoryInterface         $exerciseRepository,
     ) {
     }
 
@@ -182,6 +184,8 @@ readonly class PostgresTrainingPlanRepository implements TrainingPlanRepositoryI
         $schedules = [];
         foreach ($schedulesData as $scheduleData) {
             $scheduleId = (int)$scheduleData['id'];
+            $scheduleData['time'] = new \DateTimeImmutable($scheduleData['time']);
+
             $exercisesStmt = $this->pdo->prepare('
                 SELECT
                     tpe.id as tpe_id,
@@ -220,7 +224,7 @@ readonly class PostgresTrainingPlanRepository implements TrainingPlanRepositoryI
             $schedules[] = new TrainingSchedule(
                 $scheduleId,
                 (int)$scheduleData['day_of_week'],
-                (string)$scheduleData['time'],
+                $scheduleData['time'],
                 new \DateTimeImmutable($scheduleData['date']),
                 $exercises
             );

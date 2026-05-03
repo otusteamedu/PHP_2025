@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Repository;
+namespace App\Infrastructure\Repository\PDO;
 
+use App\Domain\Repository;
 use PDO;
 
-readonly class PostgresUserTrainingPlanRepository implements UserTrainingPlanRepositoryInterface
+readonly class PostgresUserTrainingPlanRepository implements Repository\UserTrainingPlanRepositoryInterface
 {
     public function __construct(private PDO $pdo)
     {
@@ -44,5 +45,10 @@ readonly class PostgresUserTrainingPlanRepository implements UserTrainingPlanRep
             'training_plan_id' => $trainingPlanId,
         ]);
         return (bool) $stmt->fetchColumn();
+    }
+
+    public function findByTrainingPlanId(int $trainingPlanId): array
+    {
+        // TODO: Implement findByTrainingPlanId() method.
     }
 }

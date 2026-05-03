@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Repository;
+namespace App\Infrastructure\Repository\PDO;
 
 use App\Domain\Entity\TrainingSchedule;
+use App\Domain\Repository;
 use PDO;
 
-class PostgresTrainingScheduleRepository implements TrainingScheduleRepositoryInterface
+class PostgresTrainingScheduleRepository implements Repository\TrainingScheduleRepositoryInterface
 {
     public function __construct(private readonly PDO $pdo)
     {
@@ -80,5 +81,24 @@ class PostgresTrainingScheduleRepository implements TrainingScheduleRepositoryIn
     public function findByTrainingPlanId(int $trainingPlanId): array
     {
         // TODO: Implement findByTrainingPlanId() method.
+    }
+
+    public function findByDate(\DateTimeImmutable $date): array
+    {
+        $stmt = $this->pdo->prepare('SELECT id, day_of_week, time, date FROM training_schedules WHERE date = :date');
+        $stmt->execute(['date' => $date->format('Y-m-d')]);
+
+        $schedules = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $schedules[] = new TrainingSchedule(
+                $row['id'],
+                $row['day_of_week'],
+                $row['time'],
+                new \DateTimeImmutable($row['date'])
+            );
+        }
+
+        return $schedules;
+
     }
 }

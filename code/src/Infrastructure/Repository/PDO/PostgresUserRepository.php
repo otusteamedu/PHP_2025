@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Repository;
+namespace App\Infrastructure\Repository\PDO;
 
 use App\Domain\Entity\User;
+use App\Domain\Repository;
 use PDO;
 
-class PostgresUserRepository implements UserRepositoryInterface
+readonly class PostgresUserRepository implements Repository\UserRepositoryInterface
 {
-    public function __construct(private readonly PDO $pdo)
+    public function __construct(private PDO $pdo)
     {
     }
 
@@ -78,7 +79,8 @@ class PostgresUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @param User $entity
+     * @param object $entity
+     * @return User
      */
     public function save(object $entity): User
     {
@@ -106,7 +108,7 @@ class PostgresUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @param User $entity
+     * @param object $entity
      */
     public function remove(object $entity): void
     {

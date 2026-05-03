@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Repository;
+namespace App\Infrastructure\Repository\PDO;
 
 use App\Domain\Entity\Exercise;
+use App\Domain\Repository\ExerciseRepositoryInterface;
 use PDO;
 
-class PostgresExerciseRepository implements ExerciseRepositoryInterface
+readonly class PostgresExerciseRepository implements ExerciseRepositoryInterface
 {
-    public function __construct(private readonly PDO $pdo)
+    public function __construct(private PDO $pdo)
     {
     }
 
