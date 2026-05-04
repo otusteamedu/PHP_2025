@@ -14,10 +14,25 @@ where o.created_at >= date_trunc('week', now()) and  o.created_at < date_trunc('
 -- Необходимо вывести: название фильма, время сеанса, зал.
 -- Нужно добавить фильтрацию по части дня
 
-select m.name
-from cinema.session as s
-         join cinema.movie as m on m.id = s.movie_id
-where s.start_time >= current_date and  s.start_time < current_date + interval '1 day';
+with halls as (
+    select h.id as hall_id, h.number
+    from cinema.hall as h
+    join cinema.cinema as c
+        on h.cinema_id = c.id
+    where c.city = '6xSeSIYgX5RlcjRrcjt' and
+        c.address = 'QO6Qj7tJ8i27WRXpbSm4qY9MCFAIo6J1x9xFbVPXRjPvgQdajGjq4AS5lH3Iz6yPKgZWCfGXngKdrwAvLhOhSGn52PkZyFPTAdBzZh9QH0YSPV4ShF9BubGOBJxZYD2I7N2QScXVeNlSEXRRZnBgD5v3LEIax54rsudkqC0F'
+),
+sessions_and_halls as (
+    select s.id, s.movie_id, s.hall_id, s.start_time, s.part_of_day, h.number as hall_number
+    from cinema.session as s
+    right join halls as h on s.hall_id = h.hall_id
+    where start_time >= timestamp '2026-05-01' and start_time < timestamp '2026-05-31'
+)
+
+select m.name, sh.start_time, sh.hall_number
+from sessions_and_halls as sh
+left join cinema.movie as m on m.id = sh.movie_id
+where sh.part_of_day = 'утро'
 
 --4. Поиск 3 самых прибыльных фильмов за неделю
 with sessions as (
