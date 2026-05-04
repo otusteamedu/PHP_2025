@@ -138,18 +138,22 @@
 
 ![10-million-records-complex-request-1-after-optimization.png](img/explain/10-million-records-complex-request-1-after-optimization.png)
 Для таблицы cinema.ticket включил поле session_id в индекс. Также в include я добавил поле "price", поскольку оно используется в запросе.
+Для индекса idx_ticket_session_id был выбран тип b-tree, поскольку в запросе используется равенство:`join cinema.movie as m on m.id = s.movie_id`.
 
 Для таблицы cinema.session добавил в индекс поле start_time (для ускорения поиска), в include добавил: id, movie_id.
+Для индекса idx_session_start_time был выбран тип b-tree, поскольку в запросе используется сравнение в диапазоне (<, >=)): `where s.start_time >= date_trunc('week', now()) and  s.start_time < date_trunc('week', now()) + interval '1 week'`.
 
 В итоге я добился того, что вместо Sequence Scan таблицы session данные берутся из индекса. Стоимость получения всех строк в запросе уменьшилась с 197915.71 до 293.69.
 
 ### Сложный запрос №2
 
 Добавил в индекс таблицы cinema.orders поля: created_at, id. При помощи индекса удалось избавиться от вложенного цикла. Теперь заказы берутся из индекса, теперь не нужно делать полный проход по таблице orders.
+Для индекса idx_orders_created_at_id был выбран тип b-tree, поскольку в запросе используется сравнение в диапазоне (<, >=)): `where o.created_at >= date_trunc('week', now()) and  o.created_at < date_trunc('week', now()) + interval '1 week'`.
 
 ![10-million-records-complex-request-2-after-optimization.png](img/explain/10-million-records-complex-request-2-after-optimization.png)
 
 Добавил в индекс таблицы cinema.ticket поле order_id, но query plan не изменился.
+Для индекса idx_ticket_order_id был выбран тип b-tree, поскольку в запросе используется равенство:` join cinema.orders as o on o.id = t.order_id`.
 
 Выбрав первые 10 строк таблицы cinema.ticket вижу, что У всех билетов одинаковый id заказа
 
@@ -164,7 +168,7 @@ select count(*) from cinema.ticket where order_id = 5926703;
 ### Сложный запрос №3
 
 Добавил в индекс таблицы cinema.place поле hall_id.
-
+Для индекса idx_place_hall_id был выбран тип b-tree, поскольку в запросе используется равенство: `join hall h on p.hall_id = h.id`.
 
 ![10-million-records-complex-request-3-after-optimization.png](img/explain/10-million-records-complex-request-3-after-optimization.png)
 
