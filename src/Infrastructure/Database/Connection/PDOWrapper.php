@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Database\Connection;
 
-use App\Application\DotEnvLoader;
+use App\Core\Config\DotEnvLoader;
 
 class PDOWrapper
 {

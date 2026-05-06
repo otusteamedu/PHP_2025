@@ -1,4 +1,4 @@
-DELETE http://localhost:{{nginxPublishedPort}}/delete-user?id=1
+DELETE http://localhost:{{nginxPublishedPort}}/user/delete?id=10
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

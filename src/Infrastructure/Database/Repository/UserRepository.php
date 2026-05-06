@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Database\Repository;
 
-use App\Domain\Collection\UserCollection;
+use App\Domain\UserManagement\Collection\UserCollection;
 use App\Infrastructure\Database\DataMapper\UserMapper;
 
 class UserRepository extends AbstractRepository

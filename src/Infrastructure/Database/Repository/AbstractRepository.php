@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Database\Repository;
 
-use App\Domain\Collection\AbstractCollection;
-use App\Domain\Entity\EntityInterface;
+use App\Domain\Shared\Collection\AbstractCollection;
+use App\Domain\Shared\Entity\EntityInterface;
 use App\Infrastructure\Database\Connection\DatabaseQueryExecutor;
 use App\Infrastructure\Database\DataMapper\DataMapperInterface;
 
