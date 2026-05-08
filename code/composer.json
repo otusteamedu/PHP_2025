@@ -1,0 +1,18 @@
+{
+    "name": "otus/event-storage",
+    "description": "Console event storage application with Redis backend.",
+    "type": "project",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "ext-redis": "*"
+    },
+    "config": {
+        "platform-check": false
+    }
+}
