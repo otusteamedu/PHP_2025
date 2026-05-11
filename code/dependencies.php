@@ -72,7 +72,10 @@ return function (Container $container) {
         );
     });
     $container->set(Repository\UserTrainingPlanRepositoryInterface::class, function (ContainerInterface $c) {
-        return new PdoRepository\PostgresUserTrainingPlanRepository($c->get(PDO::class));
+        return new PdoRepository\PostgresUserTrainingPlanRepository(
+            $c->get(PDO::class),
+            $c->get(Repository\UserRepositoryInterface::class)
+        );
     });
     $container->set(Repository\ExerciseRepositoryInterface::class, function (ContainerInterface $c) {
         return new PdoRepository\PostgresExerciseRepository($c->get(PDO::class));
@@ -119,6 +122,35 @@ return function (Container $container) {
             $c->get(TrainingPlanValidator::class),
             $c->get(UseCase\TrainingPlan\CreateTrainingPlanUseCase::class),
             $c->get(UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay::class)
+        );
+    });
+
+    // Event Publisher
+    $container->set(\App\Domain\Event\EventPublisherInterface::class, function (ContainerInterface $c) {
+        return new \App\Infrastructure\Event\RabbitMQEventPublisher(
+            $_ENV['RABBITMQ_HOST'],
+            (int)$_ENV['RABBITMQ_PORT'],
+            $_ENV['RABBITMQ_LOGIN'],
+            $_ENV['RABBITMQ_PASSWORD'],
+            'fitness'
+        );
+    });
+
+    // Use Case for Notifications
+    $container->set(\App\Application\UseCase\GenerateTrainingNotificationEvents::class, function (ContainerInterface $c) {
+        return new \App\Application\UseCase\GenerateTrainingNotificationEvents(
+            $c->get(Repository\TrainingScheduleRepositoryInterface::class),
+            $c->get(Repository\UserTrainingPlanRepositoryInterface::class),
+            $c->get(\App\Domain\Event\EventPublisherInterface::class),
+            $c->get(Repository\TrainingPlanRepositoryInterface::class),
+            $c->get(Repository\UserRepositoryInterface::class)
+        );
+    });
+
+    // Console Command
+    $container->set(\App\Presentation\Console\Command\GenerateTrainingNotificationsCommand::class, function (ContainerInterface $c) {
+        return new \App\Presentation\Console\Command\GenerateTrainingNotificationsCommand(
+            $c->get(\App\Application\UseCase\GenerateTrainingNotificationEvents::class)
         );
     });
 };
