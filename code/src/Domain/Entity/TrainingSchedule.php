@@ -13,17 +13,17 @@ class TrainingSchedule
 {
     /**
      * @param int|null $id
-     * @param int $dayOfWeek День недели (1 - Понедельник, 7 - Воскресенье).
-     * @param string $time Время тренировки в формате HH:MM.
-     * @param DateTimeImmutable $date Дата тренировки.
+     * @param int $trainingPlanId
+     * @param DateTimeImmutable|string $startTime
+     * @param DateTimeImmutable $endTixme
      * @param TrainingPlanExercise[] $exercises
      */
     public function __construct(
-        private ?int   $id,
-        private int    $dayOfWeek,
-        private string $time,
-        private DateTimeImmutable $date,
-        private array $exercises = []
+        private readonly ?int                     $id,
+        private readonly int                      $trainingPlanId,
+        private readonly DateTimeImmutable|string $startTime,
+        private readonly DateTimeImmutable        $endTime,
+        private array                             $exercises = []
     ) {
     }
 
@@ -32,19 +32,25 @@ class TrainingSchedule
         return $this->id;
     }
 
-    public function getDayOfWeek(): int
+    public function getTrainingPlanId(): int
     {
-        return $this->dayOfWeek;
+        return $this->trainingPlanId;
     }
 
-    public function getTime(): string
+    public function getStartTime(): DateTimeImmutable
     {
-        return $this->time;
+        return $this->startTime;
     }
 
-    public function getDate(): \DateTimeImmutable
+    public function getEndTime(): DateTimeImmutable
     {
-        return $this->date;
+        return $this->endTime;
+    }
+
+    public function getDate(): DateTimeImmutable
+    {
+        // Дата извлекается из времени начала
+        return $this->startTime;
     }
 
     /**

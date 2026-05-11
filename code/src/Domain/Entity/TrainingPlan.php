@@ -13,7 +13,7 @@ class TrainingPlan
         private ?int $id,
         private string $name,
         private ?string $description,
-        private \DateTimeImmutable $created_at,
+        private ?\DateTimeImmutable $created_at,
         private array $schedules = []
     ) {
     }
@@ -48,7 +48,7 @@ class TrainingPlan
         $this->description = $description;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->created_at;
     }
