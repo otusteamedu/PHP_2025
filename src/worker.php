@@ -2,6 +2,7 @@
 
 require 'vendor/autoload.php';
 
+use App\Exceptions\TemporaryProcessingException;
 use App\Services\QueueService;
 use App\Services\RequestStatusService;
 
@@ -15,9 +16,10 @@ echo "Worker started. Waiting for tasks...\n";
 try {
     $queueService = new QueueService();
     $statusService = new RequestStatusService();
+    $taskHandlers = createTaskHandlers();
 
     // Определяем callback-функцию для обработки каждой задачи
-    $callback = function ($task) use ($statusService) {
+    $callback = function ($task) use ($statusService, $taskHandlers) {
         echo "--------------------------------------------------\n";
         echo "Received task: " . json_encode($task, JSON_UNESCAPED_UNICODE) . "\n";
 
@@ -31,16 +33,25 @@ try {
         $statusService->markProcessing($requestId);
 
         try {
-            if (($task['type'] ?? '') !== 'statement_generation') {
-                throw new RuntimeException('Unknown task type: ' . ($task['type'] ?? 'none'));
-            }
-
-            $result = processStatementGeneration($task);
+            $result = executeTask($task, $taskHandlers);
             $statusService->markCompleted($requestId, $result);
             echo "Task {$requestId} processed.\n";
         } catch (Throwable $e) {
+            if (isTemporaryFailure($e)) {
+                try {
+                    $statusService->markQueuedForRetry($requestId, $e->getMessage());
+                } catch (Throwable $inner) {
+                    echo "Task {$requestId} retry status update failed: {$inner->getMessage()}\n";
+                }
+
+                echo "Task {$requestId} temporary failure: {$e->getMessage()}\n";
+
+                throw new TemporaryProcessingException('Temporary failure, task requeued.', 0, $e);
+            }
+
             $statusService->markFailed($requestId, $e->getMessage());
-            echo "Task {$requestId} failed: {$e->getMessage()}\n";
+            echo "Task {$requestId} failed permanently: {$e->getMessage()}\n";
+
             throw $e;
         }
     };
@@ -53,6 +64,37 @@ try {
     echo "Error in worker: " . $e->getMessage() . "\n";
     // Немного удерживаем контейнер запущенным при мгновенном падении, это удобно для отладки
     sleep(10);
+}
+
+/**
+ * Реестр обработчиков задач по типам.
+ * Для добавления нового типа достаточно зарегистрировать новый обработчик здесь.
+ *
+ * @return array<string, callable(array): array>
+ */
+function createTaskHandlers(): array
+{
+    return [
+        'statement_generation' => static fn(array $task): array => processStatementGeneration($task),
+    ];
+}
+
+/**
+ * Выполняет задачу через реестр обработчиков.
+ *
+ * @param array<string, callable(array): array> $handlers
+ */
+function executeTask(array $task, array $handlers): array
+{
+    $taskType = (string) ($task['type'] ?? '');
+
+    if ($taskType === '' || !isset($handlers[$taskType])) {
+        throw new RuntimeException('Unknown task type: ' . ($taskType !== '' ? $taskType : 'none'));
+    }
+
+    $handler = $handlers[$taskType];
+
+    return $handler($task);
 }
 
 function processStatementGeneration(array $task): array
@@ -86,4 +128,30 @@ function sendNotification(string $email, string $message): void
 {
     echo "SENDING NOTIFICATION -> To: {$email}, Message: {$message}\n";
     // В реальном приложении здесь обычно используется почтовый сервис или Telegram API
+}
+
+function isTemporaryFailure(Throwable $e): bool
+{
+    if ($e instanceof TemporaryProcessingException) {
+        return true;
+    }
+
+    $message = strtolower($e->getMessage());
+    $transientHints = [
+        'timeout',
+        'temporarily unavailable',
+        'try again',
+        'connection reset',
+        'connection refused',
+        'too many requests',
+        'rate limit',
+    ];
+
+    foreach ($transientHints as $hint) {
+        if (str_contains($message, $hint)) {
+            return true;
+        }
+    }
+
+    return false;
 }

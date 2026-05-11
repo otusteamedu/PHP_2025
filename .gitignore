@@ -6,3 +6,5 @@
 /home_work1/.env
 .env
 vendor/
+src/vendor/
+node_modules/

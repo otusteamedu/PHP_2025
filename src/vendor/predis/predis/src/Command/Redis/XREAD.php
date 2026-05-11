@@ -46,14 +46,6 @@ class XREAD extends RedisCommand
 
     public function parseResponse($data)
     {
-        if (!$data) {
-            return [];
-        }
-
-        if ($data !== array_values($data)) {
-            return $data; // Relay
-        }
-
         $processedData = [];
 
         foreach ($data as $stream) {

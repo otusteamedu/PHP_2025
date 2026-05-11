@@ -6,7 +6,7 @@
 2. Получает номер запроса (request_id).
 3. Проверяет статус обработки по request_id.
 
-Внутри используется RabbitMQ для очереди и фоновый worker для обработки задач.
+Внутри используется RabbitMQ для очереди, Redis для хранения статусов и фоновый worker для обработки задач.
 
 ## Требования
 
@@ -16,6 +16,14 @@
 ## Запуск
 
 1. Поднять контейнеры:
+
+Перед запуском создайте `.env` на основе примера:
+
+```bash
+copy .env.example .env
+```
+
+Затем поднимите контейнеры:
 
 ```bash
 docker-compose down
@@ -111,13 +119,19 @@ curl http://localhost:8080/api/requests/4b68a83f3f384fb8a1794c0f89a94468
 
 - Producer: API в src/index.php публикует задачи в RabbitMQ.
 - Consumer: src/worker.php читает сообщения из очереди и обрабатывает их в фоне.
-- Статусы запроса хранятся в файлах в src/storage/requests.
+- Статусы запроса хранятся в Redis.
+- При временных сбоях worker отправляет `nack` с requeue вместо безусловного `ack`.
+- Worker использует реестр обработчиков типов задач. В учебной версии зарегистрирован один тип: `statement_generation`.
+
+Ограничение учебной версии:
+
+- Добавление новых типов задач требует регистрации нового обработчика в `createTaskHandlers()` в `src/worker.php`.
 
 RabbitMQ management UI:
 
 - URL: http://localhost:15672
-- Login: guest
-- Password: guest
+- Login: берется из `RABBITMQ_USER` в `.env`
+- Password: берется из `RABBITMQ_PASSWORD` в `.env`
 
 ## Swagger / OpenAPI
 
@@ -135,5 +149,5 @@ RabbitMQ management UI:
 - src/index.php - REST API (create request, get status)
 - src/worker.php - фоновый обработчик очереди
 - src/Services/QueueService.php - работа с RabbitMQ
-- src/Services/RequestStatusService.php - хранение и обновление статусов
+- src/Services/RequestStatusService.php - хранение и обновление статусов в Redis
 - src/openapi.yaml - Swagger/OpenAPI документация

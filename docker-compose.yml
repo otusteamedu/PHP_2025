@@ -16,14 +16,43 @@ services:
       context: ./php
     volumes:
       - ./src:/var/www/html
+    environment:
+      AMQP_HOST: rabbitmq
+      AMQP_PORT: 5672
+      AMQP_USER: ${RABBITMQ_USER:-app_user}
+      AMQP_PASSWORD: ${RABBITMQ_PASSWORD:-change_me_rabbitmq_password}
+      AMQP_VHOST: ${RABBITMQ_VHOST:-/}
+      AMQP_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME:-task_queue}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change_me_redis_password}
+      REDIS_DB: ${REDIS_DB:-0}
+      REDIS_TIMEOUT_SECONDS: ${REDIS_TIMEOUT_SECONDS:-2.5}
+      REQUEST_STATUS_KEY_PREFIX: ${REQUEST_STATUS_KEY_PREFIX:-request_status:}
+      REQUEST_STATUS_TTL_SECONDS: ${REQUEST_STATUS_TTL_SECONDS:-604800}
+    depends_on:
+      - rabbitmq
+      - redis
     networks:
       - app-network
 
   rabbitmq:
     image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-app_user}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-change_me_rabbitmq_password}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "no", "--requirepass", "${REDIS_PASSWORD:-change_me_redis_password}"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     networks:
       - app-network
 networks:

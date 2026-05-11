@@ -32,23 +32,9 @@ class COMMAND extends BaseCommand
      */
     public function parseResponse($data)
     {
-        if (!is_array($data)) {
-            return $data;
-        }
+        // Relay (RESP3) uses maps and it might be good
+        // to make the return value a breaking change
 
-        if ($data === array_values($data)) {
-            return array_map(function ($item) {
-                return $this->parseResponse($item);
-            }, $data);
-        }
-
-        // Relay
-        $result = [];
-        foreach ($data as $key => $value) {
-            $result[] = $key;
-            $result[] = $this->parseResponse($value);
-        }
-
-        return $result;
+        return $data;
     }
 }

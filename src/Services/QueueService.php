@@ -2,20 +2,34 @@
 
 namespace App\Services;
 
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
+use App\Exceptions\TemporaryProcessingException;
 
 class QueueService
 {
     private $connection;
     private $channel;
-    private string $queueName = 'task_queue';
+    private string $queueName;
 
     public function __construct()
     {
+        $host = $this->envString('AMQP_HOST', 'rabbitmq');
+        $port = $this->envInt('AMQP_PORT', 5672);
+        $user = $this->envString('AMQP_USER', '');
+        $password = $this->envString('AMQP_PASSWORD', '');
+        $vhost = $this->envString('AMQP_VHOST', '/');
+        $this->queueName = $this->envString('AMQP_QUEUE_NAME', 'task_queue');
+
+        if ($user === '' || $password === '') {
+            throw new \InvalidArgumentException('AMQP_USER and AMQP_PASSWORD must be set in environment variables.');
+        }
 
         try {
-            $this->connection = new AMQPStreamConnection('rabbitmq', 5672, 'guest', 'guest');
+            $connectionClass = '\\PhpAmqpLib\\Connection\\AMQPStreamConnection';
+            if (!class_exists($connectionClass)) {
+                throw new \RuntimeException('php-amqplib is not installed. Run composer install in src/.');
+            }
+
+            $this->connection = new $connectionClass($host, $port, $user, $password, $vhost);
             $this->channel = $this->connection->channel();
             
 
@@ -28,10 +42,16 @@ class QueueService
 
     public function push(array $data): void
     {
+        $messageClass = '\\PhpAmqpLib\\Message\\AMQPMessage';
+        if (!class_exists($messageClass)) {
+            throw new \RuntimeException('php-amqplib is not installed. Run composer install in src/.');
+        }
+
         $payload = json_encode($data);
-        $msg = new AMQPMessage(
+        $msg = new $messageClass(
             $payload,
-            ['delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT]
+            // 2 = persistent delivery mode in AMQP
+            ['delivery_mode' => 2]
         );
         
         $this->channel->basic_publish($msg, '', $this->queueName);
@@ -51,6 +71,12 @@ class QueueService
         $callbackWrapper = function ($msg) use ($callback) {
             $body = $msg->body;
             $data = json_decode($body, true);
+
+            if (!is_array($data)) {
+                echo " [!] Invalid JSON payload, message acknowledged\n";
+                $msg->ack();
+                return;
+            }
             
             echo " [x] Received task\n";
 
@@ -61,11 +87,12 @@ class QueueService
                 // Подтверждаем сообщение только после успешной обработки
                 $msg->ack();
                 echo " [x] Done\n";
-            } catch (\Exception $e) {
-                echo " [!] Error processing message: " . $e->getMessage() . "\n";
-                // В реальном приложении здесь обычно делают ретраи или отправку в dead letter queue.
-                // В этом демо подтверждаем сообщение, чтобы избежать бесконечных повторных доставок.
-                $msg->ack(); 
+            } catch (TemporaryProcessingException $e) {
+                echo " [~] Temporary failure, requeue message: " . $e->getMessage() . "\n";
+                $msg->nack(false, true);
+            } catch (\Throwable $e) {
+                echo " [!] Permanent error, message acknowledged: " . $e->getMessage() . "\n";
+                $msg->ack();
             }
         };
 
@@ -98,5 +125,31 @@ class QueueService
     public function __destruct()
     {
         $this->close();
+    }
+
+    private function envString(string $key, string $default): string
+    {
+        $value = getenv($key);
+
+        if ($value === false || $value === '') {
+            return $default;
+        }
+
+        return $value;
+    }
+
+    private function envInt(string $key, int $default): int
+    {
+        $value = getenv($key);
+
+        if ($value === false || $value === '') {
+            return $default;
+        }
+
+        if (!is_numeric($value)) {
+            throw new \InvalidArgumentException(sprintf('Environment variable %s must be numeric.', $key));
+        }
+
+        return (int) $value;
     }
 }

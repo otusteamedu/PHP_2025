@@ -5,18 +5,45 @@ declare(strict_types=1);
 namespace App\Services;
 
 use InvalidArgumentException;
+use Predis\Client;
 use RuntimeException;
 
 final class RequestStatusService
 {
-    private string $storagePath;
+    private Client $redis;
+    private string $keyPrefix;
+    private int $ttlSeconds;
 
-    public function __construct(?string $storagePath = null)
+    public function __construct()
     {
-        $this->storagePath = $storagePath ?? __DIR__ . '/../storage/requests';
+        $host = $this->envString('REDIS_HOST', 'redis');
+        $port = $this->envInt('REDIS_PORT', 6379);
+        $password = $this->envString('REDIS_PASSWORD', '');
+        $database = $this->envInt('REDIS_DB', 0);
+        $timeout = $this->envFloat('REDIS_TIMEOUT_SECONDS', 2.5);
 
-        if (!is_dir($this->storagePath) && !mkdir($this->storagePath, 0775, true) && !is_dir($this->storagePath)) {
-            throw new RuntimeException('Unable to create storage directory for request statuses.');
+        $this->keyPrefix = $this->envString('REQUEST_STATUS_KEY_PREFIX', 'request_status:');
+        $this->ttlSeconds = $this->envInt('REQUEST_STATUS_TTL_SECONDS', 604800);
+
+        $parameters = [
+            'scheme' => 'tcp',
+            'host' => $host,
+            'port' => $port,
+            'database' => $database,
+            'timeout' => $timeout,
+        ];
+
+        if ($password !== '') {
+            $parameters['password'] = $password;
+        }
+
+        $this->redis = new Client($parameters);
+
+        try {
+            $this->redis->connect();
+            $this->redis->ping();
+        } catch (\Throwable $e) {
+            throw new RuntimeException('Redis connection error: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -41,13 +68,13 @@ final class RequestStatusService
 
     public function get(string $requestId): ?array
     {
-        $path = $this->buildPath($requestId);
+        $raw = $this->redis->get($this->buildKey($requestId));
 
-        if (!is_file($path)) {
+        if ($raw === null) {
             return null;
         }
 
-        return $this->readRecord($path);
+        return $this->decodeRecord((string) $raw);
     }
 
     public function markProcessing(string $requestId): array
@@ -77,15 +104,26 @@ final class RequestStatusService
         });
     }
 
+    public function markQueuedForRetry(string $requestId, string $error): array
+    {
+        return $this->update($requestId, function (array &$record) use ($error): void {
+            $record['status'] = 'queued';
+            $record['error'] = $error;
+            $record['retries'] = isset($record['retries']) ? ((int) $record['retries'] + 1) : 1;
+            unset($record['started_at'], $record['completed_at']);
+        });
+    }
+
     private function update(string $requestId, callable $mutator): array
     {
-        $path = $this->buildPath($requestId);
+        $key = $this->buildKey($requestId);
+        $raw = $this->redis->get($key);
 
-        if (!is_file($path)) {
+        if ($raw === null) {
             throw new RuntimeException('Request status not found.');
         }
 
-        $record = $this->readRecord($path);
+        $record = $this->decodeRecord((string) $raw);
         $mutator($record);
         $record['updated_at'] = gmdate('c');
 
@@ -96,43 +134,80 @@ final class RequestStatusService
 
     private function writeRecord(string $requestId, array $record): void
     {
-        $path = $this->buildPath($requestId);
-        $encoded = json_encode($record, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $encoded = json_encode($record, JSON_UNESCAPED_UNICODE);
 
         if ($encoded === false) {
             throw new RuntimeException('Failed to encode request status to JSON.');
         }
 
-        $bytes = file_put_contents($path, $encoded . PHP_EOL, LOCK_EX);
+        $key = $this->buildKey($requestId);
+        $written = $this->ttlSeconds > 0
+            ? $this->redis->setex($key, $this->ttlSeconds, $encoded)
+            : $this->redis->set($key, $encoded);
 
-        if ($bytes === false) {
-            throw new RuntimeException('Failed to write request status file.');
+        if ((string) $written !== 'OK') {
+            throw new RuntimeException('Failed to write request status to Redis.');
         }
     }
 
-    private function readRecord(string $path): array
+    private function decodeRecord(string $raw): array
     {
-        $content = file_get_contents($path);
-
-        if ($content === false) {
-            throw new RuntimeException('Failed to read request status file.');
-        }
-
-        $decoded = json_decode($content, true);
+        $decoded = json_decode($raw, true);
 
         if (!is_array($decoded)) {
-            throw new RuntimeException('Corrupted request status file.');
+            throw new RuntimeException('Corrupted request status in Redis.');
         }
 
         return $decoded;
     }
 
-    private function buildPath(string $requestId): string
+    private function buildKey(string $requestId): string
     {
         if (!preg_match('/^[A-Za-z0-9_-]{8,128}$/', $requestId)) {
             throw new InvalidArgumentException('Invalid request id format.');
         }
 
-        return $this->storagePath . DIRECTORY_SEPARATOR . $requestId . '.json';
+        return $this->keyPrefix . $requestId;
+    }
+
+    private function envString(string $key, string $default): string
+    {
+        $value = getenv($key);
+
+        if ($value === false || $value === '') {
+            return $default;
+        }
+
+        return $value;
+    }
+
+    private function envInt(string $key, int $default): int
+    {
+        $value = getenv($key);
+
+        if ($value === false || $value === '') {
+            return $default;
+        }
+
+        if (!is_numeric($value)) {
+            throw new InvalidArgumentException(sprintf('Environment variable %s must be numeric.', $key));
+        }
+
+        return (int) $value;
+    }
+
+    private function envFloat(string $key, float $default): float
+    {
+        $value = getenv($key);
+
+        if ($value === false || $value === '') {
+            return $default;
+        }
+
+        if (!is_numeric($value)) {
+            throw new InvalidArgumentException(sprintf('Environment variable %s must be numeric.', $key));
+        }
+
+        return (float) $value;
     }
 }

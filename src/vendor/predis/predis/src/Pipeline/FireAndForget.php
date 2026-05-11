@@ -12,7 +12,6 @@
 
 namespace Predis\Pipeline;
 
-use Predis\Connection\AggregateConnectionInterface;
 use Predis\Connection\ConnectionInterface;
 use SplQueue;
 
@@ -26,10 +25,8 @@ class FireAndForget extends Pipeline
      */
     protected function executePipeline(ConnectionInterface $connection, SplQueue $commands)
     {
-        if ($connection instanceof AggregateConnectionInterface) {
-            $this->writeToMultiNode($connection, $commands);
-        } else {
-            $this->writeToSingleNode($connection, $commands);
+        while (!$commands->isEmpty()) {
+            $connection->writeRequest($commands->dequeue());
         }
 
         $connection->disconnect();

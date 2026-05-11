@@ -12,7 +12,7 @@
 
 namespace Predis\Command\Redis;
 
-use Predis\Command\PrefixableCommand as RedisCommand;
+use Predis\Command\Command as RedisCommand;
 
 class HEXPIRETIME extends RedisCommand
 {
@@ -27,10 +27,5 @@ class HEXPIRETIME extends RedisCommand
         $processedArguments = array_merge($processedArguments, $arguments[1]);
 
         parent::setArguments($processedArguments);
-    }
-
-    public function prefixKeys($prefix)
-    {
-        $this->applyPrefixForFirstArgument($prefix);
     }
 }

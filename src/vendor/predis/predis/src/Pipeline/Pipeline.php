@@ -18,7 +18,6 @@ use Predis\ClientContextInterface;
 use Predis\ClientException;
 use Predis\ClientInterface;
 use Predis\Command\CommandInterface;
-use Predis\Connection\AggregateConnectionInterface;
 use Predis\Connection\ConnectionInterface;
 use Predis\Connection\Replication\ReplicationInterface;
 use Predis\Response\ErrorInterface as ErrorResponseInterface;
@@ -132,26 +131,19 @@ class Pipeline implements ClientContextInterface
      */
     protected function executePipeline(ConnectionInterface $connection, SplQueue $commands)
     {
-        if ($connection instanceof AggregateConnectionInterface) {
-            $this->writeToMultiNode($connection, $commands);
-        } else {
-            $this->writeToSingleNode($connection, $commands);
+        foreach ($commands as $command) {
+            $connection->writeRequest($command);
         }
 
         $responses = [];
         $exceptions = $this->throwServerExceptions();
-        $protocolVersion = (int) $connection->getParameters()->protocol;
 
         while (!$commands->isEmpty()) {
             $command = $commands->dequeue();
             $response = $connection->readResponse($command);
 
             if (!$response instanceof ResponseInterface) {
-                if ($protocolVersion === 2) {
-                    $responses[] = $command->parseResponse($response);
-                } else {
-                    $responses[] = $command->parseResp3Response($response);
-                }
+                $responses[] = $command->parseResponse($response);
             } elseif ($response instanceof ErrorResponseInterface && $exceptions) {
                 $this->exception($connection, $response);
             } else {
@@ -160,39 +152,6 @@ class Pipeline implements ClientContextInterface
         }
 
         return $responses;
-    }
-
-    /**
-     * Writes pipelined commands to single node connection.
-     *
-     * @param  ConnectionInterface $connection
-     * @param  SplQueue            $commands
-     * @return void
-     */
-    protected function writeToSingleNode(ConnectionInterface $connection, SplQueue $commands)
-    {
-        $buffer = '';
-
-        foreach ($commands as $command) {
-            $buffer .= $command->serializeCommand();
-        }
-
-        $connection->write($buffer);
-    }
-
-    /**
-     * Writes pipelined commands to multi node connection.
-     *
-     * @param  AggregateConnectionInterface $connection
-     * @param  SplQueue                     $commands
-     * @return void
-     */
-    protected function writeToMultiNode(AggregateConnectionInterface $connection, SplQueue $commands)
-    {
-        foreach ($commands as $command) {
-            $nodeConnection = $connection->getConnectionByCommand($command);
-            $nodeConnection->write($command->serializeCommand());
-        }
     }
 
     /**
