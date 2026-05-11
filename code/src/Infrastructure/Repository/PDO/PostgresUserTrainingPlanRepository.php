@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Repository\PDO;
 
+use App\Domain\Entity\User;
 use App\Domain\Repository;
 use PDO;
 
 readonly class PostgresUserTrainingPlanRepository implements Repository\UserTrainingPlanRepositoryInterface
 {
-    public function __construct(private PDO $pdo)
-    {
+    public function __construct(
+        private PDO $pdo,
+        private Repository\UserRepositoryInterface $userRepository
+    ) {
     }
 
     public function assign(int $userId, int $trainingPlanId): void
@@ -47,8 +50,25 @@ readonly class PostgresUserTrainingPlanRepository implements Repository\UserTrai
         return (bool) $stmt->fetchColumn();
     }
 
+    /**
+     * @param int $trainingPlanId
+     * @return User[]
+     */
     public function findByTrainingPlanId(int $trainingPlanId): array
     {
-        // TODO: Implement findByTrainingPlanId() method.
+        $stmt = $this->pdo->prepare('
+            SELECT u.*
+            FROM users u
+            JOIN user_training_plan utp ON u.id = utp.user_id
+            WHERE utp.training_plan_id = :training_plan_id
+        ');
+        $stmt->execute(['training_plan_id' => $trainingPlanId]);
+
+        $users = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $users[] = $this->userRepository->findById($row['id']);
+        }
+
+        return array_filter($users);
     }
 }

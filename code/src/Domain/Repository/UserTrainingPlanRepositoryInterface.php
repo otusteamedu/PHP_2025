@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Repository;
 
+use App\Domain\Entity\User;
+
 interface UserTrainingPlanRepositoryInterface
 {
-    public function assign(int $userId, int $trainingPlanId): void;
-    public function unassign(int $userId, int $trainingPlanId): void;
-    public function isAssigned(int $userId, int $trainingPlanId): bool;
+    /**
+     * @param int $trainingPlanId
+     * @return User[]
+     */
+    public function findByTrainingPlanId(int $trainingPlanId): array;
 }

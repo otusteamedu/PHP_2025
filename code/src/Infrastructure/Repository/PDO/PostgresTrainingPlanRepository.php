@@ -138,23 +138,25 @@ readonly class PostgresTrainingPlanRepository implements Repository\TrainingPlan
      */
     private function hydrateTrainingPlan(array $data): TrainingPlan
     {
-        $schedules = $this->trainingScheduleRepository->findByTrainingPlanId((int)$data['id']);
+        $schedules = $this->trainingScheduleRepository->findByTrainingPlanId( $data['id'] );
+        $createdAt = isset($data['created_at']) ? new \DateTimeImmutable($data['created_at']) : null;
 
         return new TrainingPlan(
             (int)$data['id'],
             $data['name'],
             $data['description'],
-            new \DateTimeImmutable($data['created_at']),
+            $createdAt,
             $schedules
         );
     }
 
     private function dehydrateTrainingPlan(TrainingPlan $plan, bool $includeId = true): array
     {
+        $createdAt = $plan->getCreatedAt();
         $data = [
             'name' => $plan->getName(),
             'description' => $plan->getDescription(),
-            'created_at' => $plan->getCreatedAt()->format('Y-m-d H:i:s'),
+            'created_at' => $createdAt ? $createdAt->format('Y-m-d H:i:s') : null,
         ];
 
         if ($includeId) {
@@ -229,12 +231,14 @@ readonly class PostgresTrainingPlanRepository implements Repository\TrainingPlan
                 $exercises
             );
         }
+        
+        $createdAt = isset($planData['created_at']) ? new \DateTimeImmutable($planData['created_at']) : null;
 
         return new TrainingPlan(
             (int)$planData['id'],
             $planData['name'],
             $planData['description'],
-            new \DateTimeImmutable($planData['created_at']),
+            $createdAt,
             $schedules
         );
     }
