@@ -35,8 +35,8 @@ class GetTrainingPlanWithExercisesByDay
 
             $days[$dateKey] = [
                 'date' => $dateKey,
-                'time' => $schedule->getTime(),
-                'day' => $schedule->getDayOfWeek(),
+                'time' => $schedule->getStartTime()->format('H:i'),
+                'day' => $schedule->getDate()->format('Y-m-d'),
                 'exercises' => $exercises,
             ];
         }
