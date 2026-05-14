@@ -46,9 +46,15 @@ class UserMapper extends Mapper
     /**
      * Возвращает всех пользователей в виде коллекции.
      */
-    public function findAll(): UserCollection
+    public function findAll(int $limit = 100, int $offset = 0): UserCollection
     {
-        $statement = $this->connection->query('SELECT * FROM ' . $this->getTableName() . ' ORDER BY id');
+        $statement = $this->connection->prepare(
+            'SELECT * FROM ' . $this->getTableName() . ' ORDER BY id LIMIT :limit OFFSET :offset'
+        );
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+
         $collection = new UserCollection();
 
         while ($row = $statement->fetch()) {

@@ -24,7 +24,7 @@ class Console
         try {
             match ($command) {
                 'init' => $this->init(),
-                'list' => $this->list(),
+                'list' => $this->list($argv),
                 'get' => $this->get($argv),
                 'create' => $this->create($argv),
                 'update' => $this->update($argv),
@@ -55,11 +55,14 @@ class Console
         echo 'Таблица users создана и заполнена тестовыми данными.' . PHP_EOL;
     }
 
-    private function list(): void
+    private function list(array $arguments): void
     {
-        $users = $this->getUserMapper()->findAll();
+        $limit = $this->getOptionalPositiveIntArgument($arguments, 2, 100, 'limit');
+        $offset = $this->getOptionalPositiveIntArgument($arguments, 3, 0, 'offset');
+        $users = $this->getUserMapper()->findAll($limit, $offset);
 
         echo 'Найдено пользователей: ' . count($users) . PHP_EOL;
+        echo 'limit: ' . $limit . ', offset: ' . $offset . PHP_EOL;
         echo 'id | name | phone' . PHP_EOL;
         echo '---|------|------' . PHP_EOL;
 
@@ -112,7 +115,7 @@ class Console
     {
         echo 'Доступные команды:' . PHP_EOL;
         echo '  init                       Создать таблицу users и заполнить тестовыми данными' . PHP_EOL;
-        echo '  list                       Показать всех пользователей' . PHP_EOL;
+        echo '  list [limit] [offset]      Показать пользователей постранично' . PHP_EOL;
         echo '  get <id>                   Показать пользователя по id' . PHP_EOL;
         echo '  create <name> [phone]      Создать пользователя' . PHP_EOL;
         echo '  update <id> <name> [phone] Обновить пользователя' . PHP_EOL;
@@ -160,6 +163,19 @@ class Console
 
         if (!ctype_digit($arguments[$index])) {
             throw new \InvalidArgumentException('Телефон должен быть целым положительным числом.');
+        }
+
+        return (int) $arguments[$index];
+    }
+
+    private function getOptionalPositiveIntArgument(array $arguments, int $index, int $default, string $name): int
+    {
+        if (!isset($arguments[$index]) || $arguments[$index] === '') {
+            return $default;
+        }
+
+        if (!ctype_digit($arguments[$index])) {
+            throw new \InvalidArgumentException('Аргумент ' . $name . ' должен быть целым положительным числом.');
         }
 
         return (int) $arguments[$index];

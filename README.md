@@ -65,10 +65,16 @@ docker-compose exec app php /data/mysite.local/index.php init
 docker-compose exec app php /data/mysite.local/index.php help
 ```
 
-Показать всех пользователей:
+Показать первую страницу пользователей (первые 100 записей):
 
 ```bash
 docker-compose exec app php /data/mysite.local/index.php list
+```
+
+Показать пользователей с указанием `limit` и `offset`:
+
+```bash
+docker-compose exec app php /data/mysite.local/index.php list 100 0
 ```
 
 Показать пользователя по id:
