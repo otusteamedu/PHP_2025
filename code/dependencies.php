@@ -155,7 +155,6 @@ return function (Container $container) {
             $c->get(Repository\UserTrainingPlanRepositoryInterface::class),
             $c->get(\App\Domain\Event\EventPublisherInterface::class),
             $c->get(Repository\TrainingPlanRepositoryInterface::class),
-            $c->get(Repository\UserRepositoryInterface::class)
         );
     });
 
