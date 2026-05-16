@@ -242,4 +242,36 @@ readonly class PostgresTrainingPlanRepository implements Repository\TrainingPlan
             $schedules
         );
     }
+
+    public function findExercisesByTrainingScheduleId(int $trainingScheduleId): array
+    {
+        $stmt = $this->pdo->prepare('
+            SELECT
+                e.id,
+                e.title,
+                e.description
+            FROM exercises e
+            JOIN training_plan_exercises tpe ON e.id = tpe.exercise_id
+            WHERE tpe.schedule_id = :schedule_id
+            ORDER BY tpe.sequence
+        ');
+        $stmt->execute(['schedule_id' => $trainingScheduleId]);
+        $exercisesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $exercises = [];
+        foreach ($exercisesData as $exerciseData) {
+            $exercises[] = $this->hydrateExercise($exerciseData);
+        }
+
+        return $exercises;
+    }
+
+    private function hydrateExercise(array $data): Exercise
+    {
+        return new Exercise(
+            (int)$data['id'],
+            $data['title'],
+            $data['description']
+        );
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Repository;
 
+use App\Domain\Entity\Exercise;
 use App\Domain\Entity\TrainingPlan;
 
 interface TrainingPlanRepositoryInterface extends RepositoryInterface
@@ -43,4 +44,10 @@ interface TrainingPlanRepositoryInterface extends RepositoryInterface
      * @return TrainingPlan|null
      */
     public function findWithExercisesByDay(int $trainingPlanId): ?TrainingPlan;
+
+    /**
+     * @param int $trainingScheduleId
+     * @return Exercise[]
+     */
+    public function findExercisesByTrainingScheduleId(int $trainingScheduleId): array;
 }
