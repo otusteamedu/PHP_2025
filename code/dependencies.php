@@ -12,10 +12,15 @@ use DI\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
+
+require_once __DIR__ . '/vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
+$dotenv->load();
 
 return function (Container $container) {
     // Logger
@@ -55,6 +60,16 @@ return function (Container $container) {
         } catch (PDOException $e) {
             throw new \RuntimeException("Database connection failed: " . $e->getMessage(), (int)$e->getCode(), $e);
         }
+    });
+
+    // RabbitMQ Connection
+    $container->set(AMQPStreamConnection::class, function (ContainerInterface $c) {
+        return new AMQPStreamConnection(
+            $_ENV['RABBITMQ_HOST'],
+            $_ENV['RABBITMQ_PORT'],
+            $_ENV['RABBITMQ_LOGIN'],
+            $_ENV['RABBITMQ_PASSWORD']
+        );
     });
 
     // Repositories
@@ -128,10 +143,7 @@ return function (Container $container) {
     // Event Publisher
     $container->set(\App\Domain\Event\EventPublisherInterface::class, function (ContainerInterface $c) {
         return new \App\Infrastructure\Event\RabbitMQEventPublisher(
-            $_ENV['RABBITMQ_HOST'],
-            (int)$_ENV['RABBITMQ_PORT'],
-            $_ENV['RABBITMQ_LOGIN'],
-            $_ENV['RABBITMQ_PASSWORD'],
+            $c->get(AMQPStreamConnection::class),
             'fitness'
         );
     });

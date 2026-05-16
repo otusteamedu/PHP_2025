@@ -10,14 +10,12 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitMQEventPublisher implements EventPublisherInterface
 {
-    private AMQPStreamConnection $connection;
     private \PhpAmqpLib\Channel\AMQPChannel $channel;
     private string $queueName;
 
-    public function __construct(string $host, int $port, string $user, string $password, string $queueName)
+    public function __construct(AMQPStreamConnection $connection, string $queueName)
     {
-        $this->connection = new AMQPStreamConnection($host, $port, $user, $password);
-        $this->channel = $this->connection->channel();
+        $this->channel = $connection->channel();
         $this->queueName = $queueName;
 
         // Объявляем очередь, если она еще не существует
@@ -40,11 +38,5 @@ class RabbitMQEventPublisher implements EventPublisherInterface
         );
 
         $this->channel->basic_publish($msg, '', $this->queueName);
-    }
-
-    public function __destruct()
-    {
-        $this->channel->close();
-        $this->connection->close();
     }
 }
