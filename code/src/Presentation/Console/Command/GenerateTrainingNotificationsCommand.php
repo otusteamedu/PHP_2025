@@ -18,7 +18,9 @@ class GenerateTrainingNotificationsCommand
     public function __invoke(): void
     {
         try {
-            $this->useCase->execute(new \DateTimeImmutable('today'));
+            $today = new \DateTimeImmutable('2026-05-05');
+            $this->useCase->execute($today);
+//            $this->useCase->execute(new \DateTimeImmutable('today'));
         } catch (\Exception $e) {
             echo "Error generating training notification events: " . $e->getMessage() . "\n";
             exit(1);

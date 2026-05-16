@@ -113,6 +113,9 @@ return function (Container $container) {
     $container->set(UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay::class, function (ContainerInterface $c) {
         return new UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay($c->get(Repository\TrainingPlanRepositoryInterface::class));
     });
+    $container->set(UseCase\TrainingPlan\GetExercisesByTrainingSchedule::class, function (ContainerInterface $c) {
+        return new UseCase\TrainingPlan\GetExercisesByTrainingSchedule($c->get(Repository\TrainingPlanRepositoryInterface::class));
+    });
 
     // Validators
     $container->set(UserValidator::class, function () {
