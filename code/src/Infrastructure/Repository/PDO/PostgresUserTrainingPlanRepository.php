@@ -71,4 +71,15 @@ readonly class PostgresUserTrainingPlanRepository implements Repository\UserTrai
 
         return array_filter($users);
     }
+
+    public function attachUserToTrainingPlan(int $userId, int $trainingPlanId)
+    {
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO user_training_plan (user_id, training_plan_id) VALUES (:user_id, :training_plan_id)'
+        );
+        $stmt->execute([
+            'user_id' => $userId,
+            'training_plan_id' => $trainingPlanId,
+        ]);
+    }
 }

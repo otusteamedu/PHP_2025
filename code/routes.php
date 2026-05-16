@@ -11,6 +11,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
+use App\Presentation\Controller\TrainingPlan\UserController as TrainingUserController;
 
 return static function (App $app) {
     // Add trailing slash middleware
@@ -51,6 +52,10 @@ return static function (App $app) {
         $group->get('/{id}', [UserController::class, 'getUser']);
         $group->put('/{id}', [UserController::class, 'updateUser']);
         $group->delete('/{id}', [UserController::class, 'deleteUser']);
+    });
+
+    $app->group('/user-training', function (Group $group){
+       $group->post('', [TrainingUserController::class,'attach']);
     });
 
     // Training Plans

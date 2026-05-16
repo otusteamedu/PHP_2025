@@ -13,4 +13,6 @@ interface UserTrainingPlanRepositoryInterface
      * @return User[]
      */
     public function findByTrainingPlanId(int $trainingPlanId): array;
+
+    public function attachUserToTrainingPlan(int $userId, int $trainingPlanId);
 }

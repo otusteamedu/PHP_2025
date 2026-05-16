@@ -8,6 +8,7 @@ use App\Presentation\Controller\TrainingPlan\TrainingPlanController;
 use App\Presentation\Controller\User\UserController;
 use App\Presentation\Validation\TrainingPlanValidator;
 use App\Presentation\Validation\UserValidator;
+use App\Presentation\Controller\TrainingPlan\UserController as TrainingUserController;
 use DI\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -141,6 +142,12 @@ return function (Container $container) {
             $c->get(UseCase\TrainingPlan\CreateTrainingPlanUseCase::class),
             $c->get(UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay::class)
         );
+    });
+
+    $container->set(TrainingUserController::class, function (ContainerInterface $c) {
+       return new TrainingUserController(
+           $c->get(UseCase\TrainingPlan\AssignTrainingPlanToUserUseCase::class)
+       );
     });
 
     // Event Publisher

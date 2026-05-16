@@ -6,16 +6,16 @@ namespace App\Application\UseCase\TrainingPlan;
 
 use App\Domain\Exception\TrainingPlanNotFoundException;
 use App\Domain\Exception\UserNotFoundException;
-use App\Repository\TrainingPlanRepositoryInterface;
-use App\Repository\UserRepositoryInterface;
-use App\Repository\UserTrainingPlanRepositoryInterface;
+use App\Domain\Repository\TrainingPlanRepositoryInterface;
+use App\Domain\Repository\UserRepositoryInterface;
+use App\Domain\Repository\UserTrainingPlanRepositoryInterface;
 
-class AssignTrainingPlanToUserUseCase
+readonly class AssignTrainingPlanToUserUseCase
 {
     public function __construct(
-        private readonly UserTrainingPlanRepositoryInterface $userTrainingPlanRepository,
-        private readonly UserRepositoryInterface $userRepository,
-        private readonly TrainingPlanRepositoryInterface $trainingPlanRepository
+        private UserTrainingPlanRepositoryInterface $userTrainingPlanRepository,
+        private UserRepositoryInterface             $userRepository,
+        private TrainingPlanRepositoryInterface     $trainingPlanRepository
     ) {
     }
 
