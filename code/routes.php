@@ -60,6 +60,7 @@ return static function (App $app) {
 
     // Training Plans
     $app->group('/training-plan', function (Group $group) {
+        $group->get('', [TrainingPlanController::class, 'getList']);
         $group->post('', [TrainingPlanController::class, 'createTrainingPlan']);
         $group->get('/{id}', [TrainingPlanController::class, 'getTrainingPlan']);
     });

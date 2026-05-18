@@ -5,25 +5,24 @@ declare(strict_types=1);
 namespace App\Presentation\Controller\TrainingPlan;
 
 use App\Application\UseCase;
-use App\Presentation\Validation\ValidationException;
 use App\Presentation\Validation\TrainingPlanValidator;
+use App\Presentation\Validation\ValidationException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-/**
- * Контроллер для управления планами тренировок.
- */
 readonly class TrainingPlanController
 {
     /**
      * @param TrainingPlanValidator $validator Валидатор данных плана тренировок.
      * @param UseCase\TrainingPlan\CreateTrainingPlanUseCase $createTrainingPlanUseCase Use case для создания плана тренировок.
      * @param UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay $getTrainingPlanWithExercisesByDay
+     * @param UseCase\TrainingPlan\GetAllTrainingPlansUseCase $getAllTrainingPlansUseCase
      */
     public function __construct(
         private TrainingPlanValidator $validator,
         private UseCase\TrainingPlan\CreateTrainingPlanUseCase $createTrainingPlanUseCase,
-        private UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay $getTrainingPlanWithExercisesByDay
+        private UseCase\TrainingPlan\GetTrainingPlanWithExercisesByDay $getTrainingPlanWithExercisesByDay,
+        private UseCase\TrainingPlan\GetAllTrainingPlansUseCase $getAllTrainingPlansUseCase
     ) {
     }
 
@@ -72,10 +71,26 @@ readonly class TrainingPlanController
     /**
      * @param Request $request
      * @param Response $response
-     * @param array $args
      * @return Response
      * @throws \JsonException
      */
+    public function getList(Request $request, Response $response): Response
+    {
+        $plans = $this->getAllTrainingPlansUseCase->execute();
+        $response->getBody()->write(json_encode($plans, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    /**
+     * Возвращает детальную информацию о плане тренировок, включая упражнения по дням.
+     *
+     * @param Request $request PSR-7 запрос.
+     * @param Response $response PSR-7 ответ.
+     * @param array $args Аргументы маршрута, содержащие ID плана тренировок.
+     * @return Response Ответ с детальной информацией о плане тренировок.
+     * @throws \JsonException
+     */
+
     public function getTrainingPlan(Request $request, Response $response, array $args): Response
     {
         $trainingPlanId = (int)$args['id'];
