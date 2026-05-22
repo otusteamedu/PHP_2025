@@ -1,4 +1,4 @@
-GET http://localhost:{{nginxPublishedPort}}/user/get?id=10
+GET http://localhost:{{nginxPublishedPort}}/api/v1/user/get?id=10
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

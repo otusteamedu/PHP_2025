@@ -1,4 +1,4 @@
-GET http://localhost:{{nginxPublishedPort}}/event/get
+GET http://localhost:{{nginxPublishedPort}}/api/v1/event/get
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

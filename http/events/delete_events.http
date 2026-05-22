@@ -1,4 +1,4 @@
-DELETE http://localhost:{{nginxPublishedPort}}/events/delete
+DELETE http://localhost:{{nginxPublishedPort}}/api/v1/events/delete
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

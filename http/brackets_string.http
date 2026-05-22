@@ -1,4 +1,4 @@
-POST http://localhost:{{nginxPublishedPort}}//brackets/balance-check
+POST http://localhost:{{nginxPublishedPort}}/api/v1/brackets/balance-check
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

@@ -1,4 +1,4 @@
-PATCH http://localhost:{{nginxPublishedPort}}/user/update-email?id=10
+PATCH http://localhost:{{nginxPublishedPort}}/api/v1/user/update-email?id=10
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache
