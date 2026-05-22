@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: API обработки отложенных запросов
+  version: 1.0.0
+  description: REST API для постановки запросов в очередь RabbitMQ и проверки статуса обработки. Worker имитирует обработку 30 секунд, а каждая третья заявка завершается ошибкой
+servers:
+  - url: http://mysite.local
+    description: Локальный веб-сервер
+tags:
+  - name: requests
+    description: Отложенные запросы
+paths:
+  /api/v1/requests:
+    post:
+      tags:
+        - requests
+      summary: Создать запрос на обработку
+      description: Создает запись в Postgres со статусом queued и отправляет идентификатор запроса в RabbitMQ
+      operationId: createRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequest'
+            example:
+              title: Загрузка отчета
+              description: Сформировать тестовый отчет по заявке
+      responses:
+        '200':
+          description: Запрос принят в обработку
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRequestResponse'
+              example:
+                request_id: 1
+        '400':
+          description: Некорректное тело запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/requests/{request_id}:
+    get:
+      tags:
+        - requests
+      summary: Получить статус обработки запроса
+      description: Возвращает текущий статус запроса из Postgres
+      operationId: getRequest
+      parameters:
+        - name: request_id
+          in: path
+          required: true
+          description: Идентификатор запроса
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Данные запроса найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        '404':
+          description: Запрос не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    CreateRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Название запроса
+        description:
+          type: string
+          maxLength: 1024
+          nullable: true
+          description: Описание запроса
+    RequestResponse:
+      type: object
+      required:
+        - request_id
+        - title
+        - status
+        - status_name
+        - created_at
+        - updated_at
+      properties:
+        request_id:
+          type: integer
+          minimum: 1
+          description: Идентификатор запроса
+        title:
+          type: string
+          description: Название запроса
+        description:
+          type: string
+          nullable: true
+          description: Описание запроса
+        status:
+          type: string
+          enum:
+            - queued
+            - processing
+            - completed
+            - failed
+          description: Кодовый статус обработки
+        status_name:
+          type: string
+          enum:
+            - В очереди
+            - В обработке
+            - Обработан
+            - Ошибка обработки
+          description: Название статуса обработки
+        error_message:
+          type: string
+          nullable: true
+          description: Публичный текст ошибки обработки
+        created_at:
+          type: string
+          format: date-time
+          description: Дата создания запроса
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата последнего обновления запроса
+        processed_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Дата завершения обработки запроса
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Описание ошибки
+    CreateRequestResponse:
+      type: object
+      required:
+        - request_id
+      properties:
+        request_id:
+          type: integer
+          minimum: 1
+          description: Идентификатор созданного запроса

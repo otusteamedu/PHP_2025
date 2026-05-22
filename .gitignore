@@ -1,5 +1,7 @@
-.idea/
-/vendor/
+.env
 .DS_Store
-.AppleDouble
-.LSOverride
+/postgres/data
+/vendor/
+/code/vendor/
+/code/build/
+/code/.phpunit.result.cache
