@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Http\Web;
+namespace App\Controller\Http;
 
-use App\Controller\Http\AbstractController;
-use App\Core\Http\Response;
+use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
+use App\Core\Http\Message\Response;
 
 class ErrorController extends AbstractController
 {
-    public function render404Page(): Response
+    public function __construct(
+        private readonly ErrorHandlerInterface $errorHandler,
+    ) {
+    }
+
+    public function get404Response(): Response
     {
-        return $this->view->render('404.php')->setHttpCode(404);
+        return $this->errorHandler->handle404();
     }
 }
