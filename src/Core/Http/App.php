@@ -2,21 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Core;
+namespace App\Core\Http;
 
-use App\Core\Http\Request;
-use App\Core\Http\Response;
-use App\Core\Http\Router;
+use App\Core\Http\Message\Request;
+use App\Core\Http\Message\Response;
+use App\Core\Http\Routing\Router;
 
 class App
 {
-    private readonly Request $request;
-    private readonly Router $router;
-
-    public function __construct()
-    {
-        $this->request = new Request();
-        $this->router = new Router();
+    public function __construct(
+        private readonly Request $request,
+        private readonly Router $router,
+    ) {
     }
 
     public function run(): Response
