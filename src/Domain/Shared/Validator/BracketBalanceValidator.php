@@ -10,16 +10,16 @@ class BracketBalanceValidator
     public const string RIGHT_BRACKET = ')';
     public const string VALID_BRACKET_PAIR = self::LEFT_BRACKET . self::RIGHT_BRACKET;
 
-    private static int $counter = 0;
-
     /**
      * @note: рекурсивно уменьшает строку, убирая каждый раз валидные сочетания скобок "()";
      *        если строка на определённой итерации становится пустой, значит изначальная строка сбалансирована по скобкам,
      *        если строка на определённой итерации не пуста и при этом не содержит валидных сочетаний скобок, то изначальная строка не сбалансирована.
      */
-    public static function isValid(string $string): bool
+    public function isValid(string $string): bool
     {
-        if (self::$counter === 0) {
+        static $counter = 0;
+
+        if ($counter === 0) {
             if ($string === '') {
                 return false;
             }
@@ -45,8 +45,8 @@ class BracketBalanceValidator
 
         $string = str_replace(self::VALID_BRACKET_PAIR, '', $string);
 
-        self::$counter++;
+        $counter++;
 
-        return self::isValid($string);
+        return $this->isValid($string);
     }
 }

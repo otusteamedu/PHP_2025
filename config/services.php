@@ -1,7 +1,9 @@
 <?php
 
 use App\Core\Container\Container;
+use App\Domain\BracketBalance\BracketBalancer;
 use App\Domain\EmailVerification\EmailVerifier;
+use App\Domain\Shared\Validator\BracketBalanceValidator;
 use App\Domain\Shared\Validator\DnsMxRecordValidator;
 use App\Domain\Shared\Validator\EmailFormatValidator;
 use App\Domain\Shared\Validator\EmailValidator;
@@ -26,6 +28,16 @@ return [
         DnsMxRecordValidator::class => [
             'singleton' => true,
             'factory' => fn() => new DnsMxRecordValidator(),
+        ],
+    ],
+    'BracketBalance' => [
+        BracketBalancer::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new BracketBalancer($c->get(BracketBalanceValidator::class)),
+        ],
+        BracketBalanceValidator::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new BracketBalanceValidator(),
         ],
     ],
 ];
