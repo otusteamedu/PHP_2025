@@ -5,3 +5,4 @@
 .LSOverride
 /.env
 /app/vendor/
+/app/build/
