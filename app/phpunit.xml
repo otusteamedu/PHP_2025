@@ -5,6 +5,12 @@
         cacheDirectory="build/phpunit-cache"
         colors = "true"
 >
+    <testsuites>
+        <testsuite name="Domain">
+            <directory>tests/Domain</directory>
+        </testsuite>
+    </testsuites>
+
     <source>
         <include>
             <directory>src</directory>
