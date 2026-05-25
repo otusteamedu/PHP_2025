@@ -1,0 +1,113 @@
+ 
+ QUERY PLAN 10.000                                                         
+---------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=5.00..5.01 rows=3 width=4) (actual time=0.142..0.144 rows=3 loops=1)
+   Output: movie_id
+   Sort Key: s.movie_id
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=5
+   ->  HashAggregate  (cost=4.95..4.98 rows=3 width=4) (actual time=0.099..0.100 rows=3 loops=1)
+         Output: movie_id
+         Group Key: s.movie_id
+         Batches: 1  Memory Usage: 24kB
+         Buffers: shared hit=2
+         ->  Seq Scan on public.screenings s  (cost=0.00..4.90 rows=18 width=4) (actual time=0.021..0.077 rows=18 loops=1)
+               Output: id, movie_id, hall_id, start_time, end_time, type, language, subtitles, is_active
+               Filter: ((s.start_time >= CURRENT_DATE) AND (s.start_time < (CURRENT_DATE + '1 day'::interval)))
+               Rows Removed by Filter: 111
+               Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=158
+ Planning Time: 1.269 ms
+ Execution Time: 0.310 ms
+(19 rows)
+:
+
+
+Q1 - 10.000000
+
+   Output: movie_id
+   Sort Key: s.movie_id
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=16 read=2
+   ->  HashAggregate  (cost=12.07..12.17 rows=10 width=4) (actual time=0.090..0.091 rows=10 loops=1)
+         Output: movie_id
+         Group Key: s.movie_id
+         Batches: 1  Memory Usage: 24kB
+         Buffers: shared hit=13 read=2
+         ->  Index Scan using idx_start_time on public.screenings s  (cost=0.30..11.76 rows=123 width=4) (actual time=0.048..0.068 rows=125 loops=1)
+               Output: id, movie_id, hall_id, start_time, end_time, type, language, subtitles, is_active
+               Index Cond: ((s.start_time >= CURRENT_DATE) AND (s.start_time < (CURRENT_DATE + '1 day'::interval)))
+               Buffers: shared hit=13 read=2
+ Planning:
+   Buffers: shared hit=159
+ Planning Time: 0.610 ms
+ Execution Time: 0.196 ms
+(18 rows)
+
+:
+
+10.000000 optimized
+# psql -U postgres -d mydatabase -f EXPLAIN_10000000_optimized.sql
+Q1_opt   Sort Key: s.movie_id
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=7 read=3
+   ->  HashAggregate  (cost=7.15..7.25 rows=10 width=4) (actual time=0.121..0.122 rows=10 loops=1)
+         Output: movie_id
+         Group Key: s.movie_id
+         Batches: 1  Memory Usage: 24kB
+         Buffers: shared hit=4 read=3
+         ->  Index Only Scan using idx_screenings_start_time_hall_movie on public.screenings s  (cost=0.30..6.84 rows=127 width=4) (actual time=0.067..0.100 rows=125 loops=1)
+               Output: start_time, hall_id, movie_id
+               Index Cond: ((s.start_time >= CURRENT_DATE) AND (s.start_time < (CURRENT_DATE + '1 day'::interval)))
+               Heap Fetches: 0
+               Buffers: shared hit=4 read=3
+ Planning:
+   Buffers: shared hit=176 read=1
+ Planning Time: 1.063 ms
+ Execution Time: 0.238 ms
+(19 rows)
+
+:
+
+# psql -U postgres -d mydatabase -f db_metrics.sql
+                object_name                 |    object_type     | size_pretty | size_bytes 
+--------------------------------------------+--------------------+-------------+------------
+ public.tickets                             | table_with_indexes | 2378 MB     | 2492997632
+ public.idx_tickets_screening_price         | index              | 301 MB      |  315891712
+ public.idx_tickets_sold_screening_price    | index              | 265 MB      |  277987328
+ public.tickets_screening_id_seat_id_key    | index              | 214 MB      |  224706560
+ public.tickets_pkey                        | index              | 214 MB      |  224632832
+ public.idx_tickets_screening_seat_occupied | index              | 204 MB      |  213409792
+ public.ticket_discounts                    | table_with_indexes | 112 MB      |  117432320
+ public.idx_purchase_time                   | index              | 92 MB       |   96657408
+ public.idx_customer_id                     | index              | 90 MB       |   94142464
+ public.customers                           | table_with_indexes | 70 MB       |   73736192
+ public.idx_screening_id                    | index              | 66 MB       |   69156864
+ public.idx_tickets_sold_purchase_time      | index              | 64 MB       |   67100672
+ public.idx_status                          | index              | 62 MB       |   64503808
+ public.ticket_discounts_pkey               | index              | 38 MB       |   39518208
+ public.customers_email_key                 | index              | 17 MB       |   17334272
+(15 rows)
+
+ schemaname | table_name |   index_name    | idx_scan | index_size 
+------------+------------+-----------------+----------+------------
+ public     | screenings | screenings_pkey | 10010468 | 1104 kB
+ public     | seats      | seats_pkey      | 10010335 | 208 kB
+ public     | customers  | customers_pkey  | 10010333 | 4408 kB
+ public     | tickets    | tickets_pkey    |  1762472 | 214 MB
+ public     | discounts  | discounts_pkey  |  1762472 | 16 kB
+(5 rows)
+
+ schemaname | table_name |             index_name              | idx_scan | index_size 
+------------+------------+-------------------------------------+----------+------------
+ public     | tickets    | idx_tickets_sold_screening_price    |        0 | 265 MB
+ public     | tickets    | tickets_screening_id_seat_id_key    |        0 | 214 MB
+ public     | tickets    | idx_tickets_screening_seat_occupied |        0 | 204 MB
+ public     | tickets    | idx_customer_id                     |        0 | 90 MB
+ public     | tickets    | idx_status                          |        0 | 62 MB
+(5 rows)
+
+# 
+
+
