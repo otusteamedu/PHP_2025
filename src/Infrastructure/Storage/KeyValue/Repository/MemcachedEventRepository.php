@@ -8,17 +8,15 @@ use App\Domain\EventSystem\Interface\EventRepositoryInterface;
 use App\Domain\EventSystem\Model\AddEventModel;
 use App\Domain\EventSystem\Model\GetEventModel;
 use App\Domain\EventSystem\Model\SearchEventModel;
+use App\Infrastructure\Storage\KeyValue\Driver\MemcachedDriver;
 
 class MemcachedEventRepository implements EventRepositoryInterface
 {
     private readonly \Memcached $memcached;
 
-    public function __construct(string $host, int $port)
+    public function __construct(MemcachedDriver $memcachedDriver)
     {
-        $this->memcached = new \Memcached();
-        if (!$this->memcached->addServer($host, $port)) {
-            throw new \RuntimeException('Не удалось установить связь с хранилищем.');
-        }
+        $this->memcached = $memcachedDriver->getHandler();
     }
 
     public function addEvent(AddEventModel $addEventModel): bool

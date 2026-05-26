@@ -8,15 +8,12 @@ use App\Domain\EventSystem\Interface\EventRepositoryInterface;
 use App\Domain\EventSystem\Model\AddEventModel;
 use App\Domain\EventSystem\Model\GetEventModel;
 use App\Domain\EventSystem\Model\SearchEventModel;
-use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
 
 class EventService
 {
-    private readonly EventRepositoryInterface $eventRepository;
-
-    public function __construct()
-    {
-        $this->eventRepository = EventRepositoryFactory::create();
+    public function __construct(
+        private readonly EventRepositoryInterface $eventRepository,
+    ) {
     }
 
     public function addEvent(AddEventModel $addEventModel): bool

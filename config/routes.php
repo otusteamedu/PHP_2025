@@ -39,7 +39,7 @@ return [
     ],
     [
         'method' => 'DELETE',
-        'path' => '/api/v1/event/delete',
+        'path' => '/api/v1/events/delete',
         'controller' => \App\Controller\Http\Api\EventSystem\EventSystemController::class,
         'action' => 'deleteEvents',
     ],

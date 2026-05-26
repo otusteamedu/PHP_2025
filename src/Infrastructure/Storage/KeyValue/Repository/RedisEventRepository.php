@@ -8,17 +8,15 @@ use App\Domain\EventSystem\Interface\EventRepositoryInterface;
 use App\Domain\EventSystem\Model\AddEventModel;
 use App\Domain\EventSystem\Model\GetEventModel;
 use App\Domain\EventSystem\Model\SearchEventModel;
+use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
 
 class RedisEventRepository implements EventRepositoryInterface
 {
     private readonly \Redis $redis;
 
-    public function __construct(string $host)
+    public function __construct(RedisDriver $redisDriver)
     {
-        $this->redis = new \Redis();
-        if (!$this->redis->connect($host)) {
-            throw new \RuntimeException('Не удалось установить связь с хранилищем.');
-        }
+        $this->redis = $redisDriver->getHandler();
     }
 
     public function addEvent(AddEventModel $addEventModel): bool

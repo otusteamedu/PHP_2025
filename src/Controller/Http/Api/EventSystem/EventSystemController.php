@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace App\Controller\Http\Api\EventSystem;
 
 use App\Controller\Http\AbstractController;
-use App\Core\Http\Response;
+use App\Core\Http\Message\Request;
+use App\Core\Http\Message\Response;
 use App\Domain\EventSystem\EventService;
 use App\Domain\EventSystem\Model\AddEventModel;
 use App\Domain\EventSystem\Model\SearchEventModel;
 
 class EventSystemController extends AbstractController
 {
-    private readonly EventService $eventService;
-
-    public function __construct()
-    {
-        $this->eventService = new EventService();
-        parent::__construct();
+    public function __construct(
+        private readonly Request $request,
+        private readonly EventService $eventService,
+    ) {
     }
 
     public function addEvent(): Response
@@ -41,7 +40,7 @@ class EventSystemController extends AbstractController
             $httpCode = $e->getCode();
         }
 
-        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
+        return $this->json($data, $httpCode);
     }
 
     public function getEvent(): Response
@@ -58,7 +57,7 @@ class EventSystemController extends AbstractController
             $httpCode = $e->getCode();
         }
 
-        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
+        return $this->json($data, $httpCode);
     }
 
     public function deleteEvents(): Response
@@ -74,6 +73,6 @@ class EventSystemController extends AbstractController
             $httpCode = $e->getCode();
         }
 
-        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
+        return $this->json($data, $httpCode);
     }
 }
