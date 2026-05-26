@@ -12,6 +12,14 @@ use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
 
 class SystemHealthCheckService
 {
+    public function __construct(
+        private readonly PDOWrapper $pdoWrapper,
+        private readonly RedisDriver $redisDriver,
+        private readonly MemcachedDriver $memcachedDriver,
+        private readonly SessionStorageChecker $sessionStorageChecker,
+    ) {
+    }
+
     public function checkAll(): array
     {
         return [
@@ -25,7 +33,7 @@ class SystemHealthCheckService
     private function checkPostgres(): HealthStatus
     {
         try {
-            $version = PDOWrapper::getHandler()->query('SELECT version();')->fetch(\PDO::FETCH_COLUMN);
+            $version = $this->pdoWrapper->getHandler()->query('SELECT version();')->fetch(\PDO::FETCH_COLUMN);
             return new HealthStatus(
                 isHealthy: true,
                 message: 'PostgreSQL is healthy',
@@ -46,9 +54,9 @@ class SystemHealthCheckService
     private function checkRedis(): HealthStatus
     {
         try {
-            $redis = new RedisDriver();
-            $ping = $redis->getHandler()->ping('PONG');
-            $version = $redis->getVersion();
+            $redisHandler = $this->redisDriver->getHandler();
+            $ping = $redisHandler->ping('PONG');
+            $version = $this->redisDriver->getVersion();
             return new HealthStatus(
                 isHealthy: $ping === 'PONG',
                 message: $ping === 'PONG' ? 'Redis is healthy' : 'Redis responded with unexpected value',
@@ -71,8 +79,7 @@ class SystemHealthCheckService
         $startTime = microtime(true);
 
         try {
-            $memcachedDriver = new MemcachedDriver();
-            $version = $memcachedDriver->getVersion();
+            $version = $this->memcachedDriver->getVersion();
             $responseTime = microtime(true) - $startTime;
             return new HealthStatus(
                 isHealthy: true,
@@ -100,15 +107,13 @@ class SystemHealthCheckService
         $startTime = microtime(true);
 
         try {
-            $sessionStorageChecker = new SessionStorageChecker();
-
             $_SESSION['health_check_timestamp'] = time();
             $_SESSION['health_check_value'] = 'session_health_check';
 
             session_write_close();
             usleep(10000);
 
-            $storedSessionVars = $sessionStorageChecker->getSessionVarsFromStorage();
+            $storedSessionVars = $this->sessionStorageChecker->getSessionVarsFromStorage();
 
             $responseTime = microtime(true) - $startTime;
 

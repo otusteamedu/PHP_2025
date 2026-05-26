@@ -8,11 +8,9 @@ use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
 
 class SessionStorageChecker
 {
-    private readonly \Redis $redisHandler;
-
-    public function __construct()
-    {
-        $this->redisHandler = new RedisDriver()->getHandler();
+    public function __construct(
+        private readonly RedisDriver $redisDriver,
+    ) {
     }
 
     public function getSessionVarsFromStorage(): array
@@ -22,7 +20,7 @@ class SessionStorageChecker
             return [];
         }
 
-        $sessionVarsSerialized = $this->redisHandler->get("PHPREDIS_SESSION:$sessionId");
+        $sessionVarsSerialized = $this->redisDriver->getHandler()->get("PHPREDIS_SESSION:$sessionId");
         if ($sessionVarsSerialized === false) {
             return [];
         }
