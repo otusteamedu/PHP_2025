@@ -13,11 +13,9 @@ use App\Infrastructure\Database\Repository\UserRepository;
 
 class UserService
 {
-    private readonly UserRepository $userRepository;
-
-    public function __construct()
-    {
-        $this->userRepository = new UserRepository();
+    public function __construct(
+        private readonly UserRepository $userRepository,
+    ) {
     }
 
     public function createUser(CreateUserModel $createUserModel): User

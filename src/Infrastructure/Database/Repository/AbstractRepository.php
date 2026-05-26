@@ -8,21 +8,19 @@ use App\Domain\Shared\Collection\AbstractCollection;
 use App\Domain\Shared\Entity\EntityInterface;
 use App\Infrastructure\Database\Connection\DatabaseQueryExecutor;
 use App\Infrastructure\Database\DataMapper\DataMapperInterface;
+use App\Infrastructure\Database\Factory\CollectionFactory;
 
 abstract class AbstractRepository
 {
-    protected readonly DatabaseQueryExecutor $dbQueryExecutor;
-    protected readonly DataMapperInterface $dataMapper;
-
     abstract protected function getTableName(): string;
     abstract protected function getSequenceName(): string;
-    abstract protected function getDataMapperClassName(): string;
     abstract protected function getCollectionClassName(): string;
 
-    public function __construct()
-    {
-        $this->dbQueryExecutor = new DatabaseQueryExecutor();
-        $this->dataMapper = new ($this->getDataMapperClassName());
+    public function __construct(
+        protected readonly DatabaseQueryExecutor $dbQueryExecutor,
+        protected readonly DataMapperInterface $dataMapper,
+        protected readonly CollectionFactory $collectionFactory,
+    ) {
     }
 
     public function find(int $id): ?EntityInterface
@@ -38,8 +36,7 @@ abstract class AbstractRepository
         $sql = 'SELECT * FROM ' . $this->getTableName();
         $rows = $this->dbQueryExecutor->queryRows($sql);
 
-        /** @var AbstractCollection $collection */
-        $collection = new ($this->getCollectionClassName());
+        $collection = $this->collectionFactory->create($this->getCollectionClassName());
         foreach ($rows as $row) {
             $collection->add($this->createEntityFromRow($row));
         }
@@ -52,8 +49,7 @@ abstract class AbstractRepository
         $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id > :last_id ORDER BY id ASC LIMIT :limit';
         $rows = $this->dbQueryExecutor->queryRows($sql, [':last_id' => $lastId, ':limit' => $limit]);
 
-        /** @var AbstractCollection $collection */
-        $collection = new ($this->getCollectionClassName());
+        $collection = $this->collectionFactory->create($this->getCollectionClassName());
         foreach ($rows as $row) {
             $collection->add($this->createEntityFromRow($row));
         }

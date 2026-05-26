@@ -12,7 +12,13 @@ use App\Domain\Shared\Validator\EmailFormatValidator;
 use App\Domain\Shared\Validator\EmailValidator;
 use App\Domain\SystemHealth\SessionStorageChecker;
 use App\Domain\SystemHealth\SystemHealthCheckService;
+use App\Domain\UserManagement\UserService;
+use App\Infrastructure\Database\Connection\DatabaseQueryExecutor;
 use App\Infrastructure\Database\Connection\PDOWrapper;
+use App\Infrastructure\Database\DataMapper\DataMapperInterface;
+use App\Infrastructure\Database\DataMapper\UserMapper;
+use App\Infrastructure\Database\Factory\CollectionFactory;
+use App\Infrastructure\Database\Repository\UserRepository;
 use App\Infrastructure\Storage\KeyValue\Driver\MemcachedDriver;
 use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
 use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
@@ -92,6 +98,32 @@ return [
         EventRepositoryInterface::class => [
             'singleton' => true,
             'factory' => fn (Container $c) => $c->get(EventRepositoryFactory::class)->create(),
+        ],
+    ],
+    'UserManagement' => [
+        DatabaseQueryExecutor::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new DatabaseQueryExecutor($c->get(PDOWrapper::class)),
+        ],
+        UserService::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new UserService($c->get(UserRepository::class)),
+        ],
+        DataMapperInterface::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new UserMapper(),
+        ],
+        CollectionFactory::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new CollectionFactory(),
+        ],
+        UserRepository::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new UserRepository(
+                $c->get(DatabaseQueryExecutor::class),
+                $c->get(DataMapperInterface::class),
+                $c->get(CollectionFactory::class),
+            ),
         ],
     ],
 ];

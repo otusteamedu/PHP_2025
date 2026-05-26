@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Http\Api\User;
 
-use App\Core\Http\Response;
 use App\Controller\Http\AbstractController;
+use App\Core\Http\Message\Request;
+use App\Core\Http\Message\Response;
 use App\Domain\UserManagement\Entity\User;
 use App\Domain\UserManagement\Model\CreateUserModel;
 use App\Domain\UserManagement\Model\GetUsersModel;
@@ -15,12 +16,10 @@ use Customer41\MultiException\MultiException;
 
 class UserController extends AbstractController
 {
-    private readonly UserService $userService;
-
-    public function __construct()
-    {
-        $this->userService = new UserService();
-        parent::__construct();
+    public function __construct(
+        private readonly Request $request,
+        private readonly UserService $userService,
+    ) {
     }
 
     public function createUser(): Response
@@ -54,7 +53,7 @@ class UserController extends AbstractController
             $httpCode = $e->getCode();
         }
 
-        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
+        return $this->json($data, $httpCode);
     }
 
     public function getUser(): Response
@@ -72,7 +71,7 @@ class UserController extends AbstractController
             $httpCode = $e->getCode();
         }
 
-        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
+        return $this->json($data, $httpCode);
     }
 
     public function getUsers(): Response
@@ -97,7 +96,7 @@ class UserController extends AbstractController
             $httpCode = $e->getCode();
         }
 
-        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
+        return $this->json($data, $httpCode);
     }
 
     public function updateUserEmail(): Response
@@ -119,7 +118,7 @@ class UserController extends AbstractController
             $httpCode = $e->getCode();
         }
 
-        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
+        return $this->json($data, $httpCode);
     }
 
     public function deleteUser(): Response
@@ -137,6 +136,6 @@ class UserController extends AbstractController
             $httpCode = $e->getCode();
         }
 
-        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
+        return $this->json($data, $httpCode);
     }
 }

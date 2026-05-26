@@ -8,10 +8,9 @@ class DatabaseQueryExecutor
 {
     private readonly \PDO $dbh;
 
-    public function __construct()
+    public function __construct(PDOWrapper $pdoWrapper)
     {
-        $this->dbh = PDOWrapper::getHandler();
-        $this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->dbh = $pdoWrapper->getHandler();
     }
 
     public function queryRows(string $sql, array $params = []): array
