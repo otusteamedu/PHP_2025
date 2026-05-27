@@ -37,4 +37,48 @@ class CompositeStringValidatorTest extends TestCase
 
         self::assertEmpty($result->getErrors());
     }
+
+    /**
+     * @throws Exception
+     */
+    public function testReturnsInvalidWhenAtLeastOneRuleFail(): void
+    {
+        // Arrange
+        $successValidationResult = new ValidationResult();
+        $successValidationResult->setIsValid(true);
+
+        $successRule = self::createMock(EmailRuleInterface::class);
+
+        $successRule->method('validate')->willReturn($successValidationResult);
+
+
+        $failedValidationResult = new ValidationResult();
+
+        $failedValidationResult->setIsValid(false);
+
+        $failedValidationResult->addError(
+            'Email format is invalid',
+        );
+
+
+        $failedRule = self::createMock(EmailRuleInterface::class);
+
+        $failedRule->method('validate')->willReturn($failedValidationResult);
+
+
+        $validator = new CompositeStringValidator([$successRule, $failedRule]);
+
+        // Act
+
+        $result = $validator->validate('invalid-email.com');
+
+        // Assert
+
+        self::assertFalse($result->isValid());
+
+        self::assertContains(
+            'Email format is invalid',
+            $result->getErrors(),
+        );
+    }
 }
