@@ -29,6 +29,7 @@
 ![screenshot](img/5.jpg)
 
 В зависимости от значения переменной ENV_NAME при деплое будут забираться те или иные настройки из репозитория настроек (.env):
+
 ![screenshot](img/6.jpg)
 
 7. Проверено, что deploy запускается успешно, работает без downtime, сервер переключается на blue\green.
@@ -51,12 +52,13 @@
 ![screenshot](img/13.jpg)
 
 9. Проверено, что работает подтягивание нужных настроек в зависимости от значения GitLab переменной ENV_NAME.
-При ENV_NAME=prod
+
+При **ENV_NAME=prod**
 ![screenshot](img/14.jpg)
 
 ![screenshot](img/16.jpg)
 
-При ENV_NAME=preprod
+При **ENV_NAME=preprod**
 ![screenshot](img/15.jpg)
 
 ![screenshot](img/17.jpg)
