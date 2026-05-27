@@ -21,8 +21,4 @@ class ConsoleEmailValidatorRunner
             return "Email $email is valid";
         }
     }
-
-    private function ValidateEmailRequestDTO(string $email)
-    {
-    }
 }
