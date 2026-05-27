@@ -80,14 +80,14 @@ readonly class PostgresTrainingScheduleRepository implements Repository\Training
 
     public function findByDate(\DateTimeImmutable $date): array
     {
-        $stmt = $this->pdo->prepare('SELECT id, day_of_week, time, date FROM training_schedules WHERE date = :date');
+        $stmt = $this->pdo->prepare('SELECT * FROM training_schedules WHERE date = :date');
         $stmt->execute(['date' => $date->format('Y-m-d')]);
 
         $schedules = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $schedules[] = new TrainingSchedule(
                 $row['id'],
-                $row['day_of_week'],
+                $row['training_plan_id'],
                 new \DateTimeImmutable($row['time']),
                 new \DateTimeImmutable($row['date'])
             );

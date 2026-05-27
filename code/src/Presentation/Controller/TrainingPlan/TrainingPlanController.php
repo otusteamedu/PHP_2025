@@ -46,7 +46,7 @@ readonly class TrainingPlanController
         }
 
         try {
-            $trainingPlan = $this->createTrainingPlanUseCase->execute($data);
+            $trainingPlan = $this->createTrainingPlanUseCase->execute($data['name'], $data['description'], );
         } catch (\Exception $exception) {
             $response->getBody()->write(json_encode(['error' => $exception->getMessage()], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
@@ -56,7 +56,6 @@ readonly class TrainingPlanController
             'message' => 'Training plan created successfully.',
             'training_plan' => [
                 'id' => $trainingPlan->getId(),
-                'user_id' => $trainingPlan->getUserId(),
                 'name' => $trainingPlan->getName(),
                 'description' => $trainingPlan->getDescription(),
                 'created_at' => $trainingPlan->getCreatedAt()->format('Y-m-d H:i:s'),

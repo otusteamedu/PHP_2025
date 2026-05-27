@@ -14,7 +14,7 @@ class TrainingPlan
         private string $name,
         private ?string $description,
         private ?\DateTimeImmutable $created_at,
-        private array $schedules = []
+        private ?array $schedules = []
     ) {
     }
 

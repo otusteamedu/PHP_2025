@@ -225,7 +225,7 @@ readonly class PostgresTrainingPlanRepository implements Repository\TrainingPlan
 
             $schedules[] = new TrainingSchedule(
                 $scheduleId,
-                (int)$scheduleData['day_of_week'],
+                $trainingPlanId,
                 $scheduleData['time'],
                 new \DateTimeImmutable($scheduleData['date']),
                 $exercises
