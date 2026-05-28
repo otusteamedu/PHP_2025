@@ -34,8 +34,6 @@ readonly class GenerateTrainingNotificationEvents
             $startTime = $schedule->getStartTime();
             $trainingPlan = $this->trainingPlanRepository->findById($planId);
             $users = $this->userTrainingPlanRepository->findByTrainingPlanId($planId);
-
-            $dayTrainingPlans = $this->trainingPlanRepository->findById($schedule->getTrainingPlanId());
             $arEmails = array_map(fn($u) => $u->getEmail(), $users) ?? [];
             $trainingDate = $schedule->getDate()->format('d.m.Y');
             $sendAt = $startTime->modify('-1 hour');
