@@ -33,6 +33,7 @@ class ValidateEmailUseCase
 
         $validationResult = $emailValidator->validate($email);
          if (!DnsDomainChecker::isExistsDomain($emailModel->getDomain())) {
+             $validationResult->setIsValid(false);
              $validationResult->addError('DNS record not found');
          }
 
