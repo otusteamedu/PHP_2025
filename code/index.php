@@ -5,6 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use DI\Container;
 use Slim\App;
+use Slim\Middleware\MethodOverrideMiddleware;
 
 // Create a new DI container
 $container = new Container();
@@ -17,6 +18,10 @@ $app = $container->get(App::class);
 
 // Register routes
 (require __DIR__ . '/routes.php')($app);
+
+// Add MethodOverrideMiddleware
+$methodOverrideMiddleware = new MethodOverrideMiddleware();
+$app->add($methodOverrideMiddleware);
 
 // Add error middleware
 $app->addErrorMiddleware(true, true, true);

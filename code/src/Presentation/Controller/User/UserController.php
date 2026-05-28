@@ -120,12 +120,7 @@ readonly class UserController
     public function updateUser(Request $request, Response $response, array $args): Response
     {
         $id = (int)$args['id'];
-        $data = [];
-
-        $contentType = $request->getHeaderLine('Content-Type');
-        if (str_starts_with($contentType, 'application/x-www-form-urlencoded')) {
-            parse_str($request->getBody()->getContents(), $data);
-        }
+        $data = (array)$request->getParsedBody();
 
         try {
             $this->validator->validateUpdate($data);

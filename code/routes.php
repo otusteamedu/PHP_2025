@@ -46,7 +46,7 @@ return static function (App $app) {
     $app->group('/users', function (Group $group) {
         $group->post('', [UserController::class, 'createUser']);
         $group->get('/{id}', [UserController::class, 'getUser']);
-        $group->put('/{id}', [UserController::class, 'updateUser']);
+        $group->post('/{id}', [UserController::class, 'updateUser']);
         $group->delete('/{id}', [UserController::class, 'deleteUser']);
     });
 
