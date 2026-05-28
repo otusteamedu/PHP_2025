@@ -1,10 +1,6 @@
 <?php
 declare(strict_types=1);
 
-//pr([file_exists($_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php'), ], true, true);
-
-require $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
-
 use App\Presentation\Controller\User\UserController;
 use App\Presentation\Controller\TrainingPlan\TrainingPlanController;
 use Psr\Http\Message\ResponseInterface as Response;
