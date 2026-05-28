@@ -1,0 +1,39 @@
+{
+  "name": "ak/hw",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\Test\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Alexander Kanapatski"
+    }
+  ],
+  "require": {
+    "php": ">=8.2",
+    "ext-pdo": "*",
+    "ext-mbstring": "*",
+    "phpunit/phpunit": "^11.1",
+    "mockery/mockery": "^1.6",
+    "guzzlehttp/guzzle": "^7.0",
+    "php-di/php-di": "^7.0",
+    "vlucas/phpdotenv": "^5.6",
+    "php-amqplib/php-amqplib": "^3.2",
+    "phpmailer/phpmailer": "^7.0",
+    "slim/slim": "4.*",
+    "slim/psr7": "^1.6",
+    "respect/validation": "^2.2",
+    "symfony/console": "^6.0",
+    "beberlei/assert": "^3.3"
+  }
+}

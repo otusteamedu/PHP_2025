@@ -3,3 +3,16 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+
+dbdata/
+memcached/
+.env
+.gitignore
+/redis/data/
+/nginx/logs/*
+/nginx/logs/error.log
+/code/vendor/
+/rabbitmq/*
+/pgdata/*
+/esdata/*

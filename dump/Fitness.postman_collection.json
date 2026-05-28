@@ -1,0 +1,415 @@
+{
+  "info": {
+    "_postman_id": "7758f422-0fce-4747-a672-5024a27a9eed",
+    "name": "Fitness",
+    "description": "Проектная работа Ottus.ru",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2854143"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete user",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Alexander",
+                  "type": "text",
+                  "uuid": "bb3ff30f-b9a6-4bc3-8287-630de7493ea7"
+                },
+                {
+                  "key": "email",
+                  "value": "hooploop14@gmail.com",
+                  "type": "text",
+                  "uuid": "21b41f30-9ebd-465b-86af-77789e5fa1ba"
+                },
+                {
+                  "key": "age",
+                  "value": "40",
+                  "type": "text",
+                  "uuid": "c8d90688-560a-4884-8efc-10eacf6afe36"
+                },
+                {
+                  "key": "height",
+                  "value": "190",
+                  "type": "text",
+                  "uuid": "cd89f9f4-2fbe-419a-9ffc-6fda0efaf228"
+                },
+                {
+                  "key": "weight",
+                  "value": "110",
+                  "type": "text",
+                  "uuid": "f931afe2-189f-419e-8704-33214861ba6d"
+                },
+                {
+                  "key": "gender",
+                  "value": "male",
+                  "type": "text",
+                  "uuid": "c4ea75a8-b06b-412a-9dbe-de1163266d5b"
+                },
+                {
+                  "key": "born",
+                  "value": "1986-12-01",
+                  "type": "text",
+                  "uuid": "a916a9d0-8a62-478f-b759-389beac98240"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Alexander",
+                  "type": "text",
+                  "uuid": "bb3ff30f-b9a6-4bc3-8287-630de7493ea7"
+                },
+                {
+                  "key": "email",
+                  "value": "hooploop14@gmail.com",
+                  "type": "text",
+                  "uuid": "21b41f30-9ebd-465b-86af-77789e5fa1ba"
+                },
+                {
+                  "key": "age",
+                  "value": "40",
+                  "type": "text",
+                  "uuid": "c8d90688-560a-4884-8efc-10eacf6afe36"
+                },
+                {
+                  "key": "height",
+                  "value": "190",
+                  "type": "text",
+                  "uuid": "cd89f9f4-2fbe-419a-9ffc-6fda0efaf228"
+                },
+                {
+                  "key": "weight",
+                  "value": "110",
+                  "type": "text",
+                  "uuid": "f931afe2-189f-419e-8704-33214861ba6d"
+                },
+                {
+                  "key": "gender",
+                  "value": "male",
+                  "type": "text",
+                  "uuid": "c4ea75a8-b06b-412a-9dbe-de1163266d5b"
+                },
+                {
+                  "key": "born",
+                  "value": "1986-12-01",
+                  "type": "text",
+                  "uuid": "a916a9d0-8a62-478f-b759-389beac98240"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/users/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded ",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "weight",
+                  "value": "90",
+                  "type": "text",
+                  "uuid": "566d143a-fd5a-4231-8e6a-81f08a593d82"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text",
+                  "uuid": "d3a4b76d-c578-43da-a464-02b89ea95742"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UserTrainingPlan",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "training_plan_id",
+                  "value": "5",
+                  "type": "text",
+                  "uuid": "6535fbea-025b-4d22-b250-545175133084"
+                },
+                {
+                  "key": "user_id",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "fb5111bf-dc56-448e-ae59-e31aefdab102"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/user-training",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "user-training"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Treaning plan",
+      "item": [
+        {
+          "name": "training plan list",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Alexander",
+                  "type": "text",
+                  "uuid": "bb3ff30f-b9a6-4bc3-8287-630de7493ea7"
+                },
+                {
+                  "key": "email",
+                  "value": "hooploop14@gmail.com",
+                  "type": "text",
+                  "uuid": "21b41f30-9ebd-465b-86af-77789e5fa1ba"
+                },
+                {
+                  "key": "age",
+                  "value": "40",
+                  "type": "text",
+                  "uuid": "c8d90688-560a-4884-8efc-10eacf6afe36"
+                },
+                {
+                  "key": "height",
+                  "value": "190",
+                  "type": "text",
+                  "uuid": "cd89f9f4-2fbe-419a-9ffc-6fda0efaf228"
+                },
+                {
+                  "key": "weight",
+                  "value": "110",
+                  "type": "text",
+                  "uuid": "f931afe2-189f-419e-8704-33214861ba6d"
+                },
+                {
+                  "key": "gender",
+                  "value": "male",
+                  "type": "text",
+                  "uuid": "c4ea75a8-b06b-412a-9dbe-de1163266d5b"
+                },
+                {
+                  "key": "born",
+                  "value": "1986-12-01",
+                  "type": "text",
+                  "uuid": "a916a9d0-8a62-478f-b759-389beac98240"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/training-plan/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "training-plan",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "training plan info",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Alexander",
+                  "type": "text",
+                  "uuid": "bb3ff30f-b9a6-4bc3-8287-630de7493ea7"
+                },
+                {
+                  "key": "email",
+                  "value": "hooploop14@gmail.com",
+                  "type": "text",
+                  "uuid": "21b41f30-9ebd-465b-86af-77789e5fa1ba"
+                },
+                {
+                  "key": "age",
+                  "value": "40",
+                  "type": "text",
+                  "uuid": "c8d90688-560a-4884-8efc-10eacf6afe36"
+                },
+                {
+                  "key": "height",
+                  "value": "190",
+                  "type": "text",
+                  "uuid": "cd89f9f4-2fbe-419a-9ffc-6fda0efaf228"
+                },
+                {
+                  "key": "weight",
+                  "value": "110",
+                  "type": "text",
+                  "uuid": "f931afe2-189f-419e-8704-33214861ba6d"
+                },
+                {
+                  "key": "gender",
+                  "value": "male",
+                  "type": "text",
+                  "uuid": "c4ea75a8-b06b-412a-9dbe-de1163266d5b"
+                },
+                {
+                  "key": "born",
+                  "value": "1986-12-01",
+                  "type": "text",
+                  "uuid": "a916a9d0-8a62-478f-b759-389beac98240"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/training-plan/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "training-plan",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
