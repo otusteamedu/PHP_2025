@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Repository\PDO;
 
+use App\Application\DTO\PaginationDTO;
 use App\Domain\Entity\Exercise;
 use App\Domain\Entity\TrainingPlan;
 use App\Domain\Entity\TrainingPlanExercise;
@@ -66,18 +67,18 @@ readonly class PostgresTrainingPlanRepository implements Repository\TrainingPlan
     /**
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return PaginationDTO
      * @throws Exception
      */
-    public function findAll(int $page = 1, int $limit = 10): array
+    public function findAll(int $page = 1, int $limit = 10): PaginationDTO
     {
         $totalStmt = $this->pdo->query('SELECT COUNT(*) FROM training_plans');
         $total = (int) $totalStmt->fetchColumn();
 
         $offset = ($page - 1) * $limit;
         $stmt = $this->pdo->prepare('SELECT * FROM training_plans ORDER BY id LIMIT :limit OFFSET :offset');
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
 
         $plansData = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -87,10 +88,12 @@ readonly class PostgresTrainingPlanRepository implements Repository\TrainingPlan
             $plans[] = $this->hydrateTrainingPlan($data);
         }
 
-        return [
-            'total' => $total,
-            'plans' => $plans,
-        ];
+        return new PaginationDTO(
+            items: $plans,
+            total: $total,
+            page: $page,
+            limit: $limit
+        );
     }
 
     /**

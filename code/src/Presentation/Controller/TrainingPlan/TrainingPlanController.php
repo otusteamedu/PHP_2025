@@ -75,7 +75,11 @@ readonly class TrainingPlanController
      */
     public function getList(Request $request, Response $response): Response
     {
-        $plans = $this->getAllTrainingPlansUseCase->execute();
+        $queryParams = $request->getQueryParams();
+        $page = isset($queryParams['page']) ? (int)$queryParams['page'] : 1;
+        $limit = isset($queryParams['limit']) ? (int)$queryParams['limit'] : 10;
+
+        $plans = $this->getAllTrainingPlansUseCase->execute($page, $limit);
         $response->getBody()->write(json_encode($plans, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Repository\PDO;
 
+use App\Application\DTO\PaginationDTO;
 use App\Domain\Entity\Exercise;
 use App\Domain\Repository\ExerciseRepositoryInterface;
 use PDO;
@@ -31,10 +32,9 @@ readonly class PostgresExerciseRepository implements ExerciseRepositoryInterface
         );
     }
 
-    public function findAll(int $page = 1, int $limit = 10): array
+    public function findAll(int $page = 1, int $limit = 10): PaginationDTO
     {
-        // Not implemented for this use case
-        return [];
+        return new PaginationDTO([], 0, $page, $limit);
     }
 
     public function save(object $entity): object

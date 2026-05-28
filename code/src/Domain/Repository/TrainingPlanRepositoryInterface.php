@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Repository;
 
+use App\Application\DTO\PaginationDTO;
 use App\Domain\Entity\Exercise;
 use App\Domain\Entity\TrainingPlan;
 
@@ -24,9 +25,9 @@ interface TrainingPlanRepositoryInterface extends RepositoryInterface
     /**
      * @param int $page
      * @param int $limit
-     * @return TrainingPlan[]
+     * @return PaginationDTO
      */
-    public function findAll(int $page = 1, int $limit = 10): array;
+    public function findAll(int $page = 1, int $limit = 10): PaginationDTO;
 
     /**
      * @param TrainingPlan $entity

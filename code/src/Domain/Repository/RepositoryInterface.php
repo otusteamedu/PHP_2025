@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Repository;
 
+use App\Application\DTO\PaginationDTO;
+
 interface RepositoryInterface
 {
     /**
@@ -19,9 +21,9 @@ interface RepositoryInterface
      *
      * @param int $page
      * @param int $limit
-     * @return array A list of entities.
+     * @return PaginationDTO A list of entities.
      */
-    public function findAll(int $page = 1, int $limit = 10): array;
+    public function findAll(int $page = 1, int $limit = 10): PaginationDTO;
 
     /**
      * Saves a given entity.

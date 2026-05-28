@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Repository\PDO;
 
+use App\Application\DTO\PaginationDTO;
 use App\Domain\Entity\User;
 use App\Domain\Repository;
 use PDO;
@@ -51,18 +52,18 @@ readonly class PostgresUserRepository implements Repository\UserRepositoryInterf
     /**
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return PaginationDTO
      * @throws \Exception
      */
-    public function findAll(int $page = 1, int $limit = 10): array
+    public function findAll(int $page = 1, int $limit = 10): PaginationDTO
     {
         $totalStmt = $this->pdo->query('SELECT COUNT(*) FROM users');
         $total = (int) $totalStmt->fetchColumn();
 
         $offset = ($page - 1) * $limit;
         $stmt = $this->pdo->prepare('SELECT * FROM users ORDER BY id LIMIT :limit OFFSET :offset');
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
 
         $usersData = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -72,10 +73,12 @@ readonly class PostgresUserRepository implements Repository\UserRepositoryInterf
             $users[] = $this->hydrateUser($data);
         }
 
-        return [
-            'total' => $total,
-            'users' => $users,
-        ];
+        return new PaginationDTO(
+            items: $users,
+            total: $total,
+            page: $page,
+            limit: $limit
+        );
     }
 
     /**

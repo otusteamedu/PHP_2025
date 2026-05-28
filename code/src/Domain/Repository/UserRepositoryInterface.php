@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Repository;
 
+use App\Application\DTO\PaginationDTO;
 use App\Domain\Entity\User;
 
 interface UserRepositoryInterface extends RepositoryInterface
@@ -23,9 +24,9 @@ interface UserRepositoryInterface extends RepositoryInterface
     /**
      * @param int $page
      * @param int $limit
-     * @return User[]
+     * @return PaginationDTO
      */
-    public function findAll(int $page = 1, int $limit = 10): array;
+    public function findAll(int $page = 1, int $limit = 10): PaginationDTO;
 
     /**
      * @param User $entity

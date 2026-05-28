@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\TrainingPlan;
 
+use App\Application\DTO\PaginationDTO;
 use App\Domain\Repository\TrainingPlanRepositoryInterface;
 
 
@@ -16,20 +17,12 @@ readonly class GetAllTrainingPlansUseCase
     /**
      * Retrieves all training plans.
      *
-     * @return array An array of training plan data, each containing 'id', 'name', and 'description'.
+     * @param int $page
+     * @param int $limit
+     * @return PaginationDTO
      */
-
-    public function execute(): array
+    public function execute(int $page = 1, int $limit = 10): PaginationDTO
     {
-        $plans = $this->trainingPlanRepository->findAll();
-        $result = [];
-        foreach ($plans['plans'] as $plan) {
-            $result[] = [
-                'id' => $plan->getId(),
-                'name' => $plan->getName(),
-                'description' => $plan->getDescription(),
-            ];
-        }
-        return $result;
+        return $this->trainingPlanRepository->findAll($page, $limit);
     }
 }
