@@ -1,31 +1,26 @@
 <?php
 namespace Pryaniki\App\Application\UseCases;
 
+use Pryaniki\App\Domain\Interfaces\DomainExistenceCheckerInterface;
 use Pryaniki\App\Domain\Models\Email;
 use Pryaniki\App\Application\DTO\ValidationEmailResponseDTO;
-use Pryaniki\App\Domain\ValueObjects\Email\CompositeStringValidator;
-use Pryaniki\App\Domain\ValueObjects\Email\Rules\EmailFormatRule;
-use Pryaniki\App\Domain\ValueObjects\Email\Rules\NotEmptyRule;
-use Pryaniki\App\Infrastructure\Services\DnsDomainChecker;
+use Pryaniki\App\Domain\ValueObjects\Email\EmailValidatorInterface;
 
 
-class ValidateEmailUseCase
+readonly class ValidateEmailUseCase
 {
-    public function __construct()
-    {
+    public function __construct(
+        private EmailValidatorInterface         $validator,
+        private DomainExistenceCheckerInterface $dnsChecker
+    ) {
     }
 
     public function execute(string $email): ValidationEmailResponseDTO
     {
         $emailModel = new Email($email);
-        $validationRules = [
-            new EmailFormatRule(),
-            new NotEmptyRule()
-        ];
-        $emailValidator = new CompositeStringValidator($validationRules);
 
-        $validationResult = $emailValidator->validate($email);
-         if (!DnsDomainChecker::isExistsDomain($emailModel->getDomain())) {
+        $validationResult = $this->validator->validate($email);
+         if (!$this->dnsChecker->isExistsDomain($emailModel->getDomain())) {
              $validationResult->setIsValid(false);
              $validationResult->addError('DNS record not found');
          }

@@ -10,7 +10,7 @@ class DnsDomainCheckerTest extends TestCase
     public function testValidDomain(string $domain): void
     {
         self::assertTrue(
-            DnsDomainChecker::isExistsDomain($domain),
+            (new DnsDomainChecker())->isExistsDomain($domain),
             sprintf('Domain "%s" does not exist', $domain),
         );
     }
@@ -29,7 +29,7 @@ class DnsDomainCheckerTest extends TestCase
     public function testInvalidDomain(string $domain): void
     {
         self::assertFalse(
-            DnsDomainChecker::isExistsDomain($domain),
+            (new DnsDomainChecker())->isExistsDomain($domain),
             sprintf('Domain "%s" exist', $domain),
         );
     }

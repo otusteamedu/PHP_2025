@@ -5,7 +5,7 @@ use Pryaniki\App\Domain\Interfaces\DomainExistenceCheckerInterface;
 
 class DnsDomainChecker implements DomainExistenceCheckerInterface
 {
-    public static function isExistsDomain(string $domain): bool
+    public function isExistsDomain(string $domain): bool
     {
         if (empty($domain)) {
             return false;
