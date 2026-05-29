@@ -1,0 +1,18 @@
+{
+  "managing_company": {
+    "name": "УК 'Теплый Дом'",
+    "phone": "+7 (495)123-45-67",
+    "email": "info@teplo-dom.ru",
+    "site": "https://teplo-dom.ru",
+    "address": "ул. Ленина, д.10, Москва"
+  },
+  "house_council": {
+    "chairman": "Иванов Петр Сидорович",
+    "phone": "+7 (916)987-65-43",
+    "email": "sovet@nash-dom.ru"
+  },
+  "emergency": {
+    "phone": "112",
+    "description": "Единая служба спасения"
+  }
+}

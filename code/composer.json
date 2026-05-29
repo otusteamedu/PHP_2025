@@ -1,22 +1,34 @@
 {
-    "name": "arlex2305k/api",
+    "name": "arlex2305k/mkd-bot",
     "type": "project",
     "autoload": {
         "psr-4": {
-            "Api\\": "src/",
-            "Api\\Config\\": "config/"
+            "MkdBot\\": "src/",
+            "MkdBot\\Config\\": "config/",
+            "MkdBot\\Tests\\": "tests/"
         }
     },
     "require": {
-        "php": "^8.3",
-        "ext-pdo": "*",
-        "ext-amqp": "*",
-        "ext-pcntl": "*",
-        "php-di/php-di": "^7.0",
-        "vlucas/phpdotenv": "^5.6",
-        "monolog/monolog": "^3.0",
-        "slim/slim": "^4.0",
-        "slim/psr7": "^1.0",
-        "zircote/swagger-php": "^4.0"
+      "php": "^8.2",
+      "ext-pdo": "*",
+      "ext-amqp": "*",
+      "ext-pcntl": "*",
+      "php-di/php-di": "^7.0",
+      "vlucas/phpdotenv": "^5.6",
+      "monolog/monolog": "^3.0",
+      "slim/slim": "^4.0",
+      "slim/psr7": "^1.0",
+      "max-messenger-bot/max-bot-api-php": "0.2.3",
+      "irazasyed/telegram-bot-sdk": "^3.16",
+      "phpmailer/phpmailer": "^6.9"
+    },
+    "require-dev": {
+      "phpunit/phpunit": "^11.0",
+      "phpstan/phpstan": "^2.0",
+      "friendsofphp/php-cs-fixer": "^3.75"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-text"
     }
 }

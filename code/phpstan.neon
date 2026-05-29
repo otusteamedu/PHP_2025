@@ -1,0 +1,14 @@
+parameters:
+    level: 5
+    paths:
+        - src
+        - config
+    scanDirectories:
+        - src
+    bootstrapFiles:
+        - vendor/autoload.php
+    universalObjectCratesClasses:
+        - PDO
+        - PDOStatement
+    treatPhpDocTypesAsCertain: true
+    reportUnmatchedIgnoredErrors: false

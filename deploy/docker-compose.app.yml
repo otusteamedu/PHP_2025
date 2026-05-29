@@ -1,0 +1,47 @@
+# Параметризованный compose-файл для blue-green деплоя
+# Обрабатывается envsubst: docker compose не поддерживает переменные в ключах volumes,
+# поэтому шаблон рендерится перед запуском.
+services:
+    app:
+        image: ${CI_REGISTRY_IMAGE:-mkd-bot}:${APP_VERSION:-latest}
+        container_name: ${SLOT}-app
+        env_file: ${DEPLOY_DIR}/.env
+        environment:
+            PG_HOST: postgres
+            RABBITMQ_HOST: rabbitmq
+            SLOT_ROLE: ${SLOT_ROLE:-passive}
+        restart: unless-stopped
+        volumes:
+            - ${SLOT}_php_socket:/var/run/php-fpm
+            - ./logs/${SLOT}:/var/log/app
+        # depends_on убран: postgres/rabbitmq из infra-проекта уже запущены к моменту деплоя слота.
+        # Готовность БД и RabbitMQ проверяется через /ready.
+        networks:
+            app-network:
+                aliases:
+                    - ${SLOT}-app
+
+    webserver:
+        image: nginx:stable
+        container_name: ${SLOT}-webserver
+        restart: unless-stopped
+        volumes:
+            # /data не монтируется — nginx проксирует в PHP-FPM через FastCGI, код внутри app-образа
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+            - ${SLOT}_php_socket:/var/run/php-fpm
+        depends_on:
+            app:
+                condition: service_started
+        networks:
+            app-network:
+                aliases:
+                    - ${SLOT}-webserver
+
+volumes:
+    ${SLOT}_php_socket:
+        driver: local
+
+networks:
+    app-network:
+        external: true
+        name: mkd-bot-network

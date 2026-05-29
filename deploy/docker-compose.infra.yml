@@ -1,0 +1,70 @@
+# Инфраструктурные сервисы — запускаются один раз, разделяются между слотами
+services:
+    postgres:
+        image: postgres:17
+        container_name: postgres
+        working_dir: /app
+        restart: always
+        environment:
+            POSTGRES_DB: ${PG_DB}
+            POSTGRES_USER: ${PG_USER}
+            POSTGRES_PASSWORD: ${PG_PASSWORD}
+        volumes:
+            - pg_dump:/app/dump
+            - pg_data:/var/lib/postgresql/data
+        networks:
+            - app-network
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+
+    rabbitmq:
+        image: rabbitmq:4.1-management
+        container_name: rabbitmq
+        restart: unless-stopped
+        environment:
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_LOGIN}
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        networks:
+            - app-network
+        healthcheck:
+            test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+            start_period: 15s
+
+    # Маршрутизатор blue-green: переключает трафик между слотами через sed + nginx reload
+    switch-nginx:
+        image: nginx:stable
+        container_name: switch-nginx
+        ports:
+            - "${SWITCH_PORT:-8080}:8080"
+        volumes:
+            - ./deploy/switch-nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+        networks:
+            - app-network
+        restart: always
+        healthcheck:
+            test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/switch-health"]
+            interval: 10s
+            timeout: 3s
+            retries: 3
+
+volumes:
+    pg_data:
+        driver: local
+    pg_dump:
+        driver: local
+    rabbitmq_data:
+        driver: local
+
+networks:
+    app-network:
+        external: true
+        name: mkd-bot-network

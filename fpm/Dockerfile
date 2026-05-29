@@ -1,31 +1,52 @@
-FROM php:8.3-fpm
+# Общие зависимости для dev и prod
+FROM php:8.2-fpm AS base
 
-RUN apt-get update && apt-get install -y \
-    curl \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev \
-    libonig-dev \
-    libzip-dev \
-    libmemcached-dev \
-    libmcrypt-dev \
-    librabbitmq-dev \
-    libpq-dev \
-    && pecl install mcrypt memcached redis amqp \
-    && docker-php-ext-enable mcrypt memcached redis amqp \
-    && docker-php-ext-install -j$(nproc) iconv mbstring mysqli pdo pdo_pgsql zip pcntl \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd
+LABEL project=mkd-bot
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN apt-get update && apt-get install -y libpq-dev unzip curl supervisor librabbitmq-dev \
+    && docker-php-ext-install pdo_pgsql pcntl \
+    && pecl install amqp && docker-php-ext-enable amqp \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
-COPY ./zz-z.conf /usr/local/etc/php-fpm.d/zz-z.conf
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-RUN mkdir -p /var/log/app && chmod -R 777 /var/log/app
+COPY ./fpm/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY ./fpm/zz-z.conf /usr/local/etc/php-fpm.d/zz-z.conf
+COPY ./fpm/supervisord.conf /etc/supervisor/supervisord.conf
+COPY ./fpm/supervisor-conf.d/ /etc/supervisor/conf.d/
+COPY ./fpm/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+RUN mkdir -p /var/log/app /data/logs && \
+    chown -R www-data:www-data /var/log/app /data/logs && \
+    chmod -R 775 /var/log/app /data/logs
 
 WORKDIR /data
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
-VOLUME /data
+# Dev: pcov для покрытия тестов, код — через bind mount
+FROM base AS dev
 
-CMD ["php-fpm"]
+RUN pecl install pcov \
+    && docker-php-ext-enable pcov
+
+# Builder: подготовка vendor/ для prod
+FROM base AS builder
+
+COPY ./code/ /data/
+WORKDIR /data
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Test: dev-зависимости для CI
+FROM base AS test
+
+COPY ./code/ /data/
+WORKDIR /data
+RUN composer install --no-interaction
+
+# Prod: код из builder, без тестов и dev-инструментов
+FROM base AS prod
+
+COPY --from=builder /data/ /data/
+RUN rm -rf /data/tests /data/phpunit.xml /data/.phpunit.cache /data/.phpunit.result.cache /data/.php-cs-fixer.php /data/.php-cs-fixer.cache /data/phpstan.neon
