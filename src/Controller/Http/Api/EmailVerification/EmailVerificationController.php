@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Http\Api\Email;
+namespace App\Controller\Http\Api\EmailVerification;
 
-use App\Controller\Http\AbstractController;
+use App\Core\Http\Controller\Base\AbstractController;
 use App\Core\Http\Message\Request;
 use App\Core\Http\Message\Response;
 use App\Domain\EmailVerification\EmailVerifier;
 
-class EmailController extends AbstractController
+class EmailVerificationController extends AbstractController
 {
     public function __construct(
         private readonly Request $request,

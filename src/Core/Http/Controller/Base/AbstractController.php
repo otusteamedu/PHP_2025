@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Http;
+namespace App\Core\Http\Controller\Base;
 
 use App\Core\Http\Message\Response;
 use App\Core\Http\View\View;
@@ -16,10 +16,6 @@ abstract class AbstractController
 
     public function json(array $data, int $httpCode = 200): Response
     {
-        return new Response(
-            json_encode($data),
-            $httpCode,
-            ['Content-Type: application/json; charset=utf-8'],
-        );
+        return new Response(json_encode($data), $httpCode, ['Content-Type: application/json; charset=utf-8']);
     }
 }

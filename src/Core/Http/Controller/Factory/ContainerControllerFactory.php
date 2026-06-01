@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Http\Controller\Factory;
 
-use App\Controller\Http\ErrorController;
 use App\Core\Container\Container;
+use App\Core\Http\Controller\Base\ErrorController;
 use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
 
 class ContainerControllerFactory implements ControllerFactoryInterface

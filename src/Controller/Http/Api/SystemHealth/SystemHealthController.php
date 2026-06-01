@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Http\Api\ServicesHealth;
+namespace App\Controller\Http\Api\SystemHealth;
 
-use App\Controller\Http\AbstractController;
+use App\Core\Http\Controller\Base\AbstractController;
 use App\Core\Http\Message\Response;
 use App\Domain\SystemHealth\SystemHealthCheckService;
 
-class ServicesHealthController extends AbstractController
+class SystemHealthController extends AbstractController
 {
     public function __construct(
         private readonly SystemHealthCheckService $healthCheckService,

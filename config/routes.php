@@ -10,7 +10,7 @@ return [
     [
         'method' => 'GET',
         'path' => '/api/v1/services/health-check',
-        'controller' => \App\Controller\Http\Api\ServicesHealth\ServicesHealthController::class,
+        'controller' => \App\Controller\Http\Api\SystemHealth\SystemHealthController::class,
         'action' => 'checkServicesHealth',
     ],
     [
@@ -22,7 +22,7 @@ return [
     [
         'method' => 'POST',
         'path' => '/api/v1/emails/verify',
-        'controller' => \App\Controller\Http\Api\Email\EmailController::class,
+        'controller' => \App\Controller\Http\Api\EmailVerification\EmailVerificationController::class,
         'action' => 'verifyEmails',
     ],
     [
@@ -46,31 +46,31 @@ return [
     [
         'method' => 'GET',
         'path' => '/api/v1/user/get',
-        'controller' => \App\Controller\Http\Api\User\UserController::class,
+        'controller' => \App\Controller\Http\Api\UserManagement\UserManagementController::class,
         'action' => 'getUser',
     ],
     [
         'method' => 'GET',
         'path' => '/api/v1/users/get',
-        'controller' => \App\Controller\Http\Api\User\UserController::class,
+        'controller' => \App\Controller\Http\Api\UserManagement\UserManagementController::class,
         'action' => 'getUsers',
     ],
     [
         'method' => 'POST',
         'path' => '/api/v1/user/create',
-        'controller' => \App\Controller\Http\Api\User\UserController::class,
+        'controller' => \App\Controller\Http\Api\UserManagement\UserManagementController::class,
         'action' => 'createUser',
     ],
     [
         'method' => 'PATCH',
         'path' => '/api/v1/user/update-email',
-        'controller' => \App\Controller\Http\Api\User\UserController::class,
+        'controller' => \App\Controller\Http\Api\UserManagement\UserManagementController::class,
         'action' => 'updateUserEmail',
     ],
     [
         'method' => 'DELETE',
         'path' => '/api/v1/user/delete',
-        'controller' => \App\Controller\Http\Api\User\UserController::class,
+        'controller' => \App\Controller\Http\Api\UserManagement\UserManagementController::class,
         'action' => 'deleteUser',
     ],
 ];

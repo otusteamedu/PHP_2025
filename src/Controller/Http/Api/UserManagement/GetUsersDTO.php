@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Http\Api\User;
+namespace App\Controller\Http\Api\UserManagement;
 
 readonly class GetUsersDTO
 {

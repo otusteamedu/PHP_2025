@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Http\Api\User;
+namespace App\Controller\Http\Api\UserManagement;
 
-use App\Controller\Http\AbstractController;
+use App\Core\Http\Controller\Base\AbstractController;
 use App\Core\Http\Message\Request;
 use App\Core\Http\Message\Response;
 use App\Domain\UserManagement\Entity\User;
@@ -14,7 +14,7 @@ use App\Domain\UserManagement\Model\UpdateUserEmailModel;
 use App\Domain\UserManagement\UserService;
 use Customer41\MultiException\MultiException;
 
-class UserController extends AbstractController
+class UserManagementController extends AbstractController
 {
     public function __construct(
         private readonly Request $request,

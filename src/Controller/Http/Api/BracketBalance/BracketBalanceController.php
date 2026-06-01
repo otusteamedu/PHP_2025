@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Http\Api\BracketBalance;
 
-use App\Controller\Http\AbstractController;
+use App\Core\Http\Controller\Base\AbstractController;
 use App\Core\Http\Message\Request;
 use App\Core\Http\Message\Response;
 use App\Domain\BracketBalance\BracketBalancer;

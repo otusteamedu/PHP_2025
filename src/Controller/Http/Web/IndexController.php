@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Http\Web;
 
-use App\Controller\Http\AbstractController;
+use App\Core\Http\Controller\Base\AbstractController;
 use App\Core\Http\Message\Response;
 use App\Core\Http\View\View;
 

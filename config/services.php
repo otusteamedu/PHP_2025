@@ -79,7 +79,7 @@ return [
         ],
         SessionStorageChecker::class => [
             'singleton' => false,
-            'factory' => fn (Container $c) => new SessionStorageChecker($c->get(DotEnvConfigInterface::class)),
+            'factory' => fn (Container $c) => new SessionStorageChecker($c->get(RedisDriver::class)),
         ],
     ],
     'EventService' => [

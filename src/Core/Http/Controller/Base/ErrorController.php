@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Http;
+namespace App\Core\Http\Controller\Base;
 
 use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
 use App\Core\Http\Message\Response;
