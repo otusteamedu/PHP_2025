@@ -12,6 +12,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('db:table:create:users')]
 class CreateUsersTableCommand extends Command
 {
+    public function __construct(
+        private readonly PDOWrapper $pdoWrapper,
+    ) {
+        parent::__construct();
+    }
+
     public function __invoke(OutputInterface $output): int
     {
         $columnDefinitionList = [
@@ -24,7 +30,7 @@ class CreateUsersTableCommand extends Command
         ];
 
         $sql = sprintf('CREATE TABLE users (%s)', implode(', ', $columnDefinitionList));
-        PDOWrapper::getHandler()->prepare($sql)->execute();
+        $this->pdoWrapper->getHandler()->prepare($sql)->execute();
 
         $output->writeln('Таблица пользователей успешно создана.');
 

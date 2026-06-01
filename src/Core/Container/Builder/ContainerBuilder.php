@@ -18,10 +18,10 @@ class ContainerBuilder
     {
         $container = new Container();
 
-        // Регистрируем базовые сервисы из слоя Core
+        // Регистрируем базовые сервисы из слоя "Core"
         new CommonServiceProvider()->registerServices($container);
 
-        // Регистрируем сервисы специфичные для HTTP (API / Web)
+        // Регистрируем сервисы специфичные для HTTP (API / Web) или CLI
         $appLoadContext = $container->get(AppContext::class)->getAppLoadContext();
         $appLoadContextProviders = new AppLoadContextProviderFactory()->createProviders($appLoadContext);
         foreach ($appLoadContextProviders as $serviceProvider) {
