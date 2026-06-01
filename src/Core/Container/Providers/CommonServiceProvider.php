@@ -6,8 +6,7 @@ namespace App\Core\Container\Providers;
 
 use App\Core\Config\ConfigInterface;
 use App\Core\Config\DotEnvConfig;
-use App\Core\Container\Config\ApplicationServicesConfigLoader;
-use App\Core\Container\Config\ContainerConfigLoaderInterface;
+use App\Core\Container\Config\Loaders\ConfigLoaderFactory;
 use App\Core\Container\Container;
 use App\Core\Container\Context\AppContext;
 use App\Core\Utils\PathResolver;
@@ -26,9 +25,6 @@ class CommonServiceProvider implements ServiceProviderInterface
             static fn(Container $c) => new DotEnvConfig($c->get(PathResolverInterface::class)),
         );
 
-        $container->singleton(
-            ContainerConfigLoaderInterface::class,
-            static fn(Container $c) => new ApplicationServicesConfigLoader($c->get(PathResolverInterface::class))
-        );
+        $container->singleton(ConfigLoaderFactory::class, static fn(Container $c) => new ConfigLoaderFactory($c));
     }
 }

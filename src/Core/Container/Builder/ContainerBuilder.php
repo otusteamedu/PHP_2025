@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Builder;
 
-use App\Core\Container\Config\ContainerConfigLoaderInterface;
+use App\Core\Container\Config\Loaders\ConfigLoaderFactory;
+use App\Core\Container\Config\Loaders\ConfigLoaderType;
 use App\Core\Container\Container;
 use App\Core\Container\Context\AppContext;
-use App\Core\Container\Providers\ApplicationServiceProvider;
+use App\Core\Container\Providers\ModuleServiceProvider;
 use App\Core\Container\Providers\AppLoadContextProviderFactory;
 use App\Core\Container\Providers\CommonServiceProvider;
 
@@ -27,9 +28,9 @@ class ContainerBuilder
             $serviceProvider->registerServices($container);
         }
 
-        // Регистрируем сервисы из слоя домена и инфраструктуры через файл конфигурации
-        $configLoader = $container->get(ContainerConfigLoaderInterface::class);
-        new ApplicationServiceProvider($configLoader)->registerServices($container);
+        // Регистрируем сервисы из слоя "Domain" и нужные им сервисы из слоя "Infrastructure" через файл конфигурации
+        $configLoader = $container->get(ConfigLoaderFactory::class)->create(ConfigLoaderType::MODULES);
+        new ModuleServiceProvider($configLoader)->registerServices($container);
 
         return $container;
     }
