@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Database\Connection;
 
-use App\Core\Config\ConfigInterface;
+use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
 
 class PDOWrapper
 {
     private ?\PDO $dbh = null;
 
     public function __construct(
-        private readonly ConfigInterface $dotEnvConfig,
+        private readonly DotEnvConfigInterface $dotEnvConfig,
     ) {
     }
 

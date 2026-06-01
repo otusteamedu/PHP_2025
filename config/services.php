@@ -1,6 +1,6 @@
 <?php
 
-use App\Core\Config\ConfigInterface;
+use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
 use App\Core\Container\Container;
 use App\Domain\BracketBalance\BracketBalancer;
 use App\Domain\EmailVerification\EmailVerifier;
@@ -67,19 +67,19 @@ return [
         ],
         PDOWrapper::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new PDOWrapper($c->get(ConfigInterface::class)),
+            'factory' => fn (Container $c) => new PDOWrapper($c->get(DotEnvConfigInterface::class)),
         ],
         RedisDriver::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new RedisDriver($c->get(ConfigInterface::class)),
+            'factory' => fn (Container $c) => new RedisDriver($c->get(DotEnvConfigInterface::class)),
         ],
         MemcachedDriver::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new MemcachedDriver($c->get(ConfigInterface::class)),
+            'factory' => fn (Container $c) => new MemcachedDriver($c->get(DotEnvConfigInterface::class)),
         ],
         SessionStorageChecker::class => [
             'singleton' => false,
-            'factory' => fn (Container $c) => new SessionStorageChecker($c->get(RedisDriver::class)),
+            'factory' => fn (Container $c) => new SessionStorageChecker($c->get(DotEnvConfigInterface::class)),
         ],
     ],
     'EventService' => [
@@ -90,7 +90,7 @@ return [
         EventRepositoryFactory::class => [
             'singleton' => true,
             'factory' => fn (Container $c) => new EventRepositoryFactory(
-                $c->get(ConfigInterface::class),
+                $c->get(DotEnvConfigInterface::class),
                 $c->get(RedisDriver::class),
                 $c->get(MemcachedDriver::class),
             ),

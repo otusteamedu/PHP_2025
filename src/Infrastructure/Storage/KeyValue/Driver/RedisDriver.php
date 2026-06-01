@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\KeyValue\Driver;
 
-use App\Core\Config\ConfigInterface;
+use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
 
 class RedisDriver
 {
     private readonly \Redis $redisHandler;
 
     public function __construct(
-        private readonly ConfigInterface $dotEnvConfig,
+        private readonly DotEnvConfigInterface $dotEnvConfig,
     ) {
         $host = $this->getRequiredCredential('REDIS_HOST');
         $port = (int) $this->getRequiredCredential('REDIS_PORT');

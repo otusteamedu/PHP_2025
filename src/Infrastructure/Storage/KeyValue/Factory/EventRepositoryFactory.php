@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\KeyValue\Factory;
 
-use App\Core\Config\ConfigInterface;
+use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
 use App\Domain\EventSystem\Interface\EventRepositoryInterface;
 use App\Infrastructure\Storage\KeyValue\Driver\MemcachedDriver;
 use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
@@ -14,7 +14,7 @@ use App\Infrastructure\Storage\KeyValue\Repository\RedisEventRepository;
 class EventRepositoryFactory
 {
     public function __construct(
-        private readonly ConfigInterface $dotEnvConfig,
+        private readonly DotEnvConfigInterface $dotEnvConfig,
         private readonly RedisDriver $redisDriver,
         private readonly MemcachedDriver $memcachedDriver,
     ) {

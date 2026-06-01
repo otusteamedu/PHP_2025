@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\KeyValue\Driver;
 
-use App\Core\Config\ConfigInterface;
+use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
 
 class MemcachedDriver
 {
     private readonly \Memcached $memcachedHandler;
 
     public function __construct(
-        private readonly ConfigInterface $dotEnvConfig,
+        private readonly DotEnvConfigInterface $dotEnvConfig,
     ) {
         $host = $this->getRequiredCredential('MEMCACHED_HOST');
         $port = (int) $this->getRequiredCredential('MEMCACHED_PORT');
