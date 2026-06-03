@@ -82,7 +82,7 @@ return [
             'factory' => fn (Container $c) => new SessionStorageChecker($c->get(RedisDriver::class)),
         ],
     ],
-    'EventService' => [
+    'EventSystem' => [
         EventService::class => [
             'singleton' => true,
             'factory' => fn (Container $c) => new EventService($c->get(EventRepositoryInterface::class)),

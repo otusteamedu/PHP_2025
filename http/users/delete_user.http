@@ -1,4 +1,9 @@
-DELETE http://localhost:{{nginxPublishedPort}}/api/v1/user/delete?id=10
+# REST style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@deleteUserUrl = {{baseUrl}}/user?id=15
+
+DELETE {{deleteUserUrl}}
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

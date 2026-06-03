@@ -1,0 +1,57 @@
+# REST style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@createEventUrl = {{baseUrl}}/event
+
+### create event_1 request
+POST {{createEventUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "event": {
+    "id": 1,
+    "name": "event_1",
+    "priority": 1000,
+    "conditions": {
+      "param1": 1
+    }
+  }
+}
+
+### create event_2 request
+POST {{createEventUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "event": {
+    "id": 2,
+    "name": "event_2",
+    "priority": 2000,
+    "conditions": {
+      "param1": 2,
+      "param2": 2
+    }
+  }
+}
+
+### create event_3 request
+POST {{createEventUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "event": {
+    "id": 3,
+    "name": "event_3",
+    "priority": 3000,
+    "conditions": {
+      "param1": 1,
+      "param2": 2
+    }
+  }
+}

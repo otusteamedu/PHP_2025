@@ -19,7 +19,7 @@ class EventSystemController extends AbstractController
     ) {
     }
 
-    public function addEvent(): Response
+    public function createEvent(): Response
     {
         try {
             $event = $this->request->getPayload()['event'];

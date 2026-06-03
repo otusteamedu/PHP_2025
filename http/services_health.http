@@ -1,4 +1,0 @@
-GET http://localhost:{{nginxPublishedPort}}/api/v1/services/health-check
-Content-Type: application/json
-Accept: application/json
-Cache-Control: no-cache

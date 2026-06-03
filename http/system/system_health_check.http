@@ -1,13 +1,9 @@
-# REST style
+# RPC style
 
 @baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
-@updateUserEmailUrl = {{baseUrl}}/user/email?id=14
+@systemHealthUrl = {{baseUrl}}/system/health-check
 
-PATCH {{updateUserEmailUrl}}
+GET {{systemHealthUrl}}
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache
-
-{
-  "newEmail": "i.ivanov@mail.ru"
-}

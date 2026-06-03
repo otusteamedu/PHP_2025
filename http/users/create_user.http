@@ -1,4 +1,9 @@
-POST http://localhost:{{nginxPublishedPort}}/api/v1/user/create
+# REST style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@createUserUrl = {{baseUrl}}/user
+
+POST {{createUserUrl}}
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

@@ -17,7 +17,7 @@ class SystemHealthController extends AbstractController
         session_start();
     }
 
-    public function checkServicesHealth(): Response
+    public function checkSystemHealth(): Response
     {
         $result = $this->healthCheckService->checkAll();
 
