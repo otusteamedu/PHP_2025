@@ -2,6 +2,7 @@
 
 use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
 use App\Core\Container\Container;
+use App\Domain\BookshopSearch\BookshopService;
 use App\Domain\BracketBalance\BracketBalancer;
 use App\Domain\EmailVerification\EmailVerifier;
 use App\Domain\EventSystem\EventService;
@@ -22,6 +23,8 @@ use App\Infrastructure\Database\Repository\UserRepository;
 use App\Infrastructure\Storage\KeyValue\Driver\MemcachedDriver;
 use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
 use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
+use App\Infrastructure\Storage\Search\Elasticsearch\Client\ElasticsearchClientProvider;
+use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
 
 return [
     'EmailVerification' => [
@@ -124,6 +127,20 @@ return [
                 $c->get(DataMapperInterface::class),
                 $c->get(CollectionFactory::class),
             ),
+        ],
+    ],
+    'BookshopSearch' => [
+        BookshopService::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new BookshopService($c->get(BookshopRepository::class)),
+        ],
+        BookshopRepository::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new BookshopRepository($c->get(ElasticsearchClientProvider::class)),
+        ],
+        ElasticsearchClientProvider::class => [
+            'singleton' => true,
+            'factory' => fn (Container $c) => new ElasticsearchClientProvider($c->get(DotEnvConfigInterface::class)),
         ],
     ],
 ];

@@ -4,24 +4,49 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\Search\Elasticsearch\Client;
 
-use App\Core\Config\DotEnvLoader;
+use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Exception\AuthenticationException;
 
 class ElasticsearchClientProvider
 {
-    public static function get(): Client
-    {
-        $dotEnvLoader = new DotEnvLoader();
-        $esUser = $dotEnvLoader->getEnv('ELASTIC_USER');
-        $esPassword = $dotEnvLoader->getEnv('ELASTIC_PASSWORD');
-        $esHost = $dotEnvLoader->getEnv('ELASTIC_HOST');
-        $certsDir = $dotEnvLoader->getEnv('ELASTIC_CERTS_DIR');
+    private ?Client $esClient = null;
 
-        return ClientBuilder::create()
-            ->setHosts(["https://$esHost:9200"])
-            ->setBasicAuthentication($esUser, $esPassword)
-            ->setCABundle("$certsDir/ca/ca.crt")
-            ->build();
+    public function __construct(
+        private readonly DotEnvConfigInterface $dotEnvConfig,
+    ) {
+    }
+
+    public function getClient(): Client
+    {
+        if ($this->esClient === null) {
+            $esUser = $this->getRequiredCredential('ELASTIC_USER');
+            $esPassword = $this->getRequiredCredential('ELASTIC_PASSWORD');
+            $esHost = $this->getRequiredCredential('ELASTIC_HOST');
+            $esPort = $this->getRequiredCredential('ELASTIC_PORT');
+            $certsDir = $this->getRequiredCredential('ELASTIC_CERTS_DIR');
+
+            try {
+                $this->esClient = ClientBuilder::create()
+                    ->setHosts(["https://$esHost:$esPort"])
+                    ->setBasicAuthentication($esUser, $esPassword)
+                    ->setCABundle("$certsDir/ca/ca.crt")
+                    ->build();
+            } catch (AuthenticationException $e) {
+                throw new \RuntimeException("Authentication error: {$e->getMessage()}");
+            }
+        }
+
+        return $this->esClient;
+    }
+
+    private function getRequiredCredential(string $key): mixed
+    {
+        if (!$this->dotEnvConfig->has($key)) {
+            throw new \RuntimeException("Missing configuration credential: $key");
+        }
+
+        return $this->dotEnvConfig->get($key);
     }
 }

@@ -16,14 +16,12 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand('bookshop:search')]
-class SearchBookshopCommand extends Command
+class BookshopSearchCommand extends Command
 {
-    private readonly BookshopService $bookshopService;
-
-    public function __construct(?string $name = null, ?callable $code = null)
-    {
-        $this->bookshopService = new BookshopService();
-        parent::__construct($name, $code);
+    public function __construct(
+        private readonly BookshopService $bookshopService,
+    ) {
+        parent::__construct();
     }
 
     public function __invoke(

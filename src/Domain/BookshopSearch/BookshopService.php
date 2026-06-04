@@ -9,11 +9,9 @@ use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepositor
 
 class BookshopService
 {
-    private readonly BookshopRepository $bookshopRepository;
-
-    public function __construct()
-    {
-        $this->bookshopRepository = new BookshopRepository();
+    public function __construct(
+        private readonly BookshopRepository $bookshopRepository,
+    ) {
     }
 
     public function createIndex(string $indexName, array $params = []): bool

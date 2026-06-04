@@ -19,9 +19,10 @@ class BookshopRepository
 {
     private readonly Client $esClient;
 
-    public function __construct()
-    {
-        $this->esClient = ElasticsearchClientProvider::get();
+    public function __construct(
+        ElasticsearchClientProvider $esClientProvider,
+    ) {
+        $this->esClient = $esClientProvider->getClient();
     }
 
     public function createIndex(string $indexName, array $params = []): bool

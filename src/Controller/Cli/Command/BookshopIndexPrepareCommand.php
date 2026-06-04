@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Cli\Command;
 
-use App\Core\Utils\PathResolver;
+use App\Core\Utils\PathResolverInterface;
 use App\Domain\BookshopSearch\BookshopService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
@@ -12,14 +12,13 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand('bookshop:index:prepare')]
-class PrepareBookshopCommand extends Command
+class BookshopIndexPrepareCommand extends Command
 {
-    private readonly BookshopService $bookshopService;
-
-    public function __construct(?string $name = null, ?callable $code = null)
-    {
-        $this->bookshopService = new BookshopService();
-        parent::__construct($name, $code);
+    public function __construct(
+        private readonly BookshopService $bookshopService,
+        private readonly PathResolverInterface $pathResolver,
+    ) {
+        parent::__construct();
     }
 
     public function __invoke(OutputInterface $output, #[Option] string $indexName = 'otus-shop'): int
@@ -36,7 +35,7 @@ class PrepareBookshopCommand extends Command
 
             $rawData = file($this->getDataFile());
             if ($rawData === false) {
-                throw new \RuntimeException('Не удалось прочитать файл.', 400);
+                throw new \RuntimeException("Не удалось прочитать файл '{$this->getDataFile()}'", 400);
             }
             $preparedData = array_map(
                 static fn(string $row) => json_decode($row, true, 512, JSON_THROW_ON_ERROR),
@@ -54,7 +53,7 @@ class PrepareBookshopCommand extends Command
 
     private function getDataFile(): string
     {
-        return PathResolver::getVarPath() . '/books-39289-b51bf5.json';
+        return $this->pathResolver->getVarPath() . '/books-39289-b51bf5.json';
     }
 
     private function getSettings(): array
