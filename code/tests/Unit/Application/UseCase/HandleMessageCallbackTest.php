@@ -10,6 +10,7 @@ use MkdBot\Application\Service\MainMenuSender;
 use MkdBot\Application\UseCase\GetContacts;
 use MkdBot\Application\UseCase\HandleMessageCallback;
 use MkdBot\Application\UseCase\ProcessProposal;
+use MkdBot\Domain\Enum\ConversationStep;
 use MkdBot\Domain\Interface\ConversationStateRepositoryInterface;
 use MkdBot\Domain\Interface\MaxBotClientInterface;
 use PHPUnit\Framework\TestCase;
@@ -130,7 +131,7 @@ class HandleMessageCallbackTest extends TestCase
         $useCase->execute($dto);
     }
 
-    public function testRagQueryStub(): void
+    public function testRagQueryCreatesAwaitingQuestionState(): void
     {
         $stateRepo = $this->createMock(ConversationStateRepositoryInterface::class);
         $maxBot = $this->createMock(MaxBotClientInterface::class);
@@ -139,9 +140,17 @@ class HandleMessageCallbackTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
+        // Ожидаем: сохранение состояния с шагом AwaitingQuestion
+        $stateRepo->expects($this->once())->method('save')
+            ->with($this->callback(function (\MkdBot\Domain\Entity\ConversationState $state) {
+                return $state->getUserId() === 123
+                    && $state->getCurrentStep() === ConversationStep::AwaitingQuestion;
+            }));
         $maxBot->expects($this->once())->method('answerCallbackNotification');
-        $maxBot->expects($this->once())->method('sendMessageToUser')->with(123, '🔧 Функция в разработке');
-        $mainMenuSender->expects($this->once())->method('send')->with(123);
+        $maxBot->expects($this->once())->method('sendMessageWithInlineKeyboard')
+            ->with(123, $this->stringContains('Задайте вопрос'), $this->anything());
+        // Главное меню НЕ отправляется — пользователь в режиме ввода вопроса
+        $mainMenuSender->expects($this->never())->method('send');
 
         $useCase = new HandleMessageCallback($stateRepo, $maxBot, $processProposal, $getContacts, $logger, $mainMenuSender);
 
@@ -533,9 +542,9 @@ class HandleMessageCallbackTest extends TestCase
     }
 
     /**
-     * Кнопка «Вопрос ИИ» — возвращает «🔧 Функция в разработке» (v1 заглушка)
+     * Кнопка «Вопрос ИИ» — создаёт сессию AwaitingQuestion + inline-клавиатура с отменой
      */
-    public function testRagQueryButtonReturnsStubMessage(): void
+    public function testRagQueryButtonCreatesAwaitingQuestionWithKeyboard(): void
     {
         $stateRepo = $this->createMock(ConversationStateRepositoryInterface::class);
         $maxBot = $this->createMock(MaxBotClientInterface::class);
@@ -544,10 +553,11 @@ class HandleMessageCallbackTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
+        $stateRepo->expects($this->once())->method('save');
         $maxBot->expects($this->once())->method('answerCallbackNotification')->with('cb.rag', '✅');
-        $maxBot->expects($this->once())->method('sendMessageToUser')
-            ->with(123, '🔧 Функция в разработке');
-        $mainMenuSender->expects($this->once())->method('send')->with(123);
+        $maxBot->expects($this->once())->method('sendMessageWithInlineKeyboard')
+            ->with(123, $this->stringContains('Задайте вопрос'), $this->anything());
+        $mainMenuSender->expects($this->never())->method('send');
 
         $useCase = new HandleMessageCallback($stateRepo, $maxBot, $processProposal, $getContacts, $logger, $mainMenuSender);
 
@@ -821,7 +831,8 @@ class HandleMessageCallbackTest extends TestCase
     }
 
     /**
-     * RagQuery с пустым callbackId — answerCallbackNotification НЕ вызывается
+     * RagQuery с пустым callbackId — answerCallbackNotification НЕ вызывается,
+     * но состояние создаётся и inline-клавиатура отправляется
      */
     public function testRagQueryWithNullCallbackIdSkipsAnswerCallback(): void
     {
@@ -832,10 +843,11 @@ class HandleMessageCallbackTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
+        $stateRepo->expects($this->once())->method('save');
         // answerCallbackNotification НЕ вызывается — callbackId пустой
         $maxBot->expects($this->never())->method('answerCallbackNotification');
-        $maxBot->expects($this->once())->method('sendMessageToUser')->with(123, '🔧 Функция в разработке');
-        $mainMenuSender->expects($this->once())->method('send')->with(123);
+        $maxBot->expects($this->once())->method('sendMessageWithInlineKeyboard');
+        $mainMenuSender->expects($this->never())->method('send');
 
         $useCase = new HandleMessageCallback($stateRepo, $maxBot, $processProposal, $getContacts, $logger, $mainMenuSender);
 

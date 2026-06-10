@@ -4,34 +4,24 @@ declare(strict_types=1);
 
 namespace MkdBot\Infrastructure\Queue;
 
-use AMQPConnection;
 use AMQPException;
 use MkdBot\Domain\Interface\RabbitMQConnectionInterface;
 
 /**
  * Проверка доступности RabbitMQ через попытку подключения
+ * Использует RabbitMQConnectionFactory для создания свежего подключения при каждой проверке
  */
 class RabbitMQConnection implements RabbitMQConnectionInterface
 {
     public function __construct(
-        private readonly string $host,
-        private readonly int $port,
-        private readonly string $login,
-        private readonly string $password,
-        private readonly string $vhost,
+        private readonly RabbitMQConnectionFactory $connectionFactory,
     ) {
     }
 
     public function isAvailable(): bool
     {
         try {
-            $connection = new AMQPConnection([
-                'host' => $this->host,
-                'port' => $this->port,
-                'login' => $this->login,
-                'password' => $this->password,
-                'vhost' => $this->vhost,
-            ]);
+            $connection = $this->connectionFactory->createFreshConnection();
             $connection->connect();
             $connected = $connection->isConnected();
             $connection->disconnect();

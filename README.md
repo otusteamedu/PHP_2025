@@ -155,7 +155,7 @@ graph LR
     Q1 -->|reject| DLX[mkd.dlx]
     Q2 -->|reject| DLX
 
-    DLX -->|mkd.telegram.forward| R1[retry.telegram.webhook]
+    DLX -->|mkd.telegram.forward| R1[retry.telegram.forward]
     DLX -->|mkd.rag.query| R2[retry.rag.query]
 
     R1 -->|TTL 60s| D
@@ -258,41 +258,40 @@ base — PHP 8.2-FPM + ext: pdo_pgsql, pcntl, amqp + Composer + Supervisor
 ```
 Пользователь → МКД-Бот → RabbitMQ (mkd.rag.query) → RagQueryConsumer
 → HTTP POST → Cloud Function (mkd-rag-search)
-→ YandexGPT API (/v1/chat/responses) + file_search tool + vector_store_ids
+→ YandexGPT API (/v1/responses) + file_search tool + vector_store_ids
 → Ответ + источники → Consumer → ProcessRagQuery → Пользователь
 ```
 
 ### Cloud Function: `mkd-rag-search`
-#### Пока - это прототип - работает с Completion API(проверено) и нет связи с основным приложением(заглушка)
-#### С Response API надо разбираться - документация Яндекс некорректна. Перед переводом в боевой режим будет добавлен токен в вебхук.
+#### Работает с Responses API + file_search tool. Связь с основным приложением реализована через RagSearchClient → ProcessRagQuery → RagQueryConsumer.
 
 [`index.php`](yc/functions/rag-search/index.php) → [`RequestValidator`](yc/functions/rag-search/RequestValidator.php) → [`SearchService`](yc/functions/rag-search/SearchService.php) → YandexGPT Response API с `file_search` tool → [`ResponseBuilder`](yc/functions/rag-search/ResponseBuilder.php)
 
-- **Runtime**: PHP 8.2, 256 MB, таймаут 30с
-- **IAM-токен**: автоматически через metadata service сервисного аккаунта
-- **API**: `https://llm.api.cloud.yandex.net/v1/chat/completions` (OpenAI-compatible)
+- **Runtime**: PHP 8.2, 128 MB, таймаут 30с
+- **Авторизация**: API-ключ AI Studio (через Yandex Lockbox)
+- **API**: `https://ai.api.cloud.yandex.net/v1/responses` (Responses API)
 - **Инструмент**: `file_search` с `vector_store_ids`
 
 ### Terraform: [`yc/main.tf`](yc/main.tf)
 
 | Ресурс | Описание |
 |--------|----------|
-| `yandex_function.rag_search` | Cloud Function `mkd-rag-search` (php82, 256MB, 30s) |
-| `yandex_storage_bucket.documents` | S3-бакет `mkd-chatbot-docs-<suffix>` для документов |
+| `yandex_function.rag_search` | Cloud Function `mkd-rag-search` (php82, 128MB, 30s) |
+| `yandex_lockbox_secret.rag_secrets` | Хранение API-ключа RAG в Lockbox |
 | `yandex_iam_service_account.sa` | Сервисный аккаунт `mkd-chatbot-sa` |
-| IAM роли | `ai.languageModels.user`, `functions.functionInvoker`, `storage.uploader`, `storage.viewer` |
+| IAM роли | `ai.languageModels.user`, `ai.assistants.editor`, `functions.functionInvoker`, `lockbox.payloadViewer` |
 | `data.archive_file.rag_search_zip` | Автоматическая упаковка `functions/rag-search/` в ZIP |
 
 ### API функции
 
 **Запрос:**
 ```json
-{ "question": "Как оплатить ЖКХ?", "chat_id": 12345 }
+{ "question": "Как оплатить ЖКХ?" }
 ```
 
 **Ответ (успех):**
 ```json
-{ "success": true, "answer": "Ответ на основе документов...", "sources": [{ "filename": "faq/faq.md" }] }
+{ "success": true, "answer": "Ответ на основе документов...", "sources": [{ "filename": "faq/faq.md", "file_id": "abc123", "score": 0.95, "text": "фрагмент текста..." }] }
 ```
 
 **Ответ (ошибка):**
@@ -394,6 +393,13 @@ cp .env.example .env
 | `SMTP_FROM_EMAIL` | Email отправителя |
 | `PROPOSAL_NOTIFY_EMAILS` | Email-адреса для уведомлений о предложениях |
 | `LOG_LEVEL` | Уровень логирования: `DEBUG` / `INFO` / `ERROR` |
+| `RAG_SEARCH_URL` | URL RAG-search Cloud Function |
+| `RAG_SEARCH_API_KEY` | API-ключ для RAG-search |
+| `RAG_SEARCH_TIMEOUT` | Таймаут RAG-запроса (сек) |
+| `APP_ENV` | Окружение: `dev` / `prod` |
+| `APP_DEBUG` | Режим отладки: `true` / `false` |
+| `RABBITMQ_VHOST` | Virtual host RabbitMQ |
+| `SMTP_FROM_NAME` | Имя отправителя для SMTP |
 
 ### 3. Запуск
 
@@ -485,7 +491,7 @@ docker exec app make test-coverage
 
 ```mermaid
 flowchart LR
-    B[build:app] --> T[test:unit]
+    B[build:app] --> T[test]
     T --> DS[deploy:slot]
     DS --> DM[deploy:migrations]
     DM --> VH[verify:health]
@@ -500,7 +506,7 @@ flowchart LR
 | Стадия | Job | Описание |
 |--------|-----|----------|
 | **build** | `build:app` | `docker build --target prod`, push в Registry, определение `TARGET_SLOT` |
-| **test** | `test:unit` | `docker build --target test`, запуск `phpunit --testsuite=Unit` |
+| **test** | `test` | `docker build --target test`, запуск `phpunit --testsuite=Unit,Feature` |
 | **deploy** | `deploy:slot` | `deploy-slot.sh` — запуск неактивного слота с новым образом |
 | **deploy** | `deploy:migrations` | `docker exec <slot>-app php /data/bin/migrate.php` |
 | **verify** | `verify:health` | `health-check.sh` — проверка `/ready` нового слота |

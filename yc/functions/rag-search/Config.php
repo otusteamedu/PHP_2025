@@ -4,29 +4,43 @@ declare(strict_types=1);
 
 class Config
 {
+    public const API_URL = 'https://ai.api.cloud.yandex.net/v1/responses';
+
     public readonly string $folderId;
-    public readonly string $iamToken;
+    public readonly string $yandexApiKey;
 
     /** @var string[] */
     public readonly array $vectorStoreIds;
     public readonly string $modelUri;
     public readonly int $timeout;
+    public readonly string $instructions;
+    public readonly string $webhookApiKey;
+
+    /** API-ключ AI Studio (передаётся через Lockbox → env YANDEX_API_KEY) */
+    public function authToken(): string
+    {
+        return $this->yandexApiKey;
+    }
 
     /**
      * @param string[] $vectorStoreIds
      */
     private function __construct(
         string $folderId,
-        string $iamToken,
+        string $yandexApiKey,
         array $vectorStoreIds,
         string $modelUri,
-        int $timeout
+        int $timeout,
+        string $instructions,
+        string $webhookApiKey
     ) {
         $this->folderId = $folderId;
-        $this->iamToken = $iamToken;
+        $this->yandexApiKey = $yandexApiKey;
         $this->vectorStoreIds = $vectorStoreIds;
         $this->modelUri = $modelUri;
         $this->timeout = $timeout;
+        $this->instructions = $instructions;
+        $this->webhookApiKey = $webhookApiKey;
     }
 
     public static function fromEnvironment(): self
@@ -34,75 +48,31 @@ class Config
         $folderId = getenv('YANDEX_FOLDER_ID') ?: '';
         $vectorStoreIdsStr = getenv('VECTOR_STORE_IDS') ?: '';
         $vectorStoreIds = array_filter(array_map('trim', explode(',', $vectorStoreIdsStr)));
-        $modelUri = getenv('YANDEX_MODEL_URI') ?: "gpt://{$folderId}/yandexgpt-lite/latest";
+        $modelUri = getenv('YANDEX_MODEL_URI') ?: "gpt://{$folderId}/yandexgpt-lite";
         $timeout = (int)(getenv('SEARCH_TIMEOUT') ?: 30);
+        $instructions = getenv('YANDEX_INSTRUCTIONS') ?: 'Ты — умный ассистент для жителей многоквартирного дома. Отвечай на вопросы по ЖКХ, используя информацию из подключённых поисковых индексов. Если ответа нет в документах — честно скажи об этом.';
+        $webhookApiKey = getenv('WEBHOOK_API_KEY') ?: '';
+        $yandexApiKey = getenv('YANDEX_API_KEY') ?: '';
 
-        // Получение IAM-токена: сначала через metadata service (когда SA привязан к функции),
-        // затем через переменную окружения YANDEX_IAM_TOKEN
-        $iamToken = self::fetchIamTokenFromMetadata();
-        if ($iamToken === '') {
-            $iamToken = getenv('YANDEX_IAM_TOKEN') ?: '';
-        }
-
-        return new self($folderId, $iamToken, $vectorStoreIds, $modelUri, $timeout);
-    }
-
-    /**
-     * Получение IAM-токена через metadata service Yandex Cloud.
-     *
-     * Когда сервисный аккаунт привязан к Cloud Function, metadata service
-     * автоматически предоставляет IAM-токен.
-     *
-     * @see https://yandex.cloud/docs/docs/compute/operations/vm-connect/auth-inside-vm
-     */
-    private static function fetchIamTokenFromMetadata(): string
-    {
-        $url = 'http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token';
-
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 3,
-            CURLOPT_CONNECTTIMEOUT => 2,
-            CURLOPT_HTTPHEADER => [
-                'Metadata-Flavor: Google',
-            ],
-        ]);
-
-        $body = curl_exec($ch);
-        $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($body === false || $httpCode !== 200) {
-            return '';
-        }
-
-        $data = json_decode($body, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return '';
-        }
-
-        return $data['access_token'] ?? '';
+        return new self($folderId, $yandexApiKey, $vectorStoreIds, $modelUri, $timeout, $instructions, $webhookApiKey);
     }
 
     public function isValid(): bool
     {
         return $this->folderId !== ''
-            && $this->iamToken !== ''
+            && $this->yandexApiKey !== ''
             && count($this->vectorStoreIds) > 0;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function getMissingConfig(): array
     {
         $missing = [];
         if ($this->folderId === '') {
             $missing[] = 'YANDEX_FOLDER_ID';
         }
-        if ($this->iamToken === '') {
-            $missing[] = 'IAM-токен (metadata service или YANDEX_IAM_TOKEN)';
+        if ($this->yandexApiKey === '') {
+            $missing[] = 'YANDEX_API_KEY';
         }
         if (count($this->vectorStoreIds) === 0) {
             $missing[] = 'VECTOR_STORE_IDS';

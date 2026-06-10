@@ -11,7 +11,7 @@ fi
 DEPLOY_DIR="${DEPLOY_DIR:-/opt/mkd-bot}"
 COMPOSE_APP_SRC="$DEPLOY_DIR/docker-compose.app.yml"
 COMPOSE_INFRA="$DEPLOY_DIR/docker-compose.infra.yml"
-ENV_FILE="$DEPLOY_DIR/.env"
+ENV_FILE="$(readlink -f "$DEPLOY_DIR/.env" 2>/dev/null || echo "$DEPLOY_DIR/.env")"
 PROJECT_NAME="mkd-bot-${SLOT}"
 
 if [ ! -f "$ENV_FILE" ]; then

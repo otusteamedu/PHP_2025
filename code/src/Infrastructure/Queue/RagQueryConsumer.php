@@ -16,17 +16,13 @@ use Psr\Log\LoggerInterface;
 class RagQueryConsumer extends RabbitMQConsumer
 {
     public function __construct(
-        string $host,
-        int $port,
-        string $login,
-        string $password,
-        string $vhost,
+        RabbitMQConnectionFactory $connectionFactory,
         FallbackMessageRepositoryInterface $fallbackRepo,
         LoggerInterface $logger,
         private readonly ProcessRagQuery $processRagQuery,
         ?DatabaseConnectionInterface $dbConnection = null,
     ) {
-        parent::__construct($host, $port, $login, $password, $vhost, 'mkd.rag.query', $fallbackRepo, $logger, $dbConnection);
+        parent::__construct($connectionFactory, 'mkd.rag.query', $fallbackRepo, $logger, $dbConnection);
     }
 
     protected function processMessage(string $body, array $headers): void

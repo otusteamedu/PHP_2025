@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use LogicException;
 use MkdBot\Domain\Interface\FallbackMessageRepositoryInterface;
 use MkdBot\Infrastructure\Queue\RabbitMQConsumer;
+use MkdBot\Infrastructure\Queue\RabbitMQConnectionFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use ReflectionMethod;
@@ -34,13 +35,10 @@ class RabbitMQConsumerTest extends TestCase
     {
         $fallbackRepo = $this->fallbackRepo;
         $logger = $this->logger;
+        $connectionFactory = new RabbitMQConnectionFactory('localhost', 5672, 'guest', 'guest', '/');
 
         return new class (
-            'localhost',
-            5672,
-            'guest',
-            'guest',
-            '/',
+            $connectionFactory,
             $fallbackRepo,
             $logger,
             $processMessageCallback,
@@ -48,17 +46,13 @@ class RabbitMQConsumerTest extends TestCase
             private Closure $processMessageCallback;
 
             public function __construct(
-                string $host,
-                int $port,
-                string $login,
-                string $password,
-                string $vhost,
+                RabbitMQConnectionFactory $connectionFactory,
                 FallbackMessageRepositoryInterface $fallbackRepo,
                 LoggerInterface $logger,
                 callable $processMessageCallback,
             ) {
                 $this->processMessageCallback = $processMessageCallback(...);
-                parent::__construct($host, $port, $login, $password, $vhost, 'test.queue', $fallbackRepo, $logger);
+                parent::__construct($connectionFactory, 'test.queue', $fallbackRepo, $logger);
             }
 
             protected function processMessage(string $body, array $headers): void

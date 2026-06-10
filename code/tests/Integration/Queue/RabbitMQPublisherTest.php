@@ -7,6 +7,7 @@ namespace MkdBot\Tests\Integration\Queue;
 use AMQPException;
 use MkdBot\Domain\Enum\QueueNameType;
 use MkdBot\Domain\Interface\QueuePublisherInterface;
+use MkdBot\Infrastructure\Queue\RabbitMQConnectionFactory;
 use MkdBot\Infrastructure\Queue\RabbitMQPublisher;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -30,7 +31,8 @@ class RabbitMQPublisherTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
 
         try {
-            $this->publisher = new RabbitMQPublisher($host, $port, $login, $password, $vhost, $logger);
+            $connectionFactory = new RabbitMQConnectionFactory($host, $port, $login, $password, $vhost);
+            $this->publisher = new RabbitMQPublisher($connectionFactory, $logger);
         } catch (AMQPException $e) {
             $this->markTestSkipped('RabbitMQ недоступен: ' . $e->getMessage());
         }

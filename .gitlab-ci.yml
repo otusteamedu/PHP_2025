@@ -30,33 +30,35 @@ build:app:
     reports:
       dotenv: build.env
 
-test:unit:
+test:
   stage: test
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+  - if: $CI_COMMIT_BRANCH == "main"
   tags: [mkdbot]
   needs: [build:app]
   before_script:
-    - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $INTERNAL_REGISTRY
+  - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $INTERNAL_REGISTRY
   script:
-    - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
-    - docker build --target test -f fpm/Dockerfile -t $INTERNAL_IMAGE:test-$CI_COMMIT_SHORT_SHA .
-    - docker run --rm --entrypoint php $INTERNAL_IMAGE:test-$CI_COMMIT_SHORT_SHA vendor/bin/phpunit --testsuite=Unit --colors=never
+  - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
+  - docker build --target test -f fpm/Dockerfile -t $INTERNAL_IMAGE:test-$CI_COMMIT_SHORT_SHA .
+  - docker run --rm --entrypoint php $INTERNAL_IMAGE:test-$CI_COMMIT_SHORT_SHA vendor/bin/phpunit --testsuite=Unit,Feature --colors=never
 
 deploy:slot:
   stage: deploy
   tags: [mkdbot]
-  needs: [build:app, test:unit]
+  needs: [build:app, test]
   environment:
     name: production
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   before_script:
-    - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $INTERNAL_REGISTRY
-    - bash deploy/scripts/render-env.sh deploy/env.template $DEPLOY_DIR/.env
-    - trap "rm -f $DEPLOY_DIR/.env" EXIT
+  - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $INTERNAL_REGISTRY
+  - rm -f /dev/shm/mkd-bot.env $DEPLOY_DIR/.env
+  - bash deploy/scripts/render-env.sh deploy/env.template /dev/shm/mkd-bot.env
+  - ln -sf /dev/shm/mkd-bot.env $DEPLOY_DIR/.env
+  - trap "rm -f /dev/shm/mkd-bot.env $DEPLOY_DIR/.env" EXIT SIGTERM SIGHUP
   script:
     - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
     - export CI_REGISTRY_IMAGE=$INTERNAL_IMAGE
@@ -66,7 +68,7 @@ deploy:slot:
 deploy:migrations:
   stage: deploy
   tags: [mkdbot]
-  needs: [build:app, deploy:slot, test:unit]
+  needs: [build:app, deploy:slot, test]
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $INTERNAL_REGISTRY
   script:
@@ -97,10 +99,12 @@ switch:traffic:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
   before_script:
-    - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $INTERNAL_REGISTRY
-    - bash deploy/scripts/render-env.sh deploy/env.template $DEPLOY_DIR/.env
-    - trap "rm -f $DEPLOY_DIR/.env" EXIT
+  - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $INTERNAL_REGISTRY
+  - rm -f /dev/shm/mkd-bot.env $DEPLOY_DIR/.env
+  - bash deploy/scripts/render-env.sh deploy/env.template /dev/shm/mkd-bot.env
+  - ln -sf /dev/shm/mkd-bot.env $DEPLOY_DIR/.env
+  - trap "rm -f /dev/shm/mkd-bot.env $DEPLOY_DIR/.env" EXIT SIGTERM SIGHUP
   script:
     - INTERNAL_IMAGE="${CI_REGISTRY_IMAGE/$CI_REGISTRY/$INTERNAL_REGISTRY}"
     - export CI_REGISTRY_IMAGE=$INTERNAL_IMAGE

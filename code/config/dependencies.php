@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\HttpFactory;
 use MaxMessenger\Bot\Contracts\MaxApiConfigInterface;
 use MaxMessenger\Bot\MaxApiClient;
 use MkdBot\Application\Service\MainMenuSender;
@@ -16,6 +18,7 @@ use MkdBot\Application\UseCase\HandleMaxWebhook;
 use MkdBot\Application\UseCase\HandleMessageCallback;
 use MkdBot\Application\UseCase\HandleTelegramWebhook;
 use MkdBot\Application\UseCase\ProcessProposal;
+use MkdBot\Application\Service\RagResponseFormatter;
 use MkdBot\Application\UseCase\ProcessRagQuery;
 use MkdBot\Application\UseCase\SendNewsToUser;
 use MkdBot\Domain\Interface\BotSubscriberRepositoryInterface;
@@ -32,6 +35,7 @@ use MkdBot\Domain\Interface\ProposalNotifierInterface;
 use MkdBot\Domain\Interface\ProposalRepositoryInterface;
 use MkdBot\Domain\Interface\QueuePublisherInterface;
 use MkdBot\Domain\Interface\RabbitMQConnectionInterface;
+use MkdBot\Domain\Interface\RagSearchClientInterface;
 use MkdBot\Domain\Interface\TelegramBotClientInterface;
 use MkdBot\Infrastructure\Interface\MaxWebhookRegistrarInterface;
 use MkdBot\Infrastructure\Interface\TelegramWebhookClientInterface;
@@ -53,17 +57,22 @@ use MkdBot\Infrastructure\Persistence\PostgresProposalRepository;
 use MkdBot\Infrastructure\Queue\FallbackConsumer;
 use MkdBot\Infrastructure\Queue\NewsDeliveryConsumer;
 use MkdBot\Infrastructure\Queue\RabbitMQConnection;
+use MkdBot\Infrastructure\Queue\RabbitMQConnectionFactory;
 use MkdBot\Infrastructure\Queue\RabbitMQPublisher;
 use MkdBot\Infrastructure\Queue\RagQueryConsumer;
 use MkdBot\Infrastructure\Queue\TelegramForwardConsumer;
+use MkdBot\Infrastructure\RagSearch\RagSearchClient;
 use MkdBot\Infrastructure\TelegramBot\TelegramBotClient;
 use MkdBot\Infrastructure\TelegramBot\TelegramLongPollWorker;
 use MkdBot\Presentation\Controller\HealthController;
 use MkdBot\Presentation\Controller\MaxWebhookController;
 use MkdBot\Presentation\Controller\TelegramWebhookController;
 use MkdBot\Presentation\Mapper\MaxUpdateMapper;
-use MkdBot\Presentation\Middleware\WebhookAuthMiddleware;
+use MkdBot\Presentation\Middleware\MaxWebhookAuthMiddleware;
+use MkdBot\Presentation\Middleware\TelegramWebhookAuthMiddleware;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
 
 return [
@@ -214,16 +223,50 @@ return [
         'rabbitmq.password' => fn(ContainerInterface $c) => $c->get('settings')['rabbitmq']['password'],
         'rabbitmq.vhost' => fn(ContainerInterface $c) => $c->get('settings')['rabbitmq']['vhost'],
 
-        // RabbitMQ — издатель
-        QueuePublisherInterface::class => DI\create(RabbitMQPublisher::class)
+        // RabbitMQ — фабрика подключений
+        RabbitMQConnectionFactory::class => DI\create(RabbitMQConnectionFactory::class)
             ->constructor(
                 DI\get('rabbitmq.host'),
                 DI\get('rabbitmq.port'),
                 DI\get('rabbitmq.login'),
                 DI\get('rabbitmq.password'),
                 DI\get('rabbitmq.vhost'),
+            ),
+    
+        // RabbitMQ — издатель
+        QueuePublisherInterface::class => DI\create(RabbitMQPublisher::class)
+            ->constructor(
+                DI\get(RabbitMQConnectionFactory::class),
                 DI\get(LoggerInterface::class),
             ),
+            
+                // PSR-17 HTTP-фабрики (Guzzle)
+                RequestFactoryInterface::class => DI\create(HttpFactory::class),
+                StreamFactoryInterface::class => DI\create(HttpFactory::class),
+            
+                // RAG Search — параметры из настроек
+                'rag.search_url' => fn(ContainerInterface $c) => $c->get('settings')['rag']['search_url'],
+                'rag.api_key' => fn(ContainerInterface $c) => $c->get('settings')['rag']['api_key'],
+                'rag.timeout' => fn(ContainerInterface $c) => $c->get('settings')['rag']['timeout'],
+            
+                // RAG Search — PSR-18 HTTP-клиент (Guzzle)
+                'rag.http_client' => function (ContainerInterface $c) {
+                    return new Client([
+                        'timeout' => $c->get('rag.timeout'),
+                        'connect_timeout' => 10,
+                    ]);
+                },
+            
+                // RAG Search — HTTP-клиент к Cloud Function
+                RagSearchClientInterface::class => DI\create(RagSearchClient::class)
+                    ->constructor(
+                        DI\get('rag.search_url'),
+                        DI\get('rag.api_key'),
+                        DI\get(LoggerInterface::class),
+                        DI\get('rag.http_client'),
+                        DI\get(RequestFactoryInterface::class),
+                        DI\get(StreamFactoryInterface::class),
+                    ),
             
                 // Сервис отправки главного меню
                 MainMenuSender::class => DI\create(MainMenuSender::class)
@@ -252,6 +295,7 @@ return [
                         DI\get(MaxBotClientInterface::class),
                         DI\get(LoggerInterface::class),
                         DI\get(MainMenuSender::class),
+                        DI\get(QueuePublisherInterface::class),
                     ),
             
                 HandleMessageCallback::class => DI\create(HandleMessageCallback::class)
@@ -303,7 +347,13 @@ return [
         ),
     
         ProcessRagQuery::class => DI\create(ProcessRagQuery::class)
-            ->constructor(DI\get(LoggerInterface::class)),
+            ->constructor(
+                DI\get(RagSearchClientInterface::class),
+                DI\get(MaxBotClientInterface::class),
+                DI\get(RagResponseFormatter::class),
+                DI\get(MainMenuSender::class),
+                DI\get(LoggerInterface::class),
+            ),
     
         // Use Cases — рассылка новостей
         SendNewsToUser::class => DI\create(SendNewsToUser::class)
@@ -325,11 +375,7 @@ return [
         // RabbitMQ — consumer дублирования Max->Telegram (webhook-режим)
         TelegramForwardConsumer::class => DI\create(TelegramForwardConsumer::class)
             ->constructor(
-                DI\get('rabbitmq.host'),
-                DI\get('rabbitmq.port'),
-                DI\get('rabbitmq.login'),
-                DI\get('rabbitmq.password'),
-                DI\get('rabbitmq.vhost'),
+                DI\get(RabbitMQConnectionFactory::class),
                 DI\get(FallbackMessageRepositoryInterface::class),
                 DI\get(LoggerInterface::class),
                 DI\get(ForwardToTelegram::class),
@@ -348,11 +394,7 @@ return [
         // RabbitMQ — consumer RAG-запросов
         RagQueryConsumer::class => DI\create(RagQueryConsumer::class)
             ->constructor(
-                DI\get('rabbitmq.host'),
-                DI\get('rabbitmq.port'),
-                DI\get('rabbitmq.login'),
-                DI\get('rabbitmq.password'),
-                DI\get('rabbitmq.vhost'),
+                DI\get(RabbitMQConnectionFactory::class),
                 DI\get(FallbackMessageRepositoryInterface::class),
                 DI\get(LoggerInterface::class),
                 DI\get(ProcessRagQuery::class),
@@ -362,11 +404,7 @@ return [
         // RabbitMQ — consumer DLQ-очереди mkd.fallback
         FallbackConsumer::class => DI\create(FallbackConsumer::class)
             ->constructor(
-                DI\get('rabbitmq.host'),
-                DI\get('rabbitmq.port'),
-                DI\get('rabbitmq.login'),
-                DI\get('rabbitmq.password'),
-                DI\get('rabbitmq.vhost'),
+                DI\get(RabbitMQConnectionFactory::class),
                 DI\get(FallbackMessageRepositoryInterface::class),
                 DI\get(LoggerInterface::class),
                 DI\get(DatabaseConnectionInterface::class),
@@ -375,11 +413,7 @@ return [
         // RabbitMQ — consumer рассылки новостей
         NewsDeliveryConsumer::class => DI\create(NewsDeliveryConsumer::class)
             ->constructor(
-                DI\get('rabbitmq.host'),
-                DI\get('rabbitmq.port'),
-                DI\get('rabbitmq.login'),
-                DI\get('rabbitmq.password'),
-                DI\get('rabbitmq.vhost'),
+                DI\get(RabbitMQConnectionFactory::class),
                 DI\get(FallbackMessageRepositoryInterface::class),
                 DI\get(LoggerInterface::class),
                 DI\get(SendNewsToUser::class),
@@ -405,20 +439,20 @@ return [
         // RabbitMQ — проверка доступности через DI
         RabbitMQConnectionInterface::class => DI\create(RabbitMQConnection::class)
             ->constructor(
-                DI\get('rabbitmq.host'),
-                DI\get('rabbitmq.port'),
-                DI\get('rabbitmq.login'),
-                DI\get('rabbitmq.password'),
-                DI\get('rabbitmq.vhost'),
+                DI\get(RabbitMQConnectionFactory::class),
             ),
     
         HealthController::class => DI\create(HealthController::class)
             ->constructor(DI\get(DatabaseConnectionInterface::class), DI\get(RabbitMQConnectionInterface::class)),
 
         // Presentation — middleware
-        WebhookAuthMiddleware::class => DI\create(WebhookAuthMiddleware::class)
+        MaxWebhookAuthMiddleware::class => DI\create(MaxWebhookAuthMiddleware::class)
             ->constructor(
                 DI\get('max.webhook_secret'),
+                DI\get(LoggerInterface::class),
+            ),
+        TelegramWebhookAuthMiddleware::class => DI\create(TelegramWebhookAuthMiddleware::class)
+            ->constructor(
                 DI\get('telegram.secret_token'),
                 DI\get(LoggerInterface::class),
             ),

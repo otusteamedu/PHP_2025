@@ -3,7 +3,8 @@ cloud_id    = "CHANGE_ME_2"  # yc config list
 folder_id   = "CHANGE_ME_3"  # yc config list
 zone        = "CHANGE_ME_4"  # yc config list
 
-storage_access_key = "CHANGE_ME_5"  # yc iam access-key create
-storage_secret_key = "CHANGE_ME_6"  # из вывода yc iam access-key create
+vector_store_ids = "CHANGE_ME_5" # будет получен после создания поискового индекса(Vector Store) в Yandex AI Studio
 
-vector_store_ids = "CHANGE_ME_7" # будет получен после создания поискового индекса(Vector Store) в Yandex AI Studio
+yandex_api_key = "CHANGE_ME_6" # yc iam api-key create --service-account-name mkd-chatbot-sa --scopes yc.ai.foundationModels.execute
+webhook_api_key = "CHANGE_ME_7" # openssl rand -hex 32 — передаётся в заголовке X-API-Key при вызове функции
+# yandex_instructions = "..." # (опционально) системная инструкция для RAG-ассистента

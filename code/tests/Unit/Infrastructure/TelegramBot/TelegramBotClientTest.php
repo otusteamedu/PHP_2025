@@ -658,4 +658,135 @@ class TelegramBotClientTest extends TestCase
         $result = $this->invokeMethod('formatProxyUrl', ['192.168.0.44:9080', '', '']);
         $this->assertSame('192.168.0.44:9080', $result);
     }
+
+    // ============================================================
+    // SSRF-защита: isUrlSafeForDownload
+    // ============================================================
+
+    public function testBlocksFtpScheme(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['ftp://example.com/file.pdf']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksFileScheme(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['file:///etc/passwd']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksJavascriptScheme(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['javascript:alert(1)']);
+        $this->assertFalse($result);
+    }
+
+    public function testAllowsHttpsScheme(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['https://cdn.example.com/file.pdf']);
+        // Результат зависит от DNS-резолвинга, но схема должна пройти проверку
+        // Если хост не резолвится — метод возвращает true (разрешает)
+        $this->assertTrue($result);
+    }
+
+    public function testAllowsHttpScheme(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['http://cdn.example.com/file.pdf']);
+        $this->assertTrue($result);
+    }
+
+    public function testBlocksLocalhost(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['http://localhost/etc/passwd']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksSubdomainLocalhost(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['http://sub.localhost/etc/passwd']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksUrlWithoutHost(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['http:///path/to/file']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksUrlWithoutScheme(): void
+    {
+        $result = $this->invokeMethod('isUrlSafeForDownload', ['cdn.example.com/file.pdf']);
+        $this->assertFalse($result);
+    }
+
+    // ============================================================
+    // SSRF-защита: isIpPublic
+    // ============================================================
+
+    public function testBlocksPrivateIp10(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['10.0.0.1']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksPrivateIp17216(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['172.16.0.1']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksPrivateIp192168(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['192.168.1.1']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksLoopback127(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['127.0.0.1']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksLinkLocal169(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['169.254.1.1']);
+        $this->assertFalse($result);
+    }
+
+    public function testAllowsPublicIp(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['93.184.216.34']);
+        $this->assertTrue($result);
+    }
+
+    public function testBlocksIpv6Loopback(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['::1']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksIpv6UniqueLocalFc00(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['fc00::1']);
+        $this->assertFalse($result);
+    }
+
+    public function testBlocksIpv6UniqueLocalFd00(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['fd00::1']);
+        $this->assertFalse($result);
+    }
+
+    public function testAllowsIpv6Public(): void
+    {
+        // 2001:4860:4860::8888 — Google Public DNS
+        $result = $this->invokeMethod('isIpPublic', ['2001:4860:4860::8888']);
+        $this->assertTrue($result);
+    }
+
+    public function testBlocksInvalidIp(): void
+    {
+        $result = $this->invokeMethod('isIpPublic', ['not-an-ip']);
+        $this->assertFalse($result);
+    }
 }

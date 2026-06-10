@@ -3,6 +3,8 @@ services:
     postgres:
         image: postgres:17
         container_name: postgres
+#        ports:
+#            - 5432:5432
         working_dir: /app
         restart: always
         environment:

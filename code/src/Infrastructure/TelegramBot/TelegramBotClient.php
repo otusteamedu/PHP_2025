@@ -193,7 +193,6 @@ class TelegramBotClient implements TelegramBotClientInterface, TelegramWebhookCl
         $response = $e->getResponse();
 
         if ($response !== null) { // @phpstan-ignore notIdentical.alwaysTrue — перестраховка при null-response
-            // PSR-7 заголовки case-insensitive — приводим к нижнему регистру
             $headers = array_change_key_case($response->getHeaders(), CASE_LOWER);
 
             if (isset($headers['retry-after'][0])) {
@@ -214,10 +213,21 @@ class TelegramBotClient implements TelegramBotClientInterface, TelegramWebhookCl
     /**
      * Скачивает файл по URL во временный файл
      * Возвращает путь к временному файлу или null при ошибке
+     *
+     * Защита от SSRF:
+     * - Только схемы http/https
+     * - Запрет скачивания с приватных IP-адресов (10.x, 172.16-31.x, 192.168.x, 127.x, 169.254.x, ::1, fc00::/7)
+     * - Запрет скачивания с localhost
      */
     private function downloadToTempFile(string $url): ?string
     {
         try {
+            // Валидация URL и защита от SSRF
+            if (!$this->isUrlSafeForDownload($url)) {
+                $this->logger->warning("URL заблокирован защитой от SSRF: {$url}");
+                return null;
+            }
+
             $tempDir = sys_get_temp_dir() . '/mkd-bot';
 
             if (!is_dir($tempDir) && !mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
@@ -242,6 +252,125 @@ class TelegramBotClient implements TelegramBotClientInterface, TelegramWebhookCl
             $this->logger->error("Ошибка скачивания документа: " . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Проверяет, что URL безопасен для скачивания (защита от SSRF)
+     *
+     * - Только схемы http:// и https://
+     * - Хост не должен быть localhost или разрешаться в приватный IP
+     * - Приватные диапазоны: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16,
+     *   127.0.0.0/8, 169.254.0.0/16, 0.0.0.0/8
+     * - IPv6: ::1 (loopback), fc00::/7 (unique local), fe80::/10 (link-local)
+     */
+    private function isUrlSafeForDownload(string $url): bool
+    {
+        $parsed = parse_url($url);
+
+        // Только http/https
+        $scheme = strtolower($parsed['scheme'] ?? '');
+        if ($scheme !== 'http' && $scheme !== 'https') {
+            return false;
+        }
+
+        $host = $parsed['host'] ?? '';
+        if ($host === '') {
+            return false;
+        }
+
+        // Запрет localhost и его вариаций
+        $hostLower = strtolower($host);
+        if ($hostLower === 'localhost' || str_ends_with($hostLower, '.localhost')) {
+            return false;
+        }
+
+        // Резолвим DNS и проверяем IP
+        $resolvedIps = gethostbynamel($host);
+        if ($resolvedIps === false || $resolvedIps === []) {
+            // Если хост не резолвится — пробуем getaddrinfo для IPv6
+            $resolvedIps = $this->resolveHost($host);
+            if ($resolvedIps === []) {
+                // Хост не резолвится — разрешаем (Guzzle сам упадёт при подключении)
+                return true;
+            }
+        }
+
+        foreach ($resolvedIps as $ip) {
+            if (!$this->isIpPublic($ip)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Резолвит хост в IP-адреса (IPv4 + IPv6) через getaddrinfo
+     *
+     * @return string[]
+     */
+    private function resolveHost(string $host): array
+    {
+        $ips = [];
+        $records = @dns_get_record($host, DNS_A + DNS_AAAA);
+        if ($records !== false) {
+            foreach ($records as $record) {
+                if (isset($record['ip'])) {
+                    $ips[] = $record['ip'];
+                }
+                if (isset($record['ipv6'])) {
+                    $ips[] = $record['ipv6'];
+                }
+            }
+        }
+        return $ips;
+    }
+
+    /**
+     * Проверяет, что IP-адрес является публичным (не приватным/зарезервированным)
+     */
+    private function isIpPublic(string $ip): bool
+    {
+        // IPv4 проверки через filter_var
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
+            return filter_var(
+                $ip,
+                FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE,
+            ) !== false;
+        }
+
+        // IPv6 проверки
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false) {
+            // ::1 — loopback
+            if ($ip === '::1') {
+                return false;
+            }
+
+            // fc00::/7 — Unique Local Addresses (аналог приватных IPv4)
+            // fe80::/10 — Link-Local Addresses
+            $packed = inet_pton($ip);
+            if ($packed === false) {
+                return false;
+            }
+
+            $hex = bin2hex($packed);
+
+            // fc00::/7 — первый байт 0xfc или 0xfd
+            $firstByte = hexdec(substr($hex, 0, 2));
+            if (($firstByte & 0xfe) === 0xfc) {
+                return false;
+            }
+
+            // fe80::/10 — первый байт 0xfe, старшие 2 бита = 0b10
+            if (($firstByte & 0xff) === 0xfe && (hexdec(substr($hex, 2, 2)) & 0xc0) === 0x80) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

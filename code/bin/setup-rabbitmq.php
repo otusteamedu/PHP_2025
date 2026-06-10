@@ -13,14 +13,17 @@ require __DIR__ . '/../vendor/autoload.php';
 // Загрузка .env — единая точка (config/bootstrap.php)
 require __DIR__ . '/../config/bootstrap.php';
 
+use MkdBot\Infrastructure\Queue\RabbitMQConnectionFactory;
+
 try {
-    $connection = new \AMQPConnection([
-        'host' => $_ENV['RABBITMQ_HOST'] ?? 'rabbitmq',
-        'port' => (int)($_ENV['RABBITMQ_PORT'] ?? 5672),
-        'login' => $_ENV['RABBITMQ_LOGIN'] ?? 'guest',
-        'password' => $_ENV['RABBITMQ_PASSWORD'] ?? 'guest',
-        'vhost' => $_ENV['RABBITMQ_VHOST'] ?? '/',
-    ]);
+    $factory = new RabbitMQConnectionFactory(
+        host: $_ENV['RABBITMQ_HOST'] ?? 'rabbitmq',
+        port: (int)($_ENV['RABBITMQ_PORT'] ?? 5672),
+        login: $_ENV['RABBITMQ_LOGIN'] ?? 'guest',
+        password: $_ENV['RABBITMQ_PASSWORD'] ?? 'guest',
+        vhost: $_ENV['RABBITMQ_VHOST'] ?? '/',
+    );
+    $connection = $factory->getConnection();
     $connection->connect();
 
     $channel = new \AMQPChannel($connection);

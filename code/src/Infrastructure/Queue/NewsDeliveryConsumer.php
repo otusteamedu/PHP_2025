@@ -19,17 +19,13 @@ use RuntimeException;
 class NewsDeliveryConsumer extends RabbitMQConsumer
 {
     public function __construct(
-        string $host,
-        int $port,
-        string $login,
-        string $password,
-        string $vhost,
+        RabbitMQConnectionFactory $connectionFactory,
         FallbackMessageRepositoryInterface $fallbackRepo,
         LoggerInterface $logger,
         private readonly SendNewsToUser $sendNewsToUser,
         ?DatabaseConnectionInterface $dbConnection = null,
     ) {
-        parent::__construct($host, $port, $login, $password, $vhost, 'mkd.news.delivery', $fallbackRepo, $logger, $dbConnection);
+        parent::__construct($connectionFactory, 'mkd.news.delivery', $fallbackRepo, $logger, $dbConnection);
     }
 
     protected function processMessage(string $body, array $headers): void

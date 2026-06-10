@@ -7,6 +7,7 @@ namespace MkdBot\Application\UseCase;
 use MkdBot\Application\DTO\MaxCallbackDTO;
 use MkdBot\Application\DTO\ProposalDTO;
 use MkdBot\Application\Service\MainMenuSender;
+use MkdBot\Domain\Entity\ConversationState;
 use MkdBot\Domain\Enum\ConversationStep;
 use MkdBot\Domain\Enum\ProposalType;
 use MkdBot\Domain\Interface\ConversationStateRepositoryInterface;
@@ -51,7 +52,7 @@ class HandleMessageCallback
      * Проверяет, соответствует ли шаг из payload текущему состоянию диалога
      * Если step не совпадает — возвращает false (callback устарелший/некорректный)
      */
-    private function isStepValid(MaxCallbackDTO $dto, ?\MkdBot\Domain\Entity\ConversationState $state): bool
+    private function isStepValid(MaxCallbackDTO $dto, ?ConversationState $state): bool
     {
         $payloadStep = $dto->payload['step'] ?? null;
         if ($payloadStep === null) {
@@ -101,7 +102,7 @@ class HandleMessageCallback
         $proposalType = $action === 'feature' ? ProposalType::Feature : ProposalType::Suggestion;
 
         // Создаём состояние диалога, сохраняем userName для handleConfirm()
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: $dto->userId,
             currentStep: ConversationStep::AwaitingSubject,
             data: ['type' => $proposalType->value, 'user_name' => $dto->userName ?? ''],
@@ -117,14 +118,24 @@ class HandleMessageCallback
     }
 
     /**
-     * Обработка кнопки «Вопрос ИИ» (v1 — заглушка)
-     * После заглушки — показ главного меню
+     * Обработка кнопки «Вопрос ИИ» — создаёт сессию для ввода вопроса
+     * После ввода вопроса — HandleDialogMessage опубликует его в RabbitMQ
      */
     private function handleRagQuery(MaxCallbackDTO $dto): void
     {
+        $state = new ConversationState(
+            userId: $dto->userId,
+            currentStep: ConversationStep::AwaitingQuestion,
+            data: [],
+        );
+        $this->stateRepo->save($state);
+
         $this->answerCallbackIfPresent($dto);
-        $this->maxBot->sendMessageToUser($dto->userId, '🔧 Функция в разработке');
-        $this->mainMenuSender->send($dto->userId);
+        $this->maxBot->sendMessageWithInlineKeyboard(
+            $dto->userId,
+            '🤖 Задайте вопрос:',
+            [['text' => '❌ Отмена', 'payload' => ['action' => 'cancel', 'step' => 'awaiting_question'], 'intent' => 'negative']],
+        );
     }
 
     /**

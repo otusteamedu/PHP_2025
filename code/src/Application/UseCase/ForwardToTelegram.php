@@ -17,6 +17,7 @@ class ForwardToTelegram
     private const MAX_TELEGRAM_TEXT_LENGTH = 4096;
     private const MAX_CAPTION_LENGTH = 1024;
     private const MAX_FILE_SIZE = 52428800; // 50 МБ
+    private const ATTACHMENT_SEND_DELAY_MS = 500;
 
     public function __construct(
         private readonly TelegramBotClientInterface $telegramBot,
@@ -122,6 +123,8 @@ class ForwardToTelegram
             }
 
             $this->telegramBot->sendPhoto($params);
+
+            $this->delayBetweenAttachments($index, count($photos));
         }
     }
 
@@ -170,6 +173,19 @@ class ForwardToTelegram
             }
 
             $this->telegramBot->sendDocument($params);
+
+            $this->delayBetweenAttachments($index, count($documents));
+        }
+    }
+
+    /**
+     * Выдерживает задержку между отправками вложений для снижения
+     * вероятности Telegram rate-limit (HTTP 429) при пакетной отправке большого числа файлов.
+     */
+    private function delayBetweenAttachments(int $currentIndex, int $totalCount): void
+    {
+        if ($currentIndex < $totalCount - 1) {
+            usleep(self::ATTACHMENT_SEND_DELAY_MS * 1000);
         }
     }
 

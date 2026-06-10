@@ -6,9 +6,12 @@ namespace MkdBot\Application\UseCase;
 
 use MkdBot\Application\DTO\MaxMessageDTO;
 use MkdBot\Application\Service\MainMenuSender;
+use MkdBot\Domain\Entity\ConversationState;
 use MkdBot\Domain\Enum\ConversationStep;
+use MkdBot\Domain\Enum\QueueNameType;
 use MkdBot\Domain\Interface\ConversationStateRepositoryInterface;
 use MkdBot\Domain\Interface\MaxBotClientInterface;
+use MkdBot\Domain\Interface\QueuePublisherInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -18,12 +21,14 @@ class HandleDialogMessage
 {
     private const SUBJECT_MAX_LENGTH = 200;
     private const DESCRIPTION_MAX_LENGTH = 3000;
+    private const QUESTION_MAX_LENGTH = 2000;
 
     public function __construct(
         private readonly ConversationStateRepositoryInterface $stateRepo,
         private readonly MaxBotClientInterface $maxBot,
         private readonly LoggerInterface $logger,
         private readonly MainMenuSender $mainMenuSender,
+        private readonly QueuePublisherInterface $queuePublisher,
     ) {
     }
 
@@ -79,7 +84,7 @@ class HandleDialogMessage
     /**
      * Обрабатывает ввод темы предложения
      */
-    private function handleSubjectInput(MaxMessageDTO $dto, \MkdBot\Domain\Entity\ConversationState $state): void
+    private function handleSubjectInput(MaxMessageDTO $dto, ConversationState $state): void
     {
         if (mb_strlen($dto->text) > self::SUBJECT_MAX_LENGTH) {
             $this->maxBot->sendMessageToUser(
@@ -107,7 +112,7 @@ class HandleDialogMessage
     /**
      * Обрабатывает ввод описания предложения
      */
-    private function handleDescriptionInput(MaxMessageDTO $dto, \MkdBot\Domain\Entity\ConversationState $state): void
+    private function handleDescriptionInput(MaxMessageDTO $dto, ConversationState $state): void
     {
         if (mb_strlen($dto->text) > self::DESCRIPTION_MAX_LENGTH) {
             $this->maxBot->sendMessageToUser(
@@ -140,14 +145,37 @@ class HandleDialogMessage
     }
 
     /**
-     * Обрабатывает ввод вопроса для RAG (v1 — заглушка)
+     * Обрабатывает ввод вопроса для RAG-поиска
+     * Публикует вопрос в RabbitMQ для асинхронной обработки через Cloud Function
      */
-    private function handleQuestionInput(MaxMessageDTO $dto, \MkdBot\Domain\Entity\ConversationState $state): void
+    private function handleQuestionInput(MaxMessageDTO $dto, ConversationState $state): void
     {
-        $this->maxBot->sendMessageToUser($dto->userId, '🔧 Функция в разработке');
+        $question = trim($dto->text);
+
+        if ($question === '') {
+            $this->maxBot->sendMessageToUser($dto->userId, 'Пожалуйста, введите вопрос');
+            return;
+        }
+
+        if (mb_strlen($question) > self::QUESTION_MAX_LENGTH) {
+            $this->maxBot->sendMessageToUser(
+                $dto->userId,
+                '❌ Вопрос слишком длинный, максимум ' . self::QUESTION_MAX_LENGTH . ' символов. Пожалуйста, введите вопрос заново:',
+            );
+            return;
+        }
+
+        $this->queuePublisher->publish(QueueNameType::RagQuery, [
+            'user_id' => $dto->userId,
+            'question' => $question,
+        ]);
+
+        $this->logger->info("RAG-вопрос от userId={$dto->userId} опубликован в очередь");
+
+        // Сбрасываем состояние, меню будет показано после получения ответа в ProcessRagQuery
+        $this->maxBot->sendMessageToUser($dto->userId, '🔍 Ищу ответ...');
         $state->reset();
         $this->stateRepo->save($state);
-        $this->mainMenuSender->send($dto->userId);
     }
 
     /**

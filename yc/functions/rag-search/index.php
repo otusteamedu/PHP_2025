@@ -10,25 +10,32 @@ require_once __DIR__ . '/SearchResponse.php';
 
 function main(array $event, $context): array
 {
-    $validator = new RequestValidator();
-    $config = Config::fromEnvironment();
-    $service = new SearchService($config);
     $builder = new ResponseBuilder();
 
-    $error = $validator->validate($event);
-    if ($error !== null) {
-        return $builder->error(400, $error);
-    }
+    try {
+        $config = Config::fromEnvironment();
+        $validator = new RequestValidator($config);
+        $service = new SearchService($config);
 
-    $body = json_decode($event['body'] ?? '', true);
-    $question = $body['question'] ?? '';
-    $chatId = $body['chat_id'] ?? null;
+        $result = $validator->validate($event);
+        if (!$result->isSuccess()) {
+            return $builder->error($result->errorCode, $result->error);
+        }
 
-    $result = $service->search($question, $chatId);
+        $question = $result->decodedBody['question'] ?? '';
 
-    if ($result->isSuccess()) {
-        return $builder->success($result);
-    } else {
-        return $builder->error($result->errorCode, $result->errorMessage);
+        $searchResult = $service->search($question);
+
+        if ($searchResult->isSuccess()) {
+            return $builder->success($searchResult);
+        } else {
+            return $builder->error($searchResult->errorCode, $searchResult->errorMessage);
+        }
+    } catch (SearchApiException $e) {
+        error_log('SearchApiException: ' . $e->getMessage());
+        return $builder->error($e->statusCode, $e->getMessage());
+    } catch (\Throwable $e) {
+        error_log('Unhandled exception: ' . $e->getMessage());
+        return $builder->error(500, 'Внутренняя ошибка сервера');
     }
 }

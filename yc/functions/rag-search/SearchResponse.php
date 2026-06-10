@@ -2,14 +2,59 @@
 
 declare(strict_types=1);
 
+class SearchSource
+{
+    public function __construct(
+        public readonly string $filename,
+        public readonly ?string $fileId = null,
+        public readonly ?float $score = null,
+        public readonly string $text = ''
+    ) {}
+
+    /** Из результата file_search_call: { file_id, filename, score, text } */
+    public static function fromFileSearchResult(array $result): self
+    {
+        return new self(
+            filename: $result['filename'] ?? 'Неизвестный файл',
+            fileId: $result['file_id'] ?? null,
+            score: isset($result['score']) ? (float)$result['score'] : null,
+            text: $result['text'] ?? ''
+        );
+    }
+
+    /** Из аннотации file_citation: { type, file_id, filename, index } */
+    public static function fromFileCitation(array $annotation): self
+    {
+        return new self(
+            filename: $annotation['filename'] ?? 'Неизвестный файл',
+            fileId: $annotation['file_id'] ?? null,
+            score: null,
+            text: ''
+        );
+    }
+
+    public function toArray(): array
+    {
+        $result = [
+            'filename' => $this->filename,
+        ];
+        if ($this->fileId !== null) {
+            $result['file_id'] = $this->fileId;
+        }
+        if ($this->score !== null) {
+            $result['score'] = $this->score;
+        }
+        if ($this->text !== '') {
+            $result['text'] = $this->text;
+        }
+        return $result;
+    }
+}
+
 class SearchResponse
 {
     /**
-     * @param bool $success Успешность поиска
-     * @param string $answer Текст ответа (пустой при ошибке)
-     * @param array $sources Список источников (пустой при ошибке)
-     * @param int $errorCode Код HTTP-ошибки (0 при успехе)
-     * @param string $errorMessage Описание ошибки (пустое при успехе)
+     * @param SearchSource[] $sources
      */
     private function __construct(
         public readonly bool $success,
@@ -19,18 +64,12 @@ class SearchResponse
         public readonly string $errorMessage
     ) {}
 
-    /**
-     * Создание успешного ответа поиска
-     *
-     * @param string $answer Текст ответа
-     * @param array[] $sources Список источников
-     */
+    /** @param SearchSource[] $sources */
     public static function success(string $answer, array $sources = []): self
     {
         return new self(true, $answer, $sources, 0, '');
     }
 
-    // Создание ответа с ошибкой поиска
     public static function error(int $code, string $message): self
     {
         return new self(false, '', [], $code, $message);
@@ -41,14 +80,13 @@ class SearchResponse
         return $this->success;
     }
 
-    // Преобразование в ассоциативный массив для JSON-сериализации
     public function toArray(): array
     {
         if ($this->success) {
             return [
                 'success' => true,
                 'answer' => $this->answer,
-                'sources' => $this->sources,
+                'sources' => array_map(fn(SearchSource $s) => $s->toArray(), $this->sources),
             ];
         }
 

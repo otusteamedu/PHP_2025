@@ -21,20 +21,10 @@ class RabbitMQPublisher implements QueuePublisherInterface
     private AMQPConnection $connection;
 
     public function __construct(
-        private readonly string $host,
-        private readonly int $port,
-        private readonly string $login,
-        private readonly string $password,
-        private readonly string $vhost,
+        RabbitMQConnectionFactory $connectionFactory,
         private readonly LoggerInterface $logger,
     ) {
-        $this->connection = new AMQPConnection([
-            'host' => $this->host,
-            'port' => $this->port,
-            'login' => $this->login,
-            'password' => $this->password,
-            'vhost' => $this->vhost,
-        ]);
+        $this->connection = $connectionFactory->getConnection();
     }
 
     public function publish(QueueNameType $queue, array $message): void

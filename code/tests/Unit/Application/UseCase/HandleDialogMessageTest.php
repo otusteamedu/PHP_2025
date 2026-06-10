@@ -8,7 +8,9 @@ use DateTimeImmutable;
 use MkdBot\Application\DTO\MaxMessageDTO;
 use MkdBot\Application\Service\MainMenuSender;
 use MkdBot\Application\UseCase\HandleDialogMessage;
+use MkdBot\Domain\Entity\ConversationState;
 use MkdBot\Domain\Enum\ConversationStep;
+use MkdBot\Domain\Enum\QueueNameType;
 use MkdBot\Domain\Interface\ConversationStateRepositoryInterface;
 use MkdBot\Domain\Interface\MaxBotClientInterface;
 use MkdBot\Domain\Interface\QueuePublisherInterface;
@@ -27,7 +29,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->expects($this->once())->method('deleteByUserId')->with(123);
         $mainMenuSender->expects($this->once())->method('send')->with(123);
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -53,7 +55,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->expects($this->once())->method('deleteByUserId')->with(123);
         $mainMenuSender->expects($this->once())->method('send')->with(123);
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -79,7 +81,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->method('findByUserId')->willReturn(null);
         $mainMenuSender->expects($this->once())->method('send')->with(123);
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -102,7 +104,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = $this->createMock(\MkdBot\Domain\Entity\ConversationState::class);
+        $state = $this->createMock(ConversationState::class);
         $state->method('isExpired')->willReturn(true);
 
         $stateRepo->method('findByUserId')->willReturn($state);
@@ -110,7 +112,7 @@ class HandleDialogMessageTest extends TestCase
         $maxBot->expects($this->once())->method('sendMessageToUser')->with(123, '⏰ Сессия истекла, начните заново');
         $mainMenuSender->expects($this->once())->method('send')->with(123);
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -134,7 +136,7 @@ class HandleDialogMessageTest extends TestCase
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
         // Реальное состояние — шаг awaiting_subject, тип feature
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingSubject,
             data: ['type' => 'feature'],
@@ -142,14 +144,14 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->method('findByUserId')->with(123)->willReturn($state);
 
         // Проверяем, что при сохранении состояния в data появился user_name
-        $stateRepo->expects($this->once())->method('save')->with($this->callback(function (\MkdBot\Domain\Entity\ConversationState $s) {
+        $stateRepo->expects($this->once())->method('save')->with($this->callback(function (ConversationState $s) {
             return $s->getData()['user_name'] === 'Иван'
                 && $s->getData()['subject'] === 'Новая тема'
                 && $s->getCurrentStep() === ConversationStep::AwaitingDescription;
         }));
         $maxBot->expects($this->once())->method('sendMessageWithInlineKeyboard');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -179,7 +181,7 @@ class HandleDialogMessageTest extends TestCase
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
         // Состояние с истёкшим expires_at
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingSubject,
             data: ['type' => 'feature'],
@@ -194,7 +196,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->expects($this->once())->method('deleteByUserId')->with(123);
         $mainMenuSender->expects($this->once())->method('send')->with(123);
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -221,7 +223,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingSubject,
             data: ['type' => 'feature'],
@@ -234,7 +236,7 @@ class HandleDialogMessageTest extends TestCase
         // Не должно быть сохранения состояния
         $stateRepo->expects($this->never())->method('save');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -261,7 +263,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingDescription,
             data: ['type' => 'feature', 'subject' => 'Тема'],
@@ -273,7 +275,7 @@ class HandleDialogMessageTest extends TestCase
             ->with(123, 'Пожалуйста, введите текст');
         $stateRepo->expects($this->never())->method('save');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -300,7 +302,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingSubject,
             data: ['type' => 'feature'],
@@ -313,7 +315,7 @@ class HandleDialogMessageTest extends TestCase
         // Состояние не должно сохраняться
         $stateRepo->expects($this->never())->method('save');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $longSubject = str_repeat('а', 201);
 
@@ -341,7 +343,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingSubject,
             data: ['type' => 'feature'],
@@ -352,7 +354,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->expects($this->once())->method('save');
         $maxBot->expects($this->once())->method('sendMessageWithInlineKeyboard');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $exactSubject = str_repeat('а', 200);
 
@@ -381,7 +383,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingDescription,
             data: ['type' => 'feature', 'subject' => 'Тема'],
@@ -393,7 +395,7 @@ class HandleDialogMessageTest extends TestCase
             ->with(123, '❌ Описание слишком длинное, максимум 3000 символов. Пожалуйста, введите описание заново:');
         $stateRepo->expects($this->never())->method('save');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $longDescription = str_repeat('б', 3001);
 
@@ -421,7 +423,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingDescription,
             data: ['type' => 'feature', 'subject' => 'Тема'],
@@ -431,7 +433,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->expects($this->once())->method('save');
         $maxBot->expects($this->once())->method('sendMessageWithInlineKeyboard');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $exactDescription = str_repeat('б', 3000);
 
@@ -464,7 +466,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->expects($this->once())->method('deleteByUserId')->with(123);
         $mainMenuSender->expects($this->once())->method('send')->with(123);
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -495,7 +497,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->expects($this->once())->method('deleteByUserId')->with(123);
         $mainMenuSender->expects($this->once())->method('send')->with(123);
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -522,7 +524,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingSubject,
             data: ['type' => 'feature'],
@@ -533,7 +535,7 @@ class HandleDialogMessageTest extends TestCase
             ->with(123, 'Пожалуйста, введите текст');
         $stateRepo->expects($this->never())->method('save');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -560,7 +562,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingDescription,
             data: ['type' => 'feature', 'subject' => 'Тема'],
@@ -571,7 +573,7 @@ class HandleDialogMessageTest extends TestCase
             ->with(123, 'Пожалуйста, введите текст');
         $stateRepo->expects($this->never())->method('save');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -602,7 +604,7 @@ class HandleDialogMessageTest extends TestCase
         $stateRepo->method('findByUserId')->willReturn(null);
         $mainMenuSender->expects($this->once())->method('send')->with(123);
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -628,7 +630,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingQuestion,
             data: [],
@@ -638,7 +640,7 @@ class HandleDialogMessageTest extends TestCase
         $maxBot->expects($this->once())->method('sendMessageToUser')
             ->with(123, 'Пожалуйста, введите текст');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -655,32 +657,39 @@ class HandleDialogMessageTest extends TestCase
     }
 
     /**
-     * AwaitingQuestion — текстовый ввод -> «Функция в разработке» + reset + главное меню
+     * AwaitingQuestion — текстовый ввод -> публикация в очередь + «Ищу ответ...» + reset + главное меню
      * Покрывает handleQuestionInput()
      */
-    public function testAwaitingQuestionTextInputShowsFeatureInDevelopment(): void
+    public function testAwaitingQuestionTextInputPublishesToQueueAndShowsSearching(): void
     {
         $stateRepo = $this->createMock(ConversationStateRepositoryInterface::class);
         $maxBot = $this->createMock(MaxBotClientInterface::class);
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
+        $queuePublisher = $this->createMock(QueuePublisherInterface::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingQuestion,
             data: [],
         );
         $stateRepo->method('findByUserId')->with(123)->willReturn($state);
 
-        // Ожидаем: sendMessageToUser (функция в разработке) + главное меню через MainMenuSender
+        // Ожидаем: публикация в очередь RagQuery
+        $queuePublisher->expects($this->once())->method('publish')
+            ->with(QueueNameType::RagQuery, $this->callback(function (array $msg) {
+                return $msg['user_id'] === 123 && $msg['question'] === 'Как оплатить услуги?';
+            }));
+
+        // Ожидаем: sendMessageToUser («Ищу ответ...»), меню НЕ показывается — оно будет показано после RAG-ответа в ProcessRagQuery
         $maxBot->expects($this->once())->method('sendMessageToUser')
-            ->with(123, '🔧 Функция в разработке');
-        $mainMenuSender->expects($this->once())->method('send')->with(123);
+            ->with(123, '🔍 Ищу ответ...');
+        $mainMenuSender->expects($this->never())->method('send');
 
         // Ожидаем сохранение состояния после reset
         $stateRepo->expects($this->once())->method('save');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $queuePublisher);
 
         $dto = new MaxMessageDTO(
             userId: 123,
@@ -707,7 +716,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingDescription,
             data: ['type' => 'feature', 'subject' => 'Тема'],
@@ -720,7 +729,7 @@ class HandleDialogMessageTest extends TestCase
         // Не ожидаем sendMessageWithInlineKeyboard (нет перехода к превью)
         $maxBot->expects($this->never())->method('sendMessageWithInlineKeyboard');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $longDescription = str_repeat('А', 3001);
         $dto = new MaxMessageDTO(
@@ -748,7 +757,7 @@ class HandleDialogMessageTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $mainMenuSender = $this->createMock(MainMenuSender::class);
 
-        $state = new \MkdBot\Domain\Entity\ConversationState(
+        $state = new ConversationState(
             userId: 123,
             currentStep: ConversationStep::AwaitingSubject,
             data: ['type' => 'feature'],
@@ -762,7 +771,7 @@ class HandleDialogMessageTest extends TestCase
         // Состояние должно быть сохранено (текст принят как тема)
         $stateRepo->expects($this->once())->method('save');
 
-        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender);
+        $useCase = new HandleDialogMessage($stateRepo, $maxBot, $logger, $mainMenuSender, $this->createMock(QueuePublisherInterface::class));
 
         $dto = new MaxMessageDTO(
             userId: 123,

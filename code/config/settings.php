@@ -59,6 +59,13 @@ return [
 
     'proposal_notify_emails' => $_ENV['PROPOSAL_NOTIFY_EMAILS'] ?? '',
 
+    // RAG-поиск через Yandex Cloud Function
+    'rag' => [
+        'search_url' => $_ENV['RAG_SEARCH_URL'] ?? '',
+        'api_key' => $_ENV['RAG_SEARCH_API_KEY'] ?? '',
+        'timeout' => (int)($_ENV['RAG_SEARCH_TIMEOUT'] ?? 35),
+    ],
+
     'logger' => [
         'level' => $_ENV['LOG_LEVEL'] ?? 'DEBUG',
         'path' => __DIR__ . '/../logs/app.log',

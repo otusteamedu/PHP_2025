@@ -25,6 +25,10 @@ use Throwable;
 /**
  * Базовый класс consumer-а RabbitMQ — общая логика подключения и graceful shutdown
  * Наследники реализуют processMessage()
+ *
+ * Подключение создаётся через RabbitMQConnectionFactory:
+ * - AMQPConnection создаётся при первом вызове getConnection() фабрикой
+ * - Реальное соединение — при вызове ensureConnection() в consume()
  */
 abstract class RabbitMQConsumer
 {
@@ -35,23 +39,13 @@ abstract class RabbitMQConsumer
     private ?AMQPExchange $exchange = null;
 
     public function __construct(
-        private readonly string $host,
-        private readonly int $port,
-        private readonly string $login,
-        private readonly string $password,
-        private readonly string $vhost,
+        RabbitMQConnectionFactory $connectionFactory,
         private readonly string $queueName,
         protected readonly FallbackMessageRepositoryInterface $fallbackRepo,
         protected readonly LoggerInterface $logger,
         private readonly ?DatabaseConnectionInterface $dbConnection = null,
     ) {
-        $this->connection = new AMQPConnection([
-            'host' => $this->host,
-            'port' => $this->port,
-            'login' => $this->login,
-            'password' => $this->password,
-            'vhost' => $this->vhost,
-        ]);
+        $this->connection = $connectionFactory->getConnection();
     }
 
     /**

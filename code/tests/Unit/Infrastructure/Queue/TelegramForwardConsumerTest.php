@@ -10,6 +10,7 @@ use InvalidArgumentException;
 use MkdBot\Application\DTO\ForwardMessageDTO;
 use MkdBot\Application\UseCase\ForwardToTelegram;
 use MkdBot\Domain\Interface\FallbackMessageRepositoryInterface;
+use MkdBot\Infrastructure\Queue\RabbitMQConnectionFactory;
 use MkdBot\Infrastructure\Queue\TelegramForwardConsumer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -33,12 +34,9 @@ class TelegramForwardConsumerTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
 
         // Создаём consumer без maxApiClient (опциональная зависимость)
+        $connectionFactory = new RabbitMQConnectionFactory('localhost', 5672, 'guest', 'guest', '/');
         $this->consumer = new TelegramForwardConsumer(
-            host: 'localhost',
-            port: 5672,
-            login: 'guest',
-            password: 'guest',
-            vhost: '/',
+            connectionFactory: $connectionFactory,
             fallbackRepo: $this->fallbackRepo,
             logger: $this->logger,
             forwardToTelegram: $this->forwardToTelegram,
@@ -237,12 +235,9 @@ class TelegramForwardConsumerTest extends TestCase
     public function testXDeathCountAtLeastThreeSavesToFallback(): void
     {
         // Подготавливаем consumer, у которого processMessage выбрасывает RuntimeException (повторимая ошибка)
+        $connectionFactory = new RabbitMQConnectionFactory('localhost', 5672, 'guest', 'guest', '/');
         $consumer = new class (
-            'localhost',
-            5672,
-            'guest',
-            'guest',
-            '/',
+            $connectionFactory,
             $this->fallbackRepo,
             $this->logger,
             $this->forwardToTelegram,
@@ -282,12 +277,9 @@ class TelegramForwardConsumerTest extends TestCase
      */
     public function testXDeathCountLessThanThreeNacksMessage(): void
     {
+        $connectionFactory = new RabbitMQConnectionFactory('localhost', 5672, 'guest', 'guest', '/');
         $consumer = new class (
-            'localhost',
-            5672,
-            'guest',
-            'guest',
-            '/',
+            $connectionFactory,
             $this->fallbackRepo,
             $this->logger,
             $this->forwardToTelegram,
@@ -324,12 +316,9 @@ class TelegramForwardConsumerTest extends TestCase
      */
     public function testFatalErrorCausesAckAndFallback(): void
     {
+        $connectionFactory = new RabbitMQConnectionFactory('localhost', 5672, 'guest', 'guest', '/');
         $consumer = new class (
-            'localhost',
-            5672,
-            'guest',
-            'guest',
-            '/',
+            $connectionFactory,
             $this->fallbackRepo,
             $this->logger,
             $this->forwardToTelegram,

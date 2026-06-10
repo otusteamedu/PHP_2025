@@ -16,16 +16,12 @@ use Psr\Log\LoggerInterface;
 class FallbackConsumer extends RabbitMQConsumer
 {
     public function __construct(
-        string $host,
-        int $port,
-        string $login,
-        string $password,
-        string $vhost,
+        RabbitMQConnectionFactory $connectionFactory,
         FallbackMessageRepositoryInterface $fallbackRepo,
         LoggerInterface $logger,
         ?DatabaseConnectionInterface $dbConnection = null,
     ) {
-        parent::__construct($host, $port, $login, $password, $vhost, QueueNameType::Fallback->value, $fallbackRepo, $logger, $dbConnection);
+        parent::__construct($connectionFactory, QueueNameType::Fallback->value, $fallbackRepo, $logger, $dbConnection);
     }
 
     protected function processMessage(string $body, array $headers): void

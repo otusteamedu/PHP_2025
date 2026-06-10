@@ -13,7 +13,3 @@ output "service_account_id" {
   value       = yandex_iam_service_account.sa.id
 }
 
-output "bucket_name" {
-  description = "Имя бакета с документами"
-  value       = yandex_storage_bucket.documents.bucket
-}

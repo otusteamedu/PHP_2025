@@ -8,11 +8,14 @@ OUTPUT="${2:-$DEPLOY_DIR/.env}"
 VARS=$(grep -oP '\$\{(\w+)\}' "$TEMPLATE" | sed 's/${//;s/}//' | sort -u | tr '\n' ' ')
 
 if [ -z "$VARS" ]; then
-    echo "ERROR: No variables found in template $TEMPLATE" >&2
-    exit 1
+  echo "ERROR: No variables found in template $TEMPLATE" >&2
+  exit 1
 fi
 
 echo "# Auto-generated from $TEMPLATE via envsubst — $(date -Iseconds)" > "$OUTPUT"
 envsubst "$VARS" < "$TEMPLATE" >> "$OUTPUT"
+
+# только владелец может читать секреты
+chmod 600 "$OUTPUT"
 
 echo "Rendered $OUTPUT with variables: $VARS"

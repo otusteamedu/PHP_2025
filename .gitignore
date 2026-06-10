@@ -16,3 +16,5 @@ yc/.terraform
 yc/.terraform.lock.hcl
 yc/*.tfstate
 yc/*.tfstate.*
+yc/scripts/__pycache__/
+*.pyc
