@@ -21,58 +21,43 @@ class EventSystemController extends AbstractController
 
     public function createEvent(): Response
     {
-        try {
-            $event = $this->request->getPayload()['event'];
-            $this->eventService->addEvent(
-                new AddEventModel(
-                    id: $event['id'],
-                    name: $event['name'],
-                    priority: $event['priority'],
-                    conditions: $event['conditions'],
-                ),
-            );
-            $data['success'] = true;
-            $data['message'] = 'Событие успешно добавлено.';
-            $httpCode = 200;
-        } catch (\Throwable $e) {
-            $data['success'] = false;
-            $data['message'] = $e->getMessage();
-            $httpCode = $e->getCode();
-        }
+        return $this->handleOperation(
+            operation: function() {
+                $event = $this->request->getPayload()['event'];
+                $this->eventService->addEvent(
+                    new AddEventModel(
+                        id: $event['id'],
+                        name: $event['name'],
+                        priority: $event['priority'],
+                        conditions: $event['conditions'],
+                    ),
+                );
 
-        return $this->json($data, $httpCode);
+                return ['message' => 'Событие успешно добавлено.'];
+            },
+        );
     }
 
     public function getEvent(): Response
     {
-        try {
-            $params = $this->request->getPayload()['params'];
-            $eventModel = $this->eventService->getEvent(new SearchEventModel($params));
-            $data['success'] = true;
-            $data['event'] = $eventModel->toArray();
-            $httpCode = 200;
-        } catch (\Throwable $e) {
-            $data['success'] = false;
-            $data['message'] = $e->getMessage();
-            $httpCode = $e->getCode();
-        }
+        return $this->handleOperation(
+            operation: function() {
+                $params = $this->request->getPayload()['params'];
+                $eventModel = $this->eventService->getEvent(new SearchEventModel($params));
 
-        return $this->json($data, $httpCode);
+                return ['event' => $eventModel->toArray()];
+            },
+        );
     }
 
     public function deleteEvents(): Response
     {
-        try {
-            $this->eventService->deleteAllEvents();
-            $data['success'] = true;
-            $data['message'] = 'Все события удалены.';
-            $httpCode = 200;
-        } catch (\Throwable $e) {
-            $data['success'] = false;
-            $data['message'] = $e->getMessage();
-            $httpCode = $e->getCode();
-        }
+        return $this->handleOperation(
+            operation: function() {
+                $this->eventService->deleteAllEvents();
 
-        return $this->json($data, $httpCode);
+                return ['message' => 'Все события удалены.'];
+            },
+        );
     }
 }
