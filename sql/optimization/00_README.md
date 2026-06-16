@@ -32,27 +32,3 @@ sql/optimization/
 | `idx_tickets_sold_screening_price` | Q4 | Частичный (status = 'sold') | ~265 MB | Index Only Join + SUM без обращения к таблице |
 | `idx_tickets_screening_seat_occupied` | Q5 | Частичный (status IN 'sold','reserved') | ~204 MB | Index Only Scan для LEFT JOIN |
 | `idx_tickets_screening_price` | Q6 | Покрывающий | ~301 MB | MIN/MAX по B-Tree за O(log N) |
-
-## Про файл EXPLAIN_10000.sql
-
-Изначально планы были сохранены одним коммитом в `EXPLAIN_10000.sql` и дублировались для 10M и 10M+оптимизированный в `EXPLAIN_10000000.sql` и `EXPLAIN_10000000_optimized.sql`. Это неудобно:
-- Чтобы сравнить «было/стало» по одному запросу, надо открыть 3 файла
-- Нет анализа: почему так получилось и что делать
-- Нет связи запроса с его EXPLAIN и улучшениями
-
-В новом формате всё в одном файле на запрос: запрос → EXPLAIN до → анализ → улучшения → EXPLAIN после.
-
-## Как использовать
-
-```bash
-# 1. Создать БД и таблицы
-psql -U postgres -d mydatabase -f films_DDL.sql
-
-# 2. Загрузить тестовые данные
-psql -U postgres -d mydatabase -f DML_10000000.sql
-
-# 3. Применить оптимизации (создание индексов)
-psql -U postgres -d mydatabase -f optimizations.sql
-
-# 4. Посмотреть анализ по любому запросу
-less sql/optimization/q1_films_today.sql
