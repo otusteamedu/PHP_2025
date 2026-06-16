@@ -1,0 +1,85 @@
+stages:
+  - quality
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  APP_IMAGE: "$CI_REGISTRY_IMAGE/app:$CI_COMMIT_SHA"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - vendor/
+
+quality_gate:
+  stage: quality
+  image: laravelsail/php82-composer:latest
+  script:
+    - cp .env.example .env
+    - composer install --prefer-dist --no-interaction
+    - composer validate --strict
+    - |
+      for dir in app bootstrap config database routes tests; do
+        if [ -d "$dir" ]; then
+          find "$dir" -type f -name "*.php" -print0 | xargs -0 -r -n1 php -l
+        fi
+      done
+
+php_tests:
+  stage: test
+  image: laravelsail/php82-composer:latest
+  services:
+    - name: mysql:8.0
+      alias: db
+  variables:
+    DB_CONNECTION: mysql
+    DB_HOST: db
+    DB_PORT: 3306
+    DB_DATABASE: laravel
+    DB_USERNAME: laravel
+    DB_PASSWORD: secret
+  needs:
+    - quality_gate
+  script:
+    - cp .env.example .env
+    - composer install --prefer-dist --no-interaction
+    - php artisan key:generate
+    - php artisan migrate --force
+    - php artisan test
+  artifacts:
+    when: always
+    paths:
+      - storage/logs
+
+build_app_image:
+  stage: build
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  needs:
+    - php_tests
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - docker build -t "$APP_IMAGE" -f Dockerfile .
+    - docker push "$APP_IMAGE"
+
+deploy_production:
+  stage: deploy
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  environment:
+    name: production
+  needs:
+    - build_app_image
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - chmod +x deploy/deploy.sh
+    - ./deploy/deploy.sh
+
