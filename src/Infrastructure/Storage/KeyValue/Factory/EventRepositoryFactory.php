@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\KeyValue\Factory;
 
-use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
+use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use App\Domain\EventSystem\Interface\EventRepositoryInterface;
 use App\Infrastructure\Storage\KeyValue\Driver\MemcachedDriver;
 use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;

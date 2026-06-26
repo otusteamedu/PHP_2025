@@ -12,6 +12,7 @@ class ContainerControllerFactory implements ControllerFactoryInterface
 {
     public function __construct(
         private readonly Container $container,
+        private readonly ErrorHandlerInterface $errorHandler,
     ) {
     }
 
@@ -42,8 +43,6 @@ class ContainerControllerFactory implements ControllerFactoryInterface
 
     public function createErrorController(): ErrorController
     {
-        $errorHandler = $this->container->get(ErrorHandlerInterface::class);
-
-        return new ErrorController($errorHandler);
+        return new ErrorController($this->errorHandler);
     }
 }

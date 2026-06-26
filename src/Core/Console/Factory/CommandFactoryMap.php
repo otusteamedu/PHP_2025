@@ -5,29 +5,27 @@ declare(strict_types=1);
 namespace App\Core\Console\Factory;
 
 use App\Core\Console\Metadata\CommandMetadata;
-use App\Core\Console\Metadata\CommandMetadataExtractor;
 use App\Core\Container\Container;
 
 class CommandFactoryMap
 {
-    private readonly CommandMetadataExtractor $extractor;
-
+    /**
+     * @param CommandMetadata[] $commandMetadata
+     */
     public function __construct(
         private readonly Container $container,
+        private readonly array $commandMetadata,
     ) {
-        $this->extractor = $this->container->get(CommandMetadataExtractor::class);
     }
 
     public function getCommandsFactoryMap(): array
     {
-        $commandsMetadata = $this->extractor->extractCommandsMetadata();
-        $map = [];
-
-        foreach ($commandsMetadata as $metadata) {
-            $map[$metadata->getCommandName()] = $this->createCommandFactory($metadata);
+        $mapping = [];
+        foreach ($this->commandMetadata as $metadata) {
+            $mapping[$metadata->getCommandName()] = $this->createCommandFactory($metadata);
         }
 
-        return $map;
+        return $mapping;
     }
 
     private function createCommandFactory(CommandMetadata $metadata): callable

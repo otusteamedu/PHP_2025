@@ -4,28 +4,42 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Providers;
 
-use App\Core\Container\Config\Data\Module\ModuleConfigAggregator;
-use App\Core\Container\Config\Loaders\ConfigLoaderInterface;
+use App\Core\Container\Config\Types\ModuleAggregator;
 use App\Core\Container\Container;
+use App\Core\Container\Initialization\Initializers\ModuleInitializer;
+use App\Core\Container\Initialization\Payload\ModulePayload;
+use App\Core\Utils\PathResolverInterface;
 
 class ModuleServiceProvider implements ServiceProviderInterface
 {
-    public function __construct(
-        private readonly ConfigLoaderInterface $configLoader,
-    ) {
-    }
-
     public function registerServices(Container $container): void
     {
-        /** @var ModuleConfigAggregator $moduleConfigAggregator */
-        $moduleConfigAggregator = $this->configLoader->load();
+        /** @var ModulePayload $payload */
+        $payload = $this->getInitializer($container)->initialize();
+        $config = $payload->moduleAggregatorConfig;
 
-        foreach ($moduleConfigAggregator->getModules() as $moduleConfig) {
-            foreach ($moduleConfig->getServices() as $serviceConfig) {
-                if ($serviceConfig->isSingleton()) {
-                    $container->singleton($serviceConfig->getDefinition(), $serviceConfig->getFactory());
+        $this->registerModuleAggregatorConfig($container, $config);
+        $this->registerModuleServices($container, $config);
+    }
+
+    private function getInitializer(Container $container): ModuleInitializer
+    {
+        return new ModuleInitializer($container->get(PathResolverInterface::class));
+    }
+
+    private function registerModuleAggregatorConfig(Container $container, ModuleAggregator $config): void
+    {
+        $container->singleton($config->getType()->value, $config);
+    }
+
+    private function registerModuleServices(Container $container, ModuleAggregator $config): void
+    {
+        foreach ($config->getModules() as $module) {
+            foreach ($module->getServices() as $service) {
+                if ($service->isSingleton()) {
+                    $container->singleton($service->getDefinition(), $service->getFactory());
                 } else {
-                    $container->set($serviceConfig->getDefinition(), $serviceConfig->getFactory());
+                    $container->set($service->getDefinition(), $service->getFactory());
                 }
             }
         }

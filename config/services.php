@@ -1,6 +1,8 @@
 <?php
 
-use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
+declare(strict_types=1);
+
+use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use App\Core\Container\Container;
 use App\Domain\BookshopSearch\BookshopService;
 use App\Domain\BracketBalance\BracketBalancer;

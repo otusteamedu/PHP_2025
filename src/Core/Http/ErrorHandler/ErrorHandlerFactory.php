@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace App\Core\Http\ErrorHandler;
 
+use App\Core\Container\Context\ContextDetector;
+use App\Core\Container\Context\ContextType;
 use App\Core\Container\Providers\UiServiceProvider;
-use App\Core\Http\Message\Request;
 use App\Core\Http\View\View;
 
 class ErrorHandlerFactory
 {
     public function __construct(
+        private readonly ContextDetector $contextDetector,
         private readonly ?View $view,
     ) {
     }
 
-    public function create(Request $request): ErrorHandlerInterface
+    public function create(): ErrorHandlerInterface
     {
-        if (str_starts_with($request->getRequestPath(), '/api/')) {
+        $contextType = $this->contextDetector->getContextType();
+
+        if ($contextType === ContextType::HTTP_API) {
             return new ApiErrorHandler();
         }
 

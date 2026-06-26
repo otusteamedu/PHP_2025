@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\Search\Elasticsearch\Client;
 
-use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
+use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use Elastic\Elasticsearch\Exception\AuthenticationException;

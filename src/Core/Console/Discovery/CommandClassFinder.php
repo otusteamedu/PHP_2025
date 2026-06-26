@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Core\Console\Discovery;
 
-use App\Core\Container\Config\Data\ConfigInterface;
+use App\Core\Container\Config\Contracts\ConfigInterface;
+use App\Core\Container\Config\Types\Console;
 use App\Core\Utils\PathResolverInterface;
 use Symfony\Component\Console\Command\Command;
 
 class CommandClassFinder
 {
+    /**
+     * @param Console $consoleConfig
+     */
     public function __construct(
         private readonly ConfigInterface $consoleConfig,
         private readonly PathResolverInterface $pathResolver,

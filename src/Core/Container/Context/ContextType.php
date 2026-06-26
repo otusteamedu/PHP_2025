@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Context;
 
-enum AppLoadContext: string
+enum ContextType: string
 {
     case CLI = 'cli';
     case HTTP_WEB = 'web';

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Container\Config\Data\DotEnv;
-
-use App\Core\Container\Config\Data\ConfigInterface;
+namespace App\Core\Container\Config\Contracts;
 
 interface DotEnvConfigInterface extends ConfigInterface
 {

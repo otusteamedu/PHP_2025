@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Config\Loaders;
 
-use App\Core\Container\Config\Data\ConfigInterface;
-use App\Core\Container\Config\Data\Module\ModuleConfig;
-use App\Core\Container\Config\Data\Module\ModuleConfigAggregator;
-use App\Core\Container\Config\Data\Module\ServiceConfig;
+use App\Core\Container\Config\Contracts\ConfigInterface;
+use App\Core\Container\Config\Types\Module;
+use App\Core\Container\Config\Types\ModuleAggregator;
+use App\Core\Container\Config\Types\Service;
 use App\Core\Utils\PathResolverInterface;
 
-class ModuleConfigLoader implements ConfigLoaderInterface
+class ModuleAggregatorLoader implements ConfigLoaderInterface
 {
     public function __construct(
         private readonly PathResolverInterface $pathResolver,
@@ -27,16 +27,16 @@ class ModuleConfigLoader implements ConfigLoaderInterface
         foreach ($config as $moduleName => $moduleServices) {
             $services = [];
             foreach ($moduleServices as $serviceClass => $serviceConfig) {
-                $services[] = new ServiceConfig(
+                $services[] = new Service(
                     definition: $serviceClass,
                     singleton: $serviceConfig['singleton'],
                     factory: $serviceConfig['factory'],
                 );
             }
-            $modules[] = new ModuleConfig(name: $moduleName, services: $services);
+            $modules[] = new Module(name: $moduleName, services: $services);
         }
 
-        return new ModuleConfigAggregator($modules);
+        return new ModuleAggregator($modules);
     }
 
     private function validateConfigStructure(array $config): void

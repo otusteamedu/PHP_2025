@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Builder;
 
-use App\Core\Container\Config\Loaders\ConfigLoaderFactory;
-use App\Core\Container\Config\Loaders\ConfigLoaderType;
 use App\Core\Container\Container;
-use App\Core\Container\Context\AppContext;
-use App\Core\Container\Providers\ModuleServiceProvider;
-use App\Core\Container\Providers\AppLoadContextProviderFactory;
-use App\Core\Container\Providers\CommonServiceProvider;
+use App\Core\Container\Context\ContextDetector;
+use App\Core\Container\Providers\ServiceProviderFactory;
+use App\Core\Utils\PathResolver;
+use App\Core\Utils\PathResolverInterface;
 
 class ContainerBuilder
 {
@@ -18,20 +16,20 @@ class ContainerBuilder
     {
         $container = new Container();
 
-        // Регистрируем базовые сервисы из слоя "Core"
-        new CommonServiceProvider()->registerServices($container);
+        self::registerBaseInfrastructure($container);
 
-        // Регистрируем сервисы специфичные для HTTP (API / Web) или CLI
-        $appLoadContext = $container->get(AppContext::class)->getAppLoadContext();
-        $appLoadContextProviders = new AppLoadContextProviderFactory()->createProviders($appLoadContext);
-        foreach ($appLoadContextProviders as $serviceProvider) {
+        $factory = new ServiceProviderFactory($container->get(ContextDetector::class));
+
+        foreach ($factory->createProviders() as $serviceProvider) {
             $serviceProvider->registerServices($container);
         }
 
-        // Регистрируем сервисы из слоя "Domain" и нужные им сервисы из слоя "Infrastructure" через файл конфигурации
-        $configLoader = $container->get(ConfigLoaderFactory::class)->create(ConfigLoaderType::MODULES);
-        new ModuleServiceProvider($configLoader)->registerServices($container);
-
         return $container;
+    }
+
+    private static function registerBaseInfrastructure(Container $container): void
+    {
+        $container->set(ContextDetector::class, static fn() => new ContextDetector());
+        $container->singleton(PathResolverInterface::class, static fn() => new PathResolver());
     }
 }

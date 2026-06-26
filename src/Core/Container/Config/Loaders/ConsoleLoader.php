@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Config\Loaders;
 
-use App\Core\Container\Config\Data\ConfigInterface;
-use App\Core\Container\Config\Data\Console\ConsoleConfig;
+use App\Core\Container\Config\Contracts\ConfigInterface;
+use App\Core\Container\Config\Types\Console;
 use App\Core\Utils\PathResolverInterface;
 
-class ConsoleConfigLoader implements ConfigLoaderInterface
+class ConsoleLoader implements ConfigLoaderInterface
 {
     public function __construct(
         private readonly PathResolverInterface $pathResolver,
@@ -25,7 +25,7 @@ class ConsoleConfigLoader implements ConfigLoaderInterface
         $commandDir = trim($commandDir, '/');
         $commandNamespace = $this->computeCommandNamespace($commandDir, $baseNamespace);
 
-        return new ConsoleConfig(commandDir: $commandDir, commandNamespace: $commandNamespace);
+        return new Console(commandDir: $commandDir, commandNamespace: $commandNamespace);
     }
 
     private function computeCommandNamespace(string $commandDir, string $baseNamespace): string

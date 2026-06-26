@@ -8,5 +8,8 @@ use App\Core\Container\Container;
 
 interface ServiceProviderInterface
 {
+    /**
+     * Регистрирует сервисы в контейнере.
+     */
     public function registerServices(Container $container): void;
 }

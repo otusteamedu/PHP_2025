@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Core\Container\Providers;
 
 use App\Core\Console\App;
-use App\Core\Console\Discovery\CommandClassFinder;
 use App\Core\Console\Factory\CommandFactoryMap;
-use App\Core\Console\Metadata\CommandMetadataExtractor;
-use App\Core\Container\Config\Data\Console\ConsoleConfig;
-use App\Core\Container\Config\Loaders\ConfigLoaderFactory;
-use App\Core\Container\Config\Loaders\ConfigLoaderType;
+use App\Core\Console\Metadata\CommandMetadata;
+use App\Core\Container\Config\Types\Console;
 use App\Core\Container\Container;
+use App\Core\Container\Initialization\Initializers\ConsoleInitializer;
+use App\Core\Container\Initialization\Payload\ConsolePayload;
 use App\Core\Utils\PathResolverInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
@@ -21,47 +20,47 @@ class ConsoleServiceProvider implements ServiceProviderInterface
 {
     public function registerServices(Container $container): void
     {
-        $container->set(Application::class, static fn() => new Application());
+        /** @var ConsolePayload $payload */
+        $payload = $this->getInitializer($container)->initialize();
 
-        $container->singleton(
-            ConsoleConfig::class,
-            static fn(Container $c) => $c
-                ->get(ConfigLoaderFactory::class)
-                ->create(ConfigLoaderType::CONSOLE)
-                ->load(),
-        );
+        // Создаем фабрики команд
+        $commandFactories = $this->createCommandFactories($container, $payload->commandMetadata);
 
-        $container->singleton(
-            CommandClassFinder::class,
-            static fn(Container $c) => new CommandClassFinder(
-                $c->get(ConsoleConfig::class),
-                $c->get(PathResolverInterface::class),
-            ),
-        );
+        // Оборачиваем фабрики в лоадер
+        $commandLoader = new FactoryCommandLoader($commandFactories);
 
-        $container->singleton(
-            CommandMetadataExtractor::class,
-            static fn(Container $c) => new CommandMetadataExtractor($c->get(CommandClassFinder::class)),
-        );
+        // Создаем консольное приложение Symfony
+        $symfonyConsoleApp = new Application();
 
-        $container->singleton(
-            CommandFactoryMap::class,
-            static fn(Container $c) => new CommandFactoryMap($c),
-        );
+        // Регистрируем сервисы
+        $this->registerConsoleConfig($container, $payload->consoleConfig);
+        $this->registerApp($container, $symfonyConsoleApp, $commandLoader);
+    }
 
-        $container->singleton(
-            CommandLoaderInterface::class,
-            static fn (Container $c) => new FactoryCommandLoader(
-                $c->get(CommandFactoryMap::class)->getCommandsFactoryMap(),
-            ),
-        );
+    private function getInitializer(Container $container): ConsoleInitializer
+    {
+        return new ConsoleInitializer($container->get(PathResolverInterface::class));
+    }
 
-        $container->set(
-            App::class,
-            static fn(Container $c) => new App(
-                $c->get(Application::class),
-                $c->get(CommandLoaderInterface::class),
-            ),
-        );
+    /**
+     * @param CommandMetadata[] $commandMetadata
+     *
+     * @return callable[]
+     */
+    private function createCommandFactories(Container $container, array $commandMetadata): array
+    {
+        $factoryMap = new CommandFactoryMap($container, $commandMetadata);
+
+        return $factoryMap->getCommandsFactoryMap();
+    }
+
+    private function registerConsoleConfig(Container $container, Console $config): void
+    {
+        $container->singleton($config->getType()->value, $config);
+    }
+
+    private function registerApp(Container $container, Application $app, CommandLoaderInterface $loader): void
+    {
+        $container->set(App::class, static fn() => new App($app, $loader));
     }
 }

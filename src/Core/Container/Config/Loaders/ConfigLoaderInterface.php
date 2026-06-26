@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Config\Loaders;
 
-use App\Core\Container\Config\Data\ConfigInterface;
+use App\Core\Container\Config\Contracts\ConfigInterface;
 
 interface ConfigLoaderInterface
 {

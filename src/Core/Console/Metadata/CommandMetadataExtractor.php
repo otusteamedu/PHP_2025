@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Core\Console\Metadata;
 
-use App\Core\Console\Discovery\CommandClassFinder;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 class CommandMetadataExtractor
 {
     public function __construct(
-        private readonly CommandClassFinder $commandFinder,
+        private readonly array $commandClasses,
     ) {
     }
 
@@ -19,10 +18,8 @@ class CommandMetadataExtractor
      */
     public function extractCommandsMetadata(): array
     {
-        $commandClasses = $this->commandFinder->scanCommandDirectory();
-
         $commandsMetadata = [];
-        foreach ($commandClasses as $commandClass) {
+        foreach ($this->commandClasses as $commandClass) {
             $commandsMetadata[] = $this->extractSingleCommandMetadata($commandClass);
         }
 

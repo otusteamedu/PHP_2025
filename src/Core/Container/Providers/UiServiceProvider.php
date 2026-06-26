@@ -14,7 +14,9 @@ class UiServiceProvider implements ServiceProviderInterface
     {
         $container->singleton(
             View::class,
-            static fn(Container $c) => new View($c->get(PathResolverInterface::class)),
+            static fn(Container $c) => new View(
+                $c->get(PathResolverInterface::class),
+            )
         );
     }
 }

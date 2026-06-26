@@ -16,9 +16,6 @@ class WebErrorHandler implements ErrorHandlerInterface
 
     public function handle404(): Response
     {
-        $response = $this->view->render('404.php');
-        $response->setHttpCode(404);
-
-        return $response;
+        return $this->view->render('404.php')->setHttpCode(ErrorHandlerInterface::HTTP_NOT_FOUND);
     }
 }

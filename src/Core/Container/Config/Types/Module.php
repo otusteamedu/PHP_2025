@@ -2,17 +2,24 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Container\Config\Data\Module;
+namespace App\Core\Container\Config\Types;
 
-readonly class ModuleConfig
+use App\Core\Container\Config\Contracts\ConfigInterface;
+
+readonly class Module implements ConfigInterface
 {
     /**
-     * @param ServiceConfig[] $services
+     * @param Service[] $services
      */
     public function __construct(
         private string $name,
         private array $services,
     ) {
+    }
+
+    public function getType(): ConfigType
+    {
+        return ConfigType::MODULE;
     }
 
     public function getName(): string
@@ -21,7 +28,7 @@ readonly class ModuleConfig
     }
 
     /**
-     * @return ServiceConfig[]
+     * @return Service[]
      */
     public function getServices(): array
     {

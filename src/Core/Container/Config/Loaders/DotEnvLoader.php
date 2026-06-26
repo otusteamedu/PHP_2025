@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Config\Loaders;
 
-use App\Core\Container\Config\Data\DotEnv\DotEnvConfig;
-use App\Core\Container\Config\Data\DotEnv\DotEnvConfigInterface;
+use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
+use App\Core\Container\Config\Types\DotEnv;
 use App\Core\Utils\PathResolverInterface;
-use Dotenv\Dotenv;
+use Dotenv\Dotenv as PhpDotenv;
 
-class DotEnvConfigLoader implements ConfigLoaderInterface
+class DotEnvLoader implements ConfigLoaderInterface
 {
     public function __construct(
         private readonly PathResolverInterface $pathResolver,
@@ -19,8 +19,8 @@ class DotEnvConfigLoader implements ConfigLoaderInterface
     public function load(): DotEnvConfigInterface
     {
         $projectRoot = $this->pathResolver->getProjectRoot();
-        $data = Dotenv::createMutable($projectRoot)->load();
+        $data = PhpDotenv::createMutable($projectRoot)->load();
 
-        return new DotEnvConfig($data);
+        return new DotEnv($data);
     }
 }

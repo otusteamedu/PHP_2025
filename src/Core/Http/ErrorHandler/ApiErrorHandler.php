@@ -10,10 +10,12 @@ class ApiErrorHandler implements ErrorHandlerInterface
 {
     public function handle404(): Response
     {
-        return new Response(
-            json_encode(['error' => 'Not Found']),
-            404,
-            ['Content-Type: application/json; charset=utf-8'],
-        );
+        $data = json_encode(['error' => 'Not Found']);
+
+        $headers = [
+            'Content-Type: application/json; charset=utf-8',
+        ];
+
+        return new Response($data, ErrorHandlerInterface::HTTP_NOT_FOUND, $headers);
     }
 }

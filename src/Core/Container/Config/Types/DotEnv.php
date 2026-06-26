@@ -2,13 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Container\Config\Data\DotEnv;
+namespace App\Core\Container\Config\Types;
 
-class DotEnvConfig implements DotEnvConfigInterface
+use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
+
+readonly class DotEnv implements DotEnvConfigInterface
 {
     public function __construct(
-        private readonly array $data,
+        private array $data,
     ) {
+    }
+
+    public function getType(): ConfigType
+    {
+        return ConfigType::DOT_ENV;
     }
 
     public function get(string $key, mixed $default = null): mixed
