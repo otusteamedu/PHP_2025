@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Console;
 
+use App\Application\UseCases\ClearEventsUseCase;
 use App\Application\UseCases\ImportEventsUseCase;
 use App\Infrastructure\EventRepository;
 use App\Infrastructure\JsonEventLoader;
@@ -12,6 +13,8 @@ use App\Infrastructure\RedisClient;
 class ConsoleApplication
 {
     private ImportEventsUseCase $importEvents;
+    private ClearEventsUseCase $clearEvents;
+
     public function __construct( )
     {
         $redisClient = new RedisClient();
@@ -21,6 +24,8 @@ class ConsoleApplication
             new JsonEventLoader(),
             $repository
         );
+
+        $this->clearEvents = new ClearEventsUseCase($repository);
     }
 
     public function run(): void
@@ -28,6 +33,7 @@ class ConsoleApplication
         while (true) {
             echo PHP_EOL;
             echo "1. Импортировать события из JSON\n";
+            echo "3. Очистить события\n";
             echo "5. Выход\n";
 
             $action = trim(
@@ -37,6 +43,9 @@ class ConsoleApplication
             switch ($action) {
                 case '1':
                     $this->importEvents->execute();
+                    break;
+                case '3':
+                    $this->clearEvents->execute();
                     break;
                 case '5':
                     return;

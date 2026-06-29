@@ -39,6 +39,9 @@ class EventRepository implements EventRepositoryInterface
             );
     }
 
+    /**
+     * @throws \RedisException
+     */
     public function clear(): void
     {
         $redis = $this->redis->getConnection();
