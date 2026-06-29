@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure;
 
-use App\Application\Dto\ImportEventDto;
+use App\Application\Dto\EventDto;
 
 class JsonEventLoader
 {
     /**
-     * @return ImportEventDto[]
+     * @return EventDto[]
      */
     public function load(
         string $path
@@ -25,7 +25,7 @@ class JsonEventLoader
         $events = [];
 
         foreach ($data as $item) {
-            $events[] = new ImportEventDto(
+            $events[] = new EventDto(
                 $item['priority'],
                 $item['conditions'],
                 $item['event']
