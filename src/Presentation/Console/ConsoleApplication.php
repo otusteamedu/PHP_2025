@@ -6,6 +6,7 @@ namespace App\Presentation\Console;
 
 use App\Application\UseCases\AddEventUseCase;
 use App\Application\UseCases\ClearEventsUseCase;
+use App\Application\UseCases\FindEventsUseCase;
 use App\Application\UseCases\ImportEventsUseCase;
 use App\Infrastructure\EventRepository;
 use App\Infrastructure\JsonEventLoader;
@@ -15,6 +16,7 @@ class ConsoleApplication
 {
     private ImportEventsUseCase $importEvents;
     private AddEventUseCase $addEvent;
+    private FindEventsUseCase $findEvent;
     private ClearEventsUseCase $clearEvents;
 
     public function __construct( )
@@ -29,6 +31,7 @@ class ConsoleApplication
 
         $this->clearEvents = new ClearEventsUseCase($repository);
         $this->addEvent = new AddEventUseCase($repository);
+        $this->findEvent = new FindEventsUseCase($repository);
     }
 
     public function run(): void
@@ -38,6 +41,7 @@ class ConsoleApplication
             echo "1. Импортировать события из JSON\n";
             echo "2. Добавить событие\n";
             echo "3. Очистить события\n";
+            echo "4. Найти событие\n";
             echo "5. Выход\n";
 
             $action = trim(
@@ -54,6 +58,19 @@ class ConsoleApplication
                     break;
                 case '3':
                     $this->clearEvents->execute();
+                    break;
+                case '4':
+                    $eventParams = (new ConsoleEventInput(new ParamsParser()))->getEventParams();
+                    $event = $this->findEvent->execute($eventParams);
+
+                    if ($event === null) {
+                        echo 'Событие не найдено.' . PHP_EOL;
+                        break;
+                    }
+                    echo 'Найдено событие с наибольшим приоритетом:' . PHP_EOL;
+
+                    var_dump($event);
+
                     break;
                 case '5':
                     return;

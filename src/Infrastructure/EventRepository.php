@@ -67,6 +67,15 @@ class EventRepository implements EventRepositoryInterface
                 true,
             );
 
+            $isEvent = isset($data['id'])
+                && isset($data['priority'])
+                && isset($data['conditions'])
+                && isset($data['event']);
+
+            if (!$isEvent) {
+                continue;
+            }
+
             $events[] = new Event(
                 $data['id'],
                 $data['priority'],

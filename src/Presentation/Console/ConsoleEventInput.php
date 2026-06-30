@@ -32,6 +32,15 @@ final readonly class ConsoleEventInput
         );
     }
 
+    public function getEventParams(): array
+    {
+        echo PHP_EOL;
+        echo "Поиск события по параметрам\n";
+        echo "=================\n";
+
+        return $this->readConditions();
+    }
+
     private function readPriority(): int
     {
         while (true) {
