@@ -24,7 +24,7 @@ final class ImportEventsUseCase
     public function execute(): void
     {
         $path = trim(
-            readline('Введите путь к json: ')
+            readline('Введите путь к json (data/events.json): ')
         );
 
         $eventsDto = $this->loader->load($path);
