@@ -14,6 +14,9 @@ class EventRepository implements EventRepositoryInterface
     ) {
     }
 
+    /**
+     * @throws \RedisException
+     */
     public function nextId(): int
     {
         return (int)$this->redis
@@ -53,6 +56,9 @@ class EventRepository implements EventRepositoryInterface
         }
     }
 
+    /**
+     * @throws \RedisException
+     */
     public function getAll(): array
     {
         $redis = $this->redis->getConnection();
@@ -87,6 +93,9 @@ class EventRepository implements EventRepositoryInterface
         return $events;
     }
 
+    /**
+     * @throws \RedisException
+     */
     public function findByParams(array $params): ?Event
     {
         $matchedEvents = [];

@@ -50,14 +50,29 @@ class ConsoleApplication
 
             switch ($action) {
                 case '1':
-                    $this->importEvents->execute();
+                    try {
+                        $this->importEvents->execute();
+                        echo "События успешно импортированы.\n";
+                    } catch (\Throwable $e) {
+                        echo $e->getMessage() . PHP_EOL;
+                    }
                     break;
                 case '2':
                     $eventDto = (new ConsoleEventInput(new ParamsParser()))->getEventData();
-                    $this->addEvent->execute($eventDto);
+                    try {
+                        $this->addEvent->execute($eventDto);
+                        echo 'События успешно добавлено.' . PHP_EOL;
+                    } catch (\RedisException $e)        {
+                        echo $e->getMessage() . PHP_EOL;
+                    }
                     break;
                 case '3':
-                    $this->clearEvents->execute();
+                    try {
+                        $this->clearEvents->execute();
+                        echo 'События успешно импортированы.' . PHP_EOL;
+                    } catch (\RedisException $e)        {
+                        echo $e->getMessage() . PHP_EOL;
+                    }
                     break;
                 case '4':
                     $eventParams = (new ConsoleEventInput(new ParamsParser()))->getEventParams();

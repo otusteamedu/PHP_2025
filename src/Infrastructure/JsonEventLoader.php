@@ -10,6 +10,7 @@ class JsonEventLoader
 {
     /**
      * @return EventDto[]
+     * @throws \JsonException
      */
     public function load(
         string $path

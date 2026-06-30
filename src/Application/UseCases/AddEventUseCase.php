@@ -16,6 +16,9 @@ final readonly class AddEventUseCase
     {
     }
 
+    /**
+     * @throws \RedisException
+     */
     public function execute(
         EventDto $dto
     ): void {
@@ -27,6 +30,5 @@ final readonly class AddEventUseCase
         );
 
         $this->repository->save($event);
-        echo 'События успешно добавлено.' . PHP_EOL;
     }
 }

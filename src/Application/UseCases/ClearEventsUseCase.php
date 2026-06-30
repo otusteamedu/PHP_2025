@@ -13,13 +13,12 @@ final readonly class ClearEventsUseCase
     )
     {
     }
+
+    /**
+     * @throws \RedisException
+     */
     public function execute(): void
     {
-        try {
-            $this->repository->clear();
-            echo 'События успешно импортированы.' . PHP_EOL;
-        } catch (\RedisException $e)        {
-            echo $e->getMessage() . PHP_EOL;
-        }
+        $this->repository->clear();
     }
 }
