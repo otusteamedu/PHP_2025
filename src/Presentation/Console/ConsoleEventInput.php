@@ -81,8 +81,15 @@ final readonly class ConsoleEventInput
 
     private function readManyParams(): array
     {
+        $inputData = readline("> ");
+
+         while (empty($inputData)) {
+             echo 'Вы ничего не ввели' . PHP_EOL;
+             $inputData = readline("> ");
+         }
+
         return $this->parser->parse(
-            readline("> ")
+            $inputData
         );
     }
 }
