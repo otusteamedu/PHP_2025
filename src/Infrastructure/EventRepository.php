@@ -49,10 +49,12 @@ class EventRepository implements EventRepositoryInterface
     {
         $redis = $this->redis->getConnection();
 
-        $keys = $redis->keys('event:*');
+        $iterator = null;
 
-        foreach ($keys as $key) {
-            $redis->del($key);
+        while ($keys = $redis->scan($iterator,'event:*')) {
+            foreach ($keys as $key) {
+                $redis->del($key);
+            }
         }
     }
 
