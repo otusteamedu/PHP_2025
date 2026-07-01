@@ -10,18 +10,28 @@ class JsonEventLoader
 {
     /**
      * @return EventDto[]
-     * @throws \JsonException
+     * @throws \Exception
      */
     public function load(
         string $path
     ): array {
+        if ($path === '') {
+            throw new \Exception('Путь до json файла не может быть пустым');
+        }
+
         $content = file_get_contents($path);
 
         $data = json_decode(
             json: $content,
-            associative:  true,
-            flags: JSON_THROW_ON_ERROR
+            associative: true
         );
+
+        if ($data === null) {
+            throw new \Exception('Файл для импорта не может быть преобразован или глубина вложенности структуры превышает установленный предел');
+        }
+        if ($data === []) {
+            throw new \Exception('В файле нет событий для импорта');
+        }
 
         $events = [];
 

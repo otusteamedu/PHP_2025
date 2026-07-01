@@ -63,7 +63,7 @@ class ConsoleApplication
                         $this->importEvents->execute();
                         echo "События успешно импортированы.\n";
                     } catch (\Throwable $e) {
-                        echo $e->getMessage() . PHP_EOL;
+                        echo 'Возникла ошибка при импорте: ' . $e->getMessage() . PHP_EOL;
                     }
                     break;
                 case '2':
