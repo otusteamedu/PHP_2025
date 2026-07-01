@@ -71,7 +71,7 @@
 # Инструкция по запуску приложения
 Для запуска приложения необходимо выполнить команды:
 
-`composer instull`
+`composer install`
 
 `docker compose exec php bash`
 
