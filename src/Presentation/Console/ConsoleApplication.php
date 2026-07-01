@@ -78,7 +78,7 @@ class ConsoleApplication
                 case '3':
                     try {
                         $this->clearEvents->execute();
-                        echo 'События успешно импортированы.' . PHP_EOL;
+                        echo 'Все события удалены.' . PHP_EOL;
                     } catch (\RedisException $e)        {
                         echo $e->getMessage() . PHP_EOL;
                     }
