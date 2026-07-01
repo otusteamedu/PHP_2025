@@ -12,7 +12,5 @@ interface EventRepositoryInterface
 
     public function clear(): void;
 
-    public function getAll(): array;
-
     public function findByParams(array $params): ?Event;
 }

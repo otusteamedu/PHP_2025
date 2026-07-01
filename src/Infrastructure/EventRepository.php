@@ -40,6 +40,23 @@ class EventRepository implements EventRepositoryInterface
                     'event' => $event->getEventData(),
                 ])
             );
+
+        foreach ($event->getConditions() as $name => $value) {
+            $this->redis
+                ->getConnection()
+                ->sAdd(
+                sprintf('condition:%s:%s', $name, $value),
+                $event->getId()
+            );
+        }
+
+        $this->redis
+            ->getConnection()
+            ->zAdd(
+                'event:priority',
+                $event->getPriority(),
+                (string)$event->getId()
+            );
     }
 
     /**
@@ -47,52 +64,21 @@ class EventRepository implements EventRepositoryInterface
      */
     public function clear(): void
     {
+        foreach (['event:*', 'condition:*' ] as $pattern)
+        {
+            $this->deleteByPattern($pattern);
+        }
+    }
+
+    public function deleteByPattern(string $pattern):void
+    {
         $redis = $this->redis->getConnection();
 
         $iterator = null;
 
-        while ($keys = $redis->scan($iterator,'event:*')) {
-            foreach ($keys as $key) {
-                $redis->del($key);
-            }
+        while ($keys = $redis->scan($iterator,$pattern)) {
+            $redis->del(...$keys);
         }
-    }
-
-    /**
-     * @throws \RedisException
-     */
-    public function getAll(): array
-    {
-        $redis = $this->redis->getConnection();
-
-        $keys = $redis->keys('event:*');
-
-        $events = [];
-
-        foreach ($keys as $key) {
-            $data = json_decode(
-                $redis->get($key),
-                true,
-            );
-
-            $isEvent = isset($data['id'])
-                && isset($data['priority'])
-                && isset($data['conditions'])
-                && isset($data['event']);
-
-            if (!$isEvent) {
-                continue;
-            }
-
-            $events[] = new Event(
-                $data['id'],
-                $data['priority'],
-                $data['conditions'],
-                $data['event'],
-            );
-        }
-
-        return $events;
     }
 
     /**
@@ -100,34 +86,65 @@ class EventRepository implements EventRepositoryInterface
      */
     public function findByParams(array $params): ?Event
     {
-        $matchedEvents = [];
+        $redis = $this->redis->getConnection();
 
-        foreach ($this->getAll() as $event) {
+        $conditionKeys = [];
 
-            $matched = true;
+        foreach ($params as $name => $value) {
+            $conditionKeys[] = sprintf(
+                'condition:%s:%s',
+                $name,
+                $value
+            );
+        }
 
-            foreach ($event->getConditions() as $key => $value) {
+        $eventIds = $redis->sInter(...$conditionKeys);
 
-                if (
-                    !array_key_exists($key, $params)
-                    || $params[$key] !== $value
-                ) {
-                    $matched = false;
-                    break;
-                }
+        if ($eventIds === []) {
+            return null;
+        }
+
+        $eventKeys = [];
+
+        foreach ($eventIds as $id) {
+            $eventKeys[] = 'event:' . $id;
+        }
+
+        $events = $redis->mGet($eventKeys);
+
+        $bestEvent = null;
+        $bestPriority = PHP_INT_MIN;
+
+        foreach ($events as $json) {
+
+            if ($json === false) {
+                continue;
             }
 
-            if ($matched) {
-                $matchedEvents[] = $event;
+            $data = json_decode(
+                $json,
+                true,
+            );
+
+            if ($data === null || $data === []) { //Данные о событие пусты
+                continue;
+            }
+            
+            if (!empty($data['priority']) && $data['priority'] > $bestPriority) {
+                $bestPriority = (int)$data['priority'];
+                $bestEvent = $data;
             }
         }
 
-        usort(
-            $matchedEvents,
-            static fn (Event $a, Event $b): int =>
-                $b->getPriority() <=> $a->getPriority()
-        );
+        if ($bestEvent === null) {
+            return null;
+        }
 
-        return $matchedEvents[0] ?? null;
+        return new Event(
+            $bestEvent['id'],
+            $bestEvent['priority'],
+            $bestEvent['conditions'],
+            $bestEvent['event'],
+        );
     }
 }
