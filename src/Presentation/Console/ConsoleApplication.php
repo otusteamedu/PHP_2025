@@ -21,7 +21,7 @@ class ConsoleApplication
 
     public function __construct( )
     {
-        $redisClient = new RedisClient();
+        $redisClient = $this->getRedisClient();
         $repository = new EventRepository($redisClient);
 
         $this->importEvents = new ImportEventsUseCase(
@@ -32,6 +32,15 @@ class ConsoleApplication
         $this->clearEvents = new ClearEventsUseCase($repository);
         $this->addEvent = new AddEventUseCase($repository);
         $this->findEvent = new FindEventsUseCase($repository);
+    }
+
+    private function getRedisClient(): RedisClient
+    {
+        $host = getenv('REDIS_HOST') ?: 'redis';
+        $port = (int)getenv('REDIS_PORT') ?: 6379;
+        $password = getenv('REDIS_PASSWORD');
+
+        return new RedisClient($host, $port, $password);
     }
 
     public function run(): void

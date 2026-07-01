@@ -10,16 +10,18 @@ class RedisClient
 {
     private Redis $redis;
 
-    public function __construct()
+    public function __construct(string $host, int $port, string $password = '')
     {
         $this->redis = new Redis();
 
         $this->redis->connect(
-            'redis',
-            6379
+            host: $host,
+            port: $port,
         );
 
-        $this->redis->auth(getenv('REDIS_PASSWORD'));
+        if (!empty($password)) {
+            $this->redis->auth($password);
+        }
     }
 
     public function getConnection(): Redis
