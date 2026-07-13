@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\TermLevel;
+namespace App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\TermLevel;
 
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\QueryComponentInterface;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\QueryComponentInterface;
 
 class TermQuery implements QueryComponentInterface
 {

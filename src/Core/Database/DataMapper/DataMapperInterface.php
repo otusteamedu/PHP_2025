@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Database\DataMapper;
+namespace App\Core\Database\DataMapper;
 
 use App\Domain\Shared\Entity\EntityInterface;
 

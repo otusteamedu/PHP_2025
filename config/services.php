@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use App\Core\Container\Container;
+use App\Core\Database\Connection\DatabaseQueryExecutor;
+use App\Core\Database\Connection\PDOWrapper;
+use App\Core\Database\Factory\CollectionFactory;
+use App\Core\Storage\KeyValue\Driver\MemcachedDriver;
+use App\Core\Storage\KeyValue\Driver\RedisDriver;
 use App\Domain\BookshopSearch\BookshopService;
 use App\Domain\BracketBalance\BracketBalancer;
 use App\Domain\EmailVerification\EmailVerifier;
@@ -16,14 +21,8 @@ use App\Domain\Shared\Validator\EmailValidator;
 use App\Domain\SystemHealth\SessionStorageChecker;
 use App\Domain\SystemHealth\SystemHealthCheckService;
 use App\Domain\UserManagement\UserService;
-use App\Infrastructure\Database\Connection\DatabaseQueryExecutor;
-use App\Infrastructure\Database\Connection\PDOWrapper;
-use App\Infrastructure\Database\DataMapper\DataMapperInterface;
 use App\Infrastructure\Database\DataMapper\UserMapper;
-use App\Infrastructure\Database\Factory\CollectionFactory;
 use App\Infrastructure\Database\Repository\UserRepository;
-use App\Infrastructure\Storage\KeyValue\Driver\MemcachedDriver;
-use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
 use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
 use App\Infrastructure\Storage\Search\Elasticsearch\Client\SecureElasticsearchClientBuilder;
 use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
@@ -31,71 +30,55 @@ use Elastic\Elasticsearch\ClientInterface;
 
 return [
     'EmailVerification' => [
-        EmailVerifier::class => [
+        EmailFormatValidator::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new EmailVerifier($c->get(EmailValidator::class)),
+            'factory' => static fn() => new EmailFormatValidator(),
+        ],
+        DnsMxRecordValidator::class => [
+            'singleton' => true,
+            'factory' => static fn() => new DnsMxRecordValidator(),
         ],
         EmailValidator::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new EmailValidator(
+            'factory' => static fn(Container $c) => new EmailValidator(
                 $c->get(EmailFormatValidator::class),
                 $c->get(DnsMxRecordValidator::class),
             ),
         ],
-        EmailFormatValidator::class => [
+        EmailVerifier::class => [
             'singleton' => true,
-            'factory' => fn() => new EmailFormatValidator(),
-        ],
-        DnsMxRecordValidator::class => [
-            'singleton' => true,
-            'factory' => fn() => new DnsMxRecordValidator(),
+            'factory' => static fn(Container $c) => new EmailVerifier($c->get(EmailValidator::class)),
         ],
     ],
     'BracketBalance' => [
-        BracketBalancer::class => [
-            'singleton' => true,
-            'factory' => fn (Container $c) => new BracketBalancer($c->get(BracketBalanceValidator::class)),
-        ],
         BracketBalanceValidator::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new BracketBalanceValidator(),
+            'factory' => static fn() => new BracketBalanceValidator(),
+        ],
+        BracketBalancer::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new BracketBalancer($c->get(BracketBalanceValidator::class)),
         ],
     ],
     'SystemHealth' => [
+        SessionStorageChecker::class => [
+            'singleton' => false,
+            'factory' => static fn(Container $c) => new SessionStorageChecker($c->get(RedisDriver::class)),
+        ],
         SystemHealthCheckService::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new SystemHealthCheckService(
+            'factory' => static fn(Container $c) => new SystemHealthCheckService(
                 $c->get(PDOWrapper::class),
                 $c->get(RedisDriver::class),
                 $c->get(MemcachedDriver::class),
                 $c->get(SessionStorageChecker::class),
             ),
         ],
-        PDOWrapper::class => [
-            'singleton' => true,
-            'factory' => fn (Container $c) => new PDOWrapper($c->get(DotEnvConfigInterface::class)),
-        ],
-        RedisDriver::class => [
-            'singleton' => true,
-            'factory' => fn (Container $c) => new RedisDriver($c->get(DotEnvConfigInterface::class)),
-        ],
-        MemcachedDriver::class => [
-            'singleton' => true,
-            'factory' => fn (Container $c) => new MemcachedDriver($c->get(DotEnvConfigInterface::class)),
-        ],
-        SessionStorageChecker::class => [
-            'singleton' => false,
-            'factory' => fn (Container $c) => new SessionStorageChecker($c->get(RedisDriver::class)),
-        ],
     ],
     'EventSystem' => [
-        EventService::class => [
-            'singleton' => true,
-            'factory' => fn (Container $c) => new EventService($c->get(EventRepositoryInterface::class)),
-        ],
         EventRepositoryFactory::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new EventRepositoryFactory(
+            'factory' => static fn(Container $c) => new EventRepositoryFactory(
                 $c->get(DotEnvConfigInterface::class),
                 $c->get(RedisDriver::class),
                 $c->get(MemcachedDriver::class),
@@ -103,47 +86,45 @@ return [
         ],
         EventRepositoryInterface::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => $c->get(EventRepositoryFactory::class)->create(),
+            'factory' => static fn(Container $c) => $c->get(EventRepositoryFactory::class)->create(),
+        ],
+        EventService::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new EventService($c->get(EventRepositoryInterface::class)),
         ],
     ],
     'UserManagement' => [
-        DatabaseQueryExecutor::class => [
+        UserMapper::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new DatabaseQueryExecutor($c->get(PDOWrapper::class)),
-        ],
-        UserService::class => [
-            'singleton' => true,
-            'factory' => fn (Container $c) => new UserService($c->get(UserRepository::class)),
-        ],
-        DataMapperInterface::class => [
-            'singleton' => true,
-            'factory' => fn (Container $c) => new UserMapper(),
-        ],
-        CollectionFactory::class => [
-            'singleton' => true,
-            'factory' => fn (Container $c) => new CollectionFactory(),
+            'factory' => static fn() => new UserMapper(),
         ],
         UserRepository::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new UserRepository(
+            'factory' => static fn(Container $c) => new UserRepository(
                 $c->get(DatabaseQueryExecutor::class),
-                $c->get(DataMapperInterface::class),
+                $c->get(UserMapper::class),
                 $c->get(CollectionFactory::class),
             ),
+        ],
+        UserService::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new UserService($c->get(UserRepository::class)),
         ],
     ],
     'BookshopSearch' => [
         ClientInterface::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new SecureElasticsearchClientBuilder($c->get(DotEnvConfigInterface::class))->build(),
+            'factory' => static fn(Container $c) => new SecureElasticsearchClientBuilder(
+                $c->get(DotEnvConfigInterface::class),
+            )->build(),
         ],
         BookshopRepository::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new BookshopRepository($c->get(ClientInterface::class)),
+            'factory' => static fn(Container $c) => new BookshopRepository($c->get(ClientInterface::class)),
         ],
         BookshopService::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new BookshopService($c->get(BookshopRepository::class)),
+            'factory' => static fn(Container $c) => new BookshopService($c->get(BookshopRepository::class)),
         ],
     ],
 ];

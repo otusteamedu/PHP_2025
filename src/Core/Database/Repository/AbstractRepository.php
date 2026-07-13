@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Database\Repository;
+namespace App\Core\Database\Repository;
 
+use App\Core\Database\Connection\DatabaseQueryExecutor;
+use App\Core\Database\DataMapper\DataMapperInterface;
+use App\Core\Database\Factory\CollectionFactory;
 use App\Domain\Shared\Collection\AbstractCollection;
 use App\Domain\Shared\Entity\EntityInterface;
-use App\Infrastructure\Database\Connection\DatabaseQueryExecutor;
-use App\Infrastructure\Database\DataMapper\DataMapperInterface;
-use App\Infrastructure\Database\Factory\CollectionFactory;
 
 abstract class AbstractRepository
 {

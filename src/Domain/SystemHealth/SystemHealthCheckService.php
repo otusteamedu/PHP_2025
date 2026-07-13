@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\SystemHealth;
 
+use App\Core\Database\Connection\PDOWrapper;
+use App\Core\Storage\KeyValue\Driver\MemcachedDriver;
+use App\Core\Storage\KeyValue\Driver\RedisDriver;
 use App\Domain\SystemHealth\Enum\ServiceType;
 use App\Domain\SystemHealth\Model\HealthStatus;
-use App\Infrastructure\Database\Connection\PDOWrapper;
-use App\Infrastructure\Storage\KeyValue\Driver\MemcachedDriver;
-use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
 
 class SystemHealthCheckService
 {

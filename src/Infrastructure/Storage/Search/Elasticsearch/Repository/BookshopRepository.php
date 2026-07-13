@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\Search\Elasticsearch\Repository;
 
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryBuilder\ElasticsearchQueryBuilder;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound\BoolClause;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound\BoolQuery;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\FullText\MatchQuery;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\TermLevel\RangeQuery;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\TermLevel\TermQuery;
 use App\Domain\BookshopSearch\Enum\BookshopField;
 use App\Domain\BookshopSearch\Model\BookshopSearchModel;
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryBuilder\ElasticsearchQueryBuilder;
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound\BoolClause;
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound\BoolQuery;
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\FullText\MatchQuery;
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\TermLevel\RangeQuery;
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\TermLevel\TermQuery;
 use Elastic\Elasticsearch\ClientInterface;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;

@@ -19,7 +19,10 @@ class ServiceProviderFactory
      */
     public function createProviders(): array
     {
+        $providers = [];
+
         $providers[] = new CommonServiceProvider();
+        $providers[] = new CoreInfrastructureServiceProvider();
 
         $contextType = $this->contextDetector->getContextType();
         switch ($contextType) {

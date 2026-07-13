@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound;
+namespace App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound;
 
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Joining\NestedQuery;
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\QueryComponentInterface;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Joining\NestedQuery;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\QueryComponentInterface;
 
 class BoolQuery implements QueryComponentInterface
 {
@@ -64,5 +64,12 @@ class BoolQuery implements QueryComponentInterface
         ]);
 
         return !empty($bool) ? ['bool' => $bool] : [];
+    }
+
+    public function isEmpty(): bool
+    {
+        $clauses = array_filter([$this->must, $this->should, $this->filter, $this->mustNot]);
+
+        return empty($clauses);
     }
 }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryBuilder;
+namespace App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryBuilder;
 
-use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\QueryComponentInterface;
+use App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\QueryComponentInterface;
 
 class ElasticsearchQueryBuilder
 {

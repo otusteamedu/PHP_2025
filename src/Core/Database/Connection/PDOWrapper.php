@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Database\Connection;
+namespace App\Core\Database\Connection;
 
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 

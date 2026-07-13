@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Database\Repository;
 
+use App\Core\Database\Connection\DatabaseQueryExecutor;
+use App\Core\Database\DataMapper\DataMapperInterface;
+use App\Core\Database\Factory\CollectionFactory;
+use App\Core\Database\Repository\AbstractRepository;
 use App\Domain\UserManagement\Collection\UserCollection;
-use App\Infrastructure\Database\Connection\DatabaseQueryExecutor;
-use App\Infrastructure\Database\DataMapper\DataMapperInterface;
-use App\Infrastructure\Database\Factory\CollectionFactory;
 
 class UserRepository extends AbstractRepository
 {

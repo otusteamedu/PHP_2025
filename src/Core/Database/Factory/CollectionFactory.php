@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Database\Factory;
+namespace App\Core\Database\Factory;
 
 use App\Domain\Shared\Collection\AbstractCollection;
 

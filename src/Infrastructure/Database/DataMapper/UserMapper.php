@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Database\DataMapper;
 
+use App\Core\Database\DataMapper\AbstractMapper;
+use App\Core\Database\DataMapper\DataMapperInterface;
 use App\Domain\Shared\Entity\EntityInterface;
 use App\Domain\UserManagement\Entity\User;
 

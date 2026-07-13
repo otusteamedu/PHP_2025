@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound;
+namespace App\Core\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound;
 
 enum BoolClause: string
 {

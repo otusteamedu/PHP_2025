@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Storage\KeyValue\Driver;
+namespace App\Core\Storage\KeyValue\Driver;
 
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 
