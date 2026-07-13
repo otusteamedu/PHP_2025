@@ -6,6 +6,8 @@ namespace App\Domain\BookshopSearch;
 
 use App\Domain\BookshopSearch\Model\BookshopSearchModel;
 use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 
 class BookshopService
 {
@@ -34,6 +36,10 @@ class BookshopService
         return $this->bookshopRepository->loadBulkDocuments($data);
     }
 
+    /**
+     * @throws ClientResponseException
+     * @throws ServerResponseException
+     */
     public function searchDocuments(string $indexName, BookshopSearchModel $bookshopSearchModel): array
     {
         return $this->bookshopRepository->searchDocuments($indexName, $bookshopSearchModel);

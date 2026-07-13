@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Cli\Command;
 
-use App\Infrastructure\Storage\Search\Elasticsearch\Client\ElasticsearchClientProvider;
-use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
@@ -16,12 +15,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand('bookshop:index:info')]
 class BookshopIndexInfoCommand extends Command
 {
-    private readonly Client $esClient;
-
     public function __construct(
-        ElasticsearchClientProvider $esClientProvider,
+        private readonly ClientInterface $esClient,
     ) {
-        $this->esClient = $esClientProvider->getClient();
         parent::__construct();
     }
 

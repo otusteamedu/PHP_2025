@@ -25,8 +25,9 @@ use App\Infrastructure\Database\Repository\UserRepository;
 use App\Infrastructure\Storage\KeyValue\Driver\MemcachedDriver;
 use App\Infrastructure\Storage\KeyValue\Driver\RedisDriver;
 use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
-use App\Infrastructure\Storage\Search\Elasticsearch\Client\ElasticsearchClientProvider;
+use App\Infrastructure\Storage\Search\Elasticsearch\Client\SecureElasticsearchClientBuilder;
 use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
+use Elastic\Elasticsearch\ClientInterface;
 
 return [
     'EmailVerification' => [
@@ -132,17 +133,17 @@ return [
         ],
     ],
     'BookshopSearch' => [
-        BookshopService::class => [
+        ClientInterface::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new BookshopService($c->get(BookshopRepository::class)),
+            'factory' => fn (Container $c) => new SecureElasticsearchClientBuilder($c->get(DotEnvConfigInterface::class))->build(),
         ],
         BookshopRepository::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new BookshopRepository($c->get(ElasticsearchClientProvider::class)),
+            'factory' => fn (Container $c) => new BookshopRepository($c->get(ClientInterface::class)),
         ],
-        ElasticsearchClientProvider::class => [
+        BookshopService::class => [
             'singleton' => true,
-            'factory' => fn (Container $c) => new ElasticsearchClientProvider($c->get(DotEnvConfigInterface::class)),
+            'factory' => fn (Container $c) => new BookshopService($c->get(BookshopRepository::class)),
         ],
     ],
 ];

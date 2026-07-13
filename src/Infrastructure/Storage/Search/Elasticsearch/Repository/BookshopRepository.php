@@ -6,23 +6,21 @@ namespace App\Infrastructure\Storage\Search\Elasticsearch\Repository;
 
 use App\Domain\BookshopSearch\Enum\BookshopField;
 use App\Domain\BookshopSearch\Model\BookshopSearchModel;
-use App\Infrastructure\Storage\Search\Elasticsearch\Client\ElasticsearchClientProvider;
 use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryBuilder\ElasticsearchQueryBuilder;
 use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound\BoolClause;
 use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\Compound\BoolQuery;
 use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\FullText\MatchQuery;
 use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\TermLevel\RangeQuery;
 use App\Infrastructure\Storage\Search\Elasticsearch\QueryDSL\QueryComponent\TermLevel\TermQuery;
-use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientInterface;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 
 class BookshopRepository
 {
-    private readonly Client $esClient;
-
     public function __construct(
-        ElasticsearchClientProvider $esClientProvider,
+        private readonly ClientInterface $esClient,
     ) {
-        $this->esClient = $esClientProvider->getClient();
     }
 
     public function createIndex(string $indexName, array $params = []): bool
@@ -45,6 +43,10 @@ class BookshopRepository
         return $this->esClient->bulk(['body' => $data])->asBool();
     }
 
+    /**
+     * @throws ClientResponseException
+     * @throws ServerResponseException
+     */
     public function searchDocuments(string $indexName, BookshopSearchModel $bookshopSearchModel): array
     {
         $boolQuery = new BoolQuery();
@@ -88,6 +90,10 @@ class BookshopRepository
                     ->filter(new TermQuery(BookshopField::Shop->nestedValue(), $bookshopSearchModel->getShop()->value))
                     ->filter(new RangeQuery(BookshopField::Stock->nestedValue(), [RangeQuery::GT => 0]))
             );
+        }
+
+        if ($boolQuery->isEmpty()) {
+            return [];
         }
 
         $query = new ElasticsearchQueryBuilder()->setQuery($boolQuery)->build();

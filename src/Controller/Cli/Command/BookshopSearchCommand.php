@@ -9,6 +9,8 @@ use App\Domain\BookshopSearch\Enum\BookGenre;
 use App\Domain\BookshopSearch\Enum\Bookshop;
 use App\Domain\BookshopSearch\Enum\BookshopField;
 use App\Domain\BookshopSearch\Model\BookshopSearchModel;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
@@ -33,24 +35,53 @@ class BookshopSearchCommand extends Command
         #[Option] ?int $maxPrice = null,
         #[Option] ?Bookshop $shop = null,
     ): int {
+        $model = $this->createSearchModel($category, $title, $minPrice, $maxPrice, $shop);
+
         try {
-            $bookshopSearchModel = new BookshopSearchModel($category, $title, $minPrice, $maxPrice, $shop);
-            $response = $this->bookshopService->searchDocuments($indexName, $bookshopSearchModel);
-            $this->renderResults($output, $response);
+            $documents = $this->findDocumentsBySearchModel($model, $indexName);
         } catch (\Throwable $e) {
-            $output->writeln("<error>{$e->getMessage()}</error>");
-            return Command::FAILURE;
+            throw new \RuntimeException($e->getMessage());
         }
+
+        $this->renderResults($output, $documents);
 
         return Command::SUCCESS;
     }
 
-    private function renderResults(OutputInterface $output, array $response): void
-    {
-        $table = new Table($output);
-        $table->setHeaders($this->getHeaders());
+    private function createSearchModel(
+        ?BookGenre $category,
+        ?string $title,
+        ?int $minPrice,
+        ?int $maxPrice,
+        ?Bookshop $shop,
+    ): BookshopSearchModel {
+        return new BookshopSearchModel($category, $title, $minPrice, $maxPrice, $shop);
+    }
 
-        foreach ($response['hits']['hits'] as $k => $hit) {
+    /**
+     * @throws ClientResponseException
+     * @throws ServerResponseException
+     */
+    private function findDocumentsBySearchModel(BookshopSearchModel $model, string $indexName): array
+    {
+        return $this->bookshopService->searchDocuments($indexName, $model);
+    }
+
+    private function renderResults(OutputInterface $output, array $documents): void
+    {
+        $hits = $documents['hits']['hits'] ?? [];
+
+        if (empty($hits)) {
+            $output->writeln('<info>Документы не найдены. Не заданы критерии поиска?</info>');
+            return;
+        }
+
+        $table = new Table($output);
+
+        $headers = $this->getHeaders();
+        $table->setHeaders($headers);
+
+        foreach ($hits as $k => $hit) {
             $table->setRow(
                 $k,
                 [

@@ -9,6 +9,7 @@ use App\Domain\BookshopSearch\BookshopService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand('bookshop:index:prepare')]
@@ -21,42 +22,103 @@ class BookshopIndexPrepareCommand extends Command
         parent::__construct();
     }
 
-    public function __invoke(OutputInterface $output, #[Option] string $indexName = 'otus-shop'): int
-    {
-        try {
-            $this->bookshopService->createIndex(
-                $indexName,
-                [
-                    'settings' => $this->getSettings(),
-                    'mappings' => $this->getMappings(),
-                ],
-            );
-            $output->writeln(sprintf('<info>Индекс "%s" успешно создан.</info>', $indexName));
-
-            $rawData = file($this->getDataFile());
-            if ($rawData === false) {
-                throw new \RuntimeException("Не удалось прочитать файл '{$this->getDataFile()}'", 400);
-            }
-            $preparedData = array_map(
-                static fn(string $row) => json_decode($row, true, 512, JSON_THROW_ON_ERROR),
-                $rawData,
-            );
-            $this->bookshopService->loadBulkDocuments($preparedData);
-            $output->writeln(sprintf('<info>Данные из файла "%s" успешно загружены.</info>', basename($this->getDataFile())));
-        } catch (\Throwable $e) {
-            $output->writeln("<error>{$e->getMessage()}</error>");
-            return Command::FAILURE;
-        }
+    public function __invoke(
+        InputInterface $input,
+        OutputInterface $output,
+        #[Option] string $indexName = 'otus-shop',
+        #[Option] bool $recreateIndex = false,
+    ): int {
+        $this->prepareIndex($output, $indexName, $recreateIndex);
 
         return Command::SUCCESS;
     }
 
-    private function getDataFile(): string
+    private function prepareIndex(OutputInterface $output, string $indexName, bool $recreateIndex): void
+    {
+        $existsIndex = $this->existsIndex($indexName);
+
+        if ($existsIndex && $recreateIndex === false) {
+            throw new \RuntimeException(
+                "Индекс '$indexName' уже существует. Для его пересоздания используйте опцию 'recreate-index'",
+            );
+        }
+
+        if ($existsIndex && $recreateIndex === true) {
+            $this->recreateIndex($indexName);
+        }
+
+        if (!$existsIndex) {
+            $this->createIndex($indexName);
+        }
+
+        $output->writeln("<info>Индекс '$indexName' успешно создан.</info>");
+
+        $path = $this->getBookshopDataFilePath();
+        $data = $this->prepareBookshopData($path);
+        $this->loadData($data);
+
+        $output->writeln(sprintf('<info>Данные из файла "%s" успешно загружены.</info>', basename($path)));
+    }
+
+    private function existsIndex(string $indexName): bool
+    {
+        return $this->bookshopService->existsIndex($indexName);
+    }
+
+    private function createIndex(string $indexName): void
+    {
+        $options = $this->getIndexOptions();
+        $this->bookshopService->createIndex($indexName, $options);
+    }
+
+    private function recreateIndex(string $indexName): void
+    {
+        $this->bookshopService->deleteIndex($indexName);
+        $this->createIndex($indexName);
+    }
+
+    private function getIndexOptions(): array
+    {
+        return [
+            'settings' => $this->getIndexSettings(),
+            'mappings' => $this->getIndexMappings(),
+        ];
+    }
+
+    private function getBookshopDataFilePath(): string
     {
         return $this->pathResolver->getVarPath() . '/books-39289-b51bf5.json';
     }
 
-    private function getSettings(): array
+    private function prepareBookshopData(string $bookshopDataFile): array
+    {
+        $rawData = file($bookshopDataFile);
+        if ($rawData === false) {
+            throw new \RuntimeException("Не удалось прочитать файл '$bookshopDataFile'");
+        }
+
+        try {
+            $preparedData = array_map(
+                static fn(string $row) => json_decode(
+                    json: $row,
+                    associative: true,
+                    flags: JSON_THROW_ON_ERROR
+                ),
+                $rawData,
+            );
+        } catch (\JsonException $e) {
+            throw new \RuntimeException($e->getMessage());
+        }
+
+        return $preparedData;
+    }
+
+    private function loadData(array $preparedData): void
+    {
+        $this->bookshopService->loadBulkDocuments($preparedData);
+    }
+
+    private function getIndexSettings(): array
     {
         return [
             'number_of_replicas' => 0,
@@ -85,7 +147,7 @@ class BookshopIndexPrepareCommand extends Command
         ];
     }
 
-    private function getMappings(): array
+    private function getIndexMappings(): array
     {
         return [
             'properties' => [
