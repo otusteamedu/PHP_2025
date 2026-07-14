@@ -19,14 +19,14 @@ class ErrorHandlerFactory
 
     public function create(): ErrorHandlerInterface
     {
-        $contextType = $this->contextDetector->getContextType();
+        $contextType = $this->contextDetector->detectContext();
 
         if ($contextType === ContextType::HTTP_API) {
             return new ApiErrorHandler();
         }
 
         if ($this->view === null) {
-            throw new \RuntimeException(
+            throw new \LogicException(
                 'View component not registered in container. Use ' . UiServiceProvider::class . ' for register.'
             );
         }

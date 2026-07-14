@@ -4,27 +4,37 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Context;
 
+use App\Core\Container\Context\Strategies\StrategyInterface;
+
 class ContextDetector
 {
-    private ?ContextType $contextType = null;
+    private ?StrategyInterface $selectedStrategy = null;
 
-    public function getContextType(): ContextType
-    {
-        if ($this->contextType === null) {
-            $this->contextType = $this->detectContextType();
-        }
-
-        return $this->contextType;
+    /**
+     * @param StrategyInterface[] $strategies
+     */
+    public function __construct(
+        private readonly array $strategies,
+    ) {
     }
 
-    private function detectContextType(): ContextType
+    public function detectStrategy(): StrategyInterface
     {
-        if (PHP_SAPI === ContextType::CLI->value) {
-            return ContextType::CLI;
+        if ($this->selectedStrategy !== null) {
+            return $this->selectedStrategy;
         }
 
-        return str_starts_with($_SERVER['REQUEST_URI'], '/api/')
-            ? ContextType::HTTP_API
-            : ContextType::HTTP_WEB;
+        foreach ($this->strategies as $strategy) {
+            if ($strategy->supports()) {
+                return $this->selectedStrategy = $strategy;
+            }
+        }
+
+        throw new \LogicException('No suitable context strategy found.');
+    }
+
+    public function detectContext(): ContextType
+    {
+        return $this->detectStrategy()->getContextType();
     }
 }
