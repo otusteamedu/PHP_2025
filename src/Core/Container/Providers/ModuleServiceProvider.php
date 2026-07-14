@@ -20,10 +20,10 @@ class ModuleServiceProvider extends AbstractInitializableServiceProvider
      */
     protected function doRegisterServices(Container $container, ?PayloadInterface $payload): void
     {
-        $config = $payload->moduleAggregatorConfig;
+        $aggregator = $payload->moduleAggregatorConfig;
 
-        $this->registerModuleAggregatorConfig($container, $config);
-        $this->registerModuleServices($container, $config);
+        $this->registerModuleAggregatorConfig($container, $aggregator);
+        $this->registerModuleServices($container, $aggregator);
     }
 
     protected function createInitializer(Container $container): InitializerInterface
@@ -31,20 +31,18 @@ class ModuleServiceProvider extends AbstractInitializableServiceProvider
         return new ModuleInitializer($container->get(PathResolverInterface::class));
     }
 
-    private function registerModuleAggregatorConfig(Container $container, ModuleAggregator $config): void
+    private function registerModuleAggregatorConfig(Container $container, ModuleAggregator $aggregator): void
     {
-        $container->singleton($config->getType()->value, $config);
+        $container->singleton($aggregator->getType()->value, $aggregator);
     }
 
-    private function registerModuleServices(Container $container, ModuleAggregator $config): void
+    private function registerModuleServices(Container $container, ModuleAggregator $aggregator): void
     {
-        foreach ($config->getModules() as $module) {
-            foreach ($module->getServices() as $service) {
-                if ($service->isSingleton()) {
-                    $container->singleton($service->getDefinition(), $service->getFactory());
-                } else {
-                    $container->set($service->getDefinition(), $service->getFactory());
-                }
+        foreach ($aggregator->getAllServicesIterator() as $service) {
+            if ($service->isSingleton()) {
+                $container->singleton($service->getDefinition(), $service->getFactory());
+            } else {
+                $container->set($service->getDefinition(), $service->getFactory());
             }
         }
     }
