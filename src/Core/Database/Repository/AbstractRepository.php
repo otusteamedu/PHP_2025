@@ -18,8 +18,8 @@ abstract class AbstractRepository
 
     public function __construct(
         protected readonly DatabaseQueryExecutor $dbQueryExecutor,
-        protected readonly DataMapperInterface $dataMapper,
         protected readonly CollectionFactory $collectionFactory,
+        protected readonly DataMapperInterface $dataMapper,
     ) {
     }
 

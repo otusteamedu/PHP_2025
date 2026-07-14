@@ -25,13 +25,15 @@ class UserMapper extends AbstractMapper implements DataMapperInterface
         return $user;
     }
 
-    /**
-     * @param User $entity
-     */
     public function mapEntityToRow(EntityInterface $entity): array
     {
         if (!$entity instanceof User) {
-            throw new \RuntimeException('Ожидается объект класса ' . User::class);
+            throw new \InvalidArgumentException(sprintf(
+                '[%s] expects [%s] entity, got [%s]',
+                UserMapper::class,
+                User::class,
+                get_class($entity),
+            ));
         }
 
         return [

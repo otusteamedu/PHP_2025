@@ -10,13 +10,15 @@ use App\Domain\UserManagement\Entity\User;
 
 class UserCollection extends AbstractCollection
 {
-    /**
-     * @param User $entity
-     */
     public function add(EntityInterface $entity): void
     {
         if (!$entity instanceof User) {
-            throw new \RuntimeException('Ожидается объект класса ' . User::class);
+            throw new \InvalidArgumentException(sprintf(
+                '[%s] expects [%s] entity, got [%s]',
+                UserCollection::class,
+                User::class,
+                get_class($entity),
+            ));
         }
 
         $this->addEntity($entity);
