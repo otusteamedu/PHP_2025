@@ -6,23 +6,27 @@ namespace App\Core\Container\Providers;
 
 use App\Core\Container\Config\Types\ModuleAggregator;
 use App\Core\Container\Container;
+use App\Core\Container\Initialization\Initializers\InitializerInterface;
 use App\Core\Container\Initialization\Initializers\ModuleInitializer;
 use App\Core\Container\Initialization\Payload\ModulePayload;
+use App\Core\Container\Initialization\Payload\PayloadInterface;
 use App\Core\Utils\PathResolverInterface;
 
-class ModuleServiceProvider implements ServiceProviderInterface
+class ModuleServiceProvider extends AbstractInitializableServiceProvider
 {
-    public function registerServices(Container $container): void
+    /**
+     * @param ModulePayload $payload
+     * @note non-null guarantee is enforced by parent class
+     */
+    protected function doRegisterServices(Container $container, ?PayloadInterface $payload): void
     {
-        /** @var ModulePayload $payload */
-        $payload = $this->getInitializer($container)->initialize();
         $config = $payload->moduleAggregatorConfig;
 
         $this->registerModuleAggregatorConfig($container, $config);
         $this->registerModuleServices($container, $config);
     }
 
-    private function getInitializer(Container $container): ModuleInitializer
+    protected function createInitializer(Container $container): InitializerInterface
     {
         return new ModuleInitializer($container->get(PathResolverInterface::class));
     }

@@ -26,4 +26,9 @@ class ConsoleInitializer implements InitializerInterface
 
         return new ConsolePayload($consoleConfig, $commandMetadata);
     }
+
+    public function getExpectedPayloadType(): ?string
+    {
+        return ConsolePayload::class;
+    }
 }

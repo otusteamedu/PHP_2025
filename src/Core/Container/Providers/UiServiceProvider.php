@@ -8,9 +8,9 @@ use App\Core\Container\Container;
 use App\Core\Http\View\View;
 use App\Core\Utils\PathResolverInterface;
 
-class UiServiceProvider implements ServiceProviderInterface
+class UiServiceProvider extends AbstractServiceProvider
 {
-    public function registerServices(Container $container): void
+    protected function doRegisterServices(Container $container): void
     {
         $container->singleton(
             View::class,

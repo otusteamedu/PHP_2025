@@ -12,9 +12,9 @@ use App\Core\Database\Factory\CollectionFactory;
 use App\Core\Storage\KeyValue\Driver\MemcachedDriver;
 use App\Core\Storage\KeyValue\Driver\RedisDriver;
 
-class CoreInfrastructureServiceProvider implements ServiceProviderInterface
+class CoreInfrastructureServiceProvider extends AbstractServiceProvider
 {
-    public function registerServices(Container $container): void
+    protected function doRegisterServices(Container $container): void
     {
         $this->registerDatabaseServices($container);
         $this->registerKeyValueServices($container);

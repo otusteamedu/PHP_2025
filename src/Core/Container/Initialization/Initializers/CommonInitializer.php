@@ -22,4 +22,9 @@ class CommonInitializer implements InitializerInterface
 
         return new CommonPayload($dotEnvConfig);
     }
+
+    public function getExpectedPayloadType(): ?string
+    {
+        return CommonPayload::class;
+    }
 }

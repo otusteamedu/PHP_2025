@@ -16,9 +16,9 @@ use App\Core\Http\Routing\Router;
 use App\Core\Http\View\View;
 use App\Core\Utils\PathResolverInterface;
 
-class HttpServiceProvider implements ServiceProviderInterface
+class HttpServiceProvider extends AbstractServiceProvider
 {
-    public function registerServices(Container $container): void
+    protected function doRegisterServices(Container $container): void
     {
         // Получаем определитель контектста для обработчика ошибок
         $contextDetector = $container->get(ContextDetector::class);
