@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
-use App\Core\Console\Console;
-use App\Core\Utils\PathResolver;
+use App\Core\Console\App;
+use App\Core\Container\Builder\ContainerBuilder;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-PathResolver::setRoot(dirname(__DIR__));
+$container = ContainerBuilder::build();
+$app = $container->get(App::class);
 
-$app = new Console();
-$app->run();
+return $app->run();

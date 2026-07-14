@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Database\DataMapper;
 
+use App\Core\Database\DataMapper\AbstractMapper;
+use App\Core\Database\DataMapper\DataMapperInterface;
 use App\Domain\Shared\Entity\EntityInterface;
 use App\Domain\UserManagement\Entity\User;
 
@@ -23,13 +25,15 @@ class UserMapper extends AbstractMapper implements DataMapperInterface
         return $user;
     }
 
-    /**
-     * @param User $entity
-     */
     public function mapEntityToRow(EntityInterface $entity): array
     {
         if (!$entity instanceof User) {
-            throw new \RuntimeException('Ожидается объект класса ' . User::class);
+            throw new \InvalidArgumentException(sprintf(
+                '[%s] expects [%s] entity, got [%s]',
+                UserMapper::class,
+                User::class,
+                get_class($entity),
+            ));
         }
 
         return [

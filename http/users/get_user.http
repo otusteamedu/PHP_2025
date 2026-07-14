@@ -1,4 +1,9 @@
-GET http://localhost:{{nginxPublishedPort}}/user/get?id=10
+# REST style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@getUserUrl = {{baseUrl}}/user?id=11
+
+GET {{getUserUrl}}
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

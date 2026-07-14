@@ -4,24 +4,43 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\Search\Elasticsearch\Client;
 
-use App\Core\Config\DotEnvLoader;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 
 class ElasticsearchClientProvider
 {
-    public static function get(): Client
-    {
-        $dotEnvLoader = new DotEnvLoader();
-        $esUser = $dotEnvLoader->getEnv('ELASTIC_USER');
-        $esPassword = $dotEnvLoader->getEnv('ELASTIC_PASSWORD');
-        $esHost = $dotEnvLoader->getEnv('ELASTIC_HOST');
-        $certsDir = $dotEnvLoader->getEnv('ELASTIC_CERTS_DIR');
+    private ?Client $esClient = null;
 
-        return ClientBuilder::create()
-            ->setHosts(["https://$esHost:9200"])
-            ->setBasicAuthentication($esUser, $esPassword)
-            ->setCABundle("$certsDir/ca/ca.crt")
-            ->build();
+    public function __construct(
+        private readonly string $host,
+        private readonly int $port,
+        private readonly string $username,
+        private readonly string $password,
+        private readonly ?string $caBundlePath = null,
+    ) {
+    }
+
+    public function getClient(): Client
+    {
+        if ($this->esClient === null) {
+            $scheme = $this->caBundlePath !== null ? 'https' : 'http';
+            $hosts = ["{$scheme}://{$this->host}:{$this->port}"];
+
+            $builder = ClientBuilder::create()
+                ->setHosts($hosts)
+                ->setBasicAuthentication($this->username, $this->password);
+
+            if ($this->caBundlePath !== null) {
+                $builder->setCABundle($this->caBundlePath);
+            }
+
+            try {
+                $this->esClient = $builder->build();
+            } catch (\Exception $e) {
+                throw new \RuntimeException("Failed to create Elasticsearch client: {$e->getMessage()}");
+            }
+        }
+
+        return $this->esClient;
     }
 }

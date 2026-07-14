@@ -1,4 +1,9 @@
-DELETE http://localhost:{{nginxPublishedPort}}/events/delete
+# REST style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@deleteEventsUrl = {{baseUrl}}/events
+
+DELETE {{deleteEventsUrl}}
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

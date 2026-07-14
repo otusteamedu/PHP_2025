@@ -1,0 +1,13 @@
+# RPC style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@balanceBracketsUrl = {{baseUrl}}/brackets/balance-check
+
+POST {{balanceBracketsUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+    "string": "(()()()()))((((()()()))(()()()(((()))))))"
+}

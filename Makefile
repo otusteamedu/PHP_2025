@@ -1,3 +1,13 @@
+TARGETS := status up down start stop directory-tree
+.PHONY: $(TARGETS)
+
+CMD_TARGETS := $(MAKECMDGOALS)
+ALLOWED_TARGETS := $(filter $(TARGETS),$(CMD_TARGETS))
+
+ifneq ($(ALLOWED_TARGETS),$(CMD_TARGETS))
+$(error Обнаружены недопустимые цели: $(filter-out $(ALLOWED_TARGETS),$(CMD_TARGETS)). Доступные цели: $(TARGETS))
+endif
+
 status:
 	docker compose ps -a
 
@@ -12,3 +22,6 @@ start:
 
 stop:
 	docker compose -f docker-compose.balancer.yml stop
+
+directory-tree:
+	docker compose -f docker-compose.balancer.yml exec php_1 php bin/console.php app:directory:tree $(path) $(depth)

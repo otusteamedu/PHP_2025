@@ -1,4 +1,9 @@
-PATCH http://localhost:{{nginxPublishedPort}}/user/update-email?id=10
+# REST style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@updateUserEmailUrl = {{baseUrl}}/user/email?id=14
+
+PATCH {{updateUserEmailUrl}}
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache

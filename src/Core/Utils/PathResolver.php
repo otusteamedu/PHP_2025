@@ -4,36 +4,55 @@ declare(strict_types=1);
 
 namespace App\Core\Utils;
 
-class PathResolver
+class PathResolver implements PathResolverInterface
 {
-    private static ?string $root = null;
+    private readonly string $projectRoot;
 
-    public static function setRoot(string $path): void
+    public function __construct()
     {
-        self::$root = $path;
+        $this->projectRoot = $this->findProjectRoot(__DIR__);
     }
 
-    public static function getRoot(): string
+    public function getProjectRoot(): string
     {
-        if (self::$root === null) {
-            throw new \RuntimeException('PathResolver::setRoot() must be called before getRoot().');
+        return $this->projectRoot;
+    }
+
+    public function getSrcPath(): string
+    {
+        return $this->getProjectRoot() . '/src';
+    }
+
+    public function getVarPath(): string
+    {
+        return $this->getProjectRoot() . '/var';
+    }
+
+    public function getConfigPath(): string
+    {
+        return $this->getProjectRoot() . '/config';
+    }
+
+    public function getTemplatesPath(): string
+    {
+        return $this->getProjectRoot() . '/templates';
+    }
+
+    public function build(string $relativePath): string
+    {
+        return $this->getProjectRoot()  . '/' . ltrim($relativePath, '/');
+    }
+
+    private function findProjectRoot(string $startDir): string
+    {
+        $dir = realpath($startDir);
+        while (strlen($dir) > 1) {
+            if (is_file($dir . '/composer.json')) {
+                return $dir;
+            }
+            $dir = dirname($dir);
         }
 
-        return self::$root;
-    }
-
-    public static function getSrcPath(): string
-    {
-        return self::getRoot() . '/src';
-    }
-
-    public static function getVarPath(): string
-    {
-        return self::getRoot() . '/var';
-    }
-
-    public static function build(string $relativePath): string
-    {
-        return self::getRoot() . '/' . ltrim($relativePath, '/');
+        throw new \RuntimeException('Project root (composer.json) not found.');
     }
 }

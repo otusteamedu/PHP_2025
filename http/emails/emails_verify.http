@@ -1,0 +1,19 @@
+# RPC style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@emailsVerifyUrl = {{baseUrl}}/emails/verify
+
+POST {{emailsVerifyUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "emails": [
+    "ivanov@mail.ru",
+    "petrov@test.test",
+    "popov@email.net",
+    "\"sidorov@1990\"@gmail.com",
+    "semenov1123@org"
+  ]
+}

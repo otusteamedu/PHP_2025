@@ -1,0 +1,9 @@
+# RPC style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@systemHealthUrl = {{baseUrl}}/system/health-check
+
+GET {{systemHealthUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache

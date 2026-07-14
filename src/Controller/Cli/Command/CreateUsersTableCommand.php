@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Cli\Command;
 
-use App\Infrastructure\Database\Connection\PDOWrapper;
+use App\Core\Database\Connection\PDOWrapper;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,6 +12,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('db:table:create:users')]
 class CreateUsersTableCommand extends Command
 {
+    public function __construct(
+        private readonly PDOWrapper $pdoWrapper,
+    ) {
+        parent::__construct();
+    }
+
     public function __invoke(OutputInterface $output): int
     {
         $columnDefinitionList = [
@@ -23,10 +29,10 @@ class CreateUsersTableCommand extends Command
             'status BOOLEAN NOT NULL DEFAULT TRUE',
         ];
 
-        $sql = sprintf('CREATE TABLE users (%s)', implode(', ', $columnDefinitionList));
-        PDOWrapper::getHandler()->prepare($sql)->execute();
+        $sql = sprintf('CREATE TABLE IF NOT EXISTS users (%s)', implode(', ', $columnDefinitionList));
+        $this->pdoWrapper->getHandler()->prepare($sql)->execute();
 
-        $output->writeln('Таблица пользователей успешно создана.');
+        $output->writeln('Таблица пользователей создана.');
 
         return Command::SUCCESS;
     }
