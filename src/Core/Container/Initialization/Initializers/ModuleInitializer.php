@@ -22,4 +22,9 @@ class ModuleInitializer implements InitializerInterface
 
         return new ModulePayload($moduleAggregatorConfig);
     }
+
+    public function getExpectedPayloadType(): ?string
+    {
+        return ModulePayload::class;
+    }
 }

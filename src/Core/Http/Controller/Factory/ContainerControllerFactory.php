@@ -7,38 +7,31 @@ namespace App\Core\Http\Controller\Factory;
 use App\Core\Container\Container;
 use App\Core\Http\Controller\Base\ErrorController;
 use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
+use App\Core\Resolver\ConstructorDependencyResolverInterface;
 
 class ContainerControllerFactory implements ControllerFactoryInterface
 {
     public function __construct(
         private readonly Container $container,
         private readonly ErrorHandlerInterface $errorHandler,
+        private readonly ConstructorDependencyResolverInterface $resolver,
     ) {
     }
 
     public function createHttpController(string $className): object
     {
         if (!class_exists($className)) {
-            throw new \Exception("Controller class '$className' does not exists.");
+            throw new \InvalidArgumentException("Controller class '$className' does not exists.");
         }
 
-        $reflection = new \ReflectionClass($className);
-        $constructor = $reflection->getConstructor();
+        $deps = $this->resolver->resolve($className);
 
-        if ($constructor === null) {
-            return new $className();
+        $resolved = [];
+        foreach ($deps as $depName) {
+            $resolved[] = $this->container->get($depName);
         }
 
-        $dependencies = [];
-        foreach ($constructor->getParameters() as $param) {
-            $type = $param->getType();
-            if ($type === null) {
-                throw new \Exception("Parameter {$param->getName()} in $className has no type hint.");
-            }
-            $dependencies[] = $this->container->get($type->getName());
-        }
-
-        return $reflection->newInstanceArgs($dependencies);
+        return new $className(...$resolved);
     }
 
     public function createErrorController(): ErrorController

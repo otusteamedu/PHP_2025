@@ -9,12 +9,16 @@ use App\Core\Container\Container;
 use App\Core\Database\Connection\DatabaseQueryExecutor;
 use App\Core\Database\Connection\PDOWrapper;
 use App\Core\Database\Factory\CollectionFactory;
-use App\Core\Storage\KeyValue\Driver\MemcachedDriver;
-use App\Core\Storage\KeyValue\Driver\RedisDriver;
+use App\Core\Storage\KeyValue\Memcached\MemcachedDependencyCacheAdapter;
+use App\Core\Storage\KeyValue\Memcached\MemcachedDriver;
+use App\Core\Storage\KeyValue\Redis\RedisDependencyCacheAdapter;
+use App\Core\Storage\KeyValue\Redis\RedisDriver;
+use App\Core\Storage\KeyValue\Shared\CacheStorageType;
+use App\Core\Storage\KeyValue\Shared\DependencyCacheInterface;
 
-class CoreInfrastructureServiceProvider implements ServiceProviderInterface
+class CoreInfrastructureServiceProvider extends AbstractServiceProvider
 {
-    public function registerServices(Container $container): void
+    protected function doRegisterServices(Container $container): void
     {
         $this->registerDatabaseServices($container);
         $this->registerKeyValueServices($container);
@@ -45,6 +49,31 @@ class CoreInfrastructureServiceProvider implements ServiceProviderInterface
         $container->singleton(
             MemcachedDriver::class,
             static fn(Container $c) => new MemcachedDriver($c->get(DotEnvConfigInterface::class)),
+        );
+
+        $this->registerDependencyCacheAdapter($container);
+    }
+
+    private function registerDependencyCacheAdapter(Container $container): void
+    {
+        $container->singleton(
+            DependencyCacheInterface::class,
+            static function(Container $c) {
+                $config = $c->get(DotEnvConfigInterface::class);
+
+                $cacheStorageType = $config->has('CACHE_STORAGE')
+                    ? CacheStorageType::tryFrom($config->get('CACHE_STORAGE'))
+                    : CacheStorageType::Redis;
+
+                switch ($cacheStorageType) {
+                    case CacheStorageType::Memcached:
+                        $driver = $c->get(MemcachedDriver::class);
+                        return new MemcachedDependencyCacheAdapter($driver->getHandler());
+                    default:
+                        $driver = $c->get(RedisDriver::class);
+                        return new RedisDependencyCacheAdapter($driver->getHandler());
+                }
+            },
         );
     }
 }

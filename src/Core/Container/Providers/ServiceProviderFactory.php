@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Core\Container\Providers;
 
+use App\Core\Container\Config\ContainerConfig;
 use App\Core\Container\Context\ContextDetector;
-use App\Core\Container\Context\ContextType;
 
 class ServiceProviderFactory
 {
     public function __construct(
         private readonly ContextDetector $contextDetector,
+        private readonly ContainerConfig $config,
     ) {
     }
 
@@ -19,31 +20,35 @@ class ServiceProviderFactory
      */
     public function createProviders(): array
     {
-        $providers = [];
+        $strategy = $this->contextDetector->detectStrategy();
 
-        $providers[] = new CommonServiceProvider();
-        $providers[] = new CoreInfrastructureServiceProvider();
+        $providerClasses = array_merge(
+            $this->config->getDefaultProviders(),
+            $strategy->getSpecificProviders(),
+        );
 
-        $contextType = $this->contextDetector->getContextType();
-        switch ($contextType) {
-            case ContextType::CLI:
-                $providers[] = new ConsoleServiceProvider();
-                break;
-            case ContextType::HTTP_API:
-                $providers[] = new HttpServiceProvider();
-                break;
-            case ContextType::HTTP_WEB:
-                $providers[] = new UiServiceProvider();
-                $providers[] = new HttpServiceProvider();
-                break;
-            default:
-                throw new \LogicException(
-                    "Provider not found for context: '{$contextType->value}'",
-                );
-        }
+        $providers = array_map(static fn(string $class) => new $class(), $providerClasses);
 
-        $providers[] = new ModuleServiceProvider();
+        usort($providers, $this->buildSortComparator());
 
         return $providers;
+    }
+
+    private function buildSortComparator(): callable
+    {
+        $priorities = $this->config->getProviderPriorities();
+
+        return static function (
+            ServiceProviderInterface $a,
+            ServiceProviderInterface $b,
+        ) use ($priorities) {
+            $classA = get_class($a);
+            $classB = get_class($b);
+
+            $priorityA = $priorities[$classA] ?? 0;
+            $priorityB = $priorities[$classB] ?? 0;
+
+            return $priorityB <=> $priorityA;
+        };
     }
 }

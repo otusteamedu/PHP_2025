@@ -14,11 +14,12 @@ use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
 use App\Core\Http\Message\Request;
 use App\Core\Http\Routing\Router;
 use App\Core\Http\View\View;
+use App\Core\Resolver\ConstructorDependencyResolverInterface;
 use App\Core\Utils\PathResolverInterface;
 
-class HttpServiceProvider implements ServiceProviderInterface
+class HttpServiceProvider extends AbstractServiceProvider
 {
-    public function registerServices(Container $container): void
+    protected function doRegisterServices(Container $container): void
     {
         // Получаем определитель контектста для обработчика ошибок
         $contextDetector = $container->get(ContextDetector::class);
@@ -27,8 +28,11 @@ class HttpServiceProvider implements ServiceProviderInterface
         $view = $container->has(View::class) ? $container->get(View::class) : null;
         $errorHandler = $this->createErrorHandler($contextDetector, $view);
 
+        // Получаем резолвер зависимостей конструктора для фабрики контроллеров
+        $resolver = $container->get(ConstructorDependencyResolverInterface::class);
+
         // Создаем фабрику контроллеров для роутера
-        $controllerFactory = new ContainerControllerFactory($container, $errorHandler);
+        $controllerFactory = $this->createControllerFactory($container, $errorHandler, $resolver);
 
         // Регистрируем сервисы
         $this->registerRouter($container, $controllerFactory);
@@ -41,6 +45,14 @@ class HttpServiceProvider implements ServiceProviderInterface
         $factory = new ErrorHandlerFactory($detector, $view);
 
         return $factory->create();
+    }
+
+    private function createControllerFactory(
+        Container $container,
+        ErrorHandlerInterface $errorHandler,
+        ConstructorDependencyResolverInterface $resolver,
+    ): ControllerFactoryInterface {
+        return new ContainerControllerFactory($container, $errorHandler, $resolver);
     }
 
     private function registerRouter(Container $container, ControllerFactoryInterface $factory): void

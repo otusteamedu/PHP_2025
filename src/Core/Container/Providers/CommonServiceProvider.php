@@ -7,20 +7,23 @@ namespace App\Core\Container\Providers;
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use App\Core\Container\Container;
 use App\Core\Container\Initialization\Initializers\CommonInitializer;
+use App\Core\Container\Initialization\Initializers\InitializerInterface;
 use App\Core\Container\Initialization\Payload\CommonPayload;
+use App\Core\Container\Initialization\Payload\PayloadInterface;
 use App\Core\Utils\PathResolverInterface;
 
-class CommonServiceProvider implements ServiceProviderInterface
+class CommonServiceProvider extends AbstractInitializableServiceProvider
 {
-    public function registerServices(Container $container): void
+    /**
+     * @param CommonPayload $payload
+     * @note non-null guarantee is enforced by parent class
+     */
+    protected function doRegisterServices(Container $container, ?PayloadInterface $payload): void
     {
-        /** @var CommonPayload $payload */
-        $payload = $this->getInitializer($container)->initialize();
-
         $container->singleton(DotEnvConfigInterface::class, $payload->dotEnvConfig);
     }
 
-    private function getInitializer(Container $container): CommonInitializer
+    protected function createInitializer(Container $container): InitializerInterface
     {
         return new CommonInitializer($container->get(PathResolverInterface::class));
     }

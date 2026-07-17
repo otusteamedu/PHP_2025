@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Storage\KeyValue\Factory;
 
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
-use App\Core\Storage\KeyValue\Driver\MemcachedDriver;
-use App\Core\Storage\KeyValue\Driver\RedisDriver;
+use App\Core\Storage\KeyValue\Memcached\MemcachedDriver;
+use App\Core\Storage\KeyValue\Redis\RedisDriver;
 use App\Domain\EventSystem\Interface\EventRepositoryInterface;
 use App\Infrastructure\Storage\KeyValue\Repository\MemcachedEventRepository;
 use App\Infrastructure\Storage\KeyValue\Repository\RedisEventRepository;

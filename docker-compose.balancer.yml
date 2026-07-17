@@ -7,6 +7,11 @@ services:
     volumes:
       - ./:/app
       - php_1_socket:/var/run/php
+      - ./docker/php/bin/start-php.sh:/usr/local/bin/start-php.sh:ro
+    entrypoint:
+      - /usr/local/bin/start-php.sh
+    environment:
+      - APP_ENV
 
   php_2:
     build:
@@ -15,6 +20,11 @@ services:
     volumes:
       - ./:/app
       - php_2_socket:/var/run/php
+      - ./docker/php/bin/start-php.sh:/usr/local/bin/start-php.sh:ro
+    entrypoint:
+      - /usr/local/bin/start-php.sh
+    environment:
+      - APP_ENV
 
   front_nginx:
     image: nginx:stable

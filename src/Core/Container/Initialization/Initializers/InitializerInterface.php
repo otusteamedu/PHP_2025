@@ -12,4 +12,11 @@ interface InitializerInterface
      * Выполняет инициализацию и, если требуется, возвращает payload.
      */
     public function initialize(): ?PayloadInterface;
+
+    /**
+     * Возвращает FQCN ожидаемого типа payload, либо null, если payload не ожидается.
+     *
+     * @return ?class-string<PayloadInterface>
+     */
+    public function getExpectedPayloadType(): ?string;
 }

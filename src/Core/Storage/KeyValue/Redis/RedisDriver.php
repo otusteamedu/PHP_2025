@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Storage\KeyValue\Driver;
+namespace App\Core\Storage\KeyValue\Redis;
 
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 
