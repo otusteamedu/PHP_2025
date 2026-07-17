@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Storage\KeyValue\Repository;
 
-use App\Core\Storage\KeyValue\Driver\RedisDriver;
+use App\Core\Storage\KeyValue\Redis\RedisDriver;
 use App\Domain\EventSystem\Interface\EventRepositoryInterface;
 use App\Domain\EventSystem\Model\AddEventModel;
 use App\Domain\EventSystem\Model\GetEventModel;

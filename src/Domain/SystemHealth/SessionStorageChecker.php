@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\SystemHealth;
 
-use App\Core\Storage\KeyValue\Driver\RedisDriver;
+use App\Core\Storage\KeyValue\Redis\RedisDriver;
 
 class SessionStorageChecker
 {
