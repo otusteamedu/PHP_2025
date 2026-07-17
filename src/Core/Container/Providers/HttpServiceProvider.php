@@ -14,6 +14,8 @@ use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
 use App\Core\Http\Message\Request;
 use App\Core\Http\Routing\Router;
 use App\Core\Http\View\View;
+use App\Core\Resolver\ConstructorDependencyResolver;
+use App\Core\Resolver\ConstructorDependencyResolverInterface;
 use App\Core\Utils\PathResolverInterface;
 
 class HttpServiceProvider extends AbstractServiceProvider
@@ -28,12 +30,18 @@ class HttpServiceProvider extends AbstractServiceProvider
         $errorHandler = $this->createErrorHandler($contextDetector, $view);
 
         // Создаем фабрику контроллеров для роутера
-        $controllerFactory = new ContainerControllerFactory($container, $errorHandler);
+        $resolver = $this->createConstructorDependencyResolver();
+        $controllerFactory = new ContainerControllerFactory($container, $errorHandler, $resolver);
 
         // Регистрируем сервисы
         $this->registerRouter($container, $controllerFactory);
         $this->registerRequest($container);
         $this->registerApp($container);
+    }
+
+    private function createConstructorDependencyResolver(): ConstructorDependencyResolverInterface
+    {
+        return new ConstructorDependencyResolver();
     }
 
     private function createErrorHandler(ContextDetector $detector, ?View $view): ErrorHandlerInterface
