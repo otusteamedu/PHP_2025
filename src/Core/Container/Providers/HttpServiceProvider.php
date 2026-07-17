@@ -14,7 +14,6 @@ use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
 use App\Core\Http\Message\Request;
 use App\Core\Http\Routing\Router;
 use App\Core\Http\View\View;
-use App\Core\Resolver\ConstructorDependencyResolver;
 use App\Core\Resolver\ConstructorDependencyResolverInterface;
 use App\Core\Utils\PathResolverInterface;
 
@@ -29,9 +28,11 @@ class HttpServiceProvider extends AbstractServiceProvider
         $view = $container->has(View::class) ? $container->get(View::class) : null;
         $errorHandler = $this->createErrorHandler($contextDetector, $view);
 
+        // Получаем резолвер зависимостей конструктора для фабрики контроллеров
+        $resolver = $container->get(ConstructorDependencyResolverInterface::class);
+
         // Создаем фабрику контроллеров для роутера
-        $resolver = $this->createConstructorDependencyResolver();
-        $controllerFactory = new ContainerControllerFactory($container, $errorHandler, $resolver);
+        $controllerFactory = $this->createControllerFactory($container, $errorHandler, $resolver);
 
         // Регистрируем сервисы
         $this->registerRouter($container, $controllerFactory);
@@ -39,16 +40,19 @@ class HttpServiceProvider extends AbstractServiceProvider
         $this->registerApp($container);
     }
 
-    private function createConstructorDependencyResolver(): ConstructorDependencyResolverInterface
-    {
-        return new ConstructorDependencyResolver();
-    }
-
     private function createErrorHandler(ContextDetector $detector, ?View $view): ErrorHandlerInterface
     {
         $factory = new ErrorHandlerFactory($detector, $view);
 
         return $factory->create();
+    }
+
+    private function createControllerFactory(
+        Container $container,
+        ErrorHandlerInterface $errorHandler,
+        ConstructorDependencyResolverInterface $resolver,
+    ): ControllerFactoryInterface {
+        return new ContainerControllerFactory($container, $errorHandler, $resolver);
     }
 
     private function registerRouter(Container $container, ControllerFactoryInterface $factory): void

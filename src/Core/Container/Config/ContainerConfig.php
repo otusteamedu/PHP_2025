@@ -10,6 +10,7 @@ use App\Core\Container\Context\Strategies\HttpWebStrategy;
 use App\Core\Container\Context\Strategies\StrategyInterface;
 use App\Core\Container\Providers\CommonServiceProvider;
 use App\Core\Container\Providers\ConsoleServiceProvider;
+use App\Core\Container\Providers\ConstructorReflectionCacheProvider;
 use App\Core\Container\Providers\CoreInfrastructureServiceProvider;
 use App\Core\Container\Providers\HttpServiceProvider;
 use App\Core\Container\Providers\ModuleServiceProvider;
@@ -26,6 +27,7 @@ final class ContainerConfig
     {
         return [
             CoreInfrastructureServiceProvider::class,
+            ConstructorReflectionCacheProvider::class,
             CommonServiceProvider::class,
             ModuleServiceProvider::class,
         ];
@@ -55,6 +57,8 @@ final class ContainerConfig
             CommonServiceProvider::class => 100,
             // Core infrastructure: databases, other storages
             CoreInfrastructureServiceProvider::class => 90,
+            // Responsible for reflection cache of constructor deps
+            ConstructorReflectionCacheProvider::class => 85,
             // Optional for HTTP provider, required for Web context only
             UiServiceProvider::class => 80,
             // CLI context
