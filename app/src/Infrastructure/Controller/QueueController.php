@@ -6,32 +6,85 @@ namespace App\Infrastructure\Controller;
 
 use App\Domain\Entity\Task;
 use App\Domain\Queue\TaskQueueInterface;
+use JsonException;
 
-final class QueueController
+final readonly class QueueController
 {
-    public function __construct(private TaskQueueInterface $queue)
+    public function __construct(
+        private TaskQueueInterface $queue,
+    )
     {
     }
 
-    public function handle(): string
+    /**
+     * @throws JsonException
+     */
+    public function handle(): void
     {
-        $successMessage = '';
-        $errorMessage = '';
+        header('Content-Type: application/json');
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email']??'';
-            // валидация email;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
+            http_response_code(405);
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'Метод не поддерживается',
+            ], JSON_THROW_ON_ERROR);
+
+            return;
+        }
+
+
+        $email = trim($_POST['email'] ?? '');
+
+
+        if ($email === '') {
+
+            http_response_code(400);
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'Email обязателен',
+            ], JSON_THROW_ON_ERROR);
+
+            return;
+        }
+
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+            http_response_code(400);
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'Некорректный email',
+            ], JSON_THROW_ON_ERROR);
+
+            return;
+        }
+
+
+        try {
+
             $task = new Task($email);
 
             $this->queue->push($task);
 
-            $successMessage = 'Запрос принят в обработку.';
+            echo json_encode([
+                'success' => true,
+                'message' => 'Запрос принят в обработку',
+            ], JSON_THROW_ON_ERROR);
+
+        } catch (\Throwable $exception) {
+
+            http_response_code(500);
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'Не удалось поставить задачу в очередь',
+            ], JSON_THROW_ON_ERROR);
+
         }
-
-        ob_start();
-
-        require __DIR__ . '/../../Presentation/View/form.php';
-
-        return (string)ob_get_clean();
     }
 }
