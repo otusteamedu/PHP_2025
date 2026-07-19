@@ -1,8 +1,7 @@
 <?php
-/** @var string $errorMessage */
-/** @var string $successMessage */
 
 declare(strict_types=1);
+
 ?>
 
 <!DOCTYPE html>
@@ -10,7 +9,6 @@ declare(strict_types=1);
 <head>
     <meta charset="UTF-8">
     <title>Получение банковской выписки</title>
-
     <style>
 
         * {
@@ -79,49 +77,67 @@ declare(strict_types=1);
         }
 
     </style>
-
 </head>
 <body>
+    <div class="container">
+        <h1>Формирование выписки</h1>
+        <div id="success-message" class="message success" style="display:none"></div>
+        <div id="error-message" class="message error" style="display:none"></div>
+        <form id="statement-form">
+            <div class="field">
+                <label for="email">
+                    Email для уведомления
+                </label>
 
-<div class="container">
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    placeholder="example@mail.com"
+                    required
+                >
+            </div>
+            <button type="submit">
+                Получить выписку за год
+            </button>
+        </form>
+    </div>
+    <script>
+        const form = document.getElementById('statement-form');
 
-    <h1>Формирование выписки</h1>
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
 
-    <?php if ($successMessage !== '') : ?>
-        <div class="message success">
-            <?= htmlspecialchars($successMessage) ?>
-        </div>
-    <?php endif; ?>
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
 
-    <?php if ($errorMessage !== '') : ?>
-        <div class="message error">
-            <?= htmlspecialchars($errorMessage) ?>
-        </div>
-    <?php endif; ?>
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
 
-    <form method="post">
+            const formData = new FormData(form);
 
-        <div class="field">
-            <label for="email">
-                Email для уведомления
-            </label>
+            try {
+                const response = await fetch('/queue.php', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            <input
-                id="email"
-                type="email"
-                name="email"
-                placeholder="example@mail.com"
-                required
-            >
-        </div>
+                const result = await response.json();
 
-        <button type="submit">
-            Получить выписку за год
-        </button>
+                if (result.success) {
+                    successMessage.textContent = result.message;
+                    successMessage.style.display = 'block';
 
-    </form>
-
-</div>
-
+                    form.reset();
+                } else {
+                    errorMessage.textContent = result.message;
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Ошибка соединения с сервером';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
