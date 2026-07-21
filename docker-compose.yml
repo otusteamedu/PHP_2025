@@ -27,6 +27,34 @@ services:
       - .env
     networks:
       - app-network
+
+  postgres:
+    image: postgres:18.4
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "${POSTGRES_EXTERNAL_PORT}:5432"
+
+    volumes:
+      - postgres-data-30-task:/var/lib/postgresql
+
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+      ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - app-network
+
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
@@ -38,6 +66,8 @@ services:
       RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD}"
     networks:
       - app-network
+volumes:
+  postgres-data-30-task:
 networks:
   app-network:
     driver: bridge
