@@ -19,19 +19,67 @@ final readonly class Route
 
     public function matches(Request $request): bool
     {
-        return
-            $this->method === $request->getMethod()
-            && $this->path === $request->getPath();
+        if ($this->method !== $request->getMethod()) {
+            return false;
+        }
+
+        $routeParts = explode('/', trim($this->path, '/'));
+        $requestParts = explode('/', trim($request->getPath(), '/'));
+
+        if (count($routeParts) !== count($requestParts)) {
+            return false;
+        }
+
+        foreach ($routeParts as $index => $routePart) {
+
+            $requestPart = $requestParts[$index];
+
+            if (
+                str_starts_with($routePart, '{')
+                && str_ends_with($routePart, '}')
+            ) {
+                $parameter = trim($routePart, '{}');
+
+                $request->setAttribute(
+                    $parameter,
+                    $requestPart,
+                );
+
+                continue;
+            }
+
+            if ($routePart !== $requestPart) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function hasPath(string $path): bool
     {
-        return $this->path === $path;
-    }
+        $routeParts = explode('/', trim($this->path, '/'));
+        $requestParts = explode('/', trim($path, '/'));
 
-    public function hasMethod(string $method): bool
-    {
-        return $this->method === $method;
+        if (count($routeParts) !== count($requestParts)) {
+            return false;
+        }
+
+        foreach ($routeParts as $index => $routePart) {
+
+            if (
+                str_starts_with($routePart, '{')
+                && str_ends_with($routePart, '}')
+            ) {
+                continue;
+            }
+
+            if ($routePart !== $requestParts[$index]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function execute(Request $request): JsonResponse

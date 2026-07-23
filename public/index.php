@@ -3,11 +3,13 @@
 declare(strict_types=1);
 
 use App\Application\UseCases\CreateTaskUseCase;
+use App\Application\UseCases\GetTaskStatusUseCase;
 use App\Infrastructure\Database\Config\DatabaseConfigLoader;
 use App\Infrastructure\Database\Connection\ConnectionFactory;
 use App\Infrastructure\Database\Repository\TaskRepository;
 use App\Infrastructure\Database\TaskDataMapper;
 use App\Infrastructure\Http\Handler\CreateTaskHandler;
+use App\Infrastructure\Http\Handler\GetTaskStatusHandler;
 use App\Infrastructure\Http\Request\Request;
 use App\Infrastructure\Http\Router\Router;
 use App\Infrastructure\Http\Response\JsonResponse;
@@ -36,15 +38,19 @@ $dataMapper = new TaskDataMapper($pdo);
 $repository = new TaskRepository($dataMapper);
 
 
-
 $router = new Router();
-
 
 $router->post(
     '/tasks',
     new CreateTaskHandler(new CreateTaskUseCase($repository)),
 );
 
+$statusUseCase = new GetTaskStatusUseCase($repository);
+
+$router->get(
+    '/tasks/{number}',
+    new GetTaskStatusHandler($statusUseCase),
+);
 
 $router->dispatch($request);
 

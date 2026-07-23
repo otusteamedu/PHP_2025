@@ -4,13 +4,27 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Request;
 
-final readonly class Request
+final class Request
 {
+    /**
+     * @var array<string, string>
+     */
+    private array $attributes;
     public function __construct(
-        private string $method,
-        private string $path,
-        private array $body,
+        private readonly string $method,
+        private readonly string $path,
+        private readonly array  $body,
     ) {
+        $this->attributes = [];
+    }
+    public function setAttribute(string $name, mixed $value): void
+    {
+        $this->attributes[$name] = $value;
+    }
+
+    public function getAttribute(string $name): mixed
+    {
+        return $this->attributes[$name] ?? null;
     }
 
     public static function fromGlobals(): self

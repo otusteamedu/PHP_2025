@@ -51,7 +51,6 @@ final class Router
     public function dispatch(Request $request): void
     {
         foreach ($this->routes as $route) {
-
             if ($route->matches($request)) {
                 $route
                     ->execute($request)
@@ -62,9 +61,7 @@ final class Router
         }
 
         foreach ($this->routes as $route) {
-
             if ($route->hasPath($request->getPath())) {
-
                 (new JsonResponse([
                     'message' => 'Method not allowed',
                 ], 405))->send();
