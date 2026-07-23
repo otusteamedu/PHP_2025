@@ -20,7 +20,6 @@ final readonly class TaskDataMapper
 
     public function insert(Task $task): void
     {
-        echo "INSERT\n";
         $insertQuery = $this->pdo->prepare('
 
             insert into task
@@ -37,8 +36,7 @@ final readonly class TaskDataMapper
         ');
 
         $insertQuery->execute($this->toDatabaseRow($task));
-        echo 'Inserted number: ' . $insertQuery->fetchColumn() . PHP_EOL;
-        exit;
+
         $task->assignNumber((int)$insertQuery->fetchColumn());
     }
 
@@ -106,6 +104,42 @@ final readonly class TaskDataMapper
         $deleteQuery->execute([
             'number' => $task->getNumber(),
         ]);
+    }
+
+    /**
+     * @return Task[]
+     * @throws \Exception
+     */
+    public function getNewTasks(int $limit): array
+    {
+        $selectQuery = $this->pdo->prepare('
+            select *
+            from task
+            where status = :status
+            order by number
+            limit :limit
+        ');
+
+        $selectQuery->bindValue(
+            'limit',
+            $limit,
+            PDO::PARAM_INT,
+        );
+
+        $selectQuery->bindValue(
+            'status',
+            TaskStatus::New->value,
+        );
+
+        $selectQuery->execute();
+
+        $tasks = [];
+
+        foreach ($selectQuery->fetchAll() as $databaseRow) {
+            $tasks[] = $this->createFromDatabaseRow($databaseRow);
+        }
+
+        return $tasks;
     }
 
     private function toDatabaseRow(Task $task): array

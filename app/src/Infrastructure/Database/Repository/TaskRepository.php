@@ -45,4 +45,12 @@ final readonly class TaskRepository implements TaskRepositoryInterface
     {
         $this->mapper->delete($task);
     }
+
+    /**
+     * @return Task[]
+     */
+    public function getNew(int $limit): array
+    {
+        return $this->mapper->getNewTasks($limit);
+    }
 }
