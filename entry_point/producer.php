@@ -29,7 +29,7 @@ $getTasksUseCase = new GetTenNewTasksUseCase($repository);
 
 while (1) {
     $tasks = $getTasksUseCase->execute();
-    var_dump($tasks);
+
     foreach ($tasks as $task) {
         $addTaskToQueueUseCase->execute($task);
     }
