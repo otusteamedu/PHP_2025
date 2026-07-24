@@ -20,7 +20,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 
 $request = Request::fromGlobals();
 
-if ($request->getMethod() !== 'POST') {
+if (!in_array($request->getMethod(), ['POST', 'GET'])) {
     (new JsonResponse(
         [
             'message' => 'Method not allowed',
