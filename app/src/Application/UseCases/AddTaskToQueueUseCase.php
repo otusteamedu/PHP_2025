@@ -20,10 +20,9 @@ class AddTaskToQueueUseCase
     }
     public function execute(Task $task): void
     {
+        $task->changeStatus(TaskStatus::Queued);
 
         $this->queue->push($task);
-
-        $task->changeStatus(TaskStatus::Queued);
 
         $this->repository->save($task);
     }

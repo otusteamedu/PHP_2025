@@ -73,7 +73,7 @@ final class Task
      */
     public static function fromArray(array $data): self
     {
-        $statusCode = ucfirst($data['status']);
+        $statusCode = $data['status'];
 
         return new self(
             number: $data['number'],
