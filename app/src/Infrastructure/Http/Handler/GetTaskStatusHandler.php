@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http\Handler;
 
 use App\Application\UseCases\GetTaskStatusUseCase;
+use App\Infrastructure\Http\Exception\InvalidArgumentException;
 use App\Infrastructure\Http\Request\Request;
 use App\Infrastructure\Http\Response\JsonResponse;
+use App\Infrastructure\Http\Validator\TaskNumberValidator;
 
 final readonly class GetTaskStatusHandler implements HandlerInterface
 {
@@ -18,7 +20,16 @@ final readonly class GetTaskStatusHandler implements HandlerInterface
 
     public function handle(Request $request): JsonResponse
     {
-        $number = $request->getAttribute('number');
+        try {
+            $number = TaskNumberValidator::validate(
+                $request->getAttribute('number')
+            );
+        } catch (InvalidArgumentException $e) {
+            return new JsonResponse([
+                'message' => $e->getMessage(),
+            ],
+                400);
+        }
 
         $status = $this->useCase->execute((int)$number);
 
