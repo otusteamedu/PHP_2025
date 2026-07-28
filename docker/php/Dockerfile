@@ -13,6 +13,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=composer:2.10.1 /usr/bin/composer /usr/local/bin/composer
 
-COPY ./php/php.ini /usr/local/etc/php/conf.d/php-custom.ini
-
 WORKDIR /var/www
