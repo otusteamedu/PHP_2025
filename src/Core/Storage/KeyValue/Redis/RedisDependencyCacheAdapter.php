@@ -37,15 +37,19 @@ class RedisDependencyCacheAdapter implements DependencyCacheInterface
 
     public function clear(): bool
     {
-        $cursor = null;
+        $iterator = null;
         $keysToDelete = [];
         $pattern = self::KEY_PREFIX . '*';
 
-        while ($keys = $this->redis->scan($cursor, $pattern, 100)) {
+        do {
+            $keys = $this->redis->scan($iterator, $pattern, 100);
+            if ($keys === false) {
+                throw new \RuntimeException('Redis SCAN failed: connection error or server unreachable.');
+            }
             foreach ($keys as $key) {
                 $keysToDelete[] = $key;
             }
-        }
+        } while ($iterator !== 0);
 
         if (empty($keysToDelete)) {
             return true;
