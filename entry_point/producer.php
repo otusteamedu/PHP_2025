@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../app/bootstrap.php';
 
-use App\Application\Handler\TaskConsoleHandler;
 use App\Application\UseCases\AddTaskToQueueUseCase;
 use App\Application\UseCases\GetTenNewTasksUseCase;
 use App\Infrastructure\Database\Config\DatabaseConfigLoader;
