@@ -6,22 +6,23 @@ require_once __DIR__ . '/../app/bootstrap.php';
 
 use App\Application\Handler\TaskConsoleHandler;
 use App\Application\UseCases\ProcessTaskUseCase;
-use App\Infrastructure\Database\Config\DatabaseConfigLoader;
-use App\Infrastructure\Database\Connection\ConnectionFactory;
-use App\Infrastructure\Database\Repository\TaskRepository;
-use App\Infrastructure\Database\TaskDataMapper;
+use App\Domain\Repository\TaskRepositoryInterface;
 use App\Infrastructure\Factory\RabbitMqTaskQueueFactory;
+use DI\Container;
 
 $queue = (new RabbitMqTaskQueueFactory())->create();
 
 echo "Worker started..." . PHP_EOL;
 
-$config = DatabaseConfigLoader::load();
 
-$pdo = ConnectionFactory::create($config);
+/**
+ * @var TaskRepositoryInterface $repository
+ * @var Container $container
+ */
+$repository = $container->get(
+    TaskRepositoryInterface::class
+);
 
-$dataMapper = new TaskDataMapper($pdo);
-$repository = new TaskRepository($dataMapper);
 
 $useCase = new ProcessTaskUseCase($repository);
 

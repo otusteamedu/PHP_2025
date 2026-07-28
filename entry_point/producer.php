@@ -6,18 +6,18 @@ require_once __DIR__ . '/../app/bootstrap.php';
 
 use App\Application\UseCases\AddTaskToQueueUseCase;
 use App\Application\UseCases\GetTenNewTasksUseCase;
-use App\Infrastructure\Database\Config\DatabaseConfigLoader;
-use App\Infrastructure\Database\Connection\ConnectionFactory;
-use App\Infrastructure\Database\Repository\TaskRepository;
-use App\Infrastructure\Database\TaskDataMapper;
+use App\Domain\Repository\TaskRepositoryInterface;
 use App\Infrastructure\Factory\RabbitMqTaskQueueFactory;
+use DI\Container;
 
-$config = DatabaseConfigLoader::load();
+/**
+ * @var TaskRepositoryInterface $repository
+ * @var Container $container
+ */
+$repository = $container->get(
+   TaskRepositoryInterface::class
+);
 
-$pdo = ConnectionFactory::create($config);
-
-$dataMapper = new TaskDataMapper($pdo);
-$repository = new TaskRepository($dataMapper);
 $queue = (new RabbitMqTaskQueueFactory())->create();
 
 

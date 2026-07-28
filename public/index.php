@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 use App\Application\UseCases\CreateTaskUseCase;
 use App\Application\UseCases\GetTaskStatusUseCase;
-use App\Infrastructure\Database\Config\DatabaseConfigLoader;
-use App\Infrastructure\Database\Connection\ConnectionFactory;
-use App\Infrastructure\Database\Repository\TaskRepository;
-use App\Infrastructure\Database\TaskDataMapper;
+use App\Domain\Repository\TaskRepositoryInterface;
 use App\Infrastructure\Http\Handler\CreateTaskHandler;
 use App\Infrastructure\Http\Handler\GetTaskStatusHandler;
 use App\Infrastructure\Http\Request\Request;
 use App\Infrastructure\Http\Router\Router;
 use App\Infrastructure\Http\Response\JsonResponse;
-
+use DI\Container;
 
 require_once __DIR__ . '/../app/bootstrap.php';
 
@@ -29,13 +26,13 @@ if (!in_array($request->getMethod(), ['POST', 'GET'])) {
     ))->send();
 }
 
-
-$config = DatabaseConfigLoader::load();
-
-$pdo = ConnectionFactory::create($config);
-
-$dataMapper = new TaskDataMapper($pdo);
-$repository = new TaskRepository($dataMapper);
+/**
+ * @var TaskRepositoryInterface $repository
+ * @var Container $container
+ */
+$repository = $container->get(
+    TaskRepositoryInterface::class
+);
 
 
 $router = new Router();
