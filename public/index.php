@@ -53,4 +53,3 @@ $router->get(
 );
 
 $router->dispatch($request);
-
