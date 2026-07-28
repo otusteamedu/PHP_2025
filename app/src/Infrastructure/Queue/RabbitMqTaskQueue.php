@@ -7,6 +7,7 @@ namespace App\Infrastructure\Queue;
 use App\Domain\Entity\Task;
 use App\Domain\Handler\TaskHandlerInterface;
 use App\Domain\Queue\TaskQueueInterface;
+use App\Infrastructure\Queue\Config\RabbitMqConfig;
 use JsonException;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -24,17 +25,14 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
      * @throws \Exception
      */
     public function __construct(
-        string $host,
-        int $port,
-        string $user,
-        string $password,
+        RabbitMqConfig $config
     )
     {
         $this->connection = new AMQPStreamConnection(
-            host: $host,
-            port: $port,
-            user: $user,
-            password: $password,
+            host: $config->host,
+            port: $config->port,
+            user: $config->user,
+            password: $config->password,
         );
     }
 
