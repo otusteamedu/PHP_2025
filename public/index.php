@@ -9,22 +9,11 @@ use App\Infrastructure\Http\Handler\CreateTaskHandler;
 use App\Infrastructure\Http\Handler\GetTaskStatusHandler;
 use App\Infrastructure\Http\Request\Request;
 use App\Infrastructure\Http\Router\Router;
-use App\Infrastructure\Http\Response\JsonResponse;
 use DI\Container;
 
 require_once __DIR__ . '/../app/bootstrap.php';
 
-
 $request = Request::fromGlobals();
-
-if (!in_array($request->getMethod(), ['POST', 'GET'])) {
-    (new JsonResponse(
-        [
-            'message' => 'Method not allowed',
-        ],
-        405,
-    ))->send();
-}
 
 /**
  * @var TaskRepositoryInterface $repository
