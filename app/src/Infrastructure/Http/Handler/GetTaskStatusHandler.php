@@ -35,7 +35,7 @@ final readonly class GetTaskStatusHandler implements HandlerInterface
 
         if ($status === null) {
             return new JsonResponse([
-                'message' => "Задача не найдена",
+                'message' => 'Task not found',
             ],
             404);
         }
