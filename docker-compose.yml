@@ -39,7 +39,7 @@ services:
       - "${POSTGRES_EXTERNAL_PORT}:5432"
 
     volumes:
-      - postgres-data-30-task:/var/lib/postgresql
+      - postgres-data-30-task:/var/lib/postgresql/data
 
     healthcheck:
       test: [
