@@ -39,14 +39,6 @@ final readonly class TaskRepository implements TaskRepositoryInterface
     }
 
     /**
-     * @throws AppException
-     */
-    public function delete(Task $task): void
-    {
-        $this->mapper->delete($task);
-    }
-
-    /**
      * @return Task[]
      */
     public function getNew(int $limit): array

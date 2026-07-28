@@ -85,28 +85,6 @@ final readonly class TaskDataMapper
     }
 
     /**
-     * @throws AppException
-     */
-    public function delete(Task $task): void
-    {
-        if ($task->getNumber() === null) {
-            throw new AppException(
-                'Cannot delete an task without an number.'
-            );
-        }
-
-        $deleteQuery = $this->pdo->prepare('
-            delete
-            from task
-            where number = :number
-        ');
-
-        $deleteQuery->execute([
-            'number' => $task->getNumber(),
-        ]);
-    }
-
-    /**
      * @return Task[]
      * @throws \Exception
      */
