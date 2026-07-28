@@ -45,7 +45,7 @@ final readonly class TaskDataMapper
      */
     public function update(Task $task): void
     {
-        if ($task->getNumber() === null) {
+        if ($task->getNumber() === 0) {
             throw new AppException(
                 'Cannot update an task without an number.'
             );
