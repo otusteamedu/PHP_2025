@@ -11,6 +11,7 @@ final readonly class JsonResponse
     public function __construct(
         private array $data,
         private int $statusCode = 200,
+        private array $headers = [],
     ) {
     }
 
@@ -22,6 +23,10 @@ final readonly class JsonResponse
         http_response_code($this->statusCode);
 
         header('Content-Type: application/json');
+
+        foreach ($this->headers as $name => $value) {
+            header("$name: $value", true, $this->statusCode);
+        }
 
         echo json_encode(
             $this->data,

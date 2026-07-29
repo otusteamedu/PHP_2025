@@ -26,7 +26,10 @@ final readonly class CreateTaskHandler implements HandlerInterface
 
         return new JsonResponse(
             $task->toArray(),
-            201,
+            202,
+            headers: [
+                'Location' => '/tasks/' . $task->getNumber(),
+            ],
         );
     }
 }
