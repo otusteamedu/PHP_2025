@@ -20,6 +20,7 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
     private const ROUTING_KEY = 'exchange.routing';
 
     private readonly AMQPStreamConnection $connection;
+    private readonly AMQPChannel $channel;
 
     /**
      * @throws \Exception
@@ -34,6 +35,12 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
             user: $config->user,
             password: $config->password,
         );
+        $this->channel = $this->connection->channel();
+
+        $this->declareExchange($this->channel);
+        $this->declareQueue($this->channel);
+        $this->bindQueue($this->channel);
+
     }
 
     /**
@@ -41,32 +48,21 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
      */
     public function push(Task $task): void
     {
-        $channel = $this->connection->channel();
+        $message = new AMQPMessage(
+            json_encode(
+                $task->toArray(),
+                flags: JSON_THROW_ON_ERROR,
+            ),
+            [
+                'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+            ]
+        );
 
-        try {
-
-            $this->declareExchange($channel);
-            $this->declareQueue($channel);
-            $this->bindQueue($channel);
-
-            $message = new AMQPMessage(
-                json_encode(
-                    $task->toArray(),
-                    flags: JSON_THROW_ON_ERROR,
-                ),
-                [
-                    'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT,
-                ]
-            );
-
-            $channel->basic_publish(
-                $message,
-                self::EXCHANGE_NAME,
-                self::ROUTING_KEY
-            );
-        } finally {
-            $channel->close();
-        }
+        $this->channel->basic_publish(
+            $message,
+            self::EXCHANGE_NAME,
+            self::ROUTING_KEY
+        );
     }
 
     /**
@@ -74,19 +70,13 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
      */
     public function consume(TaskHandlerInterface $handler): void
     {
-        $channel = $this->connection->channel();
-
-        $this->declareExchange($channel);
-        $this->declareQueue($channel);
-        $this->bindQueue($channel);
-
-        $channel->basic_qos(
+        $this->channel->basic_qos(
             prefetch_size: 0,
             prefetch_count: 1,
             a_global: false
         );
 
-        $channel->basic_consume(
+        $this->channel->basic_consume(
             queue: self::QUEUE_NAME,
             callback: function (AMQPMessage $message) use ($handler): void {
                 $task = Task::fromArray(
@@ -103,8 +93,8 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
             }
         );
 
-        while ($channel->is_consuming()) {
-            $channel->wait();
+        while ($this->channel->is_consuming()) {
+            $this->channel->wait();
         }
     }
 
@@ -139,8 +129,11 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
     /**
      * @throws \Exception
      */
-    public function __destruct()
+    public function close(): void
     {
-        $this->connection->close();
+        if ($this->connection->isConnected()) {
+            $this->connection->close();
+        }
     }
+
 }

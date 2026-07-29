@@ -26,6 +26,11 @@ $repository = $container->get(
 
 $useCase = new ProcessTaskUseCase($repository);
 
-$queue->consume(
-    new TaskConsoleHandler($useCase)
-);
+
+try {
+    $queue->consume(
+        new TaskConsoleHandler($useCase)
+    );
+} finally {
+    $queue->close();
+}
