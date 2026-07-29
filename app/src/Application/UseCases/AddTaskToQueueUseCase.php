@@ -22,8 +22,8 @@ class AddTaskToQueueUseCase
     {
         $task->changeStatus(TaskStatus::Queued);
 
-        $this->queue->push($task);
-
         $this->repository->save($task);
+
+        $this->queue->push($task);
     }
 }
