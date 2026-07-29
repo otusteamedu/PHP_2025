@@ -34,12 +34,6 @@ http://localhost:15672/#/queues/%2F/tasks
 Получение статуса задачи GET `http://localhost:8080/tasks/2`
 
 
-Продюсер для добавления задач в очередь можно запустить командой:
-
-`
-docker compose exec php_fpm php entry_point/producer.php -d
-`
-
 Воркер для выполнения задач можно запустить командой:
 
 `
