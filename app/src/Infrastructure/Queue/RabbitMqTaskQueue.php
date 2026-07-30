@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Queue;
 
 use App\Domain\Entity\Task;
+use App\Domain\Enum\TaskStatus;
 use App\Domain\Exception\AppException;
 use App\Domain\Handler\TaskHandlerInterface;
 use App\Domain\Queue\TaskQueueInterface;
@@ -14,6 +15,7 @@ use JsonException;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 final class RabbitMqTaskQueue implements TaskQueueInterface
 {
@@ -99,9 +101,22 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
                     throw new AppException("Couldn't get issue numbered $taskNumber from repository");
                 }
 
-                $handler->handle($task);
+                if ($task->getStatus() !== TaskStatus::Queued) {
+                    return; // Задача уже находится в очереди
+                }
 
-                $message->ack();
+                try {
+                    $handler->handle($task);
+
+                    $message->ack();
+                } catch (AppException|JsonException $e) {
+                    $message->nack();
+                } catch (Throwable $e) {
+                    $message->nack(true);
+
+                    echo "Task number $taskNumber" . PHP_EOL;
+                    echo $e->getMessage() . PHP_EOL;
+                }
             }
         );
 
