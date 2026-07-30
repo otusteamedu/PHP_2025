@@ -6,6 +6,7 @@ namespace App\Application\UseCases;
 
 use App\Domain\Entity\Task;
 use App\Domain\Enum\TaskStatus;
+use App\Domain\Exception\AppException;
 use App\Domain\Queue\TaskQueueInterface;
 use App\Domain\Repository\TaskRepositoryInterface;
 
@@ -18,6 +19,10 @@ class AddTaskToQueueUseCase
     {
 
     }
+
+    /**
+     * @throws AppException
+     */
     public function execute(Task $task): void
     {
         $task->changeStatus(TaskStatus::Queued);

@@ -10,11 +10,6 @@ use App\Domain\Repository\TaskRepositoryInterface;
 use App\Infrastructure\Factory\RabbitMqTaskQueueFactory;
 use DI\Container;
 
-$queue = (new RabbitMqTaskQueueFactory())->create();
-
-echo "Worker started..." . PHP_EOL;
-
-
 /**
  * @var TaskRepositoryInterface $repository
  * @var Container $container
@@ -22,6 +17,11 @@ echo "Worker started..." . PHP_EOL;
 $repository = $container->get(
     TaskRepositoryInterface::class
 );
+
+
+$queue = (new RabbitMqTaskQueueFactory())->create($repository);
+
+echo "Worker started..." . PHP_EOL;
 
 
 $useCase = new ProcessTaskUseCase($repository);

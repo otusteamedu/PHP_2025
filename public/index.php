@@ -25,7 +25,7 @@ $repository = $container->get(
     TaskRepositoryInterface::class
 );
 
-$queue = (new RabbitMqTaskQueueFactory())->create();
+$queue = (new RabbitMqTaskQueueFactory())->create($repository);
 
 $router = new Router();
 

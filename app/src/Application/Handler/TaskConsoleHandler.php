@@ -6,6 +6,7 @@ namespace App\Application\Handler;
 
 use App\Application\UseCases\ProcessTaskUseCase;
 use App\Domain\Entity\Task;
+use App\Domain\Exception\AppException;
 use App\Domain\Handler\TaskHandlerInterface;
 
 final class TaskConsoleHandler implements TaskHandlerInterface
@@ -16,6 +17,9 @@ final class TaskConsoleHandler implements TaskHandlerInterface
     {
     }
 
+    /**
+     * @throws AppException
+     */
     public function handle(Task $task): void
     {
         echo "Processing task №{$task->getNumber()}\n";

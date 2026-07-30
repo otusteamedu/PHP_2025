@@ -76,19 +76,4 @@ final class Task
             'createdAt' => $this->createdAt->format(DATE_ATOM),
         ];
     }
-
-    /**
-     * @throws \Exception
-     */
-    public static function fromArray(array $data): self
-    {
-        $statusCode = $data['status'];
-
-        return new self(
-            number: $data['number'],
-            data: $data['data'],
-            status: TaskStatus::from($statusCode),
-            createdAt: new DateTimeImmutable($data['createdAt'])
-        );
-    }
 }

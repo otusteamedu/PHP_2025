@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Queue;
 
 use App\Domain\Entity\Task;
+use App\Domain\Exception\AppException;
 use App\Domain\Handler\TaskHandlerInterface;
 use App\Domain\Queue\TaskQueueInterface;
+use App\Domain\Repository\TaskRepositoryInterface;
 use App\Infrastructure\Queue\Config\RabbitMqConfig;
 use JsonException;
 use PhpAmqpLib\Channel\AMQPChannel;
@@ -26,7 +28,8 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
      * @throws \Exception
      */
     public function __construct(
-        RabbitMqConfig $config
+        RabbitMqConfig $config,
+        private TaskRepositoryInterface $taskRepository
     )
     {
         $this->connection = new AMQPStreamConnection(
@@ -50,7 +53,7 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
     {
         $message = new AMQPMessage(
             json_encode(
-                $task->toArray(),
+                ['number' => $task->getNumber()],
                 flags: JSON_THROW_ON_ERROR,
             ),
             [
@@ -67,6 +70,7 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
 
     /**
      * @throws JsonException
+     * @throws AppException
      */
     public function consume(TaskHandlerInterface $handler): void
     {
@@ -79,13 +83,21 @@ final class RabbitMqTaskQueue implements TaskQueueInterface
         $this->channel->basic_consume(
             queue: self::QUEUE_NAME,
             callback: function (AMQPMessage $message) use ($handler): void {
-                $task = Task::fromArray(
-                    json_decode(
-                        $message->getBody(),
-                        true,
-                        flags: JSON_THROW_ON_ERROR
-                    )
-                );
+                $taskNumber =  json_decode(
+                    $message->getBody(),
+                    true,
+                    flags: JSON_THROW_ON_ERROR
+                )['number'] ?? 0;
+
+                if ($taskNumber === 0) {
+                    throw new AppException("Couldn't get issue number from queue");
+                }
+
+                $task = $this->taskRepository->findByNumber($taskNumber);
+
+                if ($task === null) {
+                    throw new AppException("Couldn't get issue numbered $taskNumber from repository");
+                }
 
                 $handler->handle($task);
 
