@@ -8,6 +8,7 @@ use App\Domain\Entity\Task;
 use App\Domain\Enum\TaskStatus;
 use App\Domain\Exception\AppException;
 use DateTimeImmutable;
+use JsonException;
 use PDO;
 
 final readonly class TaskDataMapper
@@ -18,17 +19,22 @@ final readonly class TaskDataMapper
     {
     }
 
+    /**
+     * @throws JsonException
+     */
     public function insert(Task $task): void
     {
         $insertQuery = $this->pdo->prepare('
 
             insert into task
             (
+                data,
                 status,
                 created_at
             )
             values
             (
+                :data,
                 :status,
                 :created_at
             )
@@ -42,6 +48,7 @@ final readonly class TaskDataMapper
 
     /**
      * @throws AppException
+     * @throws JsonException
      */
     public function update(Task $task): void
     {
@@ -53,16 +60,25 @@ final readonly class TaskDataMapper
 
         $updateQuery = $this->pdo->prepare('
             update task
-            set status = :status
+                set 
+                    status = :status,
+                    data = :data
             where number = :number
         ');
 
         $updateQuery->execute([
             'number' => $task->getNumber(),
+            'data' => json_encode(
+                $task->getData(),
+                JSON_THROW_ON_ERROR
+            ),
             'status' => $task->getStatus()->value,
         ]);
     }
 
+    /**
+     * @throws JsonException
+     */
     public function findByNumber(int $number): ?Task
     {
         $query = $this->pdo->prepare('
@@ -120,9 +136,13 @@ final readonly class TaskDataMapper
         return $tasks;
     }
 
+    /**
+     * @throws JsonException
+     */
     private function toDatabaseRow(Task $task): array
     {
         return [
+            'data' => json_encode($task->getData(), JSON_THROW_ON_ERROR),
             'status' => $task->getStatus()->value,
             'created_at' => $task->getCreatedAt()->format('Y-m-d H:i:s'),
         ];
@@ -130,11 +150,13 @@ final readonly class TaskDataMapper
 
     /**
      * @throws \Exception
+     * @throws JsonException
      */
     public function createFromDatabaseRow(array $row): Task
     {
         return new Task(
             number: (int)$row['number'],
+            data: json_decode($row['data'], true, flags: JSON_THROW_ON_ERROR),
             status: TaskStatus::from($row['status']),
             createdAt: new DateTimeImmutable($row['created_at']),
         );

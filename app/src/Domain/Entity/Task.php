@@ -11,6 +11,7 @@ use DateTimeImmutable;
 final class Task
 {
     public function __construct(
+        private array $data,
         private int $number = 0,
         private TaskStatus $status = TaskStatus::New,
         private readonly DateTimeImmutable $createdAt = new DateTimeImmutable()
@@ -21,6 +22,11 @@ final class Task
     public function getNumber(): int
     {
         return $this->number;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
     }
 
     public function assignNumber(int $number): void
@@ -65,6 +71,7 @@ final class Task
     {
         return [
             'number' => $this->number,
+            'data' => $this->data,
             'status' => $this->status->value,
             'createdAt' => $this->createdAt->format(DATE_ATOM),
         ];
@@ -79,6 +86,7 @@ final class Task
 
         return new self(
             number: $data['number'],
+            data: $data['data'],
             status: TaskStatus::from($statusCode),
             createdAt: new DateTimeImmutable($data['createdAt'])
         );

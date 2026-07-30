@@ -37,7 +37,8 @@ final readonly class TaskTable
             (
                 number integer generated always as identity primary key,
                 status task_status not null,
-                created_at  timestamp not null
+                created_at  timestamp not null,
+                data jsonb not null
             );
         SQL);
     }

@@ -20,7 +20,7 @@ final readonly class CreateTaskHandler implements HandlerInterface
 
     public function handle(Request $request): JsonResponse
     {
-        $task = $this->createTaskUseCase->execute();
+        $task = $this->createTaskUseCase->execute($request->getJsonBody());
 
         $this->addTaskToQueueUseCase->execute($task);
 

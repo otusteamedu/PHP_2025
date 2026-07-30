@@ -15,9 +15,9 @@ readonly class CreateTaskUseCase
     {
     }
 
-    public function execute(): Task
+    public function execute(array $data): Task
     {
-        $task = new Task(0);
+        $task = new Task(data: $data);
 
         $this->repository->save($task);
 
