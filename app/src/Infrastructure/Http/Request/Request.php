@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Request;
 
+use JsonException;
+
 final class Request
 {
     /**
@@ -27,12 +29,26 @@ final class Request
         return $this->attributes[$name] ?? null;
     }
 
+    /**
+     * @throws JsonException
+     */
     public static function fromGlobals(): self
     {
-        $body = json_decode(
-            file_get_contents('php://input'),
-            true
-        );
+        $body = [];
+
+        $content = file_get_contents('php://input');
+
+        if ($content !== '') {
+            $body = json_decode(
+                $content,
+                true,
+                flags: JSON_THROW_ON_ERROR,
+            );
+
+            if (!is_array($body)) {
+                throw new JsonException('JSON body must be an object');
+            }
+        }
 
         return new self(
             method: $_SERVER['REQUEST_METHOD'],

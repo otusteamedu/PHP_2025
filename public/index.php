@@ -10,12 +10,24 @@ use App\Infrastructure\Factory\RabbitMqTaskQueueFactory;
 use App\Infrastructure\Http\Handler\CreateTaskHandler;
 use App\Infrastructure\Http\Handler\GetTaskStatusHandler;
 use App\Infrastructure\Http\Request\Request;
+use App\Infrastructure\Http\Response\JsonResponse;
 use App\Infrastructure\Http\Router\Router;
 use DI\Container;
 
 require_once __DIR__ . '/../app/bootstrap.php';
 
-$request = Request::fromGlobals();
+try {
+    $request = Request::fromGlobals();
+} catch (JsonException) {
+    (new JsonResponse(
+        [
+            'message' => 'Invalid JSON',
+        ],
+        400,
+    ))->send();
+
+    return;
+}
 
 /**
  * @var TaskRepositoryInterface $repository
