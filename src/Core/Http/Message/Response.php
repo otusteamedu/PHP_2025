@@ -49,6 +49,11 @@ class Response
         return $this;
     }
 
+    public function isJson(): bool
+    {
+        return json_validate($this->getContent());
+    }
+
     public function __toString(): string
     {
         return $this->content;
