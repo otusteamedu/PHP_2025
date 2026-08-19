@@ -8,6 +8,6 @@ class EmailFormatValidator
 {
     public function isValid(string $email): bool
     {
-        return $email === filter_var($email, FILTER_VALIDATE_EMAIL);
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 }

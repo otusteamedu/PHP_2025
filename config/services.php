@@ -24,6 +24,8 @@ use App\Domain\UserManagement\Factory\UserRepositoryFactory;
 use App\Domain\UserManagement\UserService;
 use App\Infrastructure\Database\DataMapper\UserMapper;
 use App\Infrastructure\Database\Repository\UserRepository;
+use App\Infrastructure\Resolver\DnsResolver;
+use App\Infrastructure\Resolver\DnsResolverInterface;
 use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
 use App\Infrastructure\Storage\Search\Elasticsearch\Client\SecureElasticsearchClientBuilder;
 use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
@@ -31,13 +33,19 @@ use Elastic\Elasticsearch\ClientInterface;
 
 return [
     'EmailVerification' => [
+        DnsResolverInterface::class => [
+            'singleton' => true,
+            'factory' => static fn() => new DnsResolver(),
+        ],
         EmailFormatValidator::class => [
             'singleton' => true,
             'factory' => static fn() => new EmailFormatValidator(),
         ],
         DnsMxRecordValidator::class => [
             'singleton' => true,
-            'factory' => static fn() => new DnsMxRecordValidator(),
+            'factory' => static fn(Container $c) => new DnsMxRecordValidator(
+                $c->get(DnsResolverInterface::class),
+            ),
         ],
         EmailValidator::class => [
             'singleton' => true,
