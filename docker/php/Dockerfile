@@ -28,10 +28,12 @@ RUN pecl channel-update pecl.php.net \
     && pecl install -o -f \
         redis \
         memcached \
+        xdebug \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable \
         redis \
-        memcached
+        memcached \
+        xdebug
 
 COPY docker/php/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
 COPY docker/php/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf

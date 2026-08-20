@@ -9,3 +9,5 @@
 /docker/elasticsearch/config/certs
 /docker/elasticsearch/config/keystore
 /docker/ssh/keys
+.phpunit.result.cache
+tests/coverage/

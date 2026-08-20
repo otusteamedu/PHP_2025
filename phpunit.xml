@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.3/phpunit.xsd"
+    bootstrap="tests/bootstrap.php"
+    colors="true"
+>
+    <php>
+        <ini name="display_errors" value="On"/>
+        <ini name="error_reporting" value="E_ALL"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="unit">
+            <directory suffix=".php">tests/unit</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory suffix=".php">tests/integration</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage
+        includeUncoveredFiles="true"
+        pathCoverage="false"
+        ignoreDeprecatedCodeUnits="true"
+        disableCodeCoverageIgnore="false"
+    >
+        <report>
+            <html outputDirectory="tests/coverage/all/html"/>
+            <text outputFile="tests/coverage/all/coverage.txt" showUncoveredFiles="true" showOnlySummary="false"/>
+        </report>
+    </coverage>
+
+    <source ignoreIndirectDeprecations="true" restrictNotices="true" restrictWarnings="true">
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+</phpunit>
