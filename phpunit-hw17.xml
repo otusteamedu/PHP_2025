@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.3/phpunit.xsd"
+        bootstrap="tests/bootstrap.php"
+        colors="true"
+>
+    <php>
+        <ini name="display_errors" value="On"/>
+        <ini name="error_reporting" value="E_ALL"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="unit">
+            <directory suffix=".php">tests/unit/hw17</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory suffix=".php">tests/integration/hw17</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage
+            includeUncoveredFiles="true"
+            pathCoverage="false"
+            ignoreDeprecatedCodeUnits="true"
+            disableCodeCoverageIgnore="false"
+    >
+        <report>
+            <html outputDirectory="tests/coverage/hw17/html"/>
+            <text outputFile="tests/coverage/hw17/coverage.txt" showUncoveredFiles="true" showOnlySummary="false"/>
+        </report>
+    </coverage>
+
+    <source ignoreIndirectDeprecations="true" restrictNotices="true" restrictWarnings="true">
+        <include>
+            <file>src/Controller/Http/Api/EmailVerification/EmailVerificationController.php</file>
+            <file>src/Domain/EmailVerification/EmailVerifier.php</file>
+            <file>src/Domain/Shared/Validator/DnsMxRecordValidator.php</file>
+            <file>src/Domain/Shared/Validator/EmailFormatValidator.php</file>
+            <file>src/Domain/Shared/Validator/EmailValidator.php</file>
+        </include>
+    </source>
+</phpunit>
