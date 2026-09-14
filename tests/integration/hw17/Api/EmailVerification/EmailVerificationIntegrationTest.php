@@ -10,7 +10,6 @@ use App\Domain\EmailVerification\EmailVerifier;
 use App\Domain\Shared\Validator\DnsMxRecordValidator;
 use App\Domain\Shared\Validator\EmailFormatValidator;
 use App\Domain\Shared\Validator\EmailValidator;
-use App\Infrastructure\Resolver\DnsResolver;
 use App\Infrastructure\Resolver\DnsResolverInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -21,8 +20,8 @@ use PHPUnit\Framework\TestCase;
 class EmailVerificationIntegrationTest extends TestCase
 {
     /**
-     * Если payload содержит email с доменом, у которого есть MX‑запись (например, example.com)
-     * и используется реальный DnsResolver, то контроллер возвращает 200 и email попадает в validEmails.
+     * Если payload содержит email с доменом, у которого есть MX‑запись (например, example.com),
+     * то контроллер возвращает 200 и email попадает в validEmails.
      */
     public function testEmailWithValidDomainReturnsValidInList(): void
     {
@@ -31,8 +30,11 @@ class EmailVerificationIntegrationTest extends TestCase
 
         $request = Request::fromArray($payload);
 
-        $resolver = new DnsResolver();
-        $dnsValidator  = new DnsMxRecordValidator($resolver);
+        // Stub резолвера: делаем тест детерминированным - гарантируем наличие MX без зависимости от сети
+        $resolverStub = $this->createStub(DnsResolverInterface::class);
+        $resolverStub->method('hasMxRecord')->willReturn(true);
+
+        $dnsValidator  = new DnsMxRecordValidator($resolverStub);
         $formatValidator = new EmailFormatValidator();
         $emailValidator = new EmailValidator($formatValidator, $dnsValidator);
         $verifier = new EmailVerifier($emailValidator);
