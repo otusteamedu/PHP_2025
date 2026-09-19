@@ -64,7 +64,7 @@ SELECT s.id, c.id,
 FROM screenings s
          CROSS JOIN seat_categories c;
 
--- 8.35 млн билетов: примерно 1/50 (20 из 1000) мест каждого зала продано на сеанс.
+-- 8 млн билетов: 20 из 1000 мест каждого зала продано на сеанс.
 -- Вставка тремя порциями, чтобы не раздувать одну транзакцию.
 INSERT INTO tickets (screening_id, seat_id, customer_email, sold_at, final_price)
 SELECT s.id,
