@@ -1,0 +1,83 @@
+=== Параметры сервера (администрирование) ===
+             name             | setting | unit |       source       | pending_restart 
+------------------------------+---------+------+--------------------+-----------------
+ checkpoint_completion_target | 0.9     |      | configuration file | f
+ effective_cache_size         | 524288  | 8kB  | configuration file | f
+ effective_io_concurrency     | 200     |      | configuration file | f
+ jit                          | off     |      | configuration file | f
+ maintenance_work_mem         | 262144  | kB   | configuration file | f
+ max_wal_size                 | 2048    | MB   | configuration file | f
+ random_page_cost             | 1.1     |      | configuration file | f
+ shared_buffers               | 65536   | 8kB  | configuration file | f
+ wal_buffers                  | 2048    | 8kB  | configuration file | f
+ work_mem                     | 65536   | kB   | configuration file | f
+(10 rows)
+
+=== ТО-15 самых больших объектов БД (таблицы + индексы) ===
+                     object_name                      | kind  | total_size | own_size |   bytes   
+------------------------------------------------------+-------+------------+----------+-----------
+ tickets_2026_08                                      | table | 428 MB     | 162 MB   | 449052672
+ tickets_2026_07                                      | table | 427 MB     | 161 MB   | 447275008
+ tickets_2026_09                                      | table | 415 MB     | 157 MB   | 434692096
+ tickets_2026_10                                      | table | 368 MB     | 139 MB   | 385572864
+ screening_prices                                     | table | 111 MB     | 60 MB    | 116613120
+ tickets_2026_08_sold_at_screening_id_final_price_idx | index | 80 MB      | 80 MB    |  83697664
+ tickets_2026_07_sold_at_screening_id_final_price_idx | index | 80 MB      | 80 MB    |  83369984
+ tickets_2026_09_sold_at_screening_id_final_price_idx | index | 77 MB      | 77 MB    |  81027072
+ tickets_2026_10_sold_at_screening_id_final_price_idx | index | 69 MB      | 69 MB    |  71868416
+ tickets_2026_08_screening_id_final_price_idx         | index | 62 MB      | 62 MB    |  65191936
+ tickets_2026_08_pkey                                 | index | 62 MB      | 62 MB    |  65101824
+ tickets_2026_08_screening_id_seat_id_sold_at_key     | index | 62 MB      | 62 MB    |  65101824
+ tickets_2026_07_screening_id_final_price_idx         | index | 62 MB      | 62 MB    |  64937984
+ tickets_2026_07_screening_id_seat_id_sold_at_key     | index | 62 MB      | 62 MB    |  64847872
+ tickets_2026_07_pkey                                 | index | 62 MB      | 62 MB    |  64847872
+(15 rows)
+
+=== ТО-15 таблиц по размеру вместе с индексами ===
+    table_name    | total_size | indexes_size | table_size 
+------------------+------------+--------------+------------
+ tickets_2026_08  | 428 MB     | 266 MB       | 162 MB
+ tickets_2026_07  | 427 MB     | 265 MB       | 161 MB
+ tickets_2026_09  | 415 MB     | 258 MB       | 157 MB
+ tickets_2026_10  | 368 MB     | 229 MB       | 139 MB
+ screening_prices | 111 MB     | 51 MB        | 60 MB
+ screenings       | 54 MB      | 34 MB        | 20 MB
+ tickets_2026_06  | 21 MB      | 13 MB        | 8144 kB
+ seats            | 6504 kB    | 3920 kB      | 2552 kB
+ movies           | 216 kB     | 40 kB        | 136 kB
+ seat_categories  | 80 kB      | 32 kB        | 8192 bytes
+ halls            | 56 kB      | 16 kB        | 8192 bytes
+ tickets_default  | 32 kB      | 32 kB        | 0 bytes
+(12 rows)
+
+=== Секции tickets (родитель виртуальный, хранение в детях) ===
+    partition    | total_size |  rows   
+-----------------+------------+---------
+ tickets_2026_08 | 428 MB     | 2066250
+ tickets_2026_07 | 427 MB     | 2058022
+ tickets_2026_09 | 415 MB     | 2000168
+ tickets_2026_10 | 368 MB     | 1774207
+ tickets_2026_06 | 21 MB      |  101353
+ tickets_default | 32 kB      |       0
+(6 rows)
+
+=== ТО-5 самых часто используемых индексов ===
+                      index_name                      | scans |  size   
+------------------------------------------------------+-------+---------
+ idx_screenings_movie_id                              |    60 | 8808 kB
+ movies_pkey                                          |    60 | 40 kB
+ seat_categories_pkey                                 |    60 | 16 kB
+ screenings_pkey                                      |    60 | 8792 kB
+ tickets_2026_09_sold_at_screening_id_final_price_idx |    50 | 77 MB
+(5 rows)
+
+=== ТО-5 самых редко используемых индексов (0 сканов = никогда) ===
+                    index_name                    | scans | size  
+--------------------------------------------------+-------+-------
+ tickets_2026_08_screening_id_seat_id_sold_at_key |     0 | 62 MB
+ tickets_2026_08_pkey                             |     0 | 62 MB
+ tickets_2026_07_pkey                             |     0 | 62 MB
+ tickets_2026_07_screening_id_seat_id_sold_at_key |     0 | 62 MB
+ tickets_2026_09_pkey                             |     0 | 60 MB
+(5 rows)
+
