@@ -317,7 +317,7 @@ Aggregate
 
 1. **Индексы на FK и диапазон** (`sql/05_indexes.sql`):
    `idx_screenings_start_time`, `idx_screenings_movie_id`,
-   `idx_screenings_hall_id`, `idx_seats_hall_id`.
+   `idx_seats_hall_id`.
    PostgreSQL не создаёт индексы на внешние ключи сам. Без них JOIN/фильтр
    по большим таблицам — Seq Scan (запросы 1 и 3 на 10M: 132 ms).
 

@@ -10,9 +10,6 @@ CREATE INDEX idx_screenings_start_time ON screenings (start_time);
 -- сеансы конкретного фильма (JOIN в запросах 1 и 3)
 CREATE INDEX idx_screenings_movie_id ON screenings (movie_id);
 
--- зал сеанса (подзапрос в запросе 5)
-CREATE INDEX idx_screenings_hall_id ON screenings (hall_id);
-
 -- места зала (запрос 5)
 CREATE INDEX idx_seats_hall_id ON seats (hall_id);
 
