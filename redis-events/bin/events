@@ -1,0 +1,93 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\Domain\Event;
+use App\Storage\EventStorageInterface;
+use App\Storage\RedisEventStorage;
+use Predis\Client;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$storage = new RedisEventStorage(new Client(getenv('REDIS_DSN') ?: 'redis://127.0.0.1:6381/0'));
+$command = $argv[1] ?? 'help';
+
+try {
+    match ($command) {
+        'add' => add($storage, $argv),
+        'find' => find($storage, $argv),
+        'clear' => clear($storage),
+        'demo' => demo($storage),
+        default => help(),
+    };
+} catch (Throwable $exception) {
+    fwrite(STDERR, 'Ошибка: ' . $exception->getMessage() . PHP_EOL);
+    exit(1);
+}
+
+/** @param list<string> $arguments */
+function add(EventStorageInterface $storage, array $arguments): void
+{
+    if (!isset($arguments[2], $arguments[3], $arguments[4])) {
+        throw new InvalidArgumentException('Использование: add <priority> <conditions-json> <event-json>');
+    }
+
+    $storage->add(Event::create(
+        (int) $arguments[2],
+        jsonObject($arguments[3]),
+        jsonObject($arguments[4]),
+    ));
+
+    echo "Событие добавлено.\n";
+}
+
+/** @param list<string> $arguments */
+function find(EventStorageInterface $storage, array $arguments): void
+{
+    if (!isset($arguments[2])) {
+        throw new InvalidArgumentException('Использование: find <params-json>');
+    }
+
+    $event = $storage->findBest(jsonObject($arguments[2]));
+    echo json_encode($event?->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+}
+
+function clear(EventStorageInterface $storage): void
+{
+    $storage->clear();
+    echo "События очищены.\n";
+}
+
+function demo(EventStorageInterface $storage): void
+{
+    $storage->clear();
+    $storage->add(Event::create(1000, ['param1' => 1], ['name' => 'first']));
+    $storage->add(Event::create(2000, ['param1' => 2, 'param2' => 2], ['name' => 'second']));
+    $storage->add(Event::create(3000, ['param1' => 1, 'param2' => 2], ['name' => 'third']));
+
+    find($storage, ['events', 'find', '{"param1":1,"param2":2}']);
+}
+
+/** @return array<string, mixed> */
+function jsonObject(string $json): array
+{
+    $value = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+    if (!is_array($value) || array_is_list($value)) {
+        throw new InvalidArgumentException('Ожидается JSON-объект.');
+    }
+
+    return $value;
+}
+
+function help(): void
+{
+    echo <<<'TEXT'
+Использование:
+  php bin/events add <priority> '<conditions-json>' '<event-json>'
+  php bin/events find '<params-json>'
+  php bin/events clear
+  php bin/events demo
+TEXT;
+    echo PHP_EOL;
+}
