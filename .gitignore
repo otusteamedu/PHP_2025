@@ -3,7 +3,6 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-
 # IDE и редакторы
 .vscode/
 
@@ -53,7 +52,6 @@ composer.phar
 /*.zip
 
 # Базы данных
-*.sql
 *.sqlite
 *.dump
 /database/*.sqlite
