@@ -168,13 +168,37 @@ final class ElasticsearchStorage implements BookStorageInterface
         $response = curl_exec($ch);
         curl_close($ch);
 
-        $result = json_decode($response, true);
-        
-        if (($result['errors'] ?? false) === true) {
-            throw new RuntimeException('Ошибка массовой индексации.');
+        $result = json_decode((string) $response, true);
+
+        if (!is_array($result) || !isset($result['items']) || !is_array($result['items'])) {
+            throw new RuntimeException('Elasticsearch вернул некорректный ответ на bulk-индексацию.');
         }
 
-        return (int) ($result['items'] ?? []) ? count($books) : 0;
+        $failedItems = [];
+        foreach ($result['items'] as $item) {
+            $operation = $item['index'] ?? [];
+            $status = (int) ($operation['status'] ?? 500);
+
+            if ($status < 300 && !isset($operation['error'])) {
+                continue;
+            }
+
+            $id = (string) ($operation['_id'] ?? 'unknown');
+            $error = $operation['error'] ?? [];
+            $reason = is_array($error)
+                ? (string) ($error['reason'] ?? $error['type'] ?? 'unknown error')
+                : (string) $error;
+            $failedItems[] = sprintf('%s: %s', $id, $reason);
+        }
+
+        if ($failedItems !== []) {
+            $message = 'Ошибка массовой индексации. Не проиндексированы: ' . implode('; ', $failedItems);
+            error_log($message);
+
+            throw new RuntimeException($message);
+        }
+
+        return count($result['items']);
     }
 
     /**
@@ -226,15 +250,15 @@ final class ElasticsearchStorage implements BookStorageInterface
             ];
         }
 
-        $query = trim((string) $query);
+        $searchTerm = trim((string) $query);
 
-        // П��исковый запрос с нечётким matching (fuzziness)
+        // Поисковый запрос с нечётким matching (fuzziness)
         // Позволяет находить слова с опечатками
-        if ($query !== '') {
+        if ($searchTerm !== '') {
             $must[] = [
                 'match' => [
                     'title' => [
-                        'query' => $query,
+                        'query' => $searchTerm,
                         'fuzziness' => 'AUTO', // Автоматический уровень нечёткости
                         'prefix_length' => 1, // Первая буква должна совпадать
                     ],
