@@ -1,0 +1,14 @@
+{
+    "name": "otus/bookshop-search",
+    "description": "Book shop search with Elasticsearch",
+    "type": "project",
+    "require": {
+        "php": ">=8.4",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
