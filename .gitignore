@@ -53,7 +53,6 @@ composer.phar
 /*.zip
 
 # Базы данных
-*.sql
 *.sqlite
 *.dump
 /database/*.sqlite
