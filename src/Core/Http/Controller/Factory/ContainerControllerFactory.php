@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace App\Core\Http\Controller\Factory;
 
 use App\Core\Container\Container;
-use App\Core\Http\Controller\Base\ErrorController;
-use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
 use App\Core\Resolver\ConstructorDependencyResolverInterface;
 
 class ContainerControllerFactory implements ControllerFactoryInterface
 {
     public function __construct(
         private readonly Container $container,
-        private readonly ErrorHandlerInterface $errorHandler,
         private readonly ConstructorDependencyResolverInterface $resolver,
     ) {
     }
@@ -32,10 +29,5 @@ class ContainerControllerFactory implements ControllerFactoryInterface
         }
 
         return new $className(...$resolved);
-    }
-
-    public function createErrorController(): ErrorController
-    {
-        return new ErrorController($this->errorHandler);
     }
 }

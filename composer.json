@@ -9,6 +9,7 @@
         "ext-redis": "*",
         "ext-memcached": "*",
         "ext-intl": "*",
+        "ext-pcntl": "*",
         "vlucas/phpdotenv": "^5.6",
         "customer41/multiexception": "^1.0",
         "elasticsearch/elasticsearch": "^9.3",

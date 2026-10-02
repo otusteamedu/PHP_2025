@@ -13,6 +13,7 @@ class Request
     public function __construct(
         private ?array $server = null,
         private ?array $payload = null,
+        private ?array $formPayload = null,
     ) {
         // Инициализируем server (для реального приложения)
         $this->server ??= $_SERVER;
@@ -45,20 +46,42 @@ class Request
             return $this->payload;
         }
 
+        $contentType = $this->server['CONTENT_TYPE'] ?? '';
+        if (!str_starts_with($contentType, 'application/json')) {
+            throw new InvalidJsonPayloadException(
+                'Expected Content-Type: application/json, got: ' . $contentType,
+                400,
+            );
+        }
+
         $content = file_get_contents('php://input');
         if ($content === false) {
             throw new PayloadReadException('Failed to read request body', 400);
         }
 
         if ($content === '') {
-            return [];
+            $this->payload = [];
+            return $this->payload;
         }
 
         try {
-            return json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+            $this->payload = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new InvalidJsonPayloadException($e->getMessage(), 400);
         }
+
+        return $this->payload;
+    }
+
+    public function getFormData(): array
+    {
+        if ($this->formPayload !== null) {
+            return $this->formPayload;
+        }
+
+        $this->formPayload = $_POST;
+
+        return $this->formPayload;
     }
 
     /**
@@ -83,5 +106,13 @@ class Request
     public static function fromArray(array $payload): self
     {
         return new self(server: [], payload: $payload);
+    }
+
+    /**
+     * Аналагичный фабричный метод специально для форм.
+     */
+    public static function fromFormData(array $formData): self
+    {
+        return new self(server: [], formPayload: $formData);
     }
 }
