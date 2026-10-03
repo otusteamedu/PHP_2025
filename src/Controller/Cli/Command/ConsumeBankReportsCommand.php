@@ -7,7 +7,9 @@ namespace App\Controller\Cli\Command;
 use App\Controller\Amqp\BankReport\BankReportConsumer;
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use App\Domain\BankReport\ReportService;
+use App\Infrastructure\Mail\Mailer\ReportMailerInterface;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
+use App\Infrastructure\RabbitMq\Exception\AmqpConnectionException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,6 +22,7 @@ class ConsumeBankReportsCommand extends Command
         private readonly AmqpConnectionInterface $connection,
         private readonly DotEnvConfigInterface $config,
         private readonly ReportService $reportService,
+        private readonly ReportMailerInterface $reportMailer,
     ) {
         parent::__construct();
     }
@@ -51,18 +54,33 @@ class ConsumeBankReportsCommand extends Command
         try {
             $consumer = new BankReportConsumer(
                 reportService: $this->reportService,
+                reportMailer: $this->reportMailer,
                 connection: $this->connection,
                 queueName: $queueName,
                 maxAttempts: $maxAttempts,
                 prefetchCount: $prefetchCount,
             );
-
             $consumer->consume();
 
             return Command::SUCCESS;
+
+        } catch (AmqpConnectionException $e) {
+            fwrite(STDERR, ' [CONNECTION] ' . $e->getMessage() . "\n");
+            return Command::FAILURE;
+
         } catch (\Throwable $e) {
             fwrite(STDERR, ' [ERROR] ' . $e->getMessage() . "\n");
+            $this->printPreviousChain($e);
             return Command::FAILURE;
+        }
+    }
+
+    private function printPreviousChain(\Throwable $e): void
+    {
+        $previous = $e->getPrevious();
+        while ($previous !== null) {
+            fwrite(STDERR, ' [DETAILS] ' . $previous->getMessage() . "\n");
+            $previous = $previous->getPrevious();
         }
     }
 }

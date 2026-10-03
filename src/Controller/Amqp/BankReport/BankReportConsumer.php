@@ -11,6 +11,7 @@ use App\Domain\BankReport\ValueObject\Email;
 use App\Domain\BankReport\ValueObject\ReportGenerationRequest;
 use App\Domain\BankReport\ValueObject\ReportId;
 use App\Domain\BankReport\ValueObject\ReportType;
+use App\Infrastructure\Mail\Mailer\ReportMailerInterface;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
 use App\Infrastructure\RabbitMq\Consumer\AbstractConsumer;
 use App\Infrastructure\RabbitMq\Consumer\HandleResult;
@@ -20,15 +21,18 @@ use PhpAmqpLib\Message\AMQPMessage;
 class BankReportConsumer extends AbstractConsumer
 {
     private readonly ReportService $reportService;
+    private readonly ReportMailerInterface $reportMailer;
 
     public function __construct(
         ReportService $reportService,
+        ReportMailerInterface $reportMailer,
         AmqpConnectionInterface $connection,
         string $queueName,
         int $maxAttempts,
         int $prefetchCount,
     ) {
         $this->reportService = $reportService;
+        $this->reportMailer = $reportMailer;
         parent::__construct(
             connection: $connection,
             queueName: $queueName,
@@ -51,14 +55,16 @@ class BankReportConsumer extends AbstractConsumer
         $this->logProcessing($message);
 
         try {
+            $email = new Email($message->email);
             $reportRequest = new ReportGenerationRequest(
                 reportId: ReportId::fromString($message->reportId),
                 clientName: new ClientName($message->clientName),
                 dateRange: new DateRange($message->dateFrom, $message->dateTo),
                 reportType: ReportType::from($message->reportType),
-                email: new Email($message->email),
+                email: $email,
             );
-            $this->reportService->generateReport($reportRequest);
+            $report = $this->reportService->generateReport($reportRequest);
+            $this->reportMailer->send($report, $email);
 
             return HandleResult::ack();
         } catch (\RuntimeException $e) {
@@ -66,6 +72,11 @@ class BankReportConsumer extends AbstractConsumer
         } catch (\Throwable $e) {
             return HandleResult::drop($e->getMessage(), $e->getCode());
         }
+    }
+
+    protected function onMessageAcked(): void
+    {
+        fwrite(STDOUT, " [ACK] Report generated and sent successfully\n");
     }
 
     private function logProcessing(ReportGenerationMessage $message): void

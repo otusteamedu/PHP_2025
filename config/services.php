@@ -32,6 +32,8 @@ use App\Domain\UserManagement\Factory\UserRepositoryFactory;
 use App\Domain\UserManagement\UserService;
 use App\Infrastructure\Database\DataMapper\UserMapper;
 use App\Infrastructure\Database\Repository\UserRepository;
+use App\Infrastructure\Mail\Mailer\ReportMailer;
+use App\Infrastructure\Mail\Mailer\ReportMailerInterface;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnection;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionFactory;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
@@ -44,6 +46,9 @@ use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
 use App\Infrastructure\Storage\Search\Elasticsearch\Client\SecureElasticsearchClientBuilder;
 use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
 use Elastic\Elasticsearch\ClientInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport\Dsn;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransportFactory;
 
 return [
     'EmailVerification' => [
@@ -216,6 +221,18 @@ return [
                 $c->get(RabbitMqProducer::class),
                 $c->get(DotEnvConfigInterface::class),
             ),
+        ],
+        ReportMailerInterface::class => [
+            'singleton' => true,
+            'factory' => static function(Container $c) {
+                $config = $c->get(DotEnvConfigInterface::class);
+                $dsn = Dsn::fromString($config->get('MAILER_DSN'));
+                $transport = new EsmtpTransportFactory()->create($dsn);
+                return new ReportMailer(
+                    mailer: new Mailer($transport),
+                    fromEmail: $config->get('BANK_REPORTS_MAILER_FROM', 'reports@bank.local'),
+                );
+            },
         ],
     ],
 ];

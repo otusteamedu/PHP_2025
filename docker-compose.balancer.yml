@@ -179,6 +179,11 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '8025:8025'
+
 volumes:
   php_1_socket:
   php_2_socket:
