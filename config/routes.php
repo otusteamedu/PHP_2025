@@ -75,4 +75,10 @@ return [
         'controller' => \App\Controller\Http\Api\UserManagement\UserManagementController::class,
         'action' => 'deleteUser',
     ],
+    [
+        'method' => ['GET', 'POST'],
+        'path' => '/request-report',
+        'controller' => \App\Controller\Http\Web\BankReport\BankReportController::class,
+        'action' => 'requestReport',
+    ],
 ];

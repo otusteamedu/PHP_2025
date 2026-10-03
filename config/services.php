@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Controller\Http\Web\BankReport\Rule\ClientNameRule;
+use App\Controller\Http\Web\BankReport\Rule\DateFormatRule;
+use App\Controller\Http\Web\BankReport\Rule\DateRangeAndFutureRule;
+use App\Controller\Http\Web\BankReport\Rule\EmailRule;
+use App\Controller\Http\Web\BankReport\Rule\ReportTypeRule;
+use App\Controller\Http\Web\BankReport\Validator\BankReportFormValidator;
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use App\Core\Container\Container;
 use App\Core\Database\Connection\DatabaseQueryExecutor;
@@ -9,6 +15,8 @@ use App\Core\Database\Connection\PDOWrapper;
 use App\Core\Database\Factory\CollectionFactory;
 use App\Core\Storage\KeyValue\Memcached\MemcachedDriver;
 use App\Core\Storage\KeyValue\Redis\RedisDriver;
+use App\Domain\BankReport\Contract\ReportRequestPublisherInterface;
+use App\Domain\BankReport\ReportService;
 use App\Domain\BookshopSearch\BookshopService;
 use App\Domain\BracketBalance\BracketBalancer;
 use App\Domain\EmailVerification\EmailVerifier;
@@ -138,6 +146,44 @@ return [
         BookshopService::class => [
             'singleton' => true,
             'factory' => static fn(Container $c) => new BookshopService($c->get(BookshopRepository::class)),
+        ],
+    ],
+    'BankReport' => [
+        ClientNameRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new ClientNameRule(),
+        ],
+        DateFormatRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new DateFormatRule(),
+        ],
+        DateRangeAndFutureRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new DateRangeAndFutureRule(),
+        ],
+        ReportTypeRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new ReportTypeRule(),
+        ],
+        EmailRule::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new EmailRule($c->get(EmailFormatValidator::class)),
+        ],
+        BankReportFormValidator::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new BankReportFormValidator(
+                $c->get(ClientNameRule::class),
+                $c->get(DateFormatRule::class),
+                $c->get(DateRangeAndFutureRule::class),
+                $c->get(ReportTypeRule::class),
+                $c->get(EmailRule::class),
+            ),
+        ],
+        ReportService::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new ReportService(
+                $c->get(ReportRequestPublisherInterface::class),
+            ),
         ],
     ],
 ];
