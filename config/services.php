@@ -35,6 +35,8 @@ use App\Infrastructure\Database\Repository\UserRepository;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnection;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionFactory;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
+use App\Infrastructure\RabbitMq\Producer\RabbitMqProducer;
+use App\Infrastructure\RabbitMq\Publisher\ReportRequestPublisher;
 use App\Infrastructure\RabbitMq\Topology\BankReportTopology;
 use App\Infrastructure\Resolver\DnsResolver;
 use App\Infrastructure\Resolver\DnsResolverInterface;
@@ -199,6 +201,19 @@ return [
         BankReportTopology::class => [
             'singleton' => true,
             'factory' => static fn(Container $c) => new BankReportTopology(
+                $c->get(DotEnvConfigInterface::class),
+            ),
+        ],
+        RabbitMqProducer::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new RabbitMqProducer(
+                $c->get(AmqpConnectionInterface::class)
+            ),
+        ],
+        ReportRequestPublisherInterface::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new ReportRequestPublisher(
+                $c->get(RabbitMqProducer::class),
                 $c->get(DotEnvConfigInterface::class),
             ),
         ],
