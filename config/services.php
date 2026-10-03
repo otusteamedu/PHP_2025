@@ -32,6 +32,9 @@ use App\Domain\UserManagement\Factory\UserRepositoryFactory;
 use App\Domain\UserManagement\UserService;
 use App\Infrastructure\Database\DataMapper\UserMapper;
 use App\Infrastructure\Database\Repository\UserRepository;
+use App\Infrastructure\RabbitMq\Connection\AmqpConnection;
+use App\Infrastructure\RabbitMq\Connection\AmqpConnectionFactory;
+use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
 use App\Infrastructure\Resolver\DnsResolver;
 use App\Infrastructure\Resolver\DnsResolverInterface;
 use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
@@ -184,6 +187,13 @@ return [
             'factory' => static fn(Container $c) => new ReportService(
                 $c->get(ReportRequestPublisherInterface::class),
             ),
+        ],
+        AmqpConnectionInterface::class => [
+            'singleton' => true,
+            'factory' => static function(Container $c) {
+                $factory = new AmqpConnectionFactory($c->get(DotEnvConfigInterface::class));
+                return new AmqpConnection($factory->create());
+            },
         ],
     ],
 ];
