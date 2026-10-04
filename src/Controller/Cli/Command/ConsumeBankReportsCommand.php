@@ -7,7 +7,8 @@ namespace App\Controller\Cli\Command;
 use App\Controller\Amqp\BankReport\BankReportConsumer;
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use App\Domain\BankReport\ReportService;
-use App\Infrastructure\Mail\Mailer\ReportMailerInterface;
+use App\Infrastructure\Mail\Factory\ReportMailerFactory;
+use App\Infrastructure\Mail\Simulation\ReportMailerSimulation;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
 use App\Infrastructure\RabbitMq\Exception\AmqpConnectionException;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -22,7 +23,7 @@ class ConsumeBankReportsCommand extends Command
         private readonly AmqpConnectionInterface $connection,
         private readonly DotEnvConfigInterface $config,
         private readonly ReportService $reportService,
-        private readonly ReportMailerInterface $reportMailer,
+        private readonly ReportMailerFactory $mailerFactory,
     ) {
         parent::__construct();
     }
@@ -42,6 +43,12 @@ class ConsumeBankReportsCommand extends Command
                 description: 'QoS prefetch count',
                 default: $this->config->get('RABBITMQ_BANK_REPORTS_PREFETCH_COUNT', '1'),
             )
+            ->addOption(
+                name: 'simulation',
+                mode: InputOption::VALUE_REQUIRED,
+                description: 'SMTP simulation mode (ok, down, flaky)',
+                default: $this->config->get('BANK_REPORTS_MAILER_SIMULATION', 'ok'),
+            )
         ;
     }
 
@@ -52,9 +59,12 @@ class ConsumeBankReportsCommand extends Command
         $prefetchCount = (int) $input->getOption('prefetch-count');
 
         try {
+            $simulation = ReportMailerSimulation::from($input->getOption('simulation'));
+            $reportMailer = $this->mailerFactory->create($simulation);
+
             $consumer = new BankReportConsumer(
                 reportService: $this->reportService,
-                reportMailer: $this->reportMailer,
+                reportMailer: $reportMailer,
                 connection: $this->connection,
                 queueName: $queueName,
                 maxAttempts: $maxAttempts,

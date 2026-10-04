@@ -183,6 +183,8 @@ services:
     image: axllent/mailpit:latest
     ports:
       - '8025:8025'
+    environment:
+      MP_ENABLE_CHAOS: 'true'
 
 volumes:
   php_1_socket:

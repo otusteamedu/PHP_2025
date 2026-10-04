@@ -12,6 +12,7 @@ use App\Domain\BankReport\ValueObject\ReportGenerationRequest;
 use App\Domain\BankReport\ValueObject\ReportId;
 use App\Domain\BankReport\ValueObject\ReportType;
 use App\Infrastructure\Mail\Mailer\ReportMailerInterface;
+use App\Infrastructure\Mail\Smtp\SmtpCode;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
 use App\Infrastructure\RabbitMq\Consumer\AbstractConsumer;
 use App\Infrastructure\RabbitMq\Consumer\HandleResult;
@@ -66,7 +67,7 @@ class BankReportConsumer extends AbstractConsumer
             $report = $this->reportService->generateReport($reportRequest);
             $this->reportMailer->send($report, $email);
 
-            return HandleResult::ack();
+            return HandleResult::ack(SmtpCode::Ok->value);
         } catch (\RuntimeException $e) {
             return HandleResult::reject($e->getMessage(), $e->getCode());
         } catch (\Throwable $e) {
@@ -76,7 +77,10 @@ class BankReportConsumer extends AbstractConsumer
 
     protected function onMessageAcked(): void
     {
-        fwrite(STDOUT, " [ACK] Report generated and sent successfully\n");
+        fwrite(STDOUT, sprintf(
+            " [ACK] Report generated and sent successfully [%d]\n",
+            SmtpCode::Ok->value,
+        ));
     }
 
     private function logProcessing(ReportGenerationMessage $message): void
