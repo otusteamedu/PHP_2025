@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Controller\Http\Web\BankReport\Rule\ClientNameRule;
+use App\Controller\Http\Web\BankReport\Rule\DateFormatRule;
+use App\Controller\Http\Web\BankReport\Rule\DateRangeAndFutureRule;
+use App\Controller\Http\Web\BankReport\Rule\EmailRule;
+use App\Controller\Http\Web\BankReport\Rule\ReportTypeRule;
+use App\Controller\Http\Web\BankReport\Validator\BankReportFormValidator;
 use App\Core\Container\Config\Contracts\DotEnvConfigInterface;
 use App\Core\Container\Container;
 use App\Core\Database\Connection\DatabaseQueryExecutor;
@@ -9,6 +15,8 @@ use App\Core\Database\Connection\PDOWrapper;
 use App\Core\Database\Factory\CollectionFactory;
 use App\Core\Storage\KeyValue\Memcached\MemcachedDriver;
 use App\Core\Storage\KeyValue\Redis\RedisDriver;
+use App\Domain\BankReport\Contract\ReportRequestPublisherInterface;
+use App\Domain\BankReport\ReportService;
 use App\Domain\BookshopSearch\BookshopService;
 use App\Domain\BracketBalance\BracketBalancer;
 use App\Domain\EmailVerification\EmailVerifier;
@@ -24,12 +32,21 @@ use App\Domain\UserManagement\Factory\UserRepositoryFactory;
 use App\Domain\UserManagement\UserService;
 use App\Infrastructure\Database\DataMapper\UserMapper;
 use App\Infrastructure\Database\Repository\UserRepository;
+use App\Infrastructure\Mail\Factory\ReportMailerFactory;
+use App\Infrastructure\Mail\Mailpit\MailpitChaosClient;
+use App\Infrastructure\RabbitMq\Connection\AmqpConnection;
+use App\Infrastructure\RabbitMq\Connection\AmqpConnectionFactory;
+use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
+use App\Infrastructure\RabbitMq\Producer\RabbitMqProducer;
+use App\Infrastructure\RabbitMq\Publisher\ReportRequestPublisher;
+use App\Infrastructure\RabbitMq\Topology\BankReportTopology;
 use App\Infrastructure\Resolver\DnsResolver;
 use App\Infrastructure\Resolver\DnsResolverInterface;
 use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
 use App\Infrastructure\Storage\Search\Elasticsearch\Client\SecureElasticsearchClientBuilder;
 use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
 use Elastic\Elasticsearch\ClientInterface;
+use Symfony\Component\HttpClient\HttpClient;
 
 return [
     'EmailVerification' => [
@@ -138,6 +155,84 @@ return [
         BookshopService::class => [
             'singleton' => true,
             'factory' => static fn(Container $c) => new BookshopService($c->get(BookshopRepository::class)),
+        ],
+    ],
+    'BankReport' => [
+        ClientNameRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new ClientNameRule(),
+        ],
+        DateFormatRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new DateFormatRule(),
+        ],
+        DateRangeAndFutureRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new DateRangeAndFutureRule(),
+        ],
+        ReportTypeRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new ReportTypeRule(),
+        ],
+        EmailRule::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new EmailRule($c->get(EmailFormatValidator::class)),
+        ],
+        BankReportFormValidator::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new BankReportFormValidator(
+                $c->get(ClientNameRule::class),
+                $c->get(DateFormatRule::class),
+                $c->get(DateRangeAndFutureRule::class),
+                $c->get(ReportTypeRule::class),
+                $c->get(EmailRule::class),
+            ),
+        ],
+        ReportService::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new ReportService(
+                $c->get(ReportRequestPublisherInterface::class),
+            ),
+        ],
+        AmqpConnectionInterface::class => [
+            'singleton' => true,
+            'factory' => static function(Container $c) {
+                $factory = new AmqpConnectionFactory($c->get(DotEnvConfigInterface::class));
+                return new AmqpConnection($factory->create());
+            },
+        ],
+        BankReportTopology::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new BankReportTopology(
+                $c->get(DotEnvConfigInterface::class),
+            ),
+        ],
+        RabbitMqProducer::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new RabbitMqProducer(
+                $c->get(AmqpConnectionInterface::class)
+            ),
+        ],
+        ReportRequestPublisherInterface::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new ReportRequestPublisher(
+                $c->get(RabbitMqProducer::class),
+                $c->get(DotEnvConfigInterface::class),
+            ),
+        ],
+        MailpitChaosClient::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new MailpitChaosClient(
+                client: HttpClient::create(),
+                baseUrl: $c->get(DotEnvConfigInterface::class)->get('MAILER_BASE_API_URL'),
+            )
+        ],
+        ReportMailerFactory::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new ReportMailerFactory(
+                $c->get(DotEnvConfigInterface::class),
+                $c->get(MailpitChaosClient::class),
+            ),
         ],
     ],
 ];

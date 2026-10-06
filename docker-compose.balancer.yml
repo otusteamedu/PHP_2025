@@ -168,6 +168,24 @@ services:
       - redis
       - memcached
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - '${RABBITMQ_PUBLISHED_PORT:-5672}:5672'
+      - '${RABBITMQ_MANAGEMENT_PORT:-15672}:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '8025:8025'
+    environment:
+      MP_ENABLE_CHAOS: 'true'
+
 volumes:
   php_1_socket:
   php_2_socket:
@@ -175,3 +193,4 @@ volumes:
   redis_data:
   es_data:
   ssh_gateway:
+  rabbitmq_data:
