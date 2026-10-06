@@ -55,12 +55,22 @@ class ConsumeBankReportsCommand extends Command
     public function __invoke(InputInterface $input): int
     {
         $queueName = $this->config->get('RABBITMQ_BANK_REPORTS_QUEUE', 'bank_reports');
-        $maxAttempts = (int) $input->getOption('max-attempts');
         $prefetchCount = (int) $input->getOption('prefetch-count');
 
         try {
-            $simulation = ReportMailerSimulation::from($input->getOption('simulation'));
-            $reportMailer = $this->mailerFactory->create($simulation);
+            $maxAttempts = (int) $input->getOption('max-attempts');
+            if ($maxAttempts < 1) {
+                throw new \InvalidArgumentException('max-attempts option must be positive integer');
+            }
+
+            $simulation = ReportMailerSimulation::tryFrom($input->getOption('simulation'));
+            if ($simulation === null) {
+                throw new \InvalidArgumentException(
+                    sprintf('Unknown simulation mode: "%s"', $input->getOption('simulation')),
+                );
+            }
+
+            $reportMailer = $this->mailerFactory->create($simulation, $maxAttempts);
 
             $consumer = new BankReportConsumer(
                 reportService: $this->reportService,
@@ -77,6 +87,10 @@ class ConsumeBankReportsCommand extends Command
         } catch (AmqpConnectionException $e) {
             fwrite(STDERR, ' [CONNECTION] ' . $e->getMessage() . "\n");
             return Command::FAILURE;
+
+        } catch (\InvalidArgumentException $e) {
+            fwrite(STDERR, ' [INVALID] ' . $e->getMessage() . "\n");
+            return  Command::INVALID;
 
         } catch (\Throwable $e) {
             fwrite(STDERR, ' [ERROR] ' . $e->getMessage() . "\n");

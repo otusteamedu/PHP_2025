@@ -24,10 +24,9 @@ class ReportMailerFactory
     ) {
     }
 
-    public function create(ReportMailerSimulation $mode): ReportMailerInterface
+    public function create(ReportMailerSimulation $mode, int $maxAttempts): ReportMailerInterface
     {
         $mailer = $this->createMailer();
-        $maxAttempts = (int) ($this->config->get('RABBITMQ_BANK_REPORTS_MAX_ATTEMPTS') ?? 3);
 
         return match ($mode) {
             ReportMailerSimulation::Ok => $this->createOk($mailer),
@@ -75,6 +74,10 @@ class ReportMailerFactory
      */
     private function createFlaky(ReportMailer $mailer, int $maxAttempts): ReportMailerInterface
     {
+        if ($maxAttempts < 2) {
+            throw new \InvalidArgumentException('Flaky simulation requires max-attempts >= 2');
+        }
+
         $this->chaosClient->setChaos(MailpitChaosTrigger::Recipient, SmtpCode::LocalError, probability: 0);
 
         return new TemporarilyUnavailableReportMailer(

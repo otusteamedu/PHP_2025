@@ -13,7 +13,7 @@ readonly class ReportId
     private function __construct(string $value)
     {
         if ($value === '') {
-            ReportIdException::notEmpty();
+            throw ReportIdException::notEmpty();
         }
 
         $this->value = $value;
