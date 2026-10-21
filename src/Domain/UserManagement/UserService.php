@@ -27,14 +27,16 @@ class UserService
             birthDate: $createUserModel->getBirthDate(),
         );
 
-        return $this->userRepository->save($user);
+        $this->userRepository->save($user);
+
+        return $user;
     }
 
     public function findUser(int $id): User
     {
         $user = $this->userRepository->find($id);
         if ($user === null) {
-            throw new \Exception('Пользователь не найден.', 404);
+            throw new \RuntimeException('Пользователь не найден.', 404);
         }
 
         return $user;
@@ -52,15 +54,18 @@ class UserService
     {
         $user = $this
             ->findUser($updateUserModel->getUserId())
-            ->setEmail($updateUserModel->getNewEmail());
+            ->setEmail($updateUserModel->getNewEmail())
+        ;
 
-        return $this->userRepository->save($user);
+        $this->userRepository->save($user);
+
+        return $user;
     }
 
-    public function deleteUser(int $id): bool
+    public function deleteUser(int $id): void
     {
         $user = $this->findUser($id);
 
-        return $this->userRepository->delete($user);
+        $this->userRepository->delete($user);
     }
 }

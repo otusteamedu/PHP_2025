@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\UserManagement\Entity;
 
-use App\Domain\Shared\Entity\AbstractEntity;
+use App\Core\Database\Entity\AbstractEntity;
 
 class User extends AbstractEntity
 {
@@ -55,11 +55,14 @@ class User extends AbstractEntity
 
     public function toArray(): array
     {
-        $output = parent::toArray();
-        $output['fullName'] = $this->getFullName();
-        $output['birthDate'] = $this->getBirthDate()->format('d.m.Y');
-        $output['age'] = $this->getAge();
-
-        return $output;
+        return [
+            'id' => $this->getId(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'fullName' => $this->getFullName(),
+            'email' => $this->getEmail(),
+            'birthDate' => $this->getBirthDate()->format('d.m.Y'),
+            'age' => $this->getAge(),
+        ];
     }
 }

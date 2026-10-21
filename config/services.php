@@ -28,7 +28,6 @@ use App\Domain\Shared\Validator\EmailFormatValidator;
 use App\Domain\Shared\Validator\EmailValidator;
 use App\Domain\SystemHealth\SessionStorageChecker;
 use App\Domain\SystemHealth\SystemHealthCheckService;
-use App\Domain\UserManagement\Factory\UserRepositoryFactory;
 use App\Domain\UserManagement\UserService;
 use App\Infrastructure\Database\DataMapper\UserMapper;
 use App\Infrastructure\Database\Repository\UserRepository;
@@ -124,17 +123,13 @@ return [
             'singleton' => true,
             'factory' => static fn() => new UserMapper(),
         ],
-        UserRepositoryFactory::class => [
-            'singleton' => true,
-            'factory' => static fn(Container $c) => new UserRepositoryFactory(
-                $c->get(DatabaseQueryExecutor::class),
-                $c->get(CollectionFactory::class),
-            ),
-        ],
         UserRepository::class => [
             'singleton' => true,
-            'factory' => static fn(Container $c) => $c->get(UserRepositoryFactory::class)
-                ->create($c->get(UserMapper::class)),
+            'factory' => static fn(Container $c) => new UserRepository(
+                $c->get(DatabaseQueryExecutor::class),
+                $c->get(UserMapper::class),
+                $c->get(CollectionFactory::class),
+            )
         ],
         UserService::class => [
             'singleton' => true,

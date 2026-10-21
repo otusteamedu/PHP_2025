@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\UserManagement\Collection;
 
-use App\Domain\Shared\Collection\AbstractCollection;
-use App\Domain\Shared\Entity\EntityInterface;
+use App\Core\Database\Collection\AbstractCollection;
+use App\Core\Database\Entity\EntityInterface;
 use App\Domain\UserManagement\Entity\User;
 
 class UserCollection extends AbstractCollection
@@ -14,13 +14,24 @@ class UserCollection extends AbstractCollection
     {
         if (!$entity instanceof User) {
             throw new \InvalidArgumentException(sprintf(
-                '[%s] expects [%s] entity, got [%s]',
-                UserCollection::class,
+                'Ожидается сущность %s, получен %s',
                 User::class,
                 get_class($entity),
             ));
         }
 
         $this->addEntity($entity);
+    }
+
+    public function maxId(): ?int
+    {
+        $max = null;
+        foreach ($this as $user) {
+            if ($max === null || $user->getId() > $max) {
+                $max = $user->getId();
+            }
+        }
+
+        return $max;
     }
 }

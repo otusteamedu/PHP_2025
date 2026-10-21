@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\UserManagement\Model;
 
-use App\Domain\Shared\Validator\DnsMxRecordValidator;
-use App\Domain\Shared\Validator\EmailFormatValidator;
-use App\Domain\Shared\Validator\EmailValidator;
-
 class UpdateUserEmailModel
 {
     private string $newEmail;
@@ -31,13 +27,8 @@ class UpdateUserEmailModel
 
     public function setNewEmail(string $newEmail): void
     {
-        $isValid = new EmailValidator(
-            new EmailFormatValidator(),
-            new DnsMxRecordValidator()
-        )->isValid($newEmail);
-
-        if (!$isValid) {
-            throw new \Exception('Пользователь указал невалидный email.');
+        if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException('Пользователь указал невалидный email.');
         }
 
         $this->newEmail = $newEmail;

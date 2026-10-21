@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Database\Repository;
 
-use App\Core\Database\Repository\AbstractRepository;
+use App\Core\Database\Repository\AbstractCollectionRepository;
 use App\Domain\UserManagement\Collection\UserCollection;
 
-class UserRepository extends AbstractRepository
+class UserRepository extends AbstractCollectionRepository
 {
     protected function getTableName(): string
     {

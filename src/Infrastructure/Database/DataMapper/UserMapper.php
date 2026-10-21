@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Database\DataMapper;
 
 use App\Core\Database\DataMapper\AbstractMapper;
-use App\Core\Database\DataMapper\DataMapperInterface;
-use App\Domain\Shared\Entity\EntityInterface;
+use App\Core\Database\Entity\EntityInterface;
 use App\Domain\UserManagement\Entity\User;
 
-class UserMapper extends AbstractMapper implements DataMapperInterface
+class UserMapper extends AbstractMapper
 {
     public function mapRowToEntity(array $row): User
     {

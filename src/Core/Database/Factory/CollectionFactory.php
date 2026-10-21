@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Database\Factory;
 
-use App\Domain\Shared\Collection\AbstractCollection;
+use App\Core\Database\Collection\AbstractCollection;
 
 class CollectionFactory
 {
@@ -14,9 +14,11 @@ class CollectionFactory
     public function create(string $collectionClass): AbstractCollection
     {
         if (!is_subclass_of($collectionClass, AbstractCollection::class)) {
-            throw new \InvalidArgumentException(
-                "Класс $collectionClass должен наследоваться от " . AbstractCollection::class
-            );
+            throw new \InvalidArgumentException(sprintf(
+                'Class %s must be subclass of %s',
+                $collectionClass,
+                AbstractCollection::class,
+            ));
         }
 
         return new $collectionClass();

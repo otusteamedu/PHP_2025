@@ -36,7 +36,9 @@ class UserManagementController extends AbstractController
                     ),
                 );
 
-                return $createdUser->toArray();
+                return [
+                    'user' => $createdUser->toArray(),
+                ];
             },
         );
     }
@@ -49,7 +51,9 @@ class UserManagementController extends AbstractController
                 $id = is_numeric($id) ? (int) $id : throw new \Exception('Пользователь не найден.', 404);
                 $user = $this->userService->findUser($id);
 
-                return $user->toArray();
+                return [
+                    'user' => $user->toArray(),
+                ];
             },
         );
     }
@@ -67,7 +71,7 @@ class UserManagementController extends AbstractController
                     ),
                 );
                 $data['users'] = array_map(static fn(User $user) => $user->toArray(), $users->toArray());
-                $data['pager'] = ['lastId' => $users->max('id'), 'totalItems' => $users->count()];
+                $data['pager'] = ['lastId' => $users->maxId(), 'totalItems' => $users->count()];
 
                 return $data;
             },
@@ -86,7 +90,9 @@ class UserManagementController extends AbstractController
                     new UpdateUserEmailModel(userId: $id, newEmail: $newEmail)
                 );
 
-                return $updatedUser->toArray();
+                return [
+                    'user' => $updatedUser->toArray(),
+                ];
             },
         );
     }
@@ -99,7 +105,9 @@ class UserManagementController extends AbstractController
                 $id = is_numeric($id) ? (int) $id : throw new \Exception('Пользователь не найден.', 404);
                 $this->userService->deleteUser($id);
 
-                return ['message' => 'Пользователь успешно удалён.'];
+                return [
+                    'message' => 'Пользователь успешно удалён.',
+                ];
             },
         );
     }

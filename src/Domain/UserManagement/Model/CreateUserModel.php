@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\UserManagement\Model;
 
-use App\Domain\Shared\Validator\DnsMxRecordValidator;
-use App\Domain\Shared\Validator\EmailFormatValidator;
-use App\Domain\Shared\Validator\EmailValidator;
 use Customer41\MultiException\MultiException;
 
 class CreateUserModel
@@ -24,7 +21,10 @@ class CreateUserModel
         string $email,
         \DateTimeImmutable $birthDate,
     ) {
-        $this->validationErrors = new MultiException('Некорректные данные от пользователя.', 400);
+        $this->validationErrors = new MultiException(
+            'Некорректные данные от пользователя.',
+            400,
+        );
 
         $this->setFirstName($firstName);
         $this->setLastName($lastName);
@@ -44,7 +44,10 @@ class CreateUserModel
     public function setFirstName(string $firstName): void
     {
         if (mb_strlen($firstName) < 2) {
-            $this->validationErrors->add(new \Exception('Имя пользователя должно быть от 2 символов.'));
+            $this->validationErrors->add(
+                new \InvalidArgumentException('Имя пользователя должно быть от 2 символов.'),
+            );
+
             return;
         }
 
@@ -59,7 +62,10 @@ class CreateUserModel
     public function setLastName(string $lastName): void
     {
         if (mb_strlen($lastName) < 2) {
-            $this->validationErrors->add(new \Exception('Фамилия пользователя должна быть от 2 символов.'));
+            $this->validationErrors->add(
+                new \InvalidArgumentException('Фамилия пользователя должна быть от 2 символов.'),
+            );
+
             return;
         }
 
@@ -73,14 +79,10 @@ class CreateUserModel
 
     public function setEmail(string $email): void
     {
-        $isValid = new EmailValidator(
-            new EmailFormatValidator(),
-            new DnsMxRecordValidator(),
-        )->isValid($email);
-
-        if (!$isValid) {
-            $this->validationErrors->add(new \Exception('Пользователь указал невалидный email.'));
-            return;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->validationErrors->add(
+                new \InvalidArgumentException('Пользователь указал невалидный email.'),
+            );
         }
 
         $this->email = $email;
@@ -94,7 +96,10 @@ class CreateUserModel
     public function setBirthDate(\DateTimeImmutable $birthDate): void
     {
         if (new \DateTime('-18 years')->format('Y-m-d') < $birthDate->format('Y-m-d')) {
-            $this->validationErrors->add(new \Exception('Пользователь должен быть 18+.'));
+            $this->validationErrors->add(
+                new \InvalidArgumentException('Пользователь должен быть 18+.'),
+            );
+
             return;
         }
 

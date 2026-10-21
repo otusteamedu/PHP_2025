@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Shared\Entity;
+namespace App\Core\Database\Entity;
 
 interface EntityInterface
 {
     public function getId(): ?int;
-
-    public function toArray(): array;
 }

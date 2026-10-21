@@ -6,23 +6,26 @@ namespace App\Core\Database\Repository;
 
 use App\Core\Database\Connection\DatabaseQueryExecutor;
 use App\Core\Database\DataMapper\DataMapperInterface;
-use App\Core\Database\Factory\CollectionFactory;
-use App\Domain\Shared\Collection\AbstractCollection;
-use App\Domain\Shared\Entity\EntityInterface;
+use App\Core\Database\DataMapper\IdentityMapperInterface;
+use App\Core\Database\Entity\EntityInterface;
+use App\Core\Database\Exception\ConfigurationException;
+use App\Core\Database\Exception\DatabaseException;
 
 abstract class AbstractRepository
 {
     abstract protected function getTableName(): string;
     abstract protected function getSequenceName(): string;
-    abstract protected function getCollectionClassName(): string;
 
     public function __construct(
         protected readonly DatabaseQueryExecutor $dbQueryExecutor,
-        protected readonly CollectionFactory $collectionFactory,
-        protected readonly DataMapperInterface $dataMapper,
+        protected readonly DataMapperInterface&IdentityMapperInterface $dataMapper,
     ) {
     }
 
+    /**
+     * @throws ConfigurationException
+     * @throws DatabaseException
+     */
     public function find(int $id): ?EntityInterface
     {
         $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id=:id';
@@ -31,45 +34,49 @@ abstract class AbstractRepository
         return !empty($row) ? $this->createEntityFromRow($row) : null;
     }
 
-    public function findAll(): AbstractCollection
+    /**
+     * @return EntityInterface[]
+     *
+     * @throws ConfigurationException
+     * @throws DatabaseException
+     */
+    public function findAll(): array
     {
         $sql = 'SELECT * FROM ' . $this->getTableName();
         $rows = $this->dbQueryExecutor->queryRows($sql);
 
-        $collection = $this->collectionFactory->create($this->getCollectionClassName());
-        foreach ($rows as $row) {
-            $collection->add($this->createEntityFromRow($row));
+        return array_map(fn(array $row) => $this->createEntityFromRow($row), $rows);
+    }
+
+    /**
+     * @throws ConfigurationException
+     * @throws DatabaseException
+     */
+    public function save(EntityInterface $entity): void
+    {
+        $entity->getId() === null ? $this->insert($entity) : $this->update($entity);
+    }
+
+    /**
+     * @throws ConfigurationException
+     * @throws DatabaseException
+     */
+    public function delete(EntityInterface $entity): void
+    {
+        if ($entity->getId() === null) {
+            throw new DatabaseException('Cannot delete entity without id');
         }
 
-        return $collection;
-    }
-
-    public function findAllPaginatedById(int $lastId, int $limit): AbstractCollection
-    {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id > :last_id ORDER BY id ASC LIMIT :limit';
-        $rows = $this->dbQueryExecutor->queryRows($sql, [':last_id' => $lastId, ':limit' => $limit]);
-
-        $collection = $this->collectionFactory->create($this->getCollectionClassName());
-        foreach ($rows as $row) {
-            $collection->add($this->createEntityFromRow($row));
-        }
-
-        return $collection;
-    }
-
-    public function save(EntityInterface $entity): EntityInterface
-    {
-        return $entity->getId() === null ? $this->insert($entity) : $this->update($entity);
-    }
-
-    public function delete(EntityInterface $entity): bool
-    {
         $sql = 'DELETE FROM ' . $this->getTableName() . ' WHERE id=:id';
 
-        return $this->dbQueryExecutor->execute($sql, [':id' => $entity->getId()]);
+        $this->dbQueryExecutor->execute($sql, [':id' => $entity->getId()]);
     }
 
-    protected function insert(EntityInterface $entity): EntityInterface
+    /**
+     * @throws ConfigurationException
+     * @throws DatabaseException
+     */
+    protected function insert(EntityInterface $entity): void
     {
         $params = [];
         $placeholders = [];
@@ -88,18 +95,17 @@ abstract class AbstractRepository
             implode(', ', array_values($placeholders)),
         );
 
-        $result = $this->dbQueryExecutor->execute($sql, $params);
-        if ($result === false) {
-            throw new \RuntimeException('Не удалось добавить объект в БД.');
-        }
+        $this->dbQueryExecutor->execute($sql, $params);
 
         $id = $this->dbQueryExecutor->getLastInsertId($this->getSequenceName());
         $this->dataMapper->hydrateId($entity, $id);
-
-        return $entity;
     }
 
-    protected function update(EntityInterface $entity): EntityInterface
+    /**
+     * @throws ConfigurationException
+     * @throws DatabaseException
+     */
+    protected function update(EntityInterface $entity): void
     {
         $params = [];
         $placeholders = [];
@@ -118,12 +124,7 @@ abstract class AbstractRepository
             $idPlaceholder,
         );
 
-        $result = $this->dbQueryExecutor->execute($sql, $params);
-        if ($result === false) {
-            throw new \RuntimeException('Не удалось обновить объект в БД.');
-        }
-
-        return $entity;
+        $this->dbQueryExecutor->execute($sql, $params);
     }
 
     protected function createEntityFromRow(array $row): EntityInterface
