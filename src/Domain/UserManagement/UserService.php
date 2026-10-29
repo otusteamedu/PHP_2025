@@ -6,6 +6,7 @@ namespace App\Domain\UserManagement;
 
 use App\Domain\UserManagement\Collection\UserCollection;
 use App\Domain\UserManagement\Entity\User;
+use App\Domain\UserManagement\Exception\UserNotFoundException;
 use App\Domain\UserManagement\Model\CreateUserModel;
 use App\Domain\UserManagement\Model\GetUsersModel;
 use App\Domain\UserManagement\Model\UpdateUserEmailModel;
@@ -32,24 +33,34 @@ class UserService
         return $user;
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function findUser(int $id): User
     {
         $user = $this->userRepository->find($id);
+
         if ($user === null) {
-            throw new \RuntimeException('Пользователь не найден.', 404);
+            throw UserNotFoundException::byId($id);
         }
 
         return $user;
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function findUsers(GetUsersModel $getUsersModel): UserCollection
     {
         return $this->userRepository->findAllPaginatedById(
             $getUsersModel->getLastId(),
-            $getUsersModel->getLimit(),
+            $getUsersModel->getLimit()
         );
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function updateUserEmail(UpdateUserEmailModel $updateUserModel): User
     {
         $user = $this
@@ -62,6 +73,9 @@ class UserService
         return $user;
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function deleteUser(int $id): void
     {
         $user = $this->findUser($id);

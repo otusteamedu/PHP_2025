@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Controller\Http\Api\Shared\ErrorHandling\CompositeExceptionResponseResolver;
+use App\Controller\Http\Api\Shared\ErrorHandling\DomainExceptionResponseResolver;
+use App\Controller\Http\Api\Shared\ErrorHandling\ValidationExceptionResponseResolver;
 use App\Controller\Http\Web\BankReport\Rule\ClientNameRule;
 use App\Controller\Http\Web\BankReport\Rule\DateFormatRule;
 use App\Controller\Http\Web\BankReport\Rule\DateRangeAndFutureRule;
@@ -13,6 +16,7 @@ use App\Core\Container\Container;
 use App\Core\Database\Connection\DatabaseQueryExecutor;
 use App\Core\Database\Connection\PDOWrapper;
 use App\Core\Database\Factory\CollectionFactory;
+use App\Core\Http\ErrorHandler\ExceptionResponseResolverInterface;
 use App\Core\Storage\KeyValue\Memcached\MemcachedDriver;
 use App\Core\Storage\KeyValue\Redis\RedisDriver;
 use App\Domain\BankReport\Contract\ReportRequestPublisherInterface;
@@ -119,6 +123,13 @@ return [
         ],
     ],
     'UserManagement' => [
+        ExceptionResponseResolverInterface::class => [
+            'singleton' => true,
+            'factory' => static fn() => new CompositeExceptionResponseResolver([
+                new ValidationExceptionResponseResolver(),
+                new DomainExceptionResponseResolver(),
+            ]),
+        ],
         UserMapper::class => [
             'singleton' => true,
             'factory' => static fn() => new UserMapper(),

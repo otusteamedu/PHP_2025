@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace App\Core\Http\Exception;
 
-class PayloadReadException extends \InvalidArgumentException implements HttpExceptionInterface
-{
-    public function __construct(string $message, int $code = 400)
-    {
-        parent::__construct($message, $code);
-    }
+use App\Core\Http\Message\HttpStatus;
 
+class PayloadReadException extends \RuntimeException implements HttpExceptionInterface
+{
     public function getHttpCode(): int
     {
-        return $this->getCode();
+        return HttpStatus::BadRequest->value;
     }
 }

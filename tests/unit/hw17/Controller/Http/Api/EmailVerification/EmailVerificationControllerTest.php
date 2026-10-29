@@ -50,7 +50,7 @@ class EmailVerificationControllerTest extends TestCase
      * Если в payload отсутствует поле emails,
      * то контроллер выбрасывает MissingPayloadFieldException и возвращает 400.
      */
-    public function testMissingEmailsFieldReturns400(): void
+    public function testMissingEmailsFieldReturns422(): void
     {
         $payload = ['otherField' => 'some-value'];
         $request = Request::fromArray($payload);
@@ -61,20 +61,20 @@ class EmailVerificationControllerTest extends TestCase
         $controller = new EmailVerificationController($request, $verifierMock);
         $response = $controller->verifyEmails();
 
-        $this->assertEquals(400, $response->getHttpCode());
+        $this->assertEquals(422, $response->getHttpCode());
         $this->assertTrue($response->isJson());
 
         $data = json_decode($response->getContent(), true);
         $this->assertNotNull($data);
         $this->assertFalse($data['success']);
-        $this->assertStringContainsString('Missing required field: emails', $data['error']);
+        $this->assertStringContainsString('Field "emails" is required', $data['error']);
     }
 
     /**
      * Если поле emails присутствует, но не является массивом,
      * то контроллер выбрасывает InvalidPayloadTypeException и возвращает 400.
      */
-    public function testEmailsNotArrayReturns400(): void
+    public function testEmailsNotArrayReturns422(): void
     {
         $payload = ['emails' => 'not-an-array'];
         $request = Request::fromArray($payload);
@@ -85,7 +85,7 @@ class EmailVerificationControllerTest extends TestCase
         $controller = new EmailVerificationController($request, $verifierMock);
         $response = $controller->verifyEmails();
 
-        $this->assertEquals(400, $response->getHttpCode());
+        $this->assertEquals(422, $response->getHttpCode());
         $this->assertTrue($response->isJson());
 
         $data = json_decode($response->getContent(), true);
@@ -98,7 +98,7 @@ class EmailVerificationControllerTest extends TestCase
      * Если массив emails содержит хотя бы один элемент, который не является строкой,
      * то контроллер выбрасывает InvalidPayloadTypeException и возвращает 400.
      */
-    public function testEmailsArrayWithNonStringReturns400(): void
+    public function testEmailsArrayWithNonStringReturns422(): void
     {
         $payload = [
             'emails' => [
@@ -116,7 +116,7 @@ class EmailVerificationControllerTest extends TestCase
         $controller = new EmailVerificationController($request, $verifierMock);
         $response = $controller->verifyEmails();
 
-        $this->assertEquals(400, $response->getHttpCode());
+        $this->assertEquals(422, $response->getHttpCode());
         $this->assertTrue($response->isJson());
 
         $data = json_decode($response->getContent(), true);

@@ -14,15 +14,14 @@ class ErrorHandlerFactory
     public function __construct(
         private readonly ContextDetector $contextDetector,
         private readonly ?View $view,
+        private readonly ?ExceptionResponseResolverInterface $responseResolver = null,
     ) {
     }
 
     public function create(): ErrorHandlerInterface
     {
-        $contextType = $this->contextDetector->detectContext();
-
-        if ($contextType === ContextType::HTTP_API) {
-            return new ApiErrorHandler();
+        if ($this->contextDetector->detectContext() === ContextType::HTTP_API) {
+            return new ApiErrorHandler($this->responseResolver);
         }
 
         if ($this->view === null) {

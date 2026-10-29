@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Http\Api\UserManagement;
 
 use App\Core\Http\Controller\Base\AbstractController;
+use App\Core\Http\Message\HttpStatus;
 use App\Core\Http\Message\Request;
 use App\Core\Http\Message\Response;
 use App\Domain\UserManagement\Entity\User;
@@ -23,92 +24,82 @@ class UserManagementController extends AbstractController
 
     public function createUser(): Response
     {
-        return $this->handleOperation(
-            operation: function() {
-                $payload = $this->request->getPayload();
-                $createUser = CreateUserDTO::fromArray($payload);
-                $createdUser = $this->userService->createUser(
-                    new CreateUserModel(
-                        firstName: $createUser->firstName,
-                        lastName: $createUser->lastName,
-                        email: $createUser->email,
-                        birthDate: $createUser->birthDate,
-                    ),
-                );
-
-                return [
-                    'user' => $createdUser->toArray(),
-                ];
-            },
+        $payload = $this->request->getPayload();
+        $createUser = CreateUserDTO::fromArray($payload);
+        $createdUser = $this->userService->createUser(
+            new CreateUserModel(
+                firstName: $createUser->firstName,
+                lastName: $createUser->lastName,
+                email: $createUser->email,
+                birthDate: $createUser->birthDate,
+            ),
         );
+
+        return $this->json([
+            'success' => true,
+            'data' => ['user' => $createdUser->toArray()],
+        ], HttpStatus::Created->value);
     }
 
     public function getUser(): Response
     {
-        return $this->handleOperation(
-            operation: function() {
-                $id = $this->request->getQueryParam('id');
-                $id = is_numeric($id) ? (int) $id : throw new \Exception('Пользователь не найден.', 404);
-                $user = $this->userService->findUser($id);
+        $id = $this->request->getIntQueryParam('id');
+        $user = $this->userService->findUser($id);
 
-                return [
-                    'user' => $user->toArray(),
-                ];
-            },
-        );
+        return $this->json([
+            'success' => true,
+            'data' => ['user' => $user->toArray()],
+        ], HttpStatus::Ok->value);
     }
 
     public function getUsers(): Response
     {
-        return $this->handleOperation(
-            operation: function() {
-                $payload = $this->request->getPayload();
-                $getUsers = GetUsersDTO::fromArray($payload);
-                $users = $this->userService->findUsers(
-                    new GetUsersModel(
-                        lastId: $getUsers->lastId,
-                        limit: $getUsers->limit,
-                    ),
-                );
-                $data['users'] = array_map(static fn(User $user) => $user->toArray(), $users->toArray());
-                $data['pager'] = ['lastId' => $users->maxId(), 'totalItems' => $users->count()];
-
-                return $data;
-            },
+        $payload = $this->request->getPayload();
+        $getUsers = GetUsersDTO::fromArray($payload);
+        $users = $this->userService->findUsers(
+            new GetUsersModel(
+                lastId: $getUsers->lastId,
+                limit: $getUsers->limit,
+            ),
         );
+
+        return $this->json([
+            'success' => true,
+            'data' => [
+                'users' => array_map(
+                    static fn(User $user) => $user->toArray(),
+                    $users->toArray(),
+                ),
+                'pager' => [
+                    'lastId' => $users->maxId(),
+                    'totalItems' => $users->count()
+                ],
+            ],
+        ], HttpStatus::Ok->value);
     }
 
     public function updateUserEmail(): Response
     {
-        return $this->handleOperation(
-            operation: function() {
-                $id = $this->request->getQueryParam('id');
-                $id = is_numeric($id) ? (int) $id : throw new \Exception('Пользователь не найден.', 404);
-                $newEmail = $this->request->getPayload()['newEmail']
-                    ?? throw new \Exception('Неверное тело запроса.', 400);
-                $updatedUser = $this->userService->updateUserEmail(
-                    new UpdateUserEmailModel(userId: $id, newEmail: $newEmail)
-                );
-
-                return [
-                    'user' => $updatedUser->toArray(),
-                ];
-            },
+        $id = $this->request->getIntQueryParam('id');
+        $payload = $this->request->getPayload();
+        $updatedUser = $this->userService->updateUserEmail(
+            new UpdateUserEmailModel(userId: $id, newEmail: $payload['newEmail'])
         );
+
+        return $this->json([
+            'success' => true,
+            'data' => ['user' => $updatedUser->toArray()],
+        ], HttpStatus::Ok->value);
     }
 
     public function deleteUser(): Response
     {
-        return $this->handleOperation(
-            operation: function() {
-                $id = $this->request->getQueryParam('id');
-                $id = is_numeric($id) ? (int) $id : throw new \Exception('Пользователь не найден.', 404);
-                $this->userService->deleteUser($id);
+        $id = $this->request->getIntQueryParam('id');
+        $this->userService->deleteUser($id);
 
-                return [
-                    'message' => 'Пользователь успешно удалён.',
-                ];
-            },
-        );
+        return $this->json([
+            'success' => true,
+            'data' => ['message' => 'Пользователь успешно удалён.'],
+        ], HttpStatus::Ok->value);
     }
 }

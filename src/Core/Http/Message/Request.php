@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Http\Message;
 
 use App\Core\Http\Exception\InvalidJsonPayloadException;
+use App\Core\Http\Exception\InvalidQueryParamException;
 use App\Core\Http\Exception\MissingQueryParamException;
 use App\Core\Http\Exception\PayloadReadException;
 
@@ -14,6 +15,7 @@ class Request
         private ?array $server = null,
         private ?array $payload = null,
         private ?array $formPayload = null,
+        private ?array $query = null,
     ) {
         // Инициализируем server (для реального приложения)
         $this->server ??= $_SERVER;
@@ -84,16 +86,61 @@ class Request
         return $this->formPayload;
     }
 
+    public function getQueryParams(): array
+    {
+        if ($this->query !== null) {
+            return $this->query;
+        }
+
+        $this->query = $_GET;
+
+        return $this->query;
+    }
+
     /**
      * @throws MissingQueryParamException
      */
-    public function getQueryParam(string $param): mixed
+    public function getStringQueryParam(string $param): string
     {
-        if (!isset($_GET[$param])) {
-            throw new MissingQueryParamException("Param '$param' does not exist", 400);
+        $params = $this->getQueryParams();
+
+        if (!array_key_exists($param, $params)) {
+            throw new MissingQueryParamException(
+                $param,
+                sprintf("Parameter '%s' does not exist", $param),
+            );
         }
 
-        return $_GET[$param];
+        $raw = $params[$param];
+
+        if (!is_string($raw)) {
+            throw new InvalidQueryParamException(
+                $param,
+                sprintf("Parameter '%s' must not be array.", $param),
+            );
+        }
+
+        return $raw;
+    }
+
+    /**
+     * @throws MissingQueryParamException
+     * @throws InvalidQueryParamException
+     */
+    public function getIntQueryParam(string $param): int
+    {
+        $raw = $this->getStringQueryParam($param);
+
+        $int = filter_var($raw, FILTER_VALIDATE_INT);
+
+        if ($int === false) {
+            throw new InvalidQueryParamException(
+                $param,
+                sprintf("Parameter '%s' must be integer.", $param)
+            );
+        }
+
+        return $int;
     }
 
     /**

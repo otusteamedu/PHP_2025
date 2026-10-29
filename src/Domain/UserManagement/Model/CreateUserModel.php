@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\UserManagement\Model;
 
-use Customer41\MultiException\MultiException;
+use App\Controller\Http\Api\Shared\Validation\ValidationFailedException;
+use App\Core\Http\Exception\FieldValidationException;
 
 class CreateUserModel
 {
-    private readonly MultiException $validationErrors;
-
     private string $firstName;
     private string $lastName;
     private string $email;
@@ -21,18 +20,15 @@ class CreateUserModel
         string $email,
         \DateTimeImmutable $birthDate,
     ) {
-        $this->validationErrors = new MultiException(
-            'Некорректные данные от пользователя.',
-            400,
-        );
+        $failure = new ValidationFailedException('Некорректные данные от пользователя.');
 
-        $this->setFirstName($firstName);
-        $this->setLastName($lastName);
-        $this->setEmail($email);
-        $this->setBirthDate($birthDate);
+        $this->setFirstName($firstName, $failure);
+        $this->setLastName($lastName, $failure);
+        $this->setEmail($email, $failure);
+        $this->setBirthDate($birthDate, $failure);
 
-        if ($this->validationErrors->count() !== 0) {
-            throw $this->validationErrors;
+        if ($failure->hasErrors()) {
+            throw $failure;
         }
     }
 
@@ -41,13 +37,10 @@ class CreateUserModel
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): void
+    public function setFirstName(string $firstName, ValidationFailedException $failure): void
     {
         if (mb_strlen($firstName) < 2) {
-            $this->validationErrors->add(
-                new \InvalidArgumentException('Имя пользователя должно быть от 2 символов.'),
-            );
-
+            $failure->add(new FieldValidationException('firstName','Имя пользователя должно быть от 2 символов.'));
             return;
         }
 
@@ -59,13 +52,10 @@ class CreateUserModel
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): void
+    public function setLastName(string $lastName, ValidationFailedException $failure): void
     {
         if (mb_strlen($lastName) < 2) {
-            $this->validationErrors->add(
-                new \InvalidArgumentException('Фамилия пользователя должна быть от 2 символов.'),
-            );
-
+            $failure->add(new FieldValidationException('lastName', 'Фамилия пользователя должна быть от 2 символов.'));
             return;
         }
 
@@ -77,12 +67,11 @@ class CreateUserModel
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(string $email, ValidationFailedException $failure): void
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->validationErrors->add(
-                new \InvalidArgumentException('Пользователь указал невалидный email.'),
-            );
+            $failure->add(new FieldValidationException('email', 'Пользователь указал невалидный email.'));
+            return;
         }
 
         $this->email = $email;
@@ -93,13 +82,10 @@ class CreateUserModel
         return $this->birthDate;
     }
 
-    public function setBirthDate(\DateTimeImmutable $birthDate): void
+    public function setBirthDate(\DateTimeImmutable $birthDate, ValidationFailedException $failure): void
     {
         if (new \DateTime('-18 years')->format('Y-m-d') < $birthDate->format('Y-m-d')) {
-            $this->validationErrors->add(
-                new \InvalidArgumentException('Пользователь должен быть 18+.'),
-            );
-
+            $failure->add(new FieldValidationException('birthDate', 'Пользователь должен быть 18+.'));
             return;
         }
 

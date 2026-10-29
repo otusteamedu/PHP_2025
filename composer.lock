@@ -8,20 +8,20 @@
     "packages": [
         {
             "name": "customer41/multiexception",
-            "version": "1.0.1",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/customer41/multiexception.git",
-                "reference": "f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4"
+                "reference": "7b3cde57663607e5cc93ba076a29a61e26fabf22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/customer41/multiexception/zipball/f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4",
-                "reference": "f95a03b867eb09f9ceb164d52e4ce1a8783dc6d4",
+                "url": "https://api.github.com/repos/customer41/multiexception/zipball/7b3cde57663607e5cc93ba076a29a61e26fabf22",
+                "reference": "7b3cde57663607e5cc93ba076a29a61e26fabf22",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0"
+                "php": "^8.0"
             },
             "type": "library",
             "autoload": {
@@ -29,7 +29,6 @@
                     "Customer41\\MultiException\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -41,10 +40,10 @@
             ],
             "description": "It's a simple package for managing multiple exceptions",
             "support": {
-                "issues": "https://github.com/customer41/multiexception/issues",
-                "source": "https://github.com/customer41/multiexception/tree/1.0.1"
+                "source": "https://github.com/customer41/multiexception/tree/v1.1.0",
+                "issues": "https://github.com/customer41/multiexception/issues"
             },
-            "time": "2025-05-20T16:48:55+00:00"
+            "time": "2026-10-24T13:38:34+00:00"
         },
         {
             "name": "doctrine/lexer",
