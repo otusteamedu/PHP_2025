@@ -11,6 +11,7 @@ use App\Core\Http\Controller\Factory\ContainerControllerFactory;
 use App\Core\Http\Controller\Factory\ControllerFactoryInterface;
 use App\Core\Http\ErrorHandler\ErrorHandlerFactory;
 use App\Core\Http\ErrorHandler\ErrorHandlerInterface;
+use App\Core\Http\ErrorHandler\ExceptionResponseResolverInterface;
 use App\Core\Http\Message\Request;
 use App\Core\Http\Routing\Router;
 use App\Core\Http\View\View;
@@ -21,60 +22,71 @@ class HttpServiceProvider extends AbstractServiceProvider
 {
     protected function doRegisterServices(Container $container): void
     {
-        // Получаем определитель контектста для обработчика ошибок
-        $contextDetector = $container->get(ContextDetector::class);
-
-        // Создаем обработчик ошибок для приложения (App)
-        $view = $container->has(View::class) ? $container->get(View::class) : null;
-        $errorHandler = $this->createErrorHandler($contextDetector, $view);
-
-        // Получаем резолвер зависимостей конструктора для фабрики контроллеров
-        $resolver = $container->get(ConstructorDependencyResolverInterface::class);
-
-        // Создаем фабрику контроллеров для роутера
-        $controllerFactory = $this->createControllerFactory($container, $resolver);
-
-        // Регистрируем сервисы
-        $this->registerRouter($container, $controllerFactory);
+        $this->registerErrorHandlerFactory($container);
+        $this->registerErrorHandler($container);
+        $this->registerControllerFactory($container);
+        $this->registerRouter($container);
         $this->registerRequest($container);
-        $this->registerApp($container, $errorHandler);
+        $this->registerApp($container);
     }
 
-    private function createErrorHandler(ContextDetector $detector, ?View $view): ErrorHandlerInterface
+    private function registerErrorHandlerFactory(Container $container): void
     {
-        $factory = new ErrorHandlerFactory($detector, $view);
-
-        return $factory->create();
+        $container->singleton(
+            ErrorHandlerFactory::class,
+            static fn(Container $c) => new ErrorHandlerFactory(
+                $c->get(ContextDetector::class),
+                $c->has(View::class) ? $c->get(View::class) : null,
+                $c->has(ExceptionResponseResolverInterface::class)
+                    ? $c->get(ExceptionResponseResolverInterface::class)
+                    : null,
+            ),
+        );
     }
 
-    private function createControllerFactory(
-        Container $container,
-        ConstructorDependencyResolverInterface $resolver,
-    ): ControllerFactoryInterface {
-        return new ContainerControllerFactory($container, $resolver);
+    private function registerErrorHandler(Container $container): void
+    {
+        $container->singleton(
+            ErrorHandlerInterface::class,
+            static fn(Container $c) => $c->get(ErrorHandlerFactory::class)->create(),
+        );
     }
 
-    private function registerRouter(Container $container, ControllerFactoryInterface $factory): void
+    private function registerControllerFactory(Container $container): void
+    {
+        $container->singleton(
+            ControllerFactoryInterface::class,
+            static fn(Container $c) => new ContainerControllerFactory(
+                $c,
+                $c->get(ConstructorDependencyResolverInterface::class),
+            ),
+        );
+    }
+
+    private function registerRouter(Container $container): void
     {
         $container->singleton(
             Router::class,
-            static fn(Container $c) => new Router($factory, $c->get(PathResolverInterface::class))
+            static fn(Container $c) => new Router(
+                $c->get(ControllerFactoryInterface::class),
+                $c->get(PathResolverInterface::class),
+            )
         );
     }
 
     private function registerRequest(Container $container): void
     {
-        $container->set(Request::class, static fn() => new Request());
+        $container->set(Request::class, static fn() => Request::fromGlobals());
     }
 
-    private function registerApp(Container $container, ErrorHandlerInterface $errorHandler): void
+    private function registerApp(Container $container): void
     {
         $container->set(
             App::class,
             static fn(Container $c) => new App(
                 $c->get(Request::class),
                 $c->get(Router::class),
-                $errorHandler,
+                $c->get(ErrorHandlerInterface::class),
             ),
         );
     }

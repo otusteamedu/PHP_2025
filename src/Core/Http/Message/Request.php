@@ -8,17 +8,46 @@ use App\Core\Http\Exception\InvalidJsonPayloadException;
 use App\Core\Http\Exception\InvalidQueryParamException;
 use App\Core\Http\Exception\MissingQueryParamException;
 use App\Core\Http\Exception\PayloadReadException;
+use App\Core\Http\Exception\UnsupportedMediaTypeException;
 
 class Request
 {
-    public function __construct(
-        private ?array $server = null,
-        private ?array $payload = null,
-        private ?array $formPayload = null,
-        private ?array $query = null,
+    private ?array $payload = null;
+    private ?array $formPayload = null;
+    private ?array $query = null;
+
+    private function __construct(
+        private readonly array $server,
     ) {
-        // Инициализируем server (для реального приложения)
-        $this->server ??= $_SERVER;
+    }
+
+    public static function fromGlobals(): self
+    {
+        return new self(server: $_SERVER);
+    }
+
+    public static function fromArray(array $payload): self
+    {
+        $self = new self(server: []);
+        $self->payload = $payload;
+
+        return $self;
+    }
+
+    public static function fromFormData(array $formData): self
+    {
+        $self = new self(server: []);
+        $self->formPayload = $formData;
+
+        return $self;
+    }
+
+    public static function fromQuery(array $query): self
+    {
+        $self = new self(server: []);
+        $self->query = $query;
+
+        return $self;
     }
 
     public function getRequestMethod(): string
@@ -31,7 +60,7 @@ class Request
         $uri = $this->server['REQUEST_URI'] ?? '';
         $path = parse_url($uri, PHP_URL_PATH);
 
-        if ($path === false || $path === '') {
+        if (!is_string($path) || $path === '') {
             return '/';
         }
 
@@ -39,26 +68,28 @@ class Request
     }
 
     /**
+     * @throws UnsupportedMediaTypeException
      * @throws PayloadReadException
      * @throws InvalidJsonPayloadException
      */
-    public function getPayload(): ?array
+    public function getPayload(): array
     {
         if ($this->payload !== null) {
             return $this->payload;
         }
 
         $contentType = $this->server['CONTENT_TYPE'] ?? '';
+
         if (!str_starts_with($contentType, 'application/json')) {
-            throw new InvalidJsonPayloadException(
+            throw new UnsupportedMediaTypeException(
                 'Expected Content-Type: application/json, got: ' . $contentType,
-                400,
             );
         }
 
         $content = file_get_contents('php://input');
+
         if ($content === false) {
-            throw new PayloadReadException('Failed to read request body', 400);
+            throw new PayloadReadException('Failed to read request body');
         }
 
         if ($content === '') {
@@ -67,10 +98,21 @@ class Request
         }
 
         try {
-            $this->payload = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+            $decoded = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new InvalidJsonPayloadException($e->getMessage(), 400);
+            throw new InvalidJsonPayloadException(
+                self::jsonErrorMessage($e),
+                previous: $e,
+            );
         }
+
+        foreach (array_keys($decoded) as $key) {
+            if (!is_string($key)) {
+                throw new InvalidJsonPayloadException('Payload must be JSON object with named fields');
+            }
+        }
+
+        $this->payload = $decoded;
 
         return $this->payload;
     }
@@ -143,23 +185,13 @@ class Request
         return $int;
     }
 
-    /**
-     * Фабрика для тестов: сразу задаёт готовый payload.
-     *
-     * Передаём пустой массив в server, чтобы полностью исключить недетерминированность,
-     * связанную с реальным $_SERVER (REQUEST_URI, REQUEST_METHOD и т.п.).
-     * Это гарантирует, что поведение Request в тестах зависит только от переданных данных.
-     */
-    public static function fromArray(array $payload): self
+    private static function jsonErrorMessage(\JsonException $e): string
     {
-        return new self(server: [], payload: $payload);
-    }
-
-    /**
-     * Аналагичный фабричный метод специально для форм.
-     */
-    public static function fromFormData(array $formData): self
-    {
-        return new self(server: [], formPayload: $formData);
+        return match ($e->getCode()) {
+            JSON_ERROR_SYNTAX => 'Malformed JSON syntax',
+            JSON_ERROR_UTF8 => 'Request body must be valid UTF-8 string',
+            JSON_ERROR_DEPTH => 'Request body is too deeply nested',
+            default => 'Request body is not valid JSON',
+        };
     }
 }
