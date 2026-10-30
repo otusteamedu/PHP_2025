@@ -44,7 +44,9 @@ use App\Domain\Shared\Validator\EmailValidator;
 use App\Domain\SystemHealth\SessionStorageChecker;
 use App\Domain\SystemHealth\SystemHealthCheckService;
 use App\Domain\UserManagement\UserService;
+use App\Infrastructure\Database\DataMapper\NotificationTaskMapper;
 use App\Infrastructure\Database\DataMapper\UserMapper;
+use App\Infrastructure\Database\Repository\NotificationTaskRepository;
 use App\Infrastructure\Database\Repository\UserRepository;
 use App\Infrastructure\Mail\Factory\ReportMailerFactory;
 use App\Infrastructure\Mail\Mailpit\MailpitChaosClient;
@@ -290,6 +292,17 @@ return [
                 $c->get(EmailNotificationHandler::class),
                 $c->get(SmsNotificationHandler::class),
             ]),
+        ],
+        NotificationTaskRepositoryInterface::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new NotificationTaskRepository(
+                $c->get(DatabaseQueryExecutor::class),
+                $c->get(NotificationTaskMapper::class),
+            ),
+        ],
+        NotificationTaskMapper::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new NotificationTaskMapper(),
         ],
     ],
 ];

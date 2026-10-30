@@ -26,4 +26,9 @@ readonly class OrderId
     {
         return $this->value;
     }
+
+    public static function fromInt(int $id): self
+    {
+        return new self($id);
+    }
 }
