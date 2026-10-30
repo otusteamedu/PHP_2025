@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controller\Amqp\OrderNotification\StderrNotificationTaskWarningListener;
 use App\Controller\Http\Api\Shared\ErrorHandling\CompositeExceptionResponseResolver;
 use App\Controller\Http\Api\Shared\ErrorHandling\DomainExceptionResponseResolver;
 use App\Controller\Http\Api\Shared\ErrorHandling\ValidationExceptionResponseResolver;
@@ -35,6 +36,7 @@ use App\Domain\OrderNotification\Contract\NotificationMailerInterface;
 use App\Domain\OrderNotification\Contract\NotificationSmsSenderInterface;
 use App\Domain\OrderNotification\Contract\NotificationTaskPublisherInterface;
 use App\Domain\OrderNotification\Contract\NotificationTaskRepositoryInterface;
+use App\Domain\OrderNotification\Contract\NotificationTaskWarningListenerInterface;
 use App\Domain\OrderNotification\Contract\OrderDataProviderInterface;
 use App\Domain\OrderNotification\NotificationTaskService;
 use App\Domain\Shared\Validator\BracketBalanceValidator;
@@ -271,6 +273,7 @@ return [
                 $c->get(NotificationTaskPublisherInterface::class),
                 $c->get(OrderDataProviderInterface::class),
                 $c->get(NotificationHandlerFactory::class),
+                $c->get(NotificationTaskWarningListenerInterface::class),
             ),
         ],
         EmailMessageBuilder::class => [
@@ -357,6 +360,10 @@ return [
                 $c->get(RabbitMqProducer::class),
                 $c->get(NotificationAmqpConfig::class),
             ),
+        ],
+        NotificationTaskWarningListenerInterface::class => [
+            'singleton' => true,
+            'factory' => static fn() => new StderrNotificationTaskWarningListener(),
         ],
     ],
 ];

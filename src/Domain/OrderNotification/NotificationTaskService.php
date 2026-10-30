@@ -8,12 +8,14 @@ use App\Domain\OrderNotification\Channel\NotificationHandlerFactory;
 use App\Domain\OrderNotification\Command\CreateNotificationTaskCommand;
 use App\Domain\OrderNotification\Contract\NotificationTaskPublisherInterface;
 use App\Domain\OrderNotification\Contract\NotificationTaskRepositoryInterface;
+use App\Domain\OrderNotification\Contract\NotificationTaskWarningListenerInterface;
 use App\Domain\OrderNotification\Contract\OrderDataProviderInterface;
 use App\Domain\OrderNotification\Entity\NotificationTask;
 use App\Domain\OrderNotification\Exception\Delivery\MaxAttemptsExceededException;
 use App\Domain\OrderNotification\Exception\Delivery\NotificationSendingException;
 use App\Domain\OrderNotification\Exception\OrderSource\OrderDataInvalidException;
 use App\Domain\OrderNotification\Exception\OrderSource\OrderDataProvidingException;
+use App\Domain\OrderNotification\Exception\RetryableFailure;
 use App\Domain\OrderNotification\Exception\Task\InvalidTaskStateException;
 use App\Domain\OrderNotification\Exception\Task\NotificationTaskPublishingException;
 use App\Domain\OrderNotification\Exception\Task\NotificationTaskStorageException;
@@ -28,6 +30,7 @@ class NotificationTaskService
         private readonly NotificationTaskPublisherInterface $taskPublisher,
         private readonly OrderDataProviderInterface $orderDataProvider,
         private readonly NotificationHandlerFactory $handlerFactory,
+        private readonly NotificationTaskWarningListenerInterface $warningListener,
     ) {
     }
 
@@ -78,16 +81,22 @@ class NotificationTaskService
     {
         $task->beginAttempt($maxAttempts);
 
-        if ($task->getStatus() === TaskStatus::Pending) {
-            $this->taskRepository->transitionTo($task, TaskStatus::Fetching);
-        } else {
-            $this->taskRepository->restart($task);
+        try {
+            if ($task->getStatus() === TaskStatus::Pending) {
+                $this->taskRepository->transitionTo($task, TaskStatus::Fetching);
+            } else {
+                $this->taskRepository->restart($task);
+            }
+
+            $this->loadOrderData($task);
+            $this->taskRepository->transitionTo($task, TaskStatus::Sending);
+
+            $this->dispatchNotification($task);
+        } catch (RetryableFailure $e) {
+            $this->markRetrying($task);
+            throw $e;
         }
 
-        $this->loadOrderData($task);
-        $this->taskRepository->transitionTo($task, TaskStatus::Sending);
-
-        $this->dispatchNotification($task);
         $this->taskRepository->transitionTo($task, TaskStatus::Completed);
     }
 
@@ -120,5 +129,21 @@ class NotificationTaskService
         $notificationHandler = $this->handlerFactory->getForChannel($task->getChannel());
 
         $notificationHandler->handle($task);
+    }
+
+    /**
+     * Фиксирует статус Retrying после неудачной retryable-попытки.
+     * Ошибка персистенции не затирает исходную причину сбоя - её
+     * пробрасывает processTask; о факте потери пометки сообщается слушателю.
+     */
+    private function markRetrying(NotificationTask $task): void
+    {
+        try {
+            $this->taskRepository->transitionTo($task, TaskStatus::Retrying);
+        } catch (NotificationTaskStorageException $e) {
+            $this->warningListener->onRetryPersistFailure($task, $e);
+            // Хранилище недоступно - статус не обновился.
+            // Исходная причина важнее - её ретраит консумер через reject.
+        }
     }
 }

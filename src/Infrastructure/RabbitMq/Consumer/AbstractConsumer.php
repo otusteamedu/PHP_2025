@@ -317,4 +317,24 @@ abstract class AbstractConsumer
             $deaths,
         );
     }
+
+    /**
+     * Возраст ретрая: секунды с первой "смерти" сообщения в основной очереди.
+     * Время в записи x-death фиксируется при первой "смерти" и не обновляется
+     * далее, поэтому метка накопительная, null - сообщение ещё не умирало.
+     */
+    protected function measureRetryAge(AMQPMessage $msg): ?float
+    {
+        $diedAt = $this->lastDeathForQueue($msg)['time'] ?? null;
+
+        if ($diedAt instanceof \DateTimeInterface) {
+            $diedAt = (float) $diedAt->format('U.u');
+        }
+
+        if (!is_numeric($diedAt)) {
+            return null;
+        }
+
+        return max(0.0, microtime(true) - (float) $diedAt);
+    }
 }
