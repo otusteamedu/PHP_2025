@@ -20,7 +20,10 @@ readonly class Phone implements RecipientInterface
             throw PhoneException::notEmpty();
         }
 
-        if (preg_match(self::RF_PHONE_PATTERN, $value) !== 1) {
+        if (
+            MagicPhone::tryFrom($value) === null
+            && preg_match(self::RF_PHONE_PATTERN, $value) !== 1
+        ) {
             throw PhoneException::invalid($value);
         }
 

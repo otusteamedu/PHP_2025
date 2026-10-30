@@ -194,6 +194,15 @@ services:
     volumes:
       - ./docker/wiremock/mappings:/home/wiremock/mappings
 
+  sms-mock:
+    build: https://github.com/MV011/mock-sms-gateway.git#main
+    ports:
+      - '8026:8026'
+    environment:
+      STORAGE: memory
+      PORT: '8026'
+      LOG_LEVEL: debug
+
 volumes:
   php_1_socket:
   php_2_socket:

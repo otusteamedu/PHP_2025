@@ -60,6 +60,7 @@ use App\Infrastructure\RabbitMq\Publisher\ReportRequestPublisher;
 use App\Infrastructure\RabbitMq\Topology\BankReportTopology;
 use App\Infrastructure\Resolver\DnsResolver;
 use App\Infrastructure\Resolver\DnsResolverInterface;
+use App\Infrastructure\Sms\SmsMock\NotificationSmsSender;
 use App\Infrastructure\Storage\KeyValue\Factory\EventRepositoryFactory;
 use App\Infrastructure\Storage\Search\Elasticsearch\Client\SecureElasticsearchClientBuilder;
 use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
@@ -286,7 +287,7 @@ return [
         ],
         SmsNotificationHandler::class => [
             'singleton' => true,
-            'factory' => static fn(Container $c) => new EmailNotificationHandler(
+            'factory' => static fn(Container $c) => new SmsNotificationHandler(
                 $c->get(SmsMessageBuilder::class),
                 $c->get(NotificationSmsSenderInterface::class),
             ),
@@ -327,6 +328,13 @@ return [
                     fromEmail: $config->get('ORDER_NOTIFICATIONS_MAILER_FROM'),
                 );
             },
+        ],
+        NotificationSmsSenderInterface::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new NotificationSmsSender(
+                client: HttpClient::create(),
+                baseUrl: $c->get(DotEnvConfigInterface::class)->get('SMS_BASE_API_URL'),
+            ),
         ],
     ],
 ];
