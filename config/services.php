@@ -26,6 +26,9 @@ use App\Domain\BracketBalance\BracketBalancer;
 use App\Domain\EmailVerification\EmailVerifier;
 use App\Domain\EventSystem\EventService;
 use App\Domain\EventSystem\Interface\EventRepositoryInterface;
+use App\Domain\OrderNotification\Contract\NotificationTaskPublisherInterface;
+use App\Domain\OrderNotification\Contract\NotificationTaskRepositoryInterface;
+use App\Domain\OrderNotification\NotificationTaskService;
 use App\Domain\Shared\Validator\BracketBalanceValidator;
 use App\Domain\Shared\Validator\DnsMxRecordValidator;
 use App\Domain\Shared\Validator\EmailFormatValidator;
@@ -238,6 +241,15 @@ return [
             'factory' => static fn(Container $c) => new ReportMailerFactory(
                 $c->get(DotEnvConfigInterface::class),
                 $c->get(MailpitChaosClient::class),
+            ),
+        ],
+    ],
+    'OrderNotification' => [
+        NotificationTaskService::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new NotificationTaskService(
+                $c->get(NotificationTaskRepositoryInterface::class),
+                $c->get(NotificationTaskPublisherInterface::class),
             ),
         ],
     ],
