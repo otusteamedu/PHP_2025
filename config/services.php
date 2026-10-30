@@ -48,6 +48,7 @@ use App\Infrastructure\Database\DataMapper\NotificationTaskMapper;
 use App\Infrastructure\Database\DataMapper\UserMapper;
 use App\Infrastructure\Database\Repository\NotificationTaskRepository;
 use App\Infrastructure\Database\Repository\UserRepository;
+use App\Infrastructure\Http\Wiremock\OrderDataProvider;
 use App\Infrastructure\Mail\Factory\ReportMailerFactory;
 use App\Infrastructure\Mail\Mailpit\MailpitChaosClient;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnection;
@@ -303,6 +304,13 @@ return [
         NotificationTaskMapper::class => [
             'singleton' => true,
             'factory' => static fn(Container $c) => new NotificationTaskMapper(),
+        ],
+        OrderDataProviderInterface::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new OrderDataProvider(
+                client: HttpClient::create(),
+                baseUrl: $c->get(DotEnvConfigInterface::class)->get('WIREMOCK_BASE_API_URL'),
+            ),
         ],
     ],
 ];

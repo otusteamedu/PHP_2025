@@ -1,0 +1,24 @@
+{
+  "priority": 1,
+  "scenarioName": "order-created-recovery",
+  "requiredScenarioState": "recovered",
+  "request": {
+    "method": "GET",
+    "urlPattern": "/orders/[0-9]+\\?event=created"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 15000,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "id": "{{request.path.[1]}}",
+      "customerName": "{{pickRandom 'Иван' 'Мария' 'Алексей' 'Ольга' 'Сергей'}}",
+      "total": {
+        "amount": "{{randomDecimal lower=500 upper=50000}}",
+        "currency": "₽"
+      },
+      "itemsCount": "{{randomInt lower=1 upper=5}}"
+    }
+  },
+  "newScenarioState": "Started"
+}

@@ -1,0 +1,22 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/orders/[0-9]+\\?event=shipped"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 15000,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "id": "{{request.path.[1]}}",
+      "customerName": "{{pickRandom 'Иван' 'Мария' 'Алексей' 'Ольга' 'Сергей'}}",
+      "total": {
+        "amount": "{{randomDecimal lower=500 upper=50000}}",
+        "currency": "₽"
+      },
+      "itemsCount": "{{randomInt lower=1 upper=5}}",
+      "trackingNumber": "TRK-{{randomValue length=8 type='ALPHANUMERIC' uppercase=true}}-{{request.path.[1]}}"
+    }
+  }
+}

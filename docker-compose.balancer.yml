@@ -186,6 +186,14 @@ services:
     environment:
       MP_ENABLE_CHAOS: 'true'
 
+  wiremock:
+    image: wiremock/wiremock:3.9.1
+    command: [ "--global-response-templating" ]
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./docker/wiremock/mappings:/home/wiremock/mappings
+
 volumes:
   php_1_socket:
   php_2_socket:
