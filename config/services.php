@@ -50,6 +50,7 @@ use App\Infrastructure\Database\Repository\NotificationTaskRepository;
 use App\Infrastructure\Database\Repository\UserRepository;
 use App\Infrastructure\Http\Wiremock\OrderDataProvider;
 use App\Infrastructure\Mail\Factory\ReportMailerFactory;
+use App\Infrastructure\Mail\Mailer\NotificationMailer;
 use App\Infrastructure\Mail\Mailpit\MailpitChaosClient;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnection;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionFactory;
@@ -64,6 +65,9 @@ use App\Infrastructure\Storage\Search\Elasticsearch\Client\SecureElasticsearchCl
 use App\Infrastructure\Storage\Search\Elasticsearch\Repository\BookshopRepository;
 use Elastic\Elasticsearch\ClientInterface;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport\Dsn;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransportFactory;
 
 return [
     'EmailVerification' => [
@@ -311,6 +315,18 @@ return [
                 client: HttpClient::create(),
                 baseUrl: $c->get(DotEnvConfigInterface::class)->get('WIREMOCK_BASE_API_URL'),
             ),
+        ],
+        NotificationMailerInterface::class => [
+            'singleton' => true,
+            'factory' => static function(Container $c) {
+                $config = $c->get(DotEnvConfigInterface::class);
+                $dsn = Dsn::fromString($config->get('MAILER_DSN'));
+                $transport = new EsmtpTransportFactory()->create($dsn);
+                return new NotificationMailer(
+                    mailer: new Mailer($transport),
+                    fromEmail: $config->get('ORDER_NOTIFICATIONS_MAILER_FROM'),
+                );
+            },
         ],
     ],
 ];
