@@ -57,6 +57,7 @@ use App\Infrastructure\RabbitMq\Connection\AmqpConnection;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionFactory;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
 use App\Infrastructure\RabbitMq\Producer\RabbitMqProducer;
+use App\Infrastructure\RabbitMq\Publisher\NotificationTaskPublisher;
 use App\Infrastructure\RabbitMq\Publisher\ReportRequestPublisher;
 use App\Infrastructure\RabbitMq\Topology\BankReportTopology;
 use App\Infrastructure\RabbitMq\Topology\OrderNotificationTopology;
@@ -347,6 +348,13 @@ return [
         OrderNotificationTopology::class => [
             'singleton' => true,
             'factory' => static fn(Container $c) => new OrderNotificationTopology(
+                $c->get(NotificationAmqpConfig::class),
+            ),
+        ],
+        NotificationTaskPublisherInterface::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new NotificationTaskPublisher(
+                $c->get(RabbitMqProducer::class),
                 $c->get(NotificationAmqpConfig::class),
             ),
         ],
