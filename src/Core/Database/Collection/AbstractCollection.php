@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Database\Collection;
 
-use App\Core\Database\Entity\EntityInterface;
-
 abstract class AbstractCollection implements \IteratorAggregate, \Countable
 {
     private array $items = [];
 
-    abstract public function add(EntityInterface $entity): void;
+    abstract public function add(object $entity): void;
 
     public function getIterator(): \Traversable
     {
@@ -32,7 +30,7 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable
         return $this->items;
     }
 
-    protected function addEntity(EntityInterface $entity): void
+    protected function addEntity(object $entity): void
     {
         $this->items[] = $entity;
     }

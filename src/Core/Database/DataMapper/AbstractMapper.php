@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Core\Database\DataMapper;
 
-use App\Core\Database\Entity\EntityInterface;
-
 abstract class AbstractMapper implements DataMapperInterface, IdentityMapperInterface
 {
     private static array $propertyCache = [];
 
-    public function hydrateId(EntityInterface $entity, int $id): void
+    public function hydrateId(object $entity, int $id): void
     {
         $property = $this->reflectionProperty($entity::class, 'id');
 
-        if ($property->getValue($entity) === null) {
-            $property->setValue($entity, $id);
+        if ($property->isInitialized($entity) && $property->getValue($entity) !== null) {
+            return;
         }
+
+        $property->setValue($entity, $this->buildIdentity($id));
     }
 
     protected function hydrate(object $entity, array $properties): void
@@ -36,5 +36,14 @@ abstract class AbstractMapper implements DataMapperInterface, IdentityMapperInte
                 previous: $e,
             );
         }
+    }
+
+    private function buildIdentity(int $id): mixed
+    {
+        if ($this instanceof IdentityVoMapperInterface) {
+            return $this->createIdentity($id);
+        }
+
+        return $id;
     }
 }

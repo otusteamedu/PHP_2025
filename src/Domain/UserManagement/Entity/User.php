@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain\UserManagement\Entity;
 
-use App\Core\Database\Entity\AbstractEntity;
-
-class User extends AbstractEntity
+class User
 {
+    private ?int $id = null;
+
     public function __construct(
         private string $firstName,
         private string $lastName,
         private string $email,
         private \DateTimeImmutable $birthDate,
     ) {
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 
     public function getFirstName(): string

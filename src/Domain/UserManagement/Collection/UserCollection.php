@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\UserManagement\Collection;
 
 use App\Core\Database\Collection\AbstractCollection;
-use App\Core\Database\Entity\EntityInterface;
 use App\Domain\UserManagement\Entity\User;
 
 class UserCollection extends AbstractCollection
 {
-    public function add(EntityInterface $entity): void
+    public function add(object $entity): void
     {
         if (!$entity instanceof User) {
             throw new \InvalidArgumentException(sprintf(

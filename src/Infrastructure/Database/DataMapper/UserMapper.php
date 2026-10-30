@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Database\DataMapper;
 
 use App\Core\Database\DataMapper\AbstractMapper;
-use App\Core\Database\Entity\EntityInterface;
 use App\Domain\UserManagement\Entity\User;
 
 class UserMapper extends AbstractMapper
@@ -24,7 +23,7 @@ class UserMapper extends AbstractMapper
         return $user;
     }
 
-    public function mapEntityToRow(EntityInterface $entity): array
+    public function mapEntityToRow(object $entity): array
     {
         if (!$entity instanceof User) {
             throw new \InvalidArgumentException(sprintf(

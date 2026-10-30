@@ -7,7 +7,6 @@ namespace App\Core\Database\Repository;
 use App\Core\Database\Connection\DatabaseQueryExecutor;
 use App\Core\Database\DataMapper\DataMapperInterface;
 use App\Core\Database\DataMapper\IdentityMapperInterface;
-use App\Core\Database\Entity\EntityInterface;
 use App\Core\Database\Exception\ConfigurationException;
 use App\Core\Database\Exception\DatabaseException;
 
@@ -26,7 +25,7 @@ abstract class AbstractRepository
      * @throws ConfigurationException
      * @throws DatabaseException
      */
-    public function find(int $id): ?EntityInterface
+    public function find(int $id): ?object
     {
         $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id=:id';
         $row = $this->dbQueryExecutor->queryRow($sql, [':id' => $id]);
@@ -35,7 +34,7 @@ abstract class AbstractRepository
     }
 
     /**
-     * @return EntityInterface[]
+     * @return object[]
      *
      * @throws ConfigurationException
      * @throws DatabaseException
@@ -52,7 +51,7 @@ abstract class AbstractRepository
      * @throws ConfigurationException
      * @throws DatabaseException
      */
-    public function save(EntityInterface $entity): void
+    public function save(object $entity): void
     {
         $entity->getId() === null ? $this->insert($entity) : $this->update($entity);
     }
@@ -61,7 +60,7 @@ abstract class AbstractRepository
      * @throws ConfigurationException
      * @throws DatabaseException
      */
-    public function delete(EntityInterface $entity): void
+    public function delete(object $entity): void
     {
         if ($entity->getId() === null) {
             throw new DatabaseException('Cannot delete entity without id');
@@ -76,7 +75,7 @@ abstract class AbstractRepository
      * @throws ConfigurationException
      * @throws DatabaseException
      */
-    protected function insert(EntityInterface $entity): void
+    protected function insert(object $entity): void
     {
         $params = [];
         $placeholders = [];
@@ -105,7 +104,7 @@ abstract class AbstractRepository
      * @throws ConfigurationException
      * @throws DatabaseException
      */
-    protected function update(EntityInterface $entity): void
+    protected function update(object $entity): void
     {
         $params = [];
         $placeholders = [];
@@ -127,7 +126,7 @@ abstract class AbstractRepository
         $this->dbQueryExecutor->execute($sql, $params);
     }
 
-    protected function createEntityFromRow(array $row): EntityInterface
+    protected function createEntityFromRow(array $row): object
     {
         return $this->dataMapper->mapRowToEntity($row);
     }
