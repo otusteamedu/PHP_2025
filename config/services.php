@@ -26,8 +26,16 @@ use App\Domain\BracketBalance\BracketBalancer;
 use App\Domain\EmailVerification\EmailVerifier;
 use App\Domain\EventSystem\EventService;
 use App\Domain\EventSystem\Interface\EventRepositoryInterface;
+use App\Domain\OrderNotification\Channel\Email\EmailMessageBuilder;
+use App\Domain\OrderNotification\Channel\Email\EmailNotificationHandler;
+use App\Domain\OrderNotification\Channel\NotificationHandlerFactory;
+use App\Domain\OrderNotification\Channel\Sms\SmsMessageBuilder;
+use App\Domain\OrderNotification\Channel\Sms\SmsNotificationHandler;
+use App\Domain\OrderNotification\Contract\NotificationMailerInterface;
+use App\Domain\OrderNotification\Contract\NotificationSmsSenderInterface;
 use App\Domain\OrderNotification\Contract\NotificationTaskPublisherInterface;
 use App\Domain\OrderNotification\Contract\NotificationTaskRepositoryInterface;
+use App\Domain\OrderNotification\Contract\OrderDataProviderInterface;
 use App\Domain\OrderNotification\NotificationTaskService;
 use App\Domain\Shared\Validator\BracketBalanceValidator;
 use App\Domain\Shared\Validator\DnsMxRecordValidator;
@@ -250,7 +258,38 @@ return [
             'factory' => static fn(Container $c) => new NotificationTaskService(
                 $c->get(NotificationTaskRepositoryInterface::class),
                 $c->get(NotificationTaskPublisherInterface::class),
+                $c->get(OrderDataProviderInterface::class),
+                $c->get(NotificationHandlerFactory::class),
             ),
+        ],
+        EmailMessageBuilder::class => [
+            'singleton' => true,
+            'factory' => static fn() => new EmailMessageBuilder(),
+        ],
+        EmailNotificationHandler::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new EmailNotificationHandler(
+                $c->get(EmailMessageBuilder::class),
+                $c->get(NotificationMailerInterface::class),
+            ),
+        ],
+        SmsMessageBuilder::class => [
+            'singleton' => true,
+            'factory' => static fn() => new SmsMessageBuilder(),
+        ],
+        SmsNotificationHandler::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new EmailNotificationHandler(
+                $c->get(SmsMessageBuilder::class),
+                $c->get(NotificationSmsSenderInterface::class),
+            ),
+        ],
+        NotificationHandlerFactory::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new NotificationHandlerFactory([
+                $c->get(EmailNotificationHandler::class),
+                $c->get(SmsNotificationHandler::class),
+            ]),
         ],
     ],
 ];
