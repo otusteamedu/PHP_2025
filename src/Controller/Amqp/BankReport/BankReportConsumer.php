@@ -87,7 +87,7 @@ class BankReportConsumer extends AbstractConsumer
     {
         fwrite(STDOUT, sprintf(
             " [PROCESSING] (attempt %d/%d) Client: %s | Period: %s - %s | Type: %s | Email: %s\n",
-            $this->getAttemptNumber(),
+            $this->getDeliveryNumber(),
             $this->getMaxAttempts(),
             $message->clientName,
             $message->dateFrom,

@@ -13,7 +13,7 @@ use PhpAmqpLib\Wire\AMQPTable;
 abstract class AbstractConsumer
 {
     private ?AMQPChannel $channel = null;
-    private int $attemptNumber = 1;
+    private int $deliveryNumber = 1;
 
     public function __construct(
         private readonly AmqpConnectionInterface $connection,
@@ -45,9 +45,9 @@ abstract class AbstractConsumer
         return $this->queueName;
     }
 
-    protected function getAttemptNumber(): int
+    protected function getDeliveryNumber(): int
     {
-        return $this->attemptNumber;
+        return $this->deliveryNumber;
     }
 
     protected function getMaxAttempts(): int
@@ -59,33 +59,31 @@ abstract class AbstractConsumer
     {
         fwrite(STDOUT, sprintf(
             " [*] Waiting for messages on '%s'. CTRL+C to exit.\n",
-            $this->queueName,
+            $this->getQueueName(),
         ));
     }
 
+    /**
+     * Вызывается в начале каждой доставки, до проверки лимита доставок
+     * и до handle(). Точка, в которой наследник готовит своё состояние
+     * к обработке нового сообщения: сбрасывает контекст предыдущего,
+     * счётчики, признак обработанности и прочее, что требуется.
+     */
+    protected function onDeliveryStart(): void {}
+
     protected function onMessageAcked(): void
     {
-        fwrite(STDOUT, " [ACK] Message processed successfully\n");
+        fwrite(STDOUT, $this->formatOutcome('[ACK]', 'Message processed successfully'));
     }
 
     protected function onMessageRejected(string $reason, int $code = 0): void
     {
-        fwrite(STDERR, sprintf(
-            " [REJECT] (attempt %d/%d) %s%s\n",
-            $this->attemptNumber,
-            $this->maxAttempts,
-            $reason !== '' ? $reason : 'Unknown error',
-            $code > 0 ? " [$code]" : '',
-        ));
+        fwrite(STDOUT, $this->formatOutcome('[REJECT]', $reason, $code));
     }
 
     protected function onMessageDropped(string $reason, int $code = 0): void
     {
-        fwrite(STDERR, sprintf(
-            " [DROP] %s%s\n",
-            $reason !== '' ? $reason : 'Unknown error',
-            $code > 0 ? " [$code]" : '',
-        ));
+        fwrite(STDOUT, $this->formatOutcome('[DROP]', $reason, $code));
     }
 
     protected function onError(\Throwable $e): void
@@ -101,11 +99,40 @@ abstract class AbstractConsumer
         fwrite(STDERR, "\n" . $e->getTraceAsString() . "\n");
     }
 
-    private function shortClass(object $obj): string
+    protected function shortClass(object|string $obj): string
     {
-        $parts = explode('\\', $obj::class);
+        $class = is_object($obj) ? $obj::class : $obj;
+        $parts = explode('\\', $class);
 
         return end($parts);
+    }
+
+    /**
+     * Единый формат исхода: [TAG] [context] reason [code].
+     * Контекст добавляет contextLabel(), причину форматирует formatReason().
+     */
+    protected function formatOutcome(string $tag, string $reason, int $code = 0): string
+    {
+        return sprintf(" %s %s%s\n", $tag, $this->contextLabel(), $this->formatReason($reason, $code));
+    }
+
+    /**
+     * Контекстная метка исхода (класс исключения, идентификатор задачи и т.п.).
+     * Базовая реализация пуста: транспортный слой ничего не знает о домене.
+     */
+    protected function contextLabel(): string
+    {
+        return '';
+    }
+
+    /**
+     * Причина + код в едином виде: "текст" или "текст [код]".
+     * Пустая причина заменяется на "Unknown error".
+     */
+    protected function formatReason(string $reason, int $code = 0): string
+    {
+        return ($reason !== '' ? $reason : 'Unknown error')
+            . ($code > 0 ? sprintf(' [%d]', $code) : '');
     }
 
     private function registerSignalHandlers(): void
@@ -154,11 +181,16 @@ abstract class AbstractConsumer
     {
         return function(AMQPMessage $msg): void
         {
-            $this->attemptNumber = $this->resolveAttemptNumber($msg);
+            $this->onDeliveryStart();
+            $this->deliveryNumber = $this->resolveDeliveryNumber($msg);
 
             try {
-                if ($this->attemptNumber > $this->maxAttempts) {
-                    $this->drop($msg, sprintf('Max attempts (%d) exceeded', $this->maxAttempts));
+                if ($this->getDeliveryNumber() > $this->getMaxAttempts() + 1) {
+                    $this->drop($msg, sprintf(
+                        'Max delivery attempts exceeded (%d deliveries)',
+                        $this->getDeliveryNumber(),
+                    ));
+
                     return;
                 }
 
@@ -237,34 +269,52 @@ abstract class AbstractConsumer
     }
 
     /**
-     * Возвращает номер текущей попытки (1-based).
-     * Первая доставка - attempt 1, каждый retry увеличивает счётчик.
+     * Номер текущей доставки (1-based): первая доставка = 1,
+     * каждый reject-цикл через retry-очередь увеличивает счётчик.
      */
-    private function resolveAttemptNumber(AMQPMessage $msg): int
+    private function resolveDeliveryNumber(AMQPMessage $msg): int
+    {
+        return (int) ($this->lastDeathForQueue($msg)['count'] ?? 0) + 1;
+    }
+
+    /**
+     * Запись x-death о "смерти" сообщения в основной очереди (queue = текущая).
+     * Первое совпадение - актуальная запись для этой очереди.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function lastDeathForQueue(AMQPMessage $msg): ?array
+    {
+        return array_find(
+            $this->extractDeaths($msg),
+            fn($death) => ($death['queue'] ?? '') === $this->getQueueName(),
+        );
+    }
+
+    /**
+     * Записи x-death о "смертях" сообщения.
+     * Каждая запись может быть AMQPTable или массивом в зависимости от драйвера.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function extractDeaths(AMQPMessage $msg): array
     {
         if (!$msg->has('application_headers')) {
-            return 1;
+            return [];
         }
 
         $headers = $msg->get('application_headers');
-
         if (!$headers instanceof AMQPTable) {
-            return 1;
+            return [];
         }
 
-        $nativeData = $headers->getNativeData();
-        $xdeaths = $nativeData['x-death'] ?? [];
+        $deaths = $headers->getNativeData()['x-death'] ?? [];
 
-        foreach ($xdeaths as $death) {
-            $deathData = $death instanceof AMQPTable
+        return array_map(
+            static fn($death) => $death instanceof AMQPTable
                 ? $death->getNativeData()
-                : (is_array($death) ? $death : []);
-
-            if (($deathData['queue'] ?? '') === $this->queueName) {
-                return (int) ($deathData['count'] ?? 0) + 1;
-            }
-        }
-
-        return 1;
+                : (is_array($death) ? $death : []),
+            $deaths,
+        );
     }
 }
