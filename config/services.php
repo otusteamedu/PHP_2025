@@ -52,12 +52,14 @@ use App\Infrastructure\Http\Wiremock\OrderDataProvider;
 use App\Infrastructure\Mail\Factory\ReportMailerFactory;
 use App\Infrastructure\Mail\Mailer\NotificationMailer;
 use App\Infrastructure\Mail\Mailpit\MailpitChaosClient;
+use App\Infrastructure\RabbitMq\Config\NotificationAmqpConfig;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnection;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionFactory;
 use App\Infrastructure\RabbitMq\Connection\AmqpConnectionInterface;
 use App\Infrastructure\RabbitMq\Producer\RabbitMqProducer;
 use App\Infrastructure\RabbitMq\Publisher\ReportRequestPublisher;
 use App\Infrastructure\RabbitMq\Topology\BankReportTopology;
+use App\Infrastructure\RabbitMq\Topology\OrderNotificationTopology;
 use App\Infrastructure\Resolver\DnsResolver;
 use App\Infrastructure\Resolver\DnsResolverInterface;
 use App\Infrastructure\Sms\SmsMock\NotificationSmsSender;
@@ -334,6 +336,18 @@ return [
             'factory' => static fn(Container $c) => new NotificationSmsSender(
                 client: HttpClient::create(),
                 baseUrl: $c->get(DotEnvConfigInterface::class)->get('SMS_BASE_API_URL'),
+            ),
+        ],
+        NotificationAmqpConfig::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new NotificationAmqpConfig(
+                $c->get(DotEnvConfigInterface::class),
+            ),
+        ],
+        OrderNotificationTopology::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new OrderNotificationTopology(
+                $c->get(NotificationAmqpConfig::class),
             ),
         ],
     ],
