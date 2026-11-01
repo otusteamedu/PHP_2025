@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 use App\Controller\Amqp\OrderNotification\StderrNotificationTaskWarningListener;
+use App\Controller\Http\Api\OrderNotification\Presenter\NotificationTaskPresenter;
+use App\Controller\Http\Api\OrderNotification\Rule\ChannelRule;
+use App\Controller\Http\Api\OrderNotification\Rule\OrderEventRule;
+use App\Controller\Http\Api\OrderNotification\Rule\OrderIdRule;
+use App\Controller\Http\Api\OrderNotification\Rule\RecipientRule;
+use App\Controller\Http\Api\OrderNotification\Validator\OrderNotificationValidator;
 use App\Controller\Http\Api\Shared\ErrorHandling\CompositeExceptionResponseResolver;
 use App\Controller\Http\Api\Shared\ErrorHandling\DomainExceptionResponseResolver;
 use App\Controller\Http\Api\Shared\ErrorHandling\ValidationExceptionResponseResolver;
@@ -364,6 +370,35 @@ return [
         NotificationTaskWarningListenerInterface::class => [
             'singleton' => true,
             'factory' => static fn() => new StderrNotificationTaskWarningListener(),
+        ],
+        OrderIdRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new OrderIdRule(),
+        ],
+        OrderEventRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new OrderEventRule(),
+        ],
+        ChannelRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new ChannelRule(),
+        ],
+        RecipientRule::class => [
+            'singleton' => true,
+            'factory' => static fn() => new RecipientRule(),
+        ],
+        OrderNotificationValidator::class => [
+            'singleton' => true,
+            'factory' => static fn(Container $c) => new OrderNotificationValidator(
+                $c->get(OrderIdRule::class),
+                $c->get(OrderEventRule::class),
+                $c->get(ChannelRule::class),
+                $c->get(RecipientRule::class),
+            ),
+        ],
+        NotificationTaskPresenter::class => [
+            'singleton' => true,
+            'factory' => static fn() => new NotificationTaskPresenter(),
         ],
     ],
 ];
