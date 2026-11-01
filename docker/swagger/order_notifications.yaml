@@ -1,0 +1,287 @@
+openapi: 3.1.0
+info:
+  title: Order Notification API
+  version: 1.0.0
+  license:
+    name: MIT
+    identifier: MIT
+security: []
+servers:
+  - url: http://localhost:20101/api/v1
+    description: Локальный API
+paths:
+  /notification:
+    post:
+      operationId: createNotificationTask
+      summary: Создать задачу на отправку уведомления
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNotificationRequest'
+            examples:
+              email:
+                summary: Уведомление на email
+                value:
+                  orderId: 1000
+                  orderEvent: created
+                  channel: email
+                  recipient: ivanov@example.com
+              sms-basic:
+                summary: Уведомление по SMS на номера РФ
+                value:
+                  orderId: 1000
+                  orderEvent: created
+                  channel: sms
+                  recipient: "+79161234567"
+              sms-magic:
+                summary: Уведомление по SMS на магические номера
+                description: Имитация задержек, отклонений и прочих ошибок через sms-mock
+                value:
+                  orderId: 1000
+                  orderEvent: created
+                  channel: sms
+                  recipient: "+40700000003"
+      responses:
+        '202':
+          description: Задача принята и поставлена в очередь
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateNotificationResponse'
+        '400':
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientError'
+              examples:
+                invalidSyntax:
+                  summary: Некорректный json-синтаксис
+                  value:
+                    success: false
+                    error: "Malformed JSON syntax"
+                invalidRequest:
+                  summary: Некорректная структура запроса
+                  value:
+                    success: false
+                    error: "Payload must be JSON object with named fields"
+        '422':
+          description: Ошибки валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              examples:
+                invalidFields:
+                  summary: Неверные типы и значения полей
+                  value:
+                    success: false
+                    error: "Ошибки валидации."
+                    fields:
+                      orderId:
+                        - "Неверный тип поля. Ожидается int, получено: string"
+                      orderEvent:
+                        - "Недопустимое событие заказа: in-progress. Допустимые события: created, paid, shipped"
+                unknownAndMissing:
+                  summary: Неизвестное поле и незаполненные обязательные поля
+                  value:
+                    success: false
+                    error: "Ошибки валидации."
+                    fields:
+                      unknownField:
+                        - "Передано неизвестное поле."
+                      orderId:
+                        - "Поле обязательно для заполнения."
+                      orderEvent:
+                        - "Поле обязательно для заполнения."
+        '500':
+          description: Ошибка на стороне сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    get:
+      operationId: getNotificationTaskStatus
+      summary: Получить задачу уведомления и её статус
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: Идентификатор задачи, целое число от 1 и выше
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '200':
+          description: Задача получена, её статус известен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetNotificationResponse'
+        '400':
+          description: Параметр id отсутствует или не является целым числом
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientError'
+              examples:
+                invalidIdType:
+                  summary: id не целое число
+                  value:
+                    success: false
+                    error: "Parameter 'id' must be integer."
+                missingId:
+                  summary: id отсутствует
+                  value:
+                    success: false
+                    error: "Parameter 'id' does not exist"
+        '404':
+          description: Задача с указанным id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientError'
+              example:
+                success: false
+                error: "Задача уведомления № 1 не найдена."
+        '422':
+          description: Параметр id целое число, но нарушает ограничения (меньше 1)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientError'
+              example:
+                success: false
+                error: "Id задачи должен быть положительным числом."
+        '500':
+          description: Ошибка на стороне сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+components:
+  schemas:
+    CreateNotificationRequest:
+      oneOf:
+        - $ref: '#/components/schemas/EmailNotificationRequest'
+        - $ref: '#/components/schemas/SmsNotificationRequest'
+      discriminator:
+        propertyName: channel
+        mapping:
+          email: '#/components/schemas/EmailNotificationRequest'
+          sms: '#/components/schemas/SmsNotificationRequest'
+    EmailNotificationRequest:
+      type: object
+      required: [ orderId, orderEvent, channel, recipient ]
+      properties:
+        orderId: { type: integer, example: 1000 }
+        orderEvent: { type: string, enum: [ created, paid, shipped ] }
+        channel: { type: string, enum: [ email ] }
+        recipient: { type: string, format: email, example: ivanov@example.com }
+    SmsNotificationRequest:
+      type: object
+      required: [ orderId, orderEvent, channel, recipient ]
+      properties:
+        orderId: { type: integer, example: 1000 }
+        orderEvent: { type: string, enum: [ created, paid, shipped ] }
+        channel: { type: string, enum: [ sms ] }
+        recipient: { type: string, pattern: '^(\+7\d{10}|\+4070000000[1-6])$', example: "+79161234567" }
+    NotificationTask:
+      type: object
+      required: [ taskId, taskStatus, orderId, orderEvent, channel, recipient, createdAt, processedAt ]
+      properties:
+        taskId: { type: integer, example: 1 }
+        taskStatus:
+          type: string
+          enum: [ pending, fetching, sending, retrying, completed, failed ]
+        orderId: { type: integer, example: 1000 }
+        orderEvent: { type: string, enum: [ created, paid, shipped ] }
+        channel: { type: string, enum: [ email, sms ] }
+        recipient: { type: string, example: ivanov@example.com }
+        createdAt: { type: string, format: date-time, example: "2026-11-01T16:07:45+03:00" }
+        processedAt: { type: [ string, "null" ], format: date-time, example: null }
+    SuccessEnvelope:
+      type: object
+      required: [ success, data ]
+      properties:
+        success: { type: boolean, const: true }
+    CreateNotificationResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessEnvelope'
+        - type: object
+          properties:
+            data:
+              allOf:
+                - $ref: '#/components/schemas/NotificationTask'
+                - type: object
+                  properties:
+                    taskStatus: { const: pending }
+                    processedAt: { type: "null" }
+      example:
+        success: true
+        data:
+          taskId: 1
+          taskStatus: pending
+          orderId: 1000
+          orderEvent: created
+          channel: email
+          recipient: ivanov@example.com
+          createdAt: "2026-11-01T16:07:45+03:00"
+          processedAt: null
+    GetNotificationResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/NotificationTask'
+      example:
+        success: true
+        data:
+          taskId: 1
+          taskStatus: completed
+          orderId: 1000
+          orderEvent: created
+          channel: email
+          recipient: ivanov@example.com
+          createdAt: "2026-11-01T16:07:45+03:00"
+          processedAt: "2026-11-01T16:08:12+03:00"
+    ValidationError:
+      type: object
+      required: [ success, error, fields ]
+      properties:
+        success:
+          type: boolean
+          const: false
+        error:
+          type: string
+          example: 'Ошибки валидации.'
+        fields:
+          type: object
+          description: Карта "имя поля → список сообщений об ошибках"
+          additionalProperties:
+            type: array
+            items:
+              type: string
+    ClientError:
+      type: object
+      required: [ success, error ]
+      properties:
+        success:
+          type: boolean
+          const: false
+        error:
+          type: string
+    ServerError:
+      type: object
+      required: [ success, error ]
+      properties:
+        success:
+          type: boolean
+          const: false
+        error:
+          type: string
+          example: 'Internal Server Error'

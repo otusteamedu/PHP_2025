@@ -1,0 +1,12 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/orders/[0-9]+\\?event=paid"
+  },
+  "response": {
+    "status": 503,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": { "error": "service unavailable" }
+  }
+}

@@ -81,4 +81,16 @@ return [
         'controller' => \App\Controller\Http\Web\BankReport\BankReportController::class,
         'action' => 'requestReport',
     ],
+    [
+        'method' => 'POST',
+        'path' => '/api/v1/notification',
+        'controller' => \App\Controller\Http\Api\OrderNotification\OrderNotificationController::class,
+        'action' => 'createNotificationTask',
+    ],
+    [
+        'method' => 'GET',
+        'path' => '/api/v1/notification',
+        'controller' => \App\Controller\Http\Api\OrderNotification\OrderNotificationController::class,
+        'action' => 'getNotificationTaskStatus',
+    ],
 ];

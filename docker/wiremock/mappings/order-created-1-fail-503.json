@@ -1,0 +1,14 @@
+{
+  "priority": 1,
+  "scenarioName": "order-created-recovery",
+  "requiredScenarioState": "Started",
+  "request": {
+    "method": "GET",
+    "urlPattern": "/orders/[0-9]+\\?event=created"
+  },
+  "response": {
+    "status": 503,
+    "jsonBody": { "error": "service unavailable" }
+  },
+  "newScenarioState": "recovered"
+}
