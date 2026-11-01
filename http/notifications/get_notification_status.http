@@ -1,0 +1,20 @@
+# REST style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@getNotificationStatusUrl = {{baseUrl}}/notification
+
+### Статус задачи 1: поллинг pending → fetching → sending → completed
+GET {{getNotificationStatusUrl}}?id=1
+Accept: application/json
+
+### Статус задачи 4: наиболее длинные промежутки времени, проще наблюдать изменения статусов
+GET {{getNotificationStatusUrl}}?id=4
+Accept: application/json
+
+### 422: id меньше 1 - нарушает ограничение
+GET {{getNotificationStatusUrl}}?id=0
+Accept: application/json
+
+### 404: несуществующий id
+GET {{getNotificationStatusUrl}}?id=999999
+Accept: application/json

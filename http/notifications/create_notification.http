@@ -1,0 +1,88 @@
+# REST style
+
+@baseUrl = http://{{host}}:{{nginxPublishedPort}}/api/v1
+@createNotificationUrl = {{baseUrl}}/notification
+
+### Request 1 - позитивный сценарий
+### fetch 503 → 200 (задержка 15с), email доставлен → completed
+POST {{createNotificationUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "orderId": 1000,
+  "orderEvent": "created",
+  "channel": "email",
+  "recipient": "test@example.com"
+}
+
+### Request 2 - не удалось получить данные по заказу
+### fetch 503 → retry → drop, до отправки не дойдёт → failed
+POST {{createNotificationUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "orderId": 2000,
+  "orderEvent": "paid",
+  "channel": "sms",
+  "recipient": "+79269788807"
+}
+
+### Request 3 - SMS с задержкой
+### fetch 200 (задержка 15с), доставка на +40700000003 (пауза 3с) → 200 → completed
+POST {{createNotificationUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "orderId": 3000,
+  "orderEvent": "shipped",
+  "channel": "sms",
+  "recipient": "+40700000003"
+}
+
+### Request 4 - SMS с таймаутом
+### fetch 200 (задержка 15с), доставка на +40700000006 → timeout 30с, 504 → retry/failed
+POST {{createNotificationUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "orderId": 4000,
+  "orderEvent": "shipped",
+  "channel": "sms",
+  "recipient": "+40700000006"
+}
+
+### Request 5 - SMS на обычный РФ-номер
+### fetch 503 → 200 (задержка 15с), SMS доставлен сразу → completed
+POST {{createNotificationUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "orderId": 5000,
+  "orderEvent": "created",
+  "channel": "sms",
+  "recipient": "+79269788807"
+}
+
+### Request 6 - негативный сценарий валидации
+### orderId строкой, orderEvent не поддерживается → ошибки валидации 422
+POST {{createNotificationUrl}}
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+  "orderId": "6000",
+  "orderEvent": "in-progress",
+  "channel": "email",
+  "recipient": "test@example.com"
+}
